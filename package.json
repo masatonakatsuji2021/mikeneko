@@ -1,0 +1,16 @@
+{
+    "name": "saiberian",
+    "description": "A web framework for the client side that can deploy spa (single-page-action) simply and quickly. Package for framework provision.",
+    "author": "masato nakatsuji",
+    "license": "MIT",
+    "version": "1.0.1",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/masatonakatsuji2021/saiberian.git"
+    },
+    "devDependencies": {
+        "@types/node": "^20.10.1",
+        "typescript": "^5.3.2",
+        "mime-types": "^2.1.35"
+    }
+}

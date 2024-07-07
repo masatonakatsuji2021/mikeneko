@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "lib": ["es6","dom"],
+    "outDir":"./",
+    "paths": {
+      "*": ["./*", "./bin/*"],
+      "app/*" : [ "./test/src/app/*" ]
+    }
+  },
+  "exclude": [
+    "./source/*",
+  ]
+}
