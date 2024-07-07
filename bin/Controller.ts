@@ -39,24 +39,45 @@ export class Controller {
         Response.__rendering(routes, this);
     }
 
+    /**
+     * ***head*** : 
+     */
     public head : string;
 
+    /**
+     * ***setHead*** : 
+     * @param headName 
+     */
     public setHead(headName : string) {
         this.head = headName;
         const routes = Routes.getRoute();
         Response.__rendering(routes, this);
     }
 
+    /**
+     * ***header*** : 
+     */
     public header : string;
 
+    /**
+     * ***setHeader*** : 
+     * @param headerName 
+     */
     public setHeader(headerName : string) {
         this.header = headerName;
         const routes = Routes.getRoute();
         Response.__rendering(routes, this);
     }
 
+    /**
+     * ***footer*** : 
+     */
     public footer : string;
 
+    /**
+     * ***setFooter*** : 
+     * @param footerName 
+     */
     public setFooter(footerName : string) {
         this.header = footerName;
         const routes = Routes.getRoute();

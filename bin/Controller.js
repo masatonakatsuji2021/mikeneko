@@ -38,16 +38,28 @@ class Controller {
         const routes = Routes_1.Routes.getRoute();
         Response_1.Response.__rendering(routes, this);
     }
+    /**
+     * ***setHead*** :
+     * @param headName
+     */
     setHead(headName) {
         this.head = headName;
         const routes = Routes_1.Routes.getRoute();
         Response_1.Response.__rendering(routes, this);
     }
+    /**
+     * ***setHeader*** :
+     * @param headerName
+     */
     setHeader(headerName) {
         this.header = headerName;
         const routes = Routes_1.Routes.getRoute();
         Response_1.Response.__rendering(routes, this);
     }
+    /**
+     * ***setFooter*** :
+     * @param footerName
+     */
     setFooter(footerName) {
         this.header = footerName;
         const routes = Routes_1.Routes.getRoute();

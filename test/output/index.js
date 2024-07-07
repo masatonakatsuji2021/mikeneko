@@ -143,16 +143,28 @@ class Controller {
         const routes = Routes_1.Routes.getRoute();
         Response_1.Response.__rendering(routes, this);
     }
+    /**
+     * ***setHead*** :
+     * @param headName
+     */
     setHead(headName) {
         this.head = headName;
         const routes = Routes_1.Routes.getRoute();
         Response_1.Response.__rendering(routes, this);
     }
+    /**
+     * ***setHeader*** :
+     * @param headerName
+     */
     setHeader(headerName) {
         this.header = headerName;
         const routes = Routes_1.Routes.getRoute();
         Response_1.Response.__rendering(routes, this);
     }
+    /**
+     * ***setFooter*** :
+     * @param footerName
+     */
     setFooter(footerName) {
         this.header = footerName;
         const routes = Routes_1.Routes.getRoute();
@@ -1189,6 +1201,82 @@ exports.DomControl = DomControl;
 exports.Dom = DomControl.load;
 exports.VDom = DomControl.loadOnVirtual;
 ;
+return exports;});sfa.setFn("Exception", ()=>{var exports = {};
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Exception = void 0;
+const View_1 = require("View");
+class Exception extends View_1.View {
+    constructor() {
+        super(...arguments);
+        this.view = "exception";
+    }
+    /**
+     * ***handle*** :
+     * Event handler when an error occurs.
+     * @param {Exception} exception Error Exception
+     * @returns {void}
+    */
+    handle(exception) { }
+}
+exports.Exception = Exception;
+;
+return exports;});sfa.setFn("KeyEvent", ()=>{var exports = {};
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.KeyEvent = void 0;
+class KeyEvent {
+    constructor() {
+        this._callback_down = {};
+        this._callback_up = {};
+        const cont = this;
+        document.addEventListener("keydown", function (e) {
+            let keyCode = e.code;
+            if (cont._callback_down[keyCode]) {
+                cont._callback_down[keyCode](e);
+            }
+        });
+        document.addEventListener("keyup", function (e) {
+            let keyCode = e.code;
+            if (cont._callback_up[keyCode]) {
+                cont._callback_up[keyCode](e);
+            }
+        });
+    }
+    on(fullKeyName, keyDownCallback, keyUpCallback) {
+        this._callback_down[fullKeyName] = keyDownCallback;
+        if (keyUpCallback) {
+            this._callback_up[fullKeyName] = keyUpCallback;
+        }
+        return this;
+    }
+    onArrowUp(keyDownCallback, keyUpCallback) {
+        return this.on("ArrowUp", keyDownCallback, keyUpCallback);
+    }
+    onArrowDown(keyDownCallback, keyUpCallback) {
+        return this.on("ArrowDown", keyDownCallback, keyUpCallback);
+    }
+    onArrowLeft(keyDownCallback, keyUpCallback) {
+        return this.on("ArrowLeft", keyDownCallback, keyUpCallback);
+    }
+    onArrowRight(keyDownCallback, keyUpCallback) {
+        return this.on("ArrowRight", keyDownCallback, keyUpCallback);
+    }
+    onEnter(keyDownCallback, keyUpCallback) {
+        return this.on("Enter", keyDownCallback, keyUpCallback);
+    }
+    onSpace(keyDownCallback, keyUpCallback) {
+        return this.on("Space", keyDownCallback, keyUpCallback);
+    }
+    onChar(keyword, keyDownCallback, keyUpCallback) {
+        return this.on("Key" + keyword, keyDownCallback, keyUpCallback);
+    }
+    onNumber(number, keyDownCallback, keyUpCallback) {
+        return this.on("Number" + number, keyDownCallback, keyUpCallback);
+    }
+}
+exports.KeyEvent = KeyEvent;
+;
 return exports;});sfa.setFn("Response", ()=>{var exports = {};
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -1704,6 +1792,80 @@ class Startor {
 exports.Startor = Startor;
 exports.string = Startor.toString();
 ;
+return exports;});sfa.setFn("Storage", ()=>{var exports = {};
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.LocalStorage = exports.SessionStorage = void 0;
+const App_1 = require("app/config/App");
+class SessionStorage {
+    constructor() {
+        this.__name = "sbn_";
+        if (App_1.MyApp.sessionStorage) {
+            this.__name = App_1.MyApp.sessionStorage;
+        }
+    }
+    _get() {
+        var buff = sessionStorage.getItem(this.__name);
+        return JSON.parse(buff);
+    }
+    read(name) {
+        var buff = this._get();
+        if (buff[name]) {
+            return buff[name];
+        }
+        else {
+            return buff;
+        }
+    }
+    write(name, value) {
+        var buff = this._get();
+        buff[name] = value;
+        sessionStorage.setItem(this.__name, JSON.stringify(buff));
+        return this;
+    }
+    delete(name) {
+        var buff = this._get();
+        delete buff[name];
+        sessionStorage.setItem(this.__name, JSON.stringify(buff));
+        return this;
+    }
+}
+exports.SessionStorage = SessionStorage;
+class LocalStorage {
+    constructor() {
+        this.__name = "sbn";
+        if (App_1.MyApp.localStorage) {
+            this.__name = App_1.MyApp.localStorage;
+        }
+    }
+    _get() {
+        var buff = localStorage.getItem(this.__name);
+        return JSON.parse(buff);
+    }
+    read(name) {
+        var buff = this._get();
+        if (buff[name]) {
+            return buff[name];
+        }
+        else {
+            return buff;
+        }
+    }
+    write(name, value) {
+        var buff = this._get();
+        buff[name] = value;
+        localStorage.setItem(this.__name, JSON.stringify(buff));
+        return this;
+    }
+    delete(name) {
+        var buff = this._get();
+        delete buff[name];
+        localStorage.setItem(this.__name, JSON.stringify(buff));
+        return this;
+    }
+}
+exports.LocalStorage = LocalStorage;
+;
 return exports;});sfa.setFn("Util", ()=>{var exports = {};
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -1844,6 +2006,7 @@ return exports;});sfa.setFn("View", ()=>{var exports = {};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.View = void 0;
 const Routes_1 = require("Routes");
+const Response_1 = require("Response");
 class View {
     constructor() {
         /**
@@ -1860,13 +2023,13 @@ class View {
     /**
      * ***setView*** :
      * Set the page view path to display.
-     * If not specified, automatically determined by "{Controller Name}/{action name}"
-     * If you use it, place the HTML file in the path "rendering/View/{Controller Name}/{action Name}.html".
+     * If not specified, automatically determined by "{viewName}"
+     * If you use it, place the HTML file in the path "rendering/View/{viewName}.html".
      */
     setView(value) {
         this.view = value;
         const routes = Routes_1.Routes.getRoute();
-        // Response.__rendering(routes, this);
+        Response_1.Response.__rendering(routes, this);
     }
     /**
      * ***setTemplate*** :
@@ -1876,7 +2039,34 @@ class View {
     setTemplate(value) {
         this.template = value;
         const routes = Routes_1.Routes.getRoute();
-        // Response.__rendering(routes, this);
+        Response_1.Response.__rendering(routes, this);
+    }
+    /**
+     * ***setHead*** :
+     * @param headName
+     */
+    setHead(headName) {
+        this.head = headName;
+        const routes = Routes_1.Routes.getRoute();
+        Response_1.Response.__rendering(routes, this);
+    }
+    /**
+     * ***setHeader*** :
+     * @param headerName
+     */
+    setHeader(headerName) {
+        this.header = headerName;
+        const routes = Routes_1.Routes.getRoute();
+        Response_1.Response.__rendering(routes, this);
+    }
+    /**
+     * ***setFooter*** :
+     * @param footerName
+     */
+    setFooter(footerName) {
+        this.header = footerName;
+        const routes = Routes_1.Routes.getRoute();
+        Response_1.Response.__rendering(routes, this);
     }
     /**
      * ***handle*** :
@@ -1890,10 +2080,26 @@ class View {
      */
     handleAlways() { }
     handleBegin() { }
+    /**
+     * ***handleBefore*** : Event handler executed just before transitioning to the page.
+     */
     handleBefore(beginStatus) { }
+    /**
+     * ***handleAfter*** : Event handler executed immediately after transitioning to the page
+     */
     handleAfter(beginStatus) { }
+    /**
+     * ***handleRenderBefore*** : Event handler executed immediately after page transition and rendering process to the screen is completed
+     */
     handleRenderBefore(beginStatus) { }
+    /**
+     * ***handleRenderAfter*** : Event handler that is executed after page transition, after rendering process to the screen is completed,
+     * and after the event for each action is completed.
+     */
     handleRenderAfter(beginStatus) { }
+    /**
+     * ***handleLeave*** : Event handler executed when leaving the page.
+     */
     handleLeave() { }
 }
 exports.View = View;

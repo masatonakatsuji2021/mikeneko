@@ -20,9 +20,12 @@ export class Builder {
         coreStr += this.coreModuleMount("Controller");
         coreStr += this.coreModuleMount("Data");
         coreStr += this.coreModuleMount("Dom");
+        coreStr += this.coreModuleMount("Exception");
+        coreStr += this.coreModuleMount("KeyEvent");
         coreStr += this.coreModuleMount("Response");
         coreStr += this.coreModuleMount("Routes");
         coreStr += this.coreModuleMount("Startor");
+        coreStr += this.coreModuleMount("Storage");
         coreStr += this.coreModuleMount("Util");
         coreStr += this.coreModuleMount("View");
 
@@ -38,11 +41,13 @@ export class Builder {
         // end foot
         coreStr += this.jsEnd();
 
-
         this.outMkdir(rootDir);
 
         console.log("# write index.js");
         fs.writeFileSync(rootDir + "/output/index.js", coreStr);
+
+        console.log("# write index.html");
+        fs.writeFileSync(rootDir + "/output/index.html", "<!DOCTYPE html><head><script src=\"index.js\"></script></head><body></body></html>");
 
         console.log("# ...... Complete!");
     }
