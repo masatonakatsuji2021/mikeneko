@@ -19,6 +19,7 @@ export class Builder {
         coreStr += this.coreModuleMount("Background");
         coreStr += this.coreModuleMount("Controller");
         coreStr += this.coreModuleMount("Data");
+        coreStr += this.coreModuleMount("Dom");
         coreStr += this.coreModuleMount("Response");
         coreStr += this.coreModuleMount("Routes");
         coreStr += this.coreModuleMount("Startor");
@@ -61,7 +62,7 @@ export class Builder {
     }
 
     private static coreModuleMount(name : string) {
-        console.log("# core module \"" + name + "\"");
+        console.log("# core module".padEnd(30) + " " + name);
         const fullPath : string = path.dirname(__dirname) + "/bin/" + name + ".js"; 
         let contents : string = fs.readFileSync(fullPath).toString() ;
         contents = "var exports = {};\n" + contents + ";\nreturn exports;";
@@ -71,7 +72,6 @@ export class Builder {
     private static localModuleMount(rootDir : string) {
         const targetPath = rootDir + "/src/app";
         let strs : string = "";
-        console.log("# public content mount...");
         this.search(targetPath, (file)=>{
             if (file.isDirectory()) return;
             if (path.extname(file.name) != ".js") return;
@@ -81,6 +81,7 @@ export class Builder {
             let contents : string = fs.readFileSync(fullPath).toString() ;
             contents = "var exports = {};\n" + contents + ";\nreturn exports;";
             strs += this.setFn("app/" + baesPath, contents, true);
+            console.log("# local module".padEnd(30) + " app/" + baesPath);
         });
         return strs;
     }
@@ -93,7 +94,6 @@ export class Builder {
     private static publicContentMount(rootDir) {
         const targetPath = rootDir + "/src/publics";
         let strs : string = "";
-        console.log("# public content mount...");
         this.search(targetPath, (file)=>{
             if (file.isDirectory()) return;
 
@@ -102,6 +102,7 @@ export class Builder {
             const contentB64 = Buffer.from(fs.readFileSync(fullPath)).toString("base64");
             const mimeType = mime.lookup(baesPath);
             strs += this.setFn("public/"+ baesPath, "\"data:" + mimeType + ";base64," + contentB64 + "\"");
+            console.log("# public content mount ".padEnd(30) + " " + baesPath);
         });
         return strs;
     }
@@ -109,7 +110,6 @@ export class Builder {
     private static renderingHtmMount(rootDir : string) {
         const targetPath = rootDir + "/src/renderings";
         let strs : string = "";
-        console.log("# rendering HTML mount...");
         this.search(targetPath, (file)=>{
             if (file.isDirectory()) return;
 
@@ -118,6 +118,7 @@ export class Builder {
             const contentB64 = Buffer.from(fs.readFileSync(fullPath)).toString("base64");
 
             strs += this.setFn("rendering/"+ baesPath, "\"" +  contentB64 + "\";");
+            console.log("# render html  mount".padEnd(30) + " "+ baesPath);
         });
         return strs;
     }

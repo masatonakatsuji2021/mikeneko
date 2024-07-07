@@ -3,6 +3,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MainController = void 0;
 const Controller_1 = require("Controller");
 class MainController extends Controller_1.Controller {
+    constructor() {
+        super(...arguments);
+        this.template = "default";
+        this.head = "head";
+    }
     handleBefore(beginStatus) {
         console.log("Main Controller Before .... OK");
     }

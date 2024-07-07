@@ -1,4 +1,5 @@
 import { Routes } from "Routes";
+import { Response } from "Response";
 
 export class Controller {
 
@@ -18,7 +19,7 @@ export class Controller {
     public setView(viewName : string)  : void{
         this.view = viewName;
         const routes = Routes.getRoute();
-//        Response.__rendering(routes, this);
+        Response.__rendering(routes, this);
     }
 
     /**
@@ -35,7 +36,31 @@ export class Controller {
     public setTemplate(templateName : string){
         this.template = templateName;
         const routes = Routes.getRoute();
-//        Response.__rendering(routes, this);
+        Response.__rendering(routes, this);
+    }
+
+    public head : string;
+
+    public setHead(headName : string) {
+        this.head = headName;
+        const routes = Routes.getRoute();
+        Response.__rendering(routes, this);
+    }
+
+    public header : string;
+
+    public setHeader(headerName : string) {
+        this.header = headerName;
+        const routes = Routes.getRoute();
+        Response.__rendering(routes, this);
+    }
+
+    public footer : string;
+
+    public setFooter(footerName : string) {
+        this.header = footerName;
+        const routes = Routes.getRoute();
+        Response.__rendering(routes, this);
     }
 
     /**

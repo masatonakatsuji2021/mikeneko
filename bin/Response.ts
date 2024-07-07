@@ -3,6 +3,7 @@ import { Util } from "Util";
 import { Data } from "Data";
 import { Controller } from "Controller";
 import { View } from "View";
+import { Dom, VDom } from "Dom";
 
 export class Response {
 
@@ -17,11 +18,9 @@ export class Response {
             }
 
             const befView = Data.get("beforeView");
-            if(befView){
-                await befView.handleLeave();
-            }
+            if(befView) await befView.handleLeave();
 
-            if(route.mode == DecisionRouteMode.Notfound)throw("Page Not found");
+            if(route.mode == DecisionRouteMode.Notfound) throw("Page Not found");
 
             if(route.controller){
                 await Response.renderingOnController(route);
@@ -82,8 +81,9 @@ export class Response {
 
         await cont.handleAfter(beginStatus);
         if(vw) await vw.handleAfter(beginStatus);
-
-        // await Response.__rendering(routes, cont);
+        console.log("rendring ready?");
+        await Response.__rendering(route, cont);
+        console.log("rendring?");
 
         await cont.handleRenderBefore(beginStatus);
         if(vw) await vw.handleRenderBefore(beginStatus);
@@ -138,7 +138,7 @@ export class Response {
 
         await vm.handleAfter();
 
-        // await Response.__rendering(route, vm);
+        await Response.__rendering(route, vm);
 
         await vm.handleRenderBefore();
 
@@ -152,4 +152,158 @@ export class Response {
         await vm.handleRenderAfter();
     }
 
+    public static async __rendering(route : DecisionRoute, context){
+
+        if(!context.view){
+            if(route.controller){
+                context.view = route.controller + "/" + route.action;
+            }
+            else if(route.view){
+                context.view = route.view;
+            }
+        }
+
+        if(context.template){
+            const beforeTemplate : string = Data.get("beforeTemplate");
+            if(beforeTemplate != context.template){
+                Data.set("beforeTemplate", context.template);
+                const templateHtml = Response.template(context.template);
+                Dom("body").html = templateHtml;
+//                await Response.loadRenderingClass("Template", context.template);
+            }
+            const viewHtml = Response.view(context.view);
+            Dom("content").html = viewHtml;    
+        }
+        else{
+            Data.set("beforeTemplate", null);
+            const viewHtml = Response.view(context.view);
+            Dom("body").html = viewHtml;
+        }
+
+        const beforeHead = Data.get("beforeHead");
+        if (beforeHead != context.head) {
+            Data.set("beforeHead", context.head);
+            if (context.head){
+                const headHtml =  Response.viewPart(context.head);
+                Dom("head").html = headHtml;
+            }
+        }
+
+        const beforeHeader = Data.get("beforeHeader");
+        if (beforeHeader != context.header) {
+            Data.set("beforeHeader", context.header);
+            if (context.header){
+                const headerHtml =  Response.viewPart(context.header);
+                Dom("header").html = headerHtml;
+            }
+        }
+
+        const beforeFooter = Data.get("beforeFooter");
+        if (beforeFooter != context.footer) {
+            Data.set("beforeFooter", context.footer);
+            if (context.footer){
+                const foooterHtml =  Response.viewPart(context.footer);
+                Dom("footer").html = foooterHtml;
+            }
+        }
+
+  //      Response.setBindView();
+//        Response.setBindTemplate();
+  //      Response.setBindViewPart();
+
+        VDom().refresh();
+    }
+
+    /**
+     * *** view *** : 
+     * Get View's content information.
+     * @param {string} viewName View Name
+     * @returns {string} view contents
+     */
+    public static view(viewName : string) : string{
+
+        const viewPath : string = "rendering/views/" + viewName + ".html";
+        if(!useExists(viewPath)){
+            return "<div style=\"font-weight:bold;\">[Rendering ERROR] View data does not exist. Check if source file \"" + viewPath + "\" exists.</div>"; 
+        }
+        
+        let content : string = use(viewPath);
+        content = Util.base64Decode(content);
+        content = this.renderConvert(content);
+
+        return content;
+    }
+
+    /**
+     * ***template*** : 
+     * Get template content information.
+     * @param {string} templateName Template Name
+     * @returns {string} template contents
+     */
+    public static template(templateName : string) : string{
+
+        const templatePath : string = "rendering/template/" + templateName + ".html";
+
+        if(!useExists(templatePath)){
+            return "<div style=\"font-weight:bold;\">[Rendering ERROR] Template data does not exist. Check if source file \"" + templatePath + "\" exists.</div>"; 
+        }
+
+        let content : string = use(templatePath);
+        content = Util.base64Decode(content);
+        content = this.renderConvert(content);
+
+        return content;
+    }
+
+    /**
+     * ***viewPart*** : 
+     * Get viewPart content information.
+     * @param {string} viewPartName ViewPart Name
+     * @returns {string} viewPart contents
+     */
+    public static viewPart(viewPartName : string) : string{
+
+        const viewPartPath : string = "rendering/viewparts/" + viewPartName + ".html";
+        if(!useExists(viewPartPath)){
+            return "<div style=\"font-weight:bold;\">ViewPart data does not exist. Check if source file \"" + viewPartPath + "\" exists.</div>";
+        }
+        
+        let content = use(viewPartPath);
+        content = Util.base64Decode(content);
+        content = this.renderConvert(content);
+        
+        const vw = document.createElement("template");
+        vw.innerHTML = content;
+//        Response.setBindViewPart(vw);
+    
+        return vw.innerHTML;
+    }
+
+    private static renderConvert(content : string) {
+        const contentDom = document.createElement("div");
+        contentDom.innerHTML = content;
+
+        // link tag check...
+        const links =contentDom.querySelectorAll("link");
+        for (let n = 0 ; n < links.length ; n++) {
+            const link = links[n];
+            const href = link.attributes["href"].value;
+            if (!Util.existPublic(href)) continue;
+            const resource = Util.getPublic(href);
+            link.setAttribute("href", resource);
+        }
+
+        // image tag check...
+        const imgs =contentDom.querySelectorAll("img");
+        for (let n = 0 ; n < imgs.length ; n++) {
+            const img = imgs[n];
+            const src = img.attributes["src"].value;
+            if (!Util.existPublic(src)) continue;
+            const resource = Util.getPublic(src);
+            img.setAttribute("src", resource);
+        }
+        
+        content = contentDom.innerHTML;
+        return content;
+    }
 }

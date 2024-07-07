@@ -9,8 +9,11 @@ class Util {
      */
     static getHtml(path) {
         let mainView = use("rendering/" + path + ".html");
-        mainView = decodeURIComponent(escape(atob(mainView)));
+        mainView = this.base64Decode(mainView);
         return mainView;
+    }
+    static existPublic(path) {
+        return useExists("public/" + path);
     }
     /**
      * ***getPublic*** : Get prepared static content data
@@ -35,6 +38,14 @@ class Util {
         const strings = string.split("/");
         const string2 = strings[strings.length - 1];
         return string2.substring(0, 1).toUpperCase() + string2.substring(1);
+    }
+    /**
+     * ***base64Decode*** : Decode base64 text to plaintext.
+     * @param {string} b64text base64 text
+     * @returns {string} plain text content
+     */
+    static base64Decode(b64text) {
+        return decodeURIComponent(escape(atob(b64text)));
     }
     static uniqId(length) {
         if (!length)

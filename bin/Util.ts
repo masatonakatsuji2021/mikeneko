@@ -7,8 +7,12 @@ export class Util {
      */
     public static getHtml(path : string) : string {
         let mainView = use("rendering/" + path + ".html");
-        mainView =  decodeURIComponent(escape(atob(mainView)));
+        mainView =  this.base64Decode(mainView);
         return mainView;
+    }
+
+    public static existPublic(path : string) : boolean {
+        return useExists("public/" + path);
     }
 
     /**
@@ -36,6 +40,15 @@ export class Util {
         const strings = string.split("/");
         const string2 = strings[strings.length - 1];
         return string2.substring(0,1).toUpperCase() + string2.substring(1);
+    }
+
+    /**
+     * ***base64Decode*** : Decode base64 text to plaintext.
+     * @param {string} b64text base64 text
+     * @returns {string} plain text content
+     */
+    public static base64Decode(b64text: string) : string{
+        return decodeURIComponent(escape(atob(b64text)));
     }
 
     /**

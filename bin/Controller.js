@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Controller = void 0;
 const Routes_1 = require("Routes");
+const Response_1 = require("Response");
 class Controller {
     constructor() {
         /**
@@ -24,7 +25,7 @@ class Controller {
     setView(viewName) {
         this.view = viewName;
         const routes = Routes_1.Routes.getRoute();
-        //        Response.__rendering(routes, this);
+        Response_1.Response.__rendering(routes, this);
     }
     /**
      * ***setTemplate*** : Specifies the template name to use on the displayed page.
@@ -35,7 +36,22 @@ class Controller {
     setTemplate(templateName) {
         this.template = templateName;
         const routes = Routes_1.Routes.getRoute();
-        //        Response.__rendering(routes, this);
+        Response_1.Response.__rendering(routes, this);
+    }
+    setHead(headName) {
+        this.head = headName;
+        const routes = Routes_1.Routes.getRoute();
+        Response_1.Response.__rendering(routes, this);
+    }
+    setHeader(headerName) {
+        this.header = headerName;
+        const routes = Routes_1.Routes.getRoute();
+        Response_1.Response.__rendering(routes, this);
+    }
+    setFooter(footerName) {
+        this.header = footerName;
+        const routes = Routes_1.Routes.getRoute();
+        Response_1.Response.__rendering(routes, this);
     }
     /**
      * ***handleBefore*** : Event handler executed just before transitioning to the page.

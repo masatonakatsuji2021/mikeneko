@@ -2,6 +2,10 @@ import { Controller } from "Controller";
 
 export class MainController extends Controller{
 
+    public template: string = "default";
+
+    public head : string = "head";
+
     public handleBefore(beginStatus?: boolean): void {
         console.log("Main Controller Before .... OK");
     }
@@ -13,6 +17,5 @@ export class MainController extends Controller{
     public index(){
         console.log("Main Controller Index ...OK");
     }
-
 
 }

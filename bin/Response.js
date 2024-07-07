@@ -13,6 +13,7 @@ exports.Response = void 0;
 const Routes_1 = require("Routes");
 const Util_1 = require("Util");
 const Data_1 = require("Data");
+const Dom_1 = require("Dom");
 class Response {
     static rendering(route) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -23,9 +24,8 @@ class Response {
                     yield befCont.handleLeave(Data_1.Data.get("beforeControllerAction"));
                 }
                 const befView = Data_1.Data.get("beforeView");
-                if (befView) {
+                if (befView)
                     yield befView.handleLeave();
-                }
                 if (route.mode == Routes_1.DecisionRouteMode.Notfound)
                     throw ("Page Not found");
                 if (route.controller) {
@@ -81,7 +81,9 @@ class Response {
             yield cont.handleAfter(beginStatus);
             if (vw)
                 yield vw.handleAfter(beginStatus);
-            // await Response.__rendering(routes, cont);
+            console.log("rendring ready?");
+            yield Response.__rendering(route, cont);
+            console.log("rendring?");
             yield cont.handleRenderBefore(beginStatus);
             if (vw)
                 yield vw.handleRenderBefore(beginStatus);
@@ -128,7 +130,7 @@ class Response {
             Data_1.Data.set("childClasss", {});
             yield vm.handleBefore();
             yield vm.handleAfter();
-            // await Response.__rendering(route, vm);
+            yield Response.__rendering(route, vm);
             yield vm.handleRenderBefore();
             if (route.args) {
                 yield vm.handle(...route.args);
@@ -138,6 +140,139 @@ class Response {
             }
             yield vm.handleRenderAfter();
         });
+    }
+    static __rendering(route, context) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!context.view) {
+                if (route.controller) {
+                    context.view = route.controller + "/" + route.action;
+                }
+                else if (route.view) {
+                    context.view = route.view;
+                }
+            }
+            if (context.template) {
+                const beforeTemplate = Data_1.Data.get("beforeTemplate");
+                if (beforeTemplate != context.template) {
+                    Data_1.Data.set("beforeTemplate", context.template);
+                    const templateHtml = Response.template(context.template);
+                    (0, Dom_1.Dom)("body").html = templateHtml;
+                    //                await Response.loadRenderingClass("Template", context.template);
+                }
+                const viewHtml = Response.view(context.view);
+                (0, Dom_1.Dom)("content").html = viewHtml;
+            }
+            else {
+                Data_1.Data.set("beforeTemplate", null);
+                const viewHtml = Response.view(context.view);
+                (0, Dom_1.Dom)("body").html = viewHtml;
+            }
+            const beforeHead = Data_1.Data.get("beforeHead");
+            if (beforeHead != context.head) {
+                Data_1.Data.set("beforeHead", context.head);
+                if (context.head) {
+                    const headHtml = Response.viewPart(context.head);
+                    (0, Dom_1.Dom)("head").html = headHtml;
+                }
+            }
+            const beforeHeader = Data_1.Data.get("beforeHeader");
+            if (beforeHeader != context.header) {
+                Data_1.Data.set("beforeHeader", context.header);
+                if (context.header) {
+                    const headerHtml = Response.viewPart(context.header);
+                    (0, Dom_1.Dom)("header").html = headerHtml;
+                }
+            }
+            const beforeFooter = Data_1.Data.get("beforeFooter");
+            if (beforeFooter != context.footer) {
+                Data_1.Data.set("beforeFooter", context.footer);
+                if (context.footer) {
+                    const foooterHtml = Response.viewPart(context.footer);
+                    (0, Dom_1.Dom)("footer").html = foooterHtml;
+                }
+            }
+            //      Response.setBindView();
+            //        Response.setBindTemplate();
+            //      Response.setBindViewPart();
+            (0, Dom_1.VDom)().refresh();
+        });
+    }
+    /**
+     * *** view *** :
+     * Get View's content information.
+     * @param {string} viewName View Name
+     * @returns {string} view contents
+     */
+    static view(viewName) {
+        const viewPath = "rendering/views/" + viewName + ".html";
+        if (!useExists(viewPath)) {
+            return "<div style=\"font-weight:bold;\">[Rendering ERROR] View data does not exist. Check if source file \"" + viewPath + "\" exists.</div>";
+        }
+        let content = use(viewPath);
+        content = Util_1.Util.base64Decode(content);
+        content = this.renderConvert(content);
+        return content;
+    }
+    /**
+     * ***template*** :
+     * Get template content information.
+     * @param {string} templateName Template Name
+     * @returns {string} template contents
+     */
+    static template(templateName) {
+        const templatePath = "rendering/template/" + templateName + ".html";
+        if (!useExists(templatePath)) {
+            return "<div style=\"font-weight:bold;\">[Rendering ERROR] Template data does not exist. Check if source file \"" + templatePath + "\" exists.</div>";
+        }
+        let content = use(templatePath);
+        content = Util_1.Util.base64Decode(content);
+        content = this.renderConvert(content);
+        return content;
+    }
+    /**
+     * ***viewPart*** :
+     * Get viewPart content information.
+     * @param {string} viewPartName ViewPart Name
+     * @returns {string} viewPart contents
+     */
+    static viewPart(viewPartName) {
+        const viewPartPath = "rendering/viewparts/" + viewPartName + ".html";
+        if (!useExists(viewPartPath)) {
+            return "<div style=\"font-weight:bold;\">ViewPart data does not exist. Check if source file \"" + viewPartPath + "\" exists.</div>";
+        }
+        let content = use(viewPartPath);
+        content = Util_1.Util.base64Decode(content);
+        content = this.renderConvert(content);
+        const vw = document.createElement("template");
+        vw.innerHTML = content;
+        //        Response.setBindViewPart(vw);
+        return vw.innerHTML;
+    }
+    static renderConvert(content) {
+        const contentDom = document.createElement("div");
+        contentDom.innerHTML = content;
+        // link tag check...
+        const links = contentDom.querySelectorAll("link");
+        for (let n = 0; n < links.length; n++) {
+            const link = links[n];
+            const href = link.attributes["href"].value;
+            if (!Util_1.Util.existPublic(href))
+                continue;
+            const resource = Util_1.Util.getPublic(href);
+            link.setAttribute("href", resource);
+        }
+        // image tag check...
+        const imgs = contentDom.querySelectorAll("img");
+        for (let n = 0; n < imgs.length; n++) {
+            const img = imgs[n];
+            const src = img.attributes["src"].value;
+            if (!Util_1.Util.existPublic(src))
+                continue;
+            const resource = Util_1.Util.getPublic(src);
+            img.setAttribute("src", resource);
+        }
+        content = contentDom.innerHTML;
+        return content;
     }
 }
 exports.Response = Response;

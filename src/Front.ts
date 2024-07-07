@@ -12,6 +12,7 @@ class FrontControl {
         return buffer;
     }
     public exists(name : string) : boolean {
+        if (this.__fn_static[name]) return true;
         if(this.__fn[name]) return true;
         return false;
     }
