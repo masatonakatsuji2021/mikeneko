@@ -1866,6 +1866,14 @@ class LocalStorage {
 }
 exports.LocalStorage = LocalStorage;
 ;
+return exports;});sfa.setFn("Template", ()=>{var exports = {};
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Template = void 0;
+class Template {
+}
+exports.Template = Template;
+;
 return exports;});sfa.setFn("Util", ()=>{var exports = {};
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -2103,6 +2111,14 @@ class View {
     handleLeave() { }
 }
 exports.View = View;
+;
+return exports;});sfa.setFn("ViewPart", ()=>{var exports = {};
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ViewPart = void 0;
+class ViewPart {
+}
+exports.ViewPart = ViewPart;
 ;
 return exports;});sfa.setFn("app/config/App", ()=>{var exports = {};
 "use strict";

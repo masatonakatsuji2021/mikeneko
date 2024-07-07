@@ -23,8 +23,10 @@ class Builder {
         coreStr += this.coreModuleMount("Routes");
         coreStr += this.coreModuleMount("Startor");
         coreStr += this.coreModuleMount("Storage");
+        coreStr += this.coreModuleMount("Template");
         coreStr += this.coreModuleMount("Util");
         coreStr += this.coreModuleMount("View");
+        coreStr += this.coreModuleMount("ViewPart");
         // local module mount
         coreStr += this.localModuleMount(rootDir);
         // public content mount
