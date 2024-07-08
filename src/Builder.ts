@@ -83,12 +83,12 @@ export class Builder {
             if (file.isDirectory()) return;
             if (path.extname(file.name) != ".js") return;
             const fullPath = file.path + "/" + file.name;
-            const baesPath = file.path.substring((targetPath + "/").length) + "/" + file.name.substring(0, file.name.length - path.extname(file.name).length);
-
+            let basePath = file.path.substring((targetPath + "/").length) + "/" + file.name.substring(0, file.name.length - path.extname(file.name).length);
+            basePath = basePath.split("\\").join("/");
             let contents : string = fs.readFileSync(fullPath).toString() ;
             contents = "var exports = {};\n" + contents + ";\nreturn exports;";
-            strs += this.setFn("app/" + baesPath, contents, true);
-            console.log("# local module".padEnd(30) + " app/" + baesPath);
+            strs += this.setFn("app/" + basePath, contents, true);
+            console.log("# local module".padEnd(30) + " app/" + basePath);
         });
         return strs;
     }
@@ -105,11 +105,12 @@ export class Builder {
             if (file.isDirectory()) return;
 
             const fullPath = file.path + "/" + file.name;
-            const baesPath = fullPath.substring((targetPath + "/").length);
+            let basePath = fullPath.substring((targetPath + "/").length);
+            basePath = basePath.split("\\").join("/");
             const contentB64 = Buffer.from(fs.readFileSync(fullPath)).toString("base64");
-            const mimeType = mime.lookup(baesPath);
-            strs += this.setFn("public/"+ baesPath, "\"data:" + mimeType + ";base64," + contentB64 + "\"");
-            console.log("# public content mount ".padEnd(30) + " " + baesPath);
+            const mimeType = mime.lookup(basePath);
+            strs += this.setFn("public/"+ basePath, "\"data:" + mimeType + ";base64," + contentB64 + "\"");
+            console.log("# public content mount ".padEnd(30) + " " + basePath);
         });
         return strs;
     }
@@ -121,11 +122,12 @@ export class Builder {
             if (file.isDirectory()) return;
 
             const fullPath = file.path + "/" + file.name;
-            const baesPath = fullPath.substring((targetPath + "/").length);
+            let  basePath = fullPath.substring((targetPath + "/").length);
+            basePath = basePath.split("\\").join("/");
             const contentB64 = Buffer.from(fs.readFileSync(fullPath)).toString("base64");
 
-            strs += this.setFn("rendering/"+ baesPath, "\"" +  contentB64 + "\";");
-            console.log("# render html  mount".padEnd(30) + " "+ baesPath);
+            strs += this.setFn("rendering/"+ basePath, "\"" +  contentB64 + "\";");
+            console.log("# render html  mount".padEnd(30) + " "+ basePath);
         });
         return strs;
     }

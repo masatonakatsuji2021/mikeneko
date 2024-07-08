@@ -1,5 +1,5 @@
 import { Util }  from "Util";
-
+/*
 const EventTypes = [
     "click",
     "dblclick",
@@ -13,9 +13,10 @@ const EventTypes = [
     "keydown",
     "keypress",
 ] as const; 
-
+*/
 export class DomStatic {
     public static uids = {};
+    public static events = {};
 }
 
 export class DomControl{
@@ -635,21 +636,30 @@ export class DomControl{
     /**
      * ***on*** : 
      * set the event handler.
-     * @param {string} eventName event name
+     * @param {DocumentEventMap} eventName event name
      * @param {Function} callback callback function
      * @returns {DomControl} DomControl Class Object
      */
-    public on(eventName : string, callback : Function, bindClass?) : DomControl{
+    public on(eventName : keyof DocumentEventMap, callback : Function, bindClass?) : DomControl{
+
+        const eventCallback = (e) => {
+            const targetDom = new DomControl([e.target]);
+            if(bindClass){
+                callback = callback.bind(bindClass);
+            }
+            callback(targetDom, e);
+        };
+
         for(var n = 0 ; n < this._qs.length; n++){
             var qs = this._qs[n];
-            qs.addEventListener(eventName, (e) => {
-                const targetDom = new DomControl([e.target]);
-                if(bindClass){
-                    callback = callback.bind(bindClass);
-                }
-                callback(targetDom, e);
-            });
+            qs.addEventListener(eventName, eventCallback);
         }
+
+        if (!DomStatic.events[qs.uid])  DomStatic.events[qs.uid] = {};
+        if (!DomStatic.events[qs.uid][eventName]) DomStatic.events[qs.uid][eventName] = [];
+        DomStatic.events[qs.uid][eventName].push(eventCallback);
+
+        console.log(DomStatic.events);
         return this;
     }
 
@@ -1311,24 +1321,17 @@ export class DomControl{
      * @returns {VDomControl} VDomCOntrol Class Object 
      */
       public refresh(){
-        if(!this._virtual){
-            return this;
-        }
-
-        const refCheckCode = "__refcheck__";
-
+        if(!this._virtual) return this;
+        
         let c = Object.keys(DomStatic.uids);
         for(var n = 0 ; n < c.length ; n++){
             var uid = c[n];
             var obj = DomStatic.uids[uid];
 
-            obj.target.setAttribute(refCheckCode, uid);
-            if(!document.querySelector("[" + refCheckCode + "=\"" + uid + "\"]")){
+            if (!document.body.contains(obj.target)) {
                 delete DomStatic.uids[uid];
             }
-            obj.target.removeAttribute(refCheckCode);
         }
-
         return this;
     }
 

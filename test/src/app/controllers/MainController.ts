@@ -1,3 +1,4 @@
+import { VDom } from "Dom";
 import { Controller } from "Controller";
 
 export class MainController extends Controller{
@@ -16,6 +17,14 @@ export class MainController extends Controller{
 
     public index(){
         console.log("Main Controller Index ...OK");
+    }
+
+    public page1(){
+        const a = VDom("button1");
+
+        a.on("click", ()=>{
+            alert("Page1 Click ... OK");
+        });
     }
 
 }
