@@ -8,25 +8,27 @@ class Builder {
     static build(option) {
         if (!option) {
             option = {
-                platform: {
-                    normal: "normal",
-                },
+                platforms: [{ type: "web" }]
             };
         }
         console.log("saiberian build start");
         const rootDir = process.cwd();
         const buildDir = rootDir + "/output";
         this.outMkdir(buildDir);
-        const c = Object.keys(option.platform);
-        for (let n = 0; n < c.length; n++) {
-            const platformName = c[n];
-            const platformPath = option.platform[platformName];
-            console.log("# platform = " + platformName);
+        for (let n = 0; n < option.platforms.length; n++) {
+            const platform = option.platforms[n];
+            if (!platform.name)
+                platform.name = platform.type;
+            if (!platform.path)
+                platform.path = platform.type;
+            if (platform.handleBuildStart)
+                platform.handleBuildStart(platform);
+            console.log("# platform = " + platform.name);
             let coreStr = "";
-            const platformDir = buildDir + "/" + platformPath;
+            const platformDir = buildDir + "/" + platform.path;
             this.outMkdir(platformDir);
             // start head
-            coreStr += this.jsStart(platformName);
+            coreStr += this.jsStart(platform.name);
             // core module mount
             coreStr += this.coreModuleMount("App");
             coreStr += this.coreModuleMount("Background");
@@ -44,18 +46,20 @@ class Builder {
             coreStr += this.coreModuleMount("View");
             coreStr += this.coreModuleMount("ViewPart");
             // local module mount
-            coreStr += this.localModuleMount(rootDir, platformName, platformPath);
+            coreStr += this.localModuleMount(rootDir, platform.name);
             // public content mount
-            coreStr += this.publicContentMount(rootDir, platformName, platformPath);
+            coreStr += this.publicContentMount(rootDir, platform.name);
             // rendering html mount
-            coreStr += this.renderingHtmMount(rootDir, platformName, platformPath);
+            coreStr += this.renderingHtmMount(rootDir, platform.name);
             // end foot
             coreStr += this.jsEnd();
             console.log("# write index.js");
             fs.writeFileSync(platformDir + "/index.js", coreStr);
             console.log("# write index.html");
             fs.writeFileSync(platformDir + "/index.html", "<!DOCTYPE html><head><script src=\"index.js\"></script></head><body></body></html>");
-            console.log("# ........ platform = " + platformName + " ok");
+            console.log("# ........ platform = " + platform.name + " ok");
+            if (platform.handleBuildEnd)
+                platform.handleBuildEnd(platform);
         }
         console.log("#");
         console.log("# ...... Complete!");
@@ -81,7 +85,7 @@ class Builder {
         contents = "var exports = {};\n" + contents + ";\nreturn exports;";
         return this.setFn(name, contents, true);
     }
-    static localModuleMount(rootDir, platformName, platformPath) {
+    static localModuleMount(rootDir, platformName) {
         let targetPaths = [
             rootDir + "/src/app",
             rootDir + "/src_" + platformName + "/app",
@@ -109,7 +113,7 @@ class Builder {
         console.log("# build End");
         return "sfa.start(()=>{ const st = use(\"Startor\");  new st.Startor(); });";
     }
-    static publicContentMount(rootDir, platformName, platformPath) {
+    static publicContentMount(rootDir, platformName) {
         let targetPaths = [
             rootDir + "/src/public",
             rootDir + "/src_" + platformName + "/public",
@@ -131,7 +135,7 @@ class Builder {
         });
         return strs;
     }
-    static renderingHtmMount(rootDir, platformName, platformPath) {
+    static renderingHtmMount(rootDir, platformName) {
         let targetPaths = [
             rootDir + "/src/rendering",
             rootDir + "/src_" + platformName + "/rendering",

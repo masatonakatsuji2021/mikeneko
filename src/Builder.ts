@@ -3,7 +3,15 @@ import * as path from "path";
 import * as mime from "mime-types";
 
 export interface BuildOption {
-    platform? : {[name : string] : string},
+    platforms? :  Array<BuildPlatrom>,
+}
+
+export interface BuildPlatrom {
+    type : "web" | "android" | "ios" | "windows",
+    name? : string,
+    path?: string,
+    handleBuildStart? : (platform : BuildPlatrom) => void,
+    handleBuildEnd? : (platform : BuildPlatrom) => void,
 }
 
 export class Builder {
@@ -11,9 +19,7 @@ export class Builder {
     public static build(option? : BuildOption) {
         if (!option) {
             option = {
-                platform : {
-                    normal: "normal",
-                },
+                platforms : [ { type: "web" } ]
             };
         }
 
@@ -24,19 +30,21 @@ export class Builder {
         const buildDir : string = rootDir + "/output";
         this.outMkdir(buildDir);
 
-        const c = Object.keys(option.platform);
-        for (let n = 0 ; n < c.length ; n++) {
-            const platformName = c[n];
-            const platformPath = option.platform[platformName];
+        for (let n = 0 ; n < option.platforms.length ; n++) {
+            const platform = option.platforms[n];
+            if (!platform.name) platform.name = platform.type;
+            if (!platform.path) platform.path = platform.type;
 
-            console.log("# platform = " + platformName);
+            if (platform.handleBuildStart) platform.handleBuildStart(platform);
+
+            console.log("# platform = " + platform.name);
             let coreStr : string = "";
 
-            const platformDir = buildDir + "/" + platformPath;
+            const platformDir = buildDir + "/" + platform.path;
             this.outMkdir(platformDir);
 
             // start head
-            coreStr += this.jsStart(platformName);
+            coreStr += this.jsStart(platform.name);
 
             // core module mount
             coreStr += this.coreModuleMount("App");
@@ -56,13 +64,13 @@ export class Builder {
             coreStr += this.coreModuleMount("ViewPart");
 
             // local module mount
-            coreStr += this.localModuleMount(rootDir, platformName, platformPath);
+            coreStr += this.localModuleMount(rootDir, platform.name);
 
             // public content mount
-            coreStr += this.publicContentMount(rootDir, platformName, platformPath);
+            coreStr += this.publicContentMount(rootDir, platform.name);
 
             // rendering html mount
-            coreStr += this.renderingHtmMount(rootDir, platformName, platformPath);
+            coreStr += this.renderingHtmMount(rootDir, platform.name);
 
             // end foot
             coreStr += this.jsEnd();
@@ -73,7 +81,9 @@ export class Builder {
             console.log("# write index.html");
             fs.writeFileSync(platformDir + "/index.html", "<!DOCTYPE html><head><script src=\"index.js\"></script></head><body></body></html>");
     
-            console.log("# ........ platform = " + platformName + " ok");
+            console.log("# ........ platform = " + platform.name + " ok");
+
+            if (platform.handleBuildEnd) platform.handleBuildEnd(platform);
         }
 
         console.log("#");
@@ -104,7 +114,7 @@ export class Builder {
         return this.setFn(name, contents, true);
     }
 
-    private static localModuleMount(rootDir : string, platformName : string, platformPath : string) {
+    private static localModuleMount(rootDir : string, platformName : string) {
         let targetPaths = [
             rootDir + "/src/app",
             rootDir + "/src_" + platformName + "/app",
@@ -133,7 +143,7 @@ export class Builder {
         return "sfa.start(()=>{ const st = use(\"Startor\");  new st.Startor(); });";
     }
 
-    private static publicContentMount(rootDir : string, platformName : string, platformPath : string) {
+    private static publicContentMount(rootDir : string, platformName : string) {
         let targetPaths = [
             rootDir + "/src/public",
             rootDir + "/src_" + platformName + "/public",
@@ -156,7 +166,7 @@ export class Builder {
         return strs;
     }
 
-    private static renderingHtmMount(rootDir : string, platformName : string, platformPath : string) {
+    private static renderingHtmMount(rootDir : string, platformName : string) {
         let targetPaths = [
             rootDir + "/src/rendering",
             rootDir + "/src_" + platformName + "/rendering",
