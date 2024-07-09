@@ -1,3 +1,4 @@
+// @ts-ignore
 import { MyApp } from "app/config/App";
 
 export class SessionStorage {

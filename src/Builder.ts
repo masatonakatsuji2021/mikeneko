@@ -99,7 +99,7 @@ export class Builder {
     }
 
     private static publicContentMount(rootDir) {
-        const targetPath = rootDir + "/src/publics";
+        const targetPath = rootDir + "/src/public";
         let strs : string = "";
         this.search(targetPath, (file)=>{
             if (file.isDirectory()) return;
@@ -116,7 +116,7 @@ export class Builder {
     }
 
     private static renderingHtmMount(rootDir : string) {
-        const targetPath = rootDir + "/src/renderings";
+        const targetPath = rootDir + "/src/rendering";
         let strs : string = "";
         this.search(targetPath, (file)=>{
             if (file.isDirectory()) return;

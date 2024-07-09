@@ -1,4 +1,5 @@
 import { App } from "App";
+// @ts-ignore
 import { MyApp } from "app/config/App";
 
 export interface Route{

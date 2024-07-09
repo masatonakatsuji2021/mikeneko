@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LocalStorage = exports.SessionStorage = void 0;
+// @ts-ignore
 const App_1 = require("app/config/App");
 class SessionStorage {
     constructor() {

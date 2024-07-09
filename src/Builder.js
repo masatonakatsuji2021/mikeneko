@@ -84,7 +84,7 @@ class Builder {
         return "sfa.start(()=>{ const st = use(\"Startor\");  new st.Startor(); });";
     }
     static publicContentMount(rootDir) {
-        const targetPath = rootDir + "/src/publics";
+        const targetPath = rootDir + "/src/public";
         let strs = "";
         this.search(targetPath, (file) => {
             if (file.isDirectory())
@@ -100,7 +100,7 @@ class Builder {
         return strs;
     }
     static renderingHtmMount(rootDir) {
-        const targetPath = rootDir + "/src/renderings";
+        const targetPath = rootDir + "/src/rendering";
         let strs = "";
         this.search(targetPath, (file) => {
             if (file.isDirectory())

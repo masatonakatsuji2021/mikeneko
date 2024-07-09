@@ -43,14 +43,14 @@ class Response {
     static renderingOnController(route) {
         return __awaiter(this, void 0, void 0, function* () {
             const controllerName = Util_1.Util.getModuleName(route.controller + "Controller");
-            const controllerPath = "app/controllers/" + Util_1.Util.getModulePath(route.controller + "Controller");
+            const controllerPath = "app/controller/" + Util_1.Util.getModulePath(route.controller + "Controller");
             if (!useExists(controllerPath)) {
                 throw ("\"" + controllerPath + "\" Class is not found.");
             }
             const controllerClass = use(controllerPath);
             const cont = new controllerClass[controllerName]();
             const viewName = route.action + "View";
-            const viewPath = "app/views/" + route.controller + "/" + Util_1.Util.getModulePath(viewName);
+            const viewPath = "app/view/" + route.controller + "/" + Util_1.Util.getModulePath(viewName);
             let vw;
             if (useExists(viewPath)) {
                 const View_ = use(viewPath);
@@ -111,13 +111,13 @@ class Response {
     }
     static renderingOnView(route) {
         return __awaiter(this, void 0, void 0, function* () {
-            const viewName = Util_1.Util.getModuleName(route.controller + "View");
-            const viewPath = "app/views/" + Util_1.Util.getModulePath(route.controller + "View");
+            const viewName = Util_1.Util.getModuleName(route.view + "View");
+            const viewPath = "app/view/" + Util_1.Util.getModulePath(route.view + "View");
             if (!useExists(viewPath)) {
                 throw ("\"" + viewName + "\" Class is not found.");
             }
             const View_ = use(viewPath);
-            const vm = new View_();
+            const vm = new View_[viewName]();
             if (Data_1.Data.get("beforeViewPath") != viewPath) {
                 Data_1.Data.set("beforeViewPath", viewPath);
                 if (vm.handleBegin)
@@ -204,7 +204,7 @@ class Response {
      * @returns {string} view contents
      */
     static view(viewName) {
-        const viewPath = "rendering/views/" + viewName + ".html";
+        const viewPath = "rendering/view/" + viewName + ".html";
         if (!useExists(viewPath)) {
             return "<div style=\"font-weight:bold;\">[Rendering ERROR] View data does not exist. Check if source file \"" + viewPath + "\" exists.</div>";
         }
@@ -236,7 +236,7 @@ class Response {
      * @returns {string} viewPart contents
      */
     static viewPart(viewPartName) {
-        const viewPartPath = "rendering/viewparts/" + viewPartName + ".html";
+        const viewPartPath = "rendering/viewpart/" + viewPartName + ".html";
         if (!useExists(viewPartPath)) {
             return "<div style=\"font-weight:bold;\">ViewPart data does not exist. Check if source file \"" + viewPartPath + "\" exists.</div>";
         }

@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Routes = exports.DecisionRouteMode = void 0;
+// @ts-ignore
 const App_1 = require("app/config/App");
 var DecisionRouteMode;
 (function (DecisionRouteMode) {
