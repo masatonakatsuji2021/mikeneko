@@ -1,3 +1,4 @@
+const platform = "{{platform}}";
 class FrontControl {
     constructor() {
         this.__fn = {};

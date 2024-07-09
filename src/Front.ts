@@ -1,3 +1,4 @@
+const platform : string = "{{platform}}";
 class FrontControl {
     private  __fn = {};
     private  __fn_static = {};

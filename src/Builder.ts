@@ -2,61 +2,89 @@ import * as fs from "fs";
 import * as path from "path";
 import * as mime from "mime-types";
 
+export interface BuildOption {
+    platform? : {[name : string] : string},
+}
+
 export class Builder {
 
-    public static build() {
-
-        const rootDir : string = process.cwd();
+    public static build(option? : BuildOption) {
+        if (!option) {
+            option = {
+                platform : {
+                    normal: "normal",
+                },
+            };
+        }
 
         console.log("saiberian build start");
 
-        let coreStr : string = "";
-        // start head
-        coreStr += this.jsStart();
+        const rootDir : string = process.cwd();
 
-        // core module mount
-        coreStr += this.coreModuleMount("App");
-        coreStr += this.coreModuleMount("Background");
-        coreStr += this.coreModuleMount("Controller");
-        coreStr += this.coreModuleMount("Data");
-        coreStr += this.coreModuleMount("Dom");
-        coreStr += this.coreModuleMount("Exception");
-        coreStr += this.coreModuleMount("KeyEvent");
-        coreStr += this.coreModuleMount("Response");
-        coreStr += this.coreModuleMount("Routes");
-        coreStr += this.coreModuleMount("Startor");
-        coreStr += this.coreModuleMount("Storage");
-        coreStr += this.coreModuleMount("Template");
-        coreStr += this.coreModuleMount("Util");
-        coreStr += this.coreModuleMount("View");
-        coreStr += this.coreModuleMount("ViewPart");
+        const buildDir : string = rootDir + "/output";
+        this.outMkdir(buildDir);
 
-        // local module mount
-        coreStr += this.localModuleMount(rootDir);
+        const c = Object.keys(option.platform);
+        for (let n = 0 ; n < c.length ; n++) {
+            const platformName = c[n];
+            const platformPath = option.platform[platformName];
 
-        // public content mount
-        coreStr += this.publicContentMount(rootDir);
+            console.log("# platform = " + platformName);
+            let coreStr : string = "";
 
-        // rendering html mount
-        coreStr += this.renderingHtmMount(rootDir);
+            const platformDir = buildDir + "/" + platformPath;
+            this.outMkdir(platformDir);
 
-        // end foot
-        coreStr += this.jsEnd();
+            // start head
+            coreStr += this.jsStart(platformName);
 
-        this.outMkdir(rootDir);
+            // core module mount
+            coreStr += this.coreModuleMount("App");
+            coreStr += this.coreModuleMount("Background");
+            coreStr += this.coreModuleMount("Controller");
+            coreStr += this.coreModuleMount("Data");
+            coreStr += this.coreModuleMount("Dom");
+            coreStr += this.coreModuleMount("Exception");
+            coreStr += this.coreModuleMount("KeyEvent");
+            coreStr += this.coreModuleMount("Response");
+            coreStr += this.coreModuleMount("Routes");
+            coreStr += this.coreModuleMount("Startor");
+            coreStr += this.coreModuleMount("Storage");
+            coreStr += this.coreModuleMount("Template");
+            coreStr += this.coreModuleMount("Util");
+            coreStr += this.coreModuleMount("View");
+            coreStr += this.coreModuleMount("ViewPart");
 
-        console.log("# write index.js");
-        fs.writeFileSync(rootDir + "/output/index.js", coreStr);
+            // local module mount
+            coreStr += this.localModuleMount(rootDir, platformName, platformPath);
 
-        console.log("# write index.html");
-        fs.writeFileSync(rootDir + "/output/index.html", "<!DOCTYPE html><head><script src=\"index.js\"></script></head><body></body></html>");
+            // public content mount
+            coreStr += this.publicContentMount(rootDir, platformName, platformPath);
 
+            // rendering html mount
+            coreStr += this.renderingHtmMount(rootDir, platformName, platformPath);
+
+            // end foot
+            coreStr += this.jsEnd();
+
+            console.log("# write index.js");
+            fs.writeFileSync(platformDir + "/index.js", coreStr);
+    
+            console.log("# write index.html");
+            fs.writeFileSync(platformDir + "/index.html", "<!DOCTYPE html><head><script src=\"index.js\"></script></head><body></body></html>");
+    
+            console.log("# ........ platform = " + platformName + " ok");
+        }
+
+        console.log("#");
         console.log("# ...... Complete!");
     }
 
-    private static jsStart(){
+    private static jsStart(platformName : string){
         console.log("# build Start");
-        return fs.readFileSync(__dirname + "/Front.js").toString();
+        let content =  fs.readFileSync(__dirname + "/Front.js").toString();
+        content = content.split("{{platform}}").join(platformName);
+        return content;
     }
 
     private static setFn(name : string,  content, rawFlg? : boolean) {
@@ -76,19 +104,26 @@ export class Builder {
         return this.setFn(name, contents, true);
     }
 
-    private static localModuleMount(rootDir : string) {
-        const targetPath = rootDir + "/src/app";
+    private static localModuleMount(rootDir : string, platformName : string, platformPath : string) {
+        let targetPaths = [
+            rootDir + "/src/app",
+            rootDir + "/src_" + platformName + "/app",
+        ];
+
         let strs : string = "";
-        this.search(targetPath, (file)=>{
-            if (file.isDirectory()) return;
-            if (path.extname(file.name) != ".js") return;
-            const fullPath = file.path + "/" + file.name;
-            let basePath = file.path.substring((targetPath + "/").length) + "/" + file.name.substring(0, file.name.length - path.extname(file.name).length);
-            basePath = basePath.split("\\").join("/");
-            let contents : string = fs.readFileSync(fullPath).toString() ;
-            contents = "var exports = {};\n" + contents + ";\nreturn exports;";
-            strs += this.setFn("app/" + basePath, contents, true);
-            console.log("# local module".padEnd(30) + " app/" + basePath);
+        targetPaths.forEach((targetPath : string) => {
+            this.search(targetPath, (file)=>{
+                if (file.isDirectory()) return;
+                if (path.extname(file.name) != ".js") return;
+                const fullPath = file.path + "/" + file.name;
+                let basePath = "app/" + file.path.substring((targetPath + "/").length) + "/" + file.name.substring(0, file.name.length - path.extname(file.name).length);
+                basePath = basePath.split("\\").join("/");
+                basePath = basePath.split("//").join("/");
+                let contents : string = fs.readFileSync(fullPath).toString() ;
+                contents = "var exports = {};\n" + contents + ";\nreturn exports;";
+                strs += this.setFn(basePath, contents, true);
+                console.log("# local module".padEnd(30) +" " + basePath);
+            });
         });
         return strs;
     }
@@ -98,41 +133,53 @@ export class Builder {
         return "sfa.start(()=>{ const st = use(\"Startor\");  new st.Startor(); });";
     }
 
-    private static publicContentMount(rootDir) {
-        const targetPath = rootDir + "/src/public";
-        let strs : string = "";
-        this.search(targetPath, (file)=>{
-            if (file.isDirectory()) return;
+    private static publicContentMount(rootDir : string, platformName : string, platformPath : string) {
+        let targetPaths = [
+            rootDir + "/src/public",
+            rootDir + "/src_" + platformName + "/public",
+        ];
 
-            const fullPath = file.path + "/" + file.name;
-            let basePath = fullPath.substring((targetPath + "/").length);
-            basePath = basePath.split("\\").join("/");
-            const contentB64 = Buffer.from(fs.readFileSync(fullPath)).toString("base64");
-            const mimeType = mime.lookup(basePath);
-            strs += this.setFn("public/"+ basePath, "\"data:" + mimeType + ";base64," + contentB64 + "\"");
-            console.log("# public content mount ".padEnd(30) + " " + basePath);
+        let strs : string = "";
+        targetPaths.forEach((targetPath : string) => {
+            this.search(targetPath, (file)=>{
+                if (file.isDirectory()) return;
+                const fullPath = file.path + "/" + file.name;
+                let basePath = "public/"+ fullPath.substring((targetPath + "/").length);
+                basePath = basePath.split("\\").join("/");
+                basePath = basePath.split("//").join("/");
+                const contentB64 = Buffer.from(fs.readFileSync(fullPath)).toString("base64");
+                const mimeType = mime.lookup(basePath);
+                strs += this.setFn(basePath, "\"data:" + mimeType + ";base64," + contentB64 + "\"");
+                console.log("# public content mount ".padEnd(30) + " " + basePath);
+            });
         });
         return strs;
     }
 
-    private static renderingHtmMount(rootDir : string) {
-        const targetPath = rootDir + "/src/rendering";
+    private static renderingHtmMount(rootDir : string, platformName : string, platformPath : string) {
+        let targetPaths = [
+            rootDir + "/src/rendering",
+            rootDir + "/src_" + platformName + "/rendering",
+        ];
         let strs : string = "";
-        this.search(targetPath, (file)=>{
-            if (file.isDirectory()) return;
-
-            const fullPath = file.path + "/" + file.name;
-            let  basePath = fullPath.substring((targetPath + "/").length);
-            basePath = basePath.split("\\").join("/");
-            const contentB64 = Buffer.from(fs.readFileSync(fullPath)).toString("base64");
-
-            strs += this.setFn("rendering/"+ basePath, "\"" +  contentB64 + "\";");
-            console.log("# render html  mount".padEnd(30) + " "+ basePath);
+        targetPaths.forEach((targetPath : string) => {
+            this.search(targetPath, (file)=>{
+                if (file.isDirectory()) return;
+                const fullPath = file.path + "/" + file.name;
+                let  basePath = "rendering/" + fullPath.substring((targetPath + "/").length);
+                basePath = basePath.split("\\").join("/");
+                basePath = basePath.split("//").join("/");
+                const contentB64 = Buffer.from(fs.readFileSync(fullPath)).toString("base64");
+                strs += this.setFn(basePath, "\"" +  contentB64 + "\";");
+                console.log("# render html  mount".padEnd(30) + " "+ basePath);
+            });            
         });
         return strs;
     }
 
     private static search(target : string, callback) {
+        if (!fs.existsSync(target)) return;
+        if (!fs.statSync(target).isDirectory()) return;
         const list = fs.readdirSync(target, {
             withFileTypes: true,
             recursive: true,
@@ -144,15 +191,15 @@ export class Builder {
 
     private static outMkdir(rootDir : string){
         let dirExists : boolean = false;
-        if (fs.existsSync(rootDir + "/output")) {
-            if (fs.statSync(rootDir + "/output").isDirectory()){
+        if (fs.existsSync(rootDir)) {
+            if (fs.statSync(rootDir).isDirectory()){
                 dirExists = true;
             }
         }
 
         if (!dirExists) {
-            console.log("# mkdir /rootdir");
-            fs.mkdirSync(rootDir + "/output");
+            console.log("# mkdir " + rootDir);
+            fs.mkdirSync(rootDir);
         }
     }
 }

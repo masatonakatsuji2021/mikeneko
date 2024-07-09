@@ -1,9 +1,9 @@
-import { Builder } from "saiberian/src/Builder";
+import { Builder, BuildOption } from "saiberian/src/Builder";
 
 export class Saiberian {
 
-    public static build () {
-        Builder.build();
+    public static build (option? : BuildOption) {
+        Builder.build(option);
     }
 
 }
