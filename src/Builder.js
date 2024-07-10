@@ -4,6 +4,8 @@ exports.Builder = void 0;
 const fs = require("fs");
 const path = require("path");
 const mime = require("mime-types");
+const UglifyJS = require("uglify-js");
+const strip = require("strip-comments");
 class Builder {
     static build(option) {
         if (!option) {
@@ -47,10 +49,13 @@ class Builder {
             coreStr += this.coreModuleMount("ViewPart");
             // local module mount
             coreStr += this.localModuleMount(rootDir, platform.name);
-            // public content mount
-            coreStr += this.publicContentMount(rootDir, platform.name);
             // rendering html mount
             coreStr += this.renderingHtmMount(rootDir, platform.name);
+            // public content mount
+            coreStr += this.publicContentMount(rootDir, platform.name);
+            if (option.codeCompress) {
+                coreStr = this.codeCompress(coreStr);
+            }
             // end foot
             coreStr += this.jsEnd();
             console.log("# write index.js");
@@ -173,13 +178,27 @@ class Builder {
         let dirExists = false;
         if (fs.existsSync(rootDir)) {
             if (fs.statSync(rootDir).isDirectory()) {
-                dirExists = true;
+                console.log("# already build data ... on delete.");
+                fs.rmSync(rootDir, {
+                    recursive: true,
+                });
             }
         }
         if (!dirExists) {
             console.log("# mkdir " + rootDir);
             fs.mkdirSync(rootDir);
         }
+    }
+    static codeCompress(code) {
+        // Delete comment
+        console.log("# delete commentout...");
+        const strippedCode = strip(code);
+        // Compress JavaScript code
+        console.log("# code compress...");
+        const result = UglifyJS.minify(strippedCode);
+        if (result.error)
+            throw result.error;
+        return result.code;
     }
 }
 exports.Builder = Builder;

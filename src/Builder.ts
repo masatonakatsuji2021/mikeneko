@@ -1,9 +1,12 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as mime from "mime-types";
+import * as UglifyJS  from "uglify-js";
+import * as strip from "strip-comments";
 
 export interface BuildOption {
     platforms? :  Array<BuildPlatrom>,
+    codeCompress? : boolean,
 }
 
 export interface BuildPlatrom {
@@ -66,12 +69,16 @@ export class Builder {
             // local module mount
             coreStr += this.localModuleMount(rootDir, platform.name);
 
-            // public content mount
-            coreStr += this.publicContentMount(rootDir, platform.name);
-
             // rendering html mount
             coreStr += this.renderingHtmMount(rootDir, platform.name);
 
+            // public content mount
+            coreStr += this.publicContentMount(rootDir, platform.name);
+
+            if (option.codeCompress) {
+                coreStr = this.codeCompress(coreStr);
+            }
+            
             // end foot
             coreStr += this.jsEnd();
 
@@ -203,7 +210,10 @@ export class Builder {
         let dirExists : boolean = false;
         if (fs.existsSync(rootDir)) {
             if (fs.statSync(rootDir).isDirectory()){
-                dirExists = true;
+                console.log("# already build data ... on delete.");
+                fs.rmSync(rootDir, {
+                    recursive: true,
+                });
             }
         }
 
@@ -211,5 +221,16 @@ export class Builder {
             console.log("# mkdir " + rootDir);
             fs.mkdirSync(rootDir);
         }
+    }
+
+    private static codeCompress(code : string) {
+        // Delete comment
+        console.log("# delete commentout...");
+        const strippedCode = strip(code);
+        // Compress JavaScript code
+        console.log("# code compress...");
+        const result = UglifyJS.minify(strippedCode);
+        if (result.error) throw result.error;
+        return result.code;
     }
 }
