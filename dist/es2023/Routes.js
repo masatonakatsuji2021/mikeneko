@@ -1,19 +1,21 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Routes = exports.DecisionRouteMode = void 0;
-// @ts-ignore
-const App_1 = require("app/config/App");
 var DecisionRouteMode;
 (function (DecisionRouteMode) {
     DecisionRouteMode["Success"] = "success";
     DecisionRouteMode["Notfound"] = "notfound";
 })(DecisionRouteMode || (exports.DecisionRouteMode = DecisionRouteMode = {}));
-class Routes {
-    static searchRoute(url = null) {
+var Routes = /** @class */ (function () {
+    function Routes() {
+    }
+    Routes.searchRoute = function (url) {
+        if (url === void 0) { url = null; }
+        var MyApp = use("app/config/App").MyApp;
         if (!this._routes) {
-            Routes._routes = Routes.routeConvert(App_1.MyApp.routes);
+            Routes._routes = Routes.routeConvert(MyApp.routes);
         }
-        let targetUrl = location.hash.substring(1);
+        var targetUrl = location.hash.substring(1);
         if (url)
             targetUrl = url;
         if (!targetUrl) {
@@ -28,25 +30,25 @@ class Routes {
         }
         Routes._decision = Routes.routeSelect(targetUrl);
         return Routes._decision;
-    }
-    static getRoute() {
+    };
+    Routes.getRoute = function () {
         return Routes._decision;
-    }
-    static routeConvert(routes) {
-        let res = {};
+    };
+    Routes.routeConvert = function (routes) {
+        var res = {};
         var columns = Object.keys(routes);
         for (var n = 0; n < columns.length; n++) {
-            let url = columns[n];
-            let val = routes[url];
+            var url = columns[n];
+            var val = routes[url];
             if (typeof val == "string") {
-                let vals = val.split(",");
-                let buffer = {
+                var vals = val.split(",");
+                var buffer = {
                     controller: null,
                     view: null,
                     action: null,
                 };
-                for (let n2 = 0; n2 < vals.length; n2++) {
-                    let v_ = vals[n2];
+                for (var n2_1 = 0; n2_1 < vals.length; n2_1++) {
+                    var v_ = vals[n2_1];
                     v_ = v_.trim();
                     if (v_.indexOf("controller:") === 0) {
                         buffer.controller = v_.substring("controller:".length).trim();
@@ -88,8 +90,8 @@ class Routes {
             }
         }
         return res;
-    }
-    static routeSelect(targetUrl) {
+    };
+    Routes.routeSelect = function (targetUrl) {
         var sect0 = targetUrl.split("/");
         var decision = null;
         var columns = Object.keys(this._routes);
@@ -140,7 +142,7 @@ class Routes {
                 decision.aregment = aregment;
             }
         }
-        let res = {};
+        var res = {};
         if (decision) {
             res = {
                 url: targetUrl,
@@ -158,8 +160,9 @@ class Routes {
             };
         }
         return res;
-    }
-}
+    };
+    Routes._routes = null;
+    Routes._decision = null;
+    return Routes;
+}());
 exports.Routes = Routes;
-Routes._routes = null;
-Routes._decision = null;

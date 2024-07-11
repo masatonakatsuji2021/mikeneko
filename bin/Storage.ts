@@ -1,11 +1,13 @@
-// @ts-ignore
-import { MyApp } from "app/config/App";
+import { App } from "App";
 
 export class SessionStorage {
 
     public __name : string = "sbn_";
 
     public constructor(){
+
+        const MyApp : typeof App = use("app/config/App").MyApp;
+
         if(MyApp.sessionStorage){
             this.__name = MyApp.sessionStorage;
         }
@@ -48,6 +50,8 @@ export class LocalStorage {
 
     public constructor(){
 
+        const MyApp : typeof App = use("app/config/App").MyApp;
+        
         if(MyApp.localStorage){
             this.__name = MyApp.localStorage;
         }

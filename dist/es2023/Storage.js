@@ -1,20 +1,19 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LocalStorage = exports.SessionStorage = void 0;
-// @ts-ignore
-const App_1 = require("app/config/App");
-class SessionStorage {
-    constructor() {
+var SessionStorage = /** @class */ (function () {
+    function SessionStorage() {
         this.__name = "sbn_";
-        if (App_1.MyApp.sessionStorage) {
-            this.__name = App_1.MyApp.sessionStorage;
+        var MyApp = use("app/config/App").MyApp;
+        if (MyApp.sessionStorage) {
+            this.__name = MyApp.sessionStorage;
         }
     }
-    _get() {
+    SessionStorage.prototype._get = function () {
         var buff = sessionStorage.getItem(this.__name);
         return JSON.parse(buff);
-    }
-    read(name) {
+    };
+    SessionStorage.prototype.read = function (name) {
         var buff = this._get();
         if (buff[name]) {
             return buff[name];
@@ -22,33 +21,35 @@ class SessionStorage {
         else {
             return buff;
         }
-    }
-    write(name, value) {
+    };
+    SessionStorage.prototype.write = function (name, value) {
         var buff = this._get();
         buff[name] = value;
         sessionStorage.setItem(this.__name, JSON.stringify(buff));
         return this;
-    }
-    delete(name) {
+    };
+    SessionStorage.prototype.delete = function (name) {
         var buff = this._get();
         delete buff[name];
         sessionStorage.setItem(this.__name, JSON.stringify(buff));
         return this;
-    }
-}
+    };
+    return SessionStorage;
+}());
 exports.SessionStorage = SessionStorage;
-class LocalStorage {
-    constructor() {
+var LocalStorage = /** @class */ (function () {
+    function LocalStorage() {
         this.__name = "sbn";
-        if (App_1.MyApp.localStorage) {
-            this.__name = App_1.MyApp.localStorage;
+        var MyApp = use("app/config/App").MyApp;
+        if (MyApp.localStorage) {
+            this.__name = MyApp.localStorage;
         }
     }
-    _get() {
+    LocalStorage.prototype._get = function () {
         var buff = localStorage.getItem(this.__name);
         return JSON.parse(buff);
-    }
-    read(name) {
+    };
+    LocalStorage.prototype.read = function (name) {
         var buff = this._get();
         if (buff[name]) {
             return buff[name];
@@ -56,18 +57,19 @@ class LocalStorage {
         else {
             return buff;
         }
-    }
-    write(name, value) {
+    };
+    LocalStorage.prototype.write = function (name, value) {
         var buff = this._get();
         buff[name] = value;
         localStorage.setItem(this.__name, JSON.stringify(buff));
         return this;
-    }
-    delete(name) {
+    };
+    LocalStorage.prototype.delete = function (name) {
         var buff = this._get();
         delete buff[name];
         localStorage.setItem(this.__name, JSON.stringify(buff));
         return this;
-    }
-}
+    };
+    return LocalStorage;
+}());
 exports.LocalStorage = LocalStorage;

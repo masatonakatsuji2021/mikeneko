@@ -11,15 +11,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Background = void 0;
 const Util_1 = require("Util");
-// @ts-ignore
-const App_1 = require("app/config/App");
 class Background {
     static load() {
         return __awaiter(this, void 0, void 0, function* () {
+            const MyApp = use("app/config/App").MyApp;
             // background class method load.
-            if (App_1.MyApp.backgrounds) {
-                for (let n = 0; n < App_1.MyApp.backgrounds.length; n++) {
-                    const backgroundName = Util_1.Util.getModulePath(App_1.MyApp.backgrounds[n]);
+            if (MyApp.backgrounds) {
+                for (let n = 0; n < MyApp.backgrounds.length; n++) {
+                    const backgroundName = Util_1.Util.getModulePath(MyApp.backgrounds[n]);
                     const backgroundPath = "app/background/" + backgroundName;
                     if (!useExists(backgroundPath))
                         continue;

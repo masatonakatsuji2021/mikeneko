@@ -15,6 +15,13 @@ class Builder {
         }
         console.log("saiberian build start");
         const rootDir = process.cwd();
+        let tsType = "es6";
+        if (!option.noTranceComplied) {
+            tsType = this.getTsType(rootDir);
+            if (!tsType)
+                tsType = "es6";
+        }
+        console.log("# TranceComplieType = " + tsType);
         const buildDir = rootDir + "/output";
         this.outMkdir(buildDir);
         for (let n = 0; n < option.platforms.length; n++) {
@@ -30,23 +37,23 @@ class Builder {
             const platformDir = buildDir + "/" + platform.path;
             this.outMkdir(platformDir);
             // start head
-            coreStr += this.jsStart(platform.name);
+            coreStr += this.jsStart(tsType, platform.name);
             // core module mount
-            coreStr += this.coreModuleMount("App");
-            coreStr += this.coreModuleMount("Background");
-            coreStr += this.coreModuleMount("Controller");
-            coreStr += this.coreModuleMount("Data");
-            coreStr += this.coreModuleMount("Dom");
-            coreStr += this.coreModuleMount("Exception");
-            coreStr += this.coreModuleMount("KeyEvent");
-            coreStr += this.coreModuleMount("Response");
-            coreStr += this.coreModuleMount("Routes");
-            coreStr += this.coreModuleMount("Startor");
-            coreStr += this.coreModuleMount("Storage");
-            coreStr += this.coreModuleMount("Template");
-            coreStr += this.coreModuleMount("Util");
-            coreStr += this.coreModuleMount("View");
-            coreStr += this.coreModuleMount("ViewPart");
+            coreStr += this.coreModuleMount(tsType, "App");
+            coreStr += this.coreModuleMount(tsType, "Background");
+            coreStr += this.coreModuleMount(tsType, "Controller");
+            coreStr += this.coreModuleMount(tsType, "Data");
+            coreStr += this.coreModuleMount(tsType, "Dom");
+            coreStr += this.coreModuleMount(tsType, "Exception");
+            coreStr += this.coreModuleMount(tsType, "KeyEvent");
+            coreStr += this.coreModuleMount(tsType, "Response");
+            coreStr += this.coreModuleMount(tsType, "Routes");
+            coreStr += this.coreModuleMount(tsType, "Startor");
+            coreStr += this.coreModuleMount(tsType, "Storage");
+            coreStr += this.coreModuleMount(tsType, "Template");
+            coreStr += this.coreModuleMount(tsType, "Util");
+            coreStr += this.coreModuleMount(tsType, "View");
+            coreStr += this.coreModuleMount(tsType, "ViewPart");
             // local module mount
             coreStr += this.localModuleMount(rootDir, platform.name);
             // rendering html mount
@@ -69,9 +76,9 @@ class Builder {
         console.log("#");
         console.log("# ...... Complete!");
     }
-    static jsStart(platformName) {
+    static jsStart(tsType, platformName) {
         console.log("# build Start");
-        let content = fs.readFileSync(__dirname + "/Front.js").toString();
+        let content = fs.readFileSync(path.dirname(__dirname) + "/dist/" + tsType + "/Front.js").toString();
         content = content.split("{{platform}}").join(platformName);
         return content;
     }
@@ -83,9 +90,9 @@ class Builder {
             return "sfa.setFn(\"" + name + "\", ()=>{ return " + content + "});";
         }
     }
-    static coreModuleMount(name) {
+    static coreModuleMount(tsType, name) {
         console.log("# core module".padEnd(30) + " " + name);
-        const fullPath = path.dirname(__dirname) + "/bin/" + name + ".js";
+        const fullPath = path.dirname(__dirname) + "/dist/" + tsType + "/" + name + ".js";
         let contents = fs.readFileSync(fullPath).toString();
         contents = "var exports = {};\n" + contents + ";\nreturn exports;";
         return this.setFn(name, contents, true);
@@ -199,6 +206,21 @@ class Builder {
         if (result.error)
             throw result.error;
         return result.code;
+    }
+    static getTsType(rootDir) {
+        let tsConfig, tsType;
+        try {
+            tsConfig = require(rootDir + "/tsconfig.json");
+            if (!tsConfig.compilerOptions)
+                return;
+            if (!tsConfig.compilerOptions.target)
+                return;
+            tsType = tsConfig.compilerOptions.target;
+        }
+        catch (error) {
+            return;
+        }
+        return tsType;
     }
 }
 exports.Builder = Builder;

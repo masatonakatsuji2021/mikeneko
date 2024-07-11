@@ -1,6 +1,4 @@
 import { App } from "App";
-// @ts-ignore
-import { MyApp } from "app/config/App";
 
 export interface Route{
     view : string,
@@ -29,6 +27,8 @@ export class Routes{
     public static _decision = null;
 
     public static searchRoute(url: string = null){
+
+        const MyApp : typeof App = use("app/config/App").MyApp;
 
         if(!this._routes){
             Routes._routes = Routes.routeConvert(MyApp.routes);

@@ -1,10 +1,12 @@
 import { Util } from "Util";
-// @ts-ignore
-import { MyApp } from "app/config/App";
+import { App } from "App";
 
 export class Background {
 
     public static async load(){
+        
+        const MyApp : typeof App = use("app/config/App").MyApp;
+
         // background class method load.
        if(MyApp.backgrounds){
            for(let n = 0 ; n < MyApp.backgrounds.length ; n++){
