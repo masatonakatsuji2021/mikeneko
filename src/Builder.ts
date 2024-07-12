@@ -37,6 +37,7 @@ export class Builder {
         console.log("saiberian build start");
         const rootDir : string = process.cwd();
 
+        // typescript trance complie
         let tsType = "es6";
         if (option.tranceComplied) {
             tsType = this.getTsType(rootDir);
@@ -59,6 +60,8 @@ export class Builder {
         this.outMkdir(buildDir);
 
         for (let n = 0 ; n < option.platforms.length ; n++) {
+            // platforms building 
+
             const platform = option.platforms[n];
             if (!platform.name) platform.name = platform.type;
             if (!platform.path) platform.path = platform.type;
@@ -66,47 +69,58 @@ export class Builder {
             if (platform.handleBuildStart) platform.handleBuildStart(platform);
 
             console.log("# platform = " + platform.name);
-            let coreStr : string = "";
 
+            // create platform directory
             const platformDir = buildDir + "/" + platform.path;
             this.outMkdir(platformDir);
 
+            // code set
+            let codeList : {[name : string] : string} = {};
+
             // start head
-            coreStr += this.jsStart(tsType, platform.name);
+            this.jsStart(codeList, tsType, platform.name);
 
             // core module mount
-            coreStr += this.coreModuleMount(tsType, "App");
-            coreStr += this.coreModuleMount(tsType, "Background");
-            coreStr += this.coreModuleMount(tsType, "Controller");
-            coreStr += this.coreModuleMount(tsType, "Data");
-            coreStr += this.coreModuleMount(tsType, "Dom");
-            coreStr += this.coreModuleMount(tsType, "Exception");
-            coreStr += this.coreModuleMount(tsType, "KeyEvent");
-            coreStr += this.coreModuleMount(tsType, "Response");
-            coreStr += this.coreModuleMount(tsType, "Routes");
-            coreStr += this.coreModuleMount(tsType, "Startor");
-            coreStr += this.coreModuleMount(tsType, "Storage");
-            coreStr += this.coreModuleMount(tsType, "Template");
-            coreStr += this.coreModuleMount(tsType, "Util");
-            coreStr += this.coreModuleMount(tsType, "View");
-            coreStr += this.coreModuleMount(tsType, "ViewPart");
+            const coreList : Array<string> = [
+                "App", 
+                "Background", 
+                "Controller", 
+                "Data", 
+                "Dom", 
+                "Exception", 
+                "KeyEvent", 
+                "Response", 
+                "Routes", 
+                "Startor", 
+                "Storage", 
+                "Template", 
+                "Util", 
+                "View", 
+                "ViewPart", 
+            ];
+
+            coreList.forEach((core : string) => {
+                this.coreModuleMount(codeList, tsType, core);
+             });
 
             // local module mount
-            coreStr += this.localModuleMount(rootDir, platform.name);
+            this.localModuleMount(codeList, rootDir, platform.name);
 
             // rendering html mount
-            coreStr += this.renderingHtmMount(rootDir, platform.name);
+            this.renderingHtmMount(codeList, rootDir, platform.name);
 
             // public content mount
-            coreStr += this.resourceContentMount(rootDir, platform.name);
+            this.resourceContentMount(codeList, rootDir, platform.name);
+
+            // end foot
+            this.jsEnd(codeList);
+
+            let coreStr : string = Object.values(codeList).join("");
 
             if (option.codeCompress) {
                 coreStr = this.codeCompress(coreStr);
             }
             
-            // end foot
-            coreStr += this.jsEnd();
-
             console.log("# write index.js");
             fs.writeFileSync(platformDir + "/index.js", coreStr);
     
@@ -122,31 +136,31 @@ export class Builder {
         console.log("# ...... Complete!");
     }
 
-    private static jsStart(tsType : string, platformName : string){
+    private static jsStart(codeList: {[name : string] : string}, tsType : string, platformName : string){
         console.log("# build Start");
         let content =  fs.readFileSync(path.dirname(__dirname) + "/dist/" + tsType + "/Front.js").toString();
         content = content.split("{{platform}}").join(platformName);
-        return content;
+        codeList.___HEADER = content;
     }
 
     private static setFn(name : string,  content, rawFlg? : boolean) {
         if (rawFlg) {
-            return "sfa.setFn(\"" + name + "\", ()=>{" + content + "});";
+            return "sfa.setFn(\"" + name + "\", ()=>{" + content + "});\n";
         }
         else {
-            return "sfa.setFn(\"" + name + "\", ()=>{ return " + content + "});";
+            return "sfa.setFn(\"" + name + "\", ()=>{ return " + content + "});\n";
         }
     }
 
-    private static coreModuleMount(tsType : string, name : string) {
+    private static coreModuleMount(codeList : {[name : string] : string}, tsType : string, name : string) {
         console.log("# core module".padEnd(30) + " " + name);
         const fullPath : string = path.dirname(__dirname) + "/dist/" + tsType + "/" + name + ".js"; 
         let contents : string = fs.readFileSync(fullPath).toString() ;
         contents = "var exports = {};\n" + contents + ";\nreturn exports;";
-        return this.setFn(name, contents, true);
+        codeList[name] = this.setFn(name, contents, true);
     }
 
-    private static localModuleMount(rootDir : string, platformName : string) {
+    private static localModuleMount(codeList : {[name : string] : string}, rootDir : string, platformName : string) {
         let targetPaths = [
             rootDir + "/src/app",
             rootDir + "/src_" + platformName + "/app",
@@ -162,20 +176,24 @@ export class Builder {
                 basePath = basePath.split("\\").join("/");
                 basePath = basePath.split("//").join("/");
                 let contents : string = fs.readFileSync(fullPath).toString() ;
-                contents = "var exports = {};\n" + contents + ";\nreturn exports;";
-                strs += this.setFn(basePath, contents, true);
-                console.log("# local module".padEnd(30) +" " + basePath);
+                contents = "var exports = {};\n" + contents + ";\nreturn exports;";                
+                codeList[basePath] = this.setFn(basePath, contents, true);
+                let plstr = "";
+                if (targetPath != rootDir + "/src/app") {
+                    plstr = " (" + platformName + ")";
+                }
+                console.log(("# local module" + plstr).padEnd(30) +" " + basePath);
             });
         });
         return strs;
     }
 
-    private static jsEnd() {
+    private static jsEnd(codeList : {[name : string] : string}) {
         console.log("# build End");
-        return "sfa.start(()=>{ const st = use(\"Startor\");  new st.Startor(); });";
+        codeList.___FOOTER = "sfa.start(()=>{ const st = use(\"Startor\");  new st.Startor(); });";
     }
 
-    private static resourceContentMount(rootDir : string, platformName : string) {
+    private static resourceContentMount(codeList : {[name : string] : string}, rootDir : string, platformName : string) {
         let targetPaths = [
             rootDir + "/src/resource",
             rootDir + "/src_" + platformName + "/resource",
@@ -191,14 +209,18 @@ export class Builder {
                 basePath = basePath.split("//").join("/");
                 const contentB64 = Buffer.from(fs.readFileSync(fullPath)).toString("base64");
                 const mimeType = mime.lookup(basePath);
-                strs += this.setFn(basePath,  "\"" + mimeType + "|" + contentB64 + "\"");
-                console.log("# resource content mount ".padEnd(30) + " " + basePath);
+                let plstr = "";
+                if (targetPath != rootDir + "/src/resource") {
+                    plstr = "(" + platformName + ")";
+                }
+                codeList[basePath] = this.setFn(basePath,  "\"" + mimeType + "|" + contentB64 + "\"") ;
+                console.log(("# resource content mount" + plstr).padEnd(30) + " " + basePath);
             });
         });
         return strs;
     }
 
-    private static renderingHtmMount(rootDir : string, platformName : string) {
+    private static renderingHtmMount(codeList : {[name : string] : string}, rootDir : string, platformName : string) {
         let targetPaths = [
             rootDir + "/src/rendering",
             rootDir + "/src_" + platformName + "/rendering",
@@ -212,8 +234,12 @@ export class Builder {
                 basePath = basePath.split("\\").join("/");
                 basePath = basePath.split("//").join("/");
                 const contentB64 = Buffer.from(fs.readFileSync(fullPath)).toString("base64");
-                strs += this.setFn(basePath, "\"" +  contentB64 + "\";");
-                console.log("# render html  mount".padEnd(30) + " "+ basePath);
+                let plstr = "";
+                if (targetPath != rootDir + "/src/rendering"){
+                    plstr = "(" + platformName + ")";
+                }
+                codeList[basePath] = this.setFn(basePath, "\"" +  contentB64 + "\";");
+                console.log(("# render html  mount" + plstr).padEnd(30) + " "+ basePath);
             });            
         });
         return strs;
