@@ -14,17 +14,40 @@ var Util = /** @class */ (function () {
         mainView = this.base64Decode(mainView);
         return mainView;
     };
-    Util.existPublic = function (path) {
-        return useExists("public/" + path);
+    Util.existResource = function (path) {
+        return useExists("resource/" + path);
     };
     /**
-     * ***getPublic*** : Get prepared static content data
+     * ***getResource*** : Get prepared static content data
      * Content is retrieved in dataURL format
      * @param {string} path static content data path
      * @returns {string}
      */
-    Util.getPublic = function (path) {
-        return use("public/" + path);
+    Util.getResource = function (path) {
+        var data = use("resource/" + path);
+        var content = data.split("|")[1];
+        return this.base64Decode(content);
+    };
+    /**
+     * ***getResourceDataUrl*** :
+     * @param path
+     * @returns
+     */
+    Util.getResourceDataUrl = function (path) {
+        var data = use("resource/" + path);
+        var datas = data.split("|");
+        var mimeType = datas[0];
+        var content = datas[1];
+        return "data:" + mimeType + ";base64," + content;
+    };
+    /**
+     * ***getResourceMimeType*** :
+     * @param path
+     * @returns
+     */
+    Util.getResourceMimeType = function (path) {
+        var data = use("resource/" + path);
+        return data.split("|")[0];
     };
     Util.getModulePath = function (path) {
         var paths = path.split("/");

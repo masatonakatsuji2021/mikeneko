@@ -288,8 +288,8 @@ export class Response {
         for (let n = 0 ; n < links.length ; n++) {
             const link = links[n];
             const href = link.attributes["href"].value;
-            if (!Util.existPublic(href)) continue;
-            const resource = Util.getPublic(href);
+            if (!Util.existResource(href)) continue;
+            const resource = Util.getResourceDataUrl(href);
             link.setAttribute("href", resource);
         }
 
@@ -298,8 +298,8 @@ export class Response {
         for (let n = 0 ; n < imgs.length ; n++) {
             const img = imgs[n];
             const src = img.attributes["src"].value;
-            if (!Util.existPublic(src)) continue;
-            const resource = Util.getPublic(src);
+            if (!Util.existResource(src)) continue;
+            const resource = Util.getResourceDataUrl(src);
             img.setAttribute("src", resource);
         }
         

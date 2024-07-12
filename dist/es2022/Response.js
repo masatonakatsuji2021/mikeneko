@@ -239,9 +239,9 @@ class Response {
         for (let n = 0; n < links.length; n++) {
             const link = links[n];
             const href = link.attributes["href"].value;
-            if (!Util_1.Util.existPublic(href))
+            if (!Util_1.Util.existResource(href))
                 continue;
-            const resource = Util_1.Util.getPublic(href);
+            const resource = Util_1.Util.getResourceDataUrl(href);
             link.setAttribute("href", resource);
         }
         // image tag check...
@@ -249,9 +249,9 @@ class Response {
         for (let n = 0; n < imgs.length; n++) {
             const img = imgs[n];
             const src = img.attributes["src"].value;
-            if (!Util_1.Util.existPublic(src))
+            if (!Util_1.Util.existResource(src))
                 continue;
-            const resource = Util_1.Util.getPublic(src);
+            const resource = Util_1.Util.getResourceDataUrl(src);
             img.setAttribute("src", resource);
         }
         content = contentDom.innerHTML;

@@ -369,9 +369,9 @@ var Response = /** @class */ (function () {
         for (var n = 0; n < links.length; n++) {
             var link = links[n];
             var href = link.attributes["href"].value;
-            if (!Util_1.Util.existPublic(href))
+            if (!Util_1.Util.existResource(href))
                 continue;
-            var resource = Util_1.Util.getPublic(href);
+            var resource = Util_1.Util.getResourceDataUrl(href);
             link.setAttribute("href", resource);
         }
         // image tag check...
@@ -379,9 +379,9 @@ var Response = /** @class */ (function () {
         for (var n = 0; n < imgs.length; n++) {
             var img = imgs[n];
             var src = img.attributes["src"].value;
-            if (!Util_1.Util.existPublic(src))
+            if (!Util_1.Util.existResource(src))
                 continue;
-            var resource = Util_1.Util.getPublic(src);
+            var resource = Util_1.Util.getResourceDataUrl(src);
             img.setAttribute("src", resource);
         }
         content = contentDom.innerHTML;

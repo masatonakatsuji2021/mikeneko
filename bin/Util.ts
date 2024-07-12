@@ -11,18 +11,43 @@ export class Util {
         return mainView;
     }
 
-    public static existPublic(path : string) : boolean {
-        return useExists("public/" + path);
+    public static existResource(path : string) : boolean {
+        return useExists("resource/" + path);
     }
 
     /**
-     * ***getPublic*** : Get prepared static content data  
+     * ***getResource*** : Get prepared static content data  
      * Content is retrieved in dataURL format
      * @param {string} path static content data path
      * @returns {string} 
      */
-    public static getPublic(path : string) : string {
-        return use("public/" + path);
+    public static getResource(path : string) : string {
+        const data = use("resource/" + path);
+        const content = data.split("|")[1];
+        return this.base64Decode(content);
+    }
+
+    /**
+     * ***getResourceDataUrl*** : 
+     * @param path 
+     * @returns 
+     */
+    public static getResourceDataUrl(path : string) : string {
+        const data = use("resource/" + path);
+        const datas = data.split("|");
+        const mimeType = datas[0];
+        const content = datas[1];
+        return "data:" + mimeType + ";base64," + content;
+    }
+
+    /**
+     * ***getResourceMimeType*** : 
+     * @param path 
+     * @returns 
+     */
+    public static getResourceMimeType(path : string) : string {
+        const data = use("resource/" + path);
+        return data.split("|")[0];
     }
 
     public static getModulePath(path : string) : string {

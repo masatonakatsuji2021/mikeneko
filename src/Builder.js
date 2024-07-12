@@ -6,6 +6,7 @@ const path = require("path");
 const mime = require("mime-types");
 const UglifyJS = require("uglify-js");
 const strip = require("strip-comments");
+const child_process_1 = require("child_process");
 class Builder {
     static build(option) {
         if (!option) {
@@ -13,15 +14,33 @@ class Builder {
                 platforms: [{ type: "web" }]
             };
         }
+        if (option.tranceComplied == undefined)
+            option.tranceComplied = true;
+        if (option.resourceCached == undefined)
+            option.resourceCached = true;
+        if (option.resourceMaxsize == undefined)
+            option.resourceMaxsize = -1;
         console.log("saiberian build start");
         const rootDir = process.cwd();
         let tsType = "es6";
-        if (!option.noTranceComplied) {
+        if (option.tranceComplied) {
             tsType = this.getTsType(rootDir);
             if (!tsType)
                 tsType = "es6";
+            console.log("# TranceComplieType = " + tsType);
+            console.log("# Trance Complie...");
+            try {
+                (0, child_process_1.execSync)("tsc");
+            }
+            catch (error) {
+                console.log(error.stack);
+                return;
+            }
+            console.log("# ..OK");
         }
-        console.log("# TranceComplieType = " + tsType);
+        else {
+            console.log("# TranceComplieType = " + tsType);
+        }
         const buildDir = rootDir + "/output";
         this.outMkdir(buildDir);
         for (let n = 0; n < option.platforms.length; n++) {
@@ -59,7 +78,7 @@ class Builder {
             // rendering html mount
             coreStr += this.renderingHtmMount(rootDir, platform.name);
             // public content mount
-            coreStr += this.publicContentMount(rootDir, platform.name);
+            coreStr += this.resourceContentMount(rootDir, platform.name);
             if (option.codeCompress) {
                 coreStr = this.codeCompress(coreStr);
             }
@@ -125,10 +144,10 @@ class Builder {
         console.log("# build End");
         return "sfa.start(()=>{ const st = use(\"Startor\");  new st.Startor(); });";
     }
-    static publicContentMount(rootDir, platformName) {
+    static resourceContentMount(rootDir, platformName) {
         let targetPaths = [
-            rootDir + "/src/public",
-            rootDir + "/src_" + platformName + "/public",
+            rootDir + "/src/resource",
+            rootDir + "/src_" + platformName + "/resource",
         ];
         let strs = "";
         targetPaths.forEach((targetPath) => {
@@ -136,13 +155,13 @@ class Builder {
                 if (file.isDirectory())
                     return;
                 const fullPath = file.path + "/" + file.name;
-                let basePath = "public/" + fullPath.substring((targetPath + "/").length);
+                let basePath = "resource/" + fullPath.substring((targetPath + "/").length);
                 basePath = basePath.split("\\").join("/");
                 basePath = basePath.split("//").join("/");
                 const contentB64 = Buffer.from(fs.readFileSync(fullPath)).toString("base64");
                 const mimeType = mime.lookup(basePath);
-                strs += this.setFn(basePath, "\"data:" + mimeType + ";base64," + contentB64 + "\"");
-                console.log("# public content mount ".padEnd(30) + " " + basePath);
+                strs += this.setFn(basePath, "\"" + mimeType + "|" + contentB64 + "\"");
+                console.log("# resource content mount ".padEnd(30) + " " + basePath);
             });
         });
         return strs;
