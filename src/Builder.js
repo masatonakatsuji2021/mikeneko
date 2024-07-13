@@ -135,8 +135,6 @@ class Builder {
         let strs = "";
         targetPaths.forEach((targetPath) => {
             this.search(targetPath, (file) => {
-                if (file.isDirectory())
-                    return;
                 if (path.extname(file.name) != ".js")
                     return;
                 const fullPath = file.path + "/" + file.name;
@@ -167,8 +165,6 @@ class Builder {
         let strs = "";
         targetPaths.forEach((targetPath) => {
             this.search(targetPath, (file) => {
-                if (file.isDirectory())
-                    return;
                 const fullPath = file.path + "/" + file.name;
                 let basePath = "resource/" + fullPath.substring((targetPath + "/").length);
                 basePath = basePath.split("\\").join("/");
@@ -193,8 +189,6 @@ class Builder {
         let strs = "";
         targetPaths.forEach((targetPath) => {
             this.search(targetPath, (file) => {
-                if (file.isDirectory())
-                    return;
                 const fullPath = file.path + "/" + file.name;
                 let basePath = "rendering/" + fullPath.substring((targetPath + "/").length);
                 basePath = basePath.split("\\").join("/");
@@ -217,10 +211,18 @@ class Builder {
             return;
         const list = fs.readdirSync(target, {
             withFileTypes: true,
-            recursive: true,
         });
         for (let n = 0; n < list.length; n++) {
-            callback(list[n]);
+            const l_ = list[n];
+            if (l_.isDirectory()) {
+                this.search(target + "/" + l_.name, callback);
+            }
+            else {
+                // node.js v14 under support.
+                const file = l_;
+                file.path = target;
+                callback(l_);
+            }
         }
     }
     static outMkdir(rootDir) {

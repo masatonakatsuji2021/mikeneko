@@ -170,7 +170,6 @@ export class Builder {
         let strs : string = "";
         targetPaths.forEach((targetPath : string) => {
             this.search(targetPath, (file)=>{
-                if (file.isDirectory()) return;
                 if (path.extname(file.name) != ".js") return;
                 const fullPath = file.path + "/" + file.name;
                 let basePath = "app/" + file.path.substring((targetPath + "/").length) + "/" + file.name.substring(0, file.name.length - path.extname(file.name).length);
@@ -203,7 +202,6 @@ export class Builder {
         let strs : string = "";
         targetPaths.forEach((targetPath : string) => {
             this.search(targetPath, (file)=>{
-                if (file.isDirectory()) return;
                 const fullPath = file.path + "/" + file.name;
                 let basePath = "resource/"+ fullPath.substring((targetPath + "/").length);
                 basePath = basePath.split("\\").join("/");
@@ -229,7 +227,6 @@ export class Builder {
         let strs : string = "";
         targetPaths.forEach((targetPath : string) => {
             this.search(targetPath, (file)=>{
-                if (file.isDirectory()) return;
                 const fullPath = file.path + "/" + file.name;
                 let  basePath = "rendering/" + fullPath.substring((targetPath + "/").length);
                 basePath = basePath.split("\\").join("/");
@@ -251,12 +248,21 @@ export class Builder {
         if (!fs.statSync(target).isDirectory()) return;
         const list = fs.readdirSync(target, {
             withFileTypes: true,
-            recursive: true,
         });
         for (let n = 0 ; n < list.length ; n++) {
-            callback(list[n]);
+            const l_ = list[n];
+            if (l_.isDirectory()) {
+                this.search(target + "/" + l_.name, callback);
+            }
+            else {
+                // node.js v14 under support.
+                const file : any = l_;
+                file.path = target;
+                callback(l_);
+            }
         }
     }
+
 
     private static outMkdir(rootDir : string){
         let dirExists : boolean = false;
