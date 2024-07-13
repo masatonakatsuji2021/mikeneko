@@ -41,6 +41,7 @@ var Routes_1 = require("Routes");
 var Util_1 = require("Util");
 var Data_1 = require("Data");
 var Dom_1 = require("Dom");
+var Shortcode_1 = require("Shortcode");
 var Response = /** @class */ (function () {
     function Response() {
     }
@@ -311,8 +312,22 @@ var Response = /** @class */ (function () {
         });
     };
     /**
-     * *** view *** :
-     * Get View's content information.
+     * ***renderHtml** : Get Rendering HTML content information.
+     * @param {string} renderName rendering html Name
+     * @returns {string}
+     */
+    Response.renderHtml = function (renderName) {
+        var renderPath = "rendering/" + renderName + ".html";
+        if (!useExists(renderPath)) {
+            return "<div style=\"font-weight:bold;\">[Rendering ERROR] Rendering data does not exist. Check if source file \"" + renderPath + "\" exists.</div>";
+        }
+        var content = use(renderPath);
+        content = Util_1.Util.base64Decode(content);
+        content = this.renderConvert(content);
+        return content;
+    };
+    /**
+     * *** view *** : Get View's content information.
      * @param {string} viewName View Name
      * @returns {string} view contents
      */
@@ -384,8 +399,9 @@ var Response = /** @class */ (function () {
             var resource = Util_1.Util.getResourceDataUrl(src);
             img.setAttribute("src", resource);
         }
-        content = contentDom.innerHTML;
-        return content;
+        // shortcode analysis
+        contentDom.innerHTML = Shortcode_1.Shortcode.analysis(contentDom.innerHTML);
+        return contentDom.innerHTML;
     };
     return Response;
 }());

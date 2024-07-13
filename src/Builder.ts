@@ -93,6 +93,7 @@ export class Builder {
                 "Routes", 
                 "Startor", 
                 "Storage", 
+                "Shortcode",
                 "Template", 
                 "Util", 
                 "View", 

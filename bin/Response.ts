@@ -4,6 +4,7 @@ import { Data } from "Data";
 import { Controller } from "Controller";
 import { View } from "View";
 import { Dom, VDom } from "Dom";
+import { Shortcode } from "Shortcode";
 
 export class Response {
 
@@ -215,8 +216,26 @@ export class Response {
     }
 
     /**
-     * *** view *** : 
-     * Get View's content information.
+     * ***renderHtml** : Get Rendering HTML content information.
+     * @param {string} renderName rendering html Name
+     * @returns {string}
+     */
+    public static renderHtml(renderName : string) : string {
+
+        const renderPath : string = "rendering/" + renderName + ".html";
+        if(!useExists(renderPath)){
+            return "<div style=\"font-weight:bold;\">[Rendering ERROR] Rendering data does not exist. Check if source file \"" + renderPath + "\" exists.</div>"; 
+        }
+        
+        let content : string = use(renderPath);
+        content = Util.base64Decode(content);
+        content = this.renderConvert(content);
+
+        return content;
+    }
+
+    /**
+     * *** view *** : Get View's content information.
      * @param {string} viewName View Name
      * @returns {string} view contents
      */
@@ -302,8 +321,10 @@ export class Response {
             const resource = Util.getResourceDataUrl(src);
             img.setAttribute("src", resource);
         }
-        
-        content = contentDom.innerHTML;
-        return content;
+
+        // shortcode analysis
+        contentDom.innerHTML = Shortcode.analysis(contentDom.innerHTML);
+
+        return contentDom.innerHTML;
     }
 }

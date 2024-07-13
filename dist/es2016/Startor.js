@@ -11,11 +11,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.string = exports.Startor = void 0;
 const Routes_1 = require("Routes");
+const Util_1 = require("Util");
 const Data_1 = require("Data");
 const Background_1 = require("Background");
 const Response_1 = require("Response");
+const Shortcode_1 = require("Shortcode");
 class Startor {
     constructor() {
+        this.setShortcode();
         (() => __awaiter(this, void 0, void 0, function* () {
             window.addEventListener("click", (e) => {
                 this.cliekHandleDelegate(e);
@@ -60,6 +63,48 @@ class Startor {
             const route = Routes_1.Routes.searchRoute(url);
             yield Response_1.Response.rendering(route);
             Data_1.Data.set("stepMode", false);
+        });
+    }
+    setShortcode() {
+        Shortcode_1.Shortcode.add("rendering", (args) => {
+            if (!args.path)
+                return;
+            return Response_1.Response.renderHtml(args.path);
+        });
+        Shortcode_1.Shortcode.add("view", (args) => {
+            if (!args.path)
+                return;
+            return Response_1.Response.view(args.path);
+        });
+        Shortcode_1.Shortcode.add("viewpart", (args) => {
+            if (!args.path)
+                return;
+            return Response_1.Response.viewPart(args.path);
+        });
+        Shortcode_1.Shortcode.add("template", (args) => {
+            if (!args.path)
+                return;
+            return Response_1.Response.template(args.path);
+        });
+        Shortcode_1.Shortcode.add("resource", (args) => {
+            if (!args.url)
+                return;
+            return Util_1.Util.getResource(args.url);
+        });
+        Shortcode_1.Shortcode.add("resource_dataurl", (args) => {
+            if (!args.url)
+                return;
+            return Util_1.Util.getResourceDataUrl(args.url);
+        });
+        Shortcode_1.Shortcode.add("resource_mimtype", (args) => {
+            if (!args.url)
+                return;
+            return Util_1.Util.getResourceMimeType(args.url);
+        });
+        Shortcode_1.Shortcode.add("uniqId", (args) => {
+            if (!args.length)
+                args.length = "";
+            return Util_1.Util.uniqId(parseInt(args.length));
         });
     }
 }

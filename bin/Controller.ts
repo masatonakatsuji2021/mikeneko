@@ -87,7 +87,7 @@ export class Controller {
     /**
      * ***handleBefore*** : Event handler executed just before transitioning to the page.
      */
-    handleBefore(beginStatus? : boolean) : void{}
+    handleBefore(beginStatus? : boolean) : void{ }
 
     /**
      * ***handleAfter*** : Event handler executed immediately after transitioning to the page

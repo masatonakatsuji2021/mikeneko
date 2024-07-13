@@ -38,12 +38,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.string = exports.Startor = void 0;
 var Routes_1 = require("Routes");
+var Util_1 = require("Util");
 var Data_1 = require("Data");
 var Background_1 = require("Background");
 var Response_1 = require("Response");
+var Shortcode_1 = require("Shortcode");
 var Startor = /** @class */ (function () {
     function Startor() {
         var _this = this;
+        this.setShortcode();
         (function () { return __awaiter(_this, void 0, void 0, function () {
             var route;
             var _this = this;
@@ -114,6 +117,48 @@ var Startor = /** @class */ (function () {
                         return [2 /*return*/];
                 }
             });
+        });
+    };
+    Startor.prototype.setShortcode = function () {
+        Shortcode_1.Shortcode.add("rendering", function (args) {
+            if (!args.path)
+                return;
+            return Response_1.Response.renderHtml(args.path);
+        });
+        Shortcode_1.Shortcode.add("view", function (args) {
+            if (!args.path)
+                return;
+            return Response_1.Response.view(args.path);
+        });
+        Shortcode_1.Shortcode.add("viewpart", function (args) {
+            if (!args.path)
+                return;
+            return Response_1.Response.viewPart(args.path);
+        });
+        Shortcode_1.Shortcode.add("template", function (args) {
+            if (!args.path)
+                return;
+            return Response_1.Response.template(args.path);
+        });
+        Shortcode_1.Shortcode.add("resource", function (args) {
+            if (!args.url)
+                return;
+            return Util_1.Util.getResource(args.url);
+        });
+        Shortcode_1.Shortcode.add("resource_dataurl", function (args) {
+            if (!args.url)
+                return;
+            return Util_1.Util.getResourceDataUrl(args.url);
+        });
+        Shortcode_1.Shortcode.add("resource_mimtype", function (args) {
+            if (!args.url)
+                return;
+            return Util_1.Util.getResourceMimeType(args.url);
+        });
+        Shortcode_1.Shortcode.add("uniqId", function (args) {
+            if (!args.length)
+                args.length = "";
+            return Util_1.Util.uniqId(parseInt(args.length));
         });
     };
     return Startor;

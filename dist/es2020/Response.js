@@ -5,6 +5,7 @@ const Routes_1 = require("Routes");
 const Util_1 = require("Util");
 const Data_1 = require("Data");
 const Dom_1 = require("Dom");
+const Shortcode_1 = require("Shortcode");
 class Response {
     static async rendering(route) {
         try {
@@ -181,8 +182,22 @@ class Response {
         (0, Dom_1.VDom)().refresh();
     }
     /**
-     * *** view *** :
-     * Get View's content information.
+     * ***renderHtml** : Get Rendering HTML content information.
+     * @param {string} renderName rendering html Name
+     * @returns {string}
+     */
+    static renderHtml(renderName) {
+        const renderPath = "rendering/" + renderName + ".html";
+        if (!useExists(renderPath)) {
+            return "<div style=\"font-weight:bold;\">[Rendering ERROR] Rendering data does not exist. Check if source file \"" + renderPath + "\" exists.</div>";
+        }
+        let content = use(renderPath);
+        content = Util_1.Util.base64Decode(content);
+        content = this.renderConvert(content);
+        return content;
+    }
+    /**
+     * *** view *** : Get View's content information.
      * @param {string} viewName View Name
      * @returns {string} view contents
      */
@@ -254,8 +269,9 @@ class Response {
             const resource = Util_1.Util.getResourceDataUrl(src);
             img.setAttribute("src", resource);
         }
-        content = contentDom.innerHTML;
-        return content;
+        // shortcode analysis
+        contentDom.innerHTML = Shortcode_1.Shortcode.analysis(contentDom.innerHTML);
+        return contentDom.innerHTML;
     }
 }
 exports.Response = Response;

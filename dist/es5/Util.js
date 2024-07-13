@@ -1,19 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SbnDateTime = exports.Util = void 0;
+var Shortcode_1 = require("Shortcode");
 var Util = /** @class */ (function () {
     function Util() {
     }
     /**
-     * ***getHtml*** : Gets the prepared rendering data for each
-     * @param {string} path rendering data path
-     * @returns {string}
+     * ***existResource** :Determine whether resource data exists in the specified path.
+     * @param {string} path
+     * @returns
      */
-    Util.getHtml = function (path) {
-        var mainView = use("rendering/" + path + ".html");
-        mainView = this.base64Decode(mainView);
-        return mainView;
-    };
     Util.existResource = function (path) {
         return useExists("resource/" + path);
     };
@@ -25,8 +21,18 @@ var Util = /** @class */ (function () {
      */
     Util.getResource = function (path) {
         var data = use("resource/" + path);
-        var content = data.split("|")[1];
-        return this.base64Decode(content);
+        var datas = data.split("|");
+        var mimeType = datas[0];
+        var content = datas[1];
+        content = this.base64Decode(content);
+        if (mimeType == "text/css" ||
+            mimeType == "text/plain" ||
+            mimeType == "text/html" ||
+            mimeType == "application/json" ||
+            mimeType == "text/javascript") {
+            content = Shortcode_1.Shortcode.analysis(content);
+        }
+        return content;
     };
     /**
      * ***getResourceDataUrl*** :
@@ -38,6 +44,15 @@ var Util = /** @class */ (function () {
         var datas = data.split("|");
         var mimeType = datas[0];
         var content = datas[1];
+        if (mimeType == "text/css" ||
+            mimeType == "text/plain" ||
+            mimeType == "text/html" ||
+            mimeType == "application/json" ||
+            mimeType == "text/javascript") {
+            content = this.base64Decode(content);
+            content = Shortcode_1.Shortcode.analysis(content);
+            content = this.base64Encode(content);
+        }
         return "data:" + mimeType + ";base64," + content;
     };
     /**
@@ -71,6 +86,14 @@ var Util = /** @class */ (function () {
      */
     Util.base64Decode = function (b64text) {
         return decodeURIComponent(escape(atob(b64text)));
+    };
+    /**
+     * ***base64Encode*** :  Encode the text to base64 format.
+     * @param {string} text text content
+     * @returns {string} base64 encode content
+     */
+    Util.base64Encode = function (text) {
+        return btoa(unescape(encodeURIComponent(text)));
     };
     Util.uniqId = function (length) {
         if (!length)
