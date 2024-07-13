@@ -105,7 +105,7 @@ saiberian build start
 ```
 
 The build files are generated in the ``output`` directory.  
-The directories are divided according to platform, so if the ````index.html`` and ````index.js`` are created, the build is successful.
+The directories are divided according to platform, so if the ``index.html`` and ``index.js`` are created, the build is successful.
 
 ```
 $ cd output/web
