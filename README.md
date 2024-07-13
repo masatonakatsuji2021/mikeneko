@@ -3,7 +3,7 @@
 * 2024.7.13 Details coming soon...
 
 A framework for SPA (Single-Page-Action) that can be installed on Web, Android, and iOS.  
-([The Japanese version of the document is here](wiki/Saiberian(日本語ページ)))
+([The Japanese version of the document is here](https://github.com/masatonakatsuji2021/saiberian/wiki/Saiberian(%E6%97%A5%E6%9C%AC%E8%AA%9E%E3%83%9A%E3%83%BC%E3%82%B8)))
 
 ## # How to use
 
