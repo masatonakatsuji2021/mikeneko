@@ -3,6 +3,7 @@
 * 2024.7.13 Details coming soon...
 
 A framework for SPA (Single-Page-Action) that can be installed on Web, Android, and iOS.
+([README_JP.md](The Japanese version of the document is here))
 
 ## # How to use
 
