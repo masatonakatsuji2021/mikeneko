@@ -6,6 +6,8 @@ import * as strip from "strip-comments";
 import { execSync } from "child_process";
 
 export interface BuildOption {
+    debug? : boolean,
+    rootDir? : string,
     platforms? :  Array<BuildPlatrom>,
     codeCompress? : boolean,
     tranceComplied? : boolean,
@@ -24,18 +26,16 @@ export interface BuildPlatrom {
 export class Builder {
 
     public static build(option? : BuildOption) {
-        if (!option) {
-            option = {
-                platforms : [ { type: "web" } ]
-            };
-        }
-
+        if (!option) option = {};
+        if (option.debug == undefined) option.debug = false;
+        if (option.rootDir == undefined) option.rootDir = process.cwd();
         if (option.tranceComplied == undefined) option.tranceComplied = true;
         if (option.resourceCached == undefined) option.resourceCached = true;
         if (option.resourceMaxsize == undefined) option.resourceMaxsize = -1;
+        if (option.platforms == undefined) option.platforms = [ { type: "web" } ];
 
         console.log("saiberian build start");
-        const rootDir : string = process.cwd();
+        const rootDir : string = option.rootDir;;
 
         // typescript trance complie
         let tsType = "es6";
@@ -78,7 +78,7 @@ export class Builder {
             let codeList : {[name : string] : string} = {};
 
             // start head
-            this.jsStart(codeList, tsType, platform.name);
+            this.jsStart(codeList, tsType, platform.name, option.debug);
 
             // core module mount
             const coreList : Array<string> = [
@@ -137,10 +137,11 @@ export class Builder {
         console.log("# ...... Complete!");
     }
 
-    private static jsStart(codeList: {[name : string] : string}, tsType : string, platformName : string){
+    private static jsStart(codeList: {[name : string] : string}, tsType : string, platformName : string, debugMode : boolean){
         console.log("# build Start");
         let content =  fs.readFileSync(path.dirname(__dirname) + "/dist/" + tsType + "/Front.js").toString();
         content = content.split("{{platform}}").join(platformName);
+        if (!debugMode) content += "console.log=()=>{};\n"
         codeList.___HEADER = content;
     }
 
@@ -213,7 +214,7 @@ export class Builder {
                     plstr = "(" + platformName + ")";
                 }
                 codeList[basePath] = this.setFn(basePath,  "\"" + mimeType + "|" + contentB64 + "\"") ;
-                console.log(("# resource content mount" + plstr).padEnd(30) + " " + basePath);
+                console.log(("# resource mount" + plstr).padEnd(30) + " " + basePath);
             });
         });
         return strs;
@@ -237,7 +238,7 @@ export class Builder {
                     plstr = "(" + platformName + ")";
                 }
                 codeList[basePath] = this.setFn(basePath, "\"" +  contentB64 + "\";");
-                console.log(("# render html  mount" + plstr).padEnd(30) + " "+ basePath);
+                console.log(("# render mount" + plstr).padEnd(30) + " "+ basePath);
             });            
         });
         return strs;

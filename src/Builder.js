@@ -9,19 +9,23 @@ const strip = require("strip-comments");
 const child_process_1 = require("child_process");
 class Builder {
     static build(option) {
-        if (!option) {
-            option = {
-                platforms: [{ type: "web" }]
-            };
-        }
+        if (!option)
+            option = {};
+        if (option.debug == undefined)
+            option.debug = false;
+        if (option.rootDir == undefined)
+            option.rootDir = process.cwd();
         if (option.tranceComplied == undefined)
             option.tranceComplied = true;
         if (option.resourceCached == undefined)
             option.resourceCached = true;
         if (option.resourceMaxsize == undefined)
             option.resourceMaxsize = -1;
+        if (option.platforms == undefined)
+            option.platforms = [{ type: "web" }];
         console.log("saiberian build start");
-        const rootDir = process.cwd();
+        const rootDir = option.rootDir;
+        ;
         // typescript trance complie
         let tsType = "es6";
         if (option.tranceComplied) {
@@ -60,7 +64,7 @@ class Builder {
             // code set
             let codeList = {};
             // start head
-            this.jsStart(codeList, tsType, platform.name);
+            this.jsStart(codeList, tsType, platform.name, option.debug);
             // core module mount
             const coreList = [
                 "App",
@@ -106,10 +110,12 @@ class Builder {
         console.log("#");
         console.log("# ...... Complete!");
     }
-    static jsStart(codeList, tsType, platformName) {
+    static jsStart(codeList, tsType, platformName, debugMode) {
         console.log("# build Start");
         let content = fs.readFileSync(path.dirname(__dirname) + "/dist/" + tsType + "/Front.js").toString();
         content = content.split("{{platform}}").join(platformName);
+        if (!debugMode)
+            content += "console.log=()=>{};\n";
         codeList.___HEADER = content;
     }
     static setFn(name, content, rawFlg) {
@@ -176,7 +182,7 @@ class Builder {
                     plstr = "(" + platformName + ")";
                 }
                 codeList[basePath] = this.setFn(basePath, "\"" + mimeType + "|" + contentB64 + "\"");
-                console.log(("# resource content mount" + plstr).padEnd(30) + " " + basePath);
+                console.log(("# resource mount" + plstr).padEnd(30) + " " + basePath);
             });
         });
         return strs;
@@ -199,7 +205,7 @@ class Builder {
                     plstr = "(" + platformName + ")";
                 }
                 codeList[basePath] = this.setFn(basePath, "\"" + contentB64 + "\";");
-                console.log(("# render html  mount" + plstr).padEnd(30) + " " + basePath);
+                console.log(("# render mount" + plstr).padEnd(30) + " " + basePath);
             });
         });
         return strs;

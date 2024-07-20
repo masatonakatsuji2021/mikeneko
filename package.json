@@ -4,6 +4,9 @@
     "author": "masato nakatsuji",
     "license": "MIT",
     "version": "1.0.1",
+    "bin": {
+        "sab": "src/command"
+    },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/masatonakatsuji2021/saiberian.git"

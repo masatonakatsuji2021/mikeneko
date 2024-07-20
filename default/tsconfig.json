@@ -3,14 +3,12 @@
     "target": "es6",
     "module": "commonjs",
     "lib": ["es6","dom"],
-    "outDir":"./",
     "paths": {
-      "*": ["./*", "./bin/*"],
-      "app/*" : [ "./test/src/app/*" ]
+      "*": ["./*", "../bin/*"],
+      "app/*" : [ "./src/app/*" ]
     }
   },
   "exclude": [
-    "./bin/*",
-    "./default/*"
+    "./source/*"
   ]
 }

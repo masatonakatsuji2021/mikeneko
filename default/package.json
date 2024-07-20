@@ -1,0 +1,9 @@
+{
+    "saiberianBuild": {
+        "debug": true,
+        "codeCompress": false,
+        "platforms": [
+            { "type": "web" }
+        ]
+    }
+}
