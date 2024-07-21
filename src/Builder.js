@@ -7,6 +7,8 @@ const mime = require("mime-types");
 const UglifyJS = require("uglify-js");
 const strip = require("strip-comments");
 const child_process_1 = require("child_process");
+const obfucator = require("javascript-obfuscator");
+const saiberian_1 = require("saiberian");
 class Builder {
     static build(option) {
         if (!option)
@@ -17,54 +19,48 @@ class Builder {
             option.rootDir = process.cwd();
         if (option.tranceComplied == undefined)
             option.tranceComplied = true;
-        if (option.resourceCached == undefined)
-            option.resourceCached = true;
-        if (option.resourceMaxsize == undefined)
-            option.resourceMaxsize = -1;
         if (option.platforms == undefined)
-            option.platforms = [{ type: "web" }];
+            option.platforms = [{ name: "web" }];
         console.log("saiberian build start");
         const rootDir = option.rootDir;
-        ;
         // typescript trance complie
         let tsType = "es6";
-        if (option.tranceComplied) {
-            tsType = this.getTsType(rootDir);
-            if (!tsType)
-                tsType = "es6";
-            console.log("# TranceComplieType = " + tsType);
-            console.log("# Trance Complie...");
-            try {
-                (0, child_process_1.execSync)("tsc");
-            }
-            catch (error) {
-                console.log(error.stack);
-                return;
-            }
-            console.log("# ..OK");
-        }
-        else {
-            console.log("# TranceComplieType = " + tsType);
-        }
+        if (option.tranceComplied)
+            tsType = this.typescriptComplie(rootDir);
+        // mkdir
         const buildDir = rootDir + "/output";
         this.outMkdir(buildDir);
         for (let n = 0; n < option.platforms.length; n++) {
             // platforms building 
             const platform = option.platforms[n];
-            if (!platform.name)
-                platform.name = platform.type;
-            if (!platform.path)
-                platform.path = platform.type;
-            if (platform.handleBuildStart)
-                platform.handleBuildStart(platform);
+            let buildhandle = saiberian_1.BuildHandle;
+            try {
+                buildhandle = require(rootDir + "/src/BuildHandle").BuildHandle;
+            }
+            catch (error) { }
+            if (!buildhandle) {
+                try {
+                    buildhandle = require(rootDir + "/src_" + platform.name + "/BuildHandle").BuildHandle;
+                }
+                catch (error) { }
+            }
             console.log("# platform = " + platform.name);
             // create platform directory
-            const platformDir = buildDir + "/" + platform.path;
-            this.outMkdir(platformDir);
+            let platformDir = buildDir + "/" + platform.name;
+            if (platform.optionDir)
+                platformDir += "/" + platform.optionDir;
+            this.outMkdir(platformDir, true);
+            platform.outPath = platformDir;
+            platform.path = buildDir + "/" + platform.name;
+            // build handle begin
+            buildhandle.handleBegin(platform);
             // code set
             let codeList = {};
             // start head
-            this.jsStart(codeList, tsType, platform.name, option.debug);
+            let debug = option.debug;
+            if (platform.debug != undefined)
+                debug = platform.debug;
+            this.jsStart(codeList, tsType, platform.name, debug);
             // core module mount
             const coreList = [
                 "App",
@@ -96,16 +92,25 @@ class Builder {
             // end foot
             this.jsEnd(codeList);
             let coreStr = Object.values(codeList).join("");
-            if (option.codeCompress) {
+            // code compress
+            let codeCompress = option.codeCompress;
+            if (platform.codeCompress != undefined)
+                codeCompress = platform.codeCompress;
+            if (codeCompress)
                 coreStr = this.codeCompress(coreStr);
-            }
+            // code obfuscated
+            let obfuscated = option.obfuscated;
+            if (platform.obfuscated != undefined)
+                obfuscated = platform.obfuscated;
+            if (obfuscated)
+                coreStr = this.codeObfuscate(coreStr);
             console.log("# write index.js");
             fs.writeFileSync(platformDir + "/index.js", coreStr);
             console.log("# write index.html");
             fs.writeFileSync(platformDir + "/index.html", "<!DOCTYPE html><head><script src=\"index.js\"></script></head><body></body></html>");
             console.log("# ........ platform = " + platform.name + " ok");
-            if (platform.handleBuildEnd)
-                platform.handleBuildEnd(platform);
+            // build handle platform  complete
+            buildhandle.handleComplete(platform);
         }
         console.log("#");
         console.log("# ...... Complete!");
@@ -231,23 +236,40 @@ class Builder {
             }
         }
     }
-    static outMkdir(rootDir) {
-        let dirExists = false;
-        if (fs.existsSync(rootDir)) {
-            if (fs.statSync(rootDir).isDirectory()) {
-                console.log("# already build data ... on delete.");
+    static typescriptComplie(rootDir) {
+        let tsType = "es6";
+        tsType = this.getTsType(rootDir);
+        if (!tsType)
+            tsType = "es6";
+        console.log("# TranceComplieType = " + tsType);
+        console.log("# Trance Complie...");
+        try {
+            (0, child_process_1.execSync)("tsc");
+        }
+        catch (error) {
+            console.log(error.stack);
+            return;
+        }
+        console.log("# ..OK");
+        return tsType;
+    }
+    static outMkdir(rootDir, alreadyDeleted) {
+        console.log("# mkdir " + rootDir);
+        if (alreadyDeleted) {
+            if (fs.existsSync(rootDir)) {
+                console.log("# already directory .... clear");
                 fs.rmSync(rootDir, {
                     recursive: true,
                 });
             }
         }
-        if (!dirExists) {
-            console.log("# mkdir " + rootDir);
-            fs.mkdirSync(rootDir);
-        }
+        fs.mkdirSync(rootDir, {
+            recursive: true,
+        });
     }
     static codeCompress(code) {
         // Delete comment
+        console.log("# code compress ... ");
         console.log("# delete commentout...");
         const strippedCode = strip(code);
         // Compress JavaScript code
@@ -256,6 +278,11 @@ class Builder {
         if (result.error)
             throw result.error;
         return result.code;
+    }
+    static codeObfuscate(code) {
+        console.log("# code obfuscate .... ");
+        code = obfucator.obfuscate(code).getObfuscatedCode();
+        return code;
     }
     static getTsType(rootDir) {
         let tsConfig, tsType;
