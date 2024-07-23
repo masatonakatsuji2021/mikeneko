@@ -107,7 +107,11 @@ class Builder {
             console.log("# write index.js");
             fs.writeFileSync(platformDir + "/index.js", coreStr);
             console.log("# write index.html");
-            fs.writeFileSync(platformDir + "/index.html", "<!DOCTYPE html><head><script src=\"index.js\"></script></head><body></body></html>");
+            let indexHTML = "<!DOCTYPE html><head><meta charset=\"UTF-8\"><script src=\"index.js\"></script></head><body></body></html>";
+            if (platform.buildType == "cordova") {
+                indexHTML = "<!DOCTYPE html><head><meta charset=\"UTF-8\"><script src=\"cordova.js\"></script><script src=\"index.js\"></script></head><body></body></html>";
+            }
+            fs.writeFileSync(platformDir + "/index.html", indexHTML);
             console.log("# ........ platform = " + platform.name + " ok");
             // build handle platform  complete
             buildhandle.handleComplete(platform);

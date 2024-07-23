@@ -1,5 +1,5 @@
 export interface Routes {
-    [url : string] : string,
+    [url : string] : string | Routes,
 }
 
 export class App {

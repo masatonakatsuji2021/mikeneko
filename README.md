@@ -44,10 +44,12 @@ The actual test sample deployment results are as follows:
         L resource
     L src_android
         ...
-    L index.js
     L init.d.ts
+    L package.json
     L tsconfig.json
 ```
+
+For the structure of each directory, [see here](#structure).
 
 ---
 
@@ -117,3 +119,74 @@ index.html      index.js
 After that, just move this build data to the deployment location.
 
 ---
+
+<div id="structure"></div>
+
+## # Structure
+
+For an explanation of each file and directory area, see below.  
+For the terms used in each directory, see [Terminology](#term).
+
+|name|explanation|
+|:--|:--|
+|output|Build output directory.<br>Generated automatically after the build is executed.|
+|src|Source Code directory.|
+| - app|Script source directory|
+| -  -  config|Directory for various setting classes. [Explanation here](#config)|
+| -  - controller|Controller placement directory. [Explanation here](#controller)|
+| - -  view|View class directory.[Explanation here](#view)|
+| - rendering|Rendering HTML placement directory|
+| - - template|Directory for placing template HTML. [Explanation here](#template)|
+| - - view|Directory for placing HTML for View. [Explanation here](#view_html)|
+| - - viewpart|Directory for placing HTML for ViewPart. [Explanation here](#viewpart)|
+|〜resource|Directory for placing resource contents. [Explanation here](#resource)|
+|src_{platform_name}|Platform-specific source code directories<br>If you want to place or change code information at build time for each platform, add it here.|
+|init.d.ts|Type definition file for TypeScript|
+|package.json|Build setting json.  [Explanation here](#package.json)|
+|tsconfig.json|TypeScript transpilation configuration json|
+
+<div id="config"></div>
+
+### : Config (App Class)
+
+<div id="controller"></div>
+
+### : Controller (Class)
+
+
+
+<div id="view"></div>
+
+### : View (Class)
+
+
+<div id="temlate"></div>
+
+### : Template (HTML)
+
+<div id="view_html"></div>
+
+### : View (HTML)
+
+
+<div id="viewpart"></div>
+
+### : ViewPart (HTML)
+
+
+<div id="resource"></div>
+
+### : Resource
+
+
+<div id="package.json"></div>
+
+### : package.json
+
+
+
+<a id="term">
+
+## # Terminology
+
+### : 

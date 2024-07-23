@@ -10,11 +10,12 @@ export class Background {
         // background class method load.
        if(MyApp.backgrounds){
            for(let n = 0 ; n < MyApp.backgrounds.length ; n++){
-               const backgroundName = Util.getModulePath(MyApp.backgrounds[n]);
-               const backgroundPath : string = "app/background/" + backgroundName;
-               if(!useExists(backgroundPath)) continue;
-               const bg : Background = use(backgroundPath);
-               await bg.handle();
+                const backgroundName = Util.getModulePath(MyApp.backgrounds[n]);
+                const backgroundPath : string = "app/background/" + backgroundName;
+                if(!useExists(backgroundPath)) continue;
+                const background : typeof Background = use(backgroundPath);
+                const bg : Background = new background[backgroundName]();
+                await bg.handle();
            }
        }
    }

@@ -22,7 +22,8 @@ class Background {
                     const backgroundPath = "app/background/" + backgroundName;
                     if (!useExists(backgroundPath))
                         continue;
-                    const bg = use(backgroundPath);
+                    const background = use(backgroundPath);
+                    const bg = new background[backgroundName]();
                     yield bg.handle();
                 }
             }

@@ -43,7 +43,7 @@ var Background = /** @class */ (function () {
     }
     Background.load = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var MyApp, n, backgroundName, backgroundPath, bg;
+            var MyApp, n, backgroundName, backgroundPath, background, bg;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -57,7 +57,8 @@ var Background = /** @class */ (function () {
                         backgroundPath = "app/background/" + backgroundName;
                         if (!useExists(backgroundPath))
                             return [3 /*break*/, 3];
-                        bg = use(backgroundPath);
+                        background = use(backgroundPath);
+                        bg = new background[backgroundName]();
                         return [4 /*yield*/, bg.handle()];
                     case 2:
                         _a.sent();

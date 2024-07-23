@@ -46,6 +46,10 @@ export interface BuildPlatrom {
      */
     name? : string,
 
+    buildType? : "web" | "cordova" | "electron",
+
+    cordova? : BuildCordova,
+
     path?: string,
 
     outPath? : string,
@@ -69,6 +73,15 @@ export interface BuildPlatrom {
      * ***obfuscated*** : javascript obfuscate.
      */
     obfuscated? : boolean,
+}
+
+export interface BuildCordova {
+
+    devices? : Array<"android" | "ios">,
+
+    id? : string,
+
+    name? : string,
 }
 
 export class Builder {
@@ -178,7 +191,11 @@ export class Builder {
             fs.writeFileSync(platformDir + "/index.js", coreStr);
     
             console.log("# write index.html");
-            fs.writeFileSync(platformDir + "/index.html", "<!DOCTYPE html><head><script src=\"index.js\"></script></head><body></body></html>");
+            let indexHTML : string = "<!DOCTYPE html><head><meta charset=\"UTF-8\"><script src=\"index.js\"></script></head><body></body></html>";
+            if (platform.buildType == "cordova") {
+                indexHTML =  "<!DOCTYPE html><head><meta charset=\"UTF-8\"><script src=\"cordova.js\"></script><script src=\"index.js\"></script></head><body></body></html>";
+            }
+            fs.writeFileSync(platformDir + "/index.html", indexHTML);
     
             console.log("# ........ platform = " + platform.name + " ok");
 
