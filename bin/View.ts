@@ -125,4 +125,11 @@ export class View {
      */
     handleLeave() : void{}
 
+    public handleTemplateChanged() : void{}
+
+    public handleHeadChanged() : void{}
+
+    public handleHeaderChanged() : void{}
+
+    public handleFooterChanged() : void{}
 }

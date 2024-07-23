@@ -110,4 +110,12 @@ export class Controller {
      * @param {string} action before access controller action name
      */
     handleLeave(action? : string){}
+
+    public handleTemplateChanged() : void{}
+
+    public handleHeadChanged() : void{}
+
+    public handleHeaderChanged() : void{}
+
+    public handleFooterChanged() : void{}
 }

@@ -188,6 +188,7 @@ export class Response {
                 Data.set("beforeTemplate", context.template);
                 const templateHtml = Response.template(context.template);
                 Dom("body").html = templateHtml;
+                if (context.handleTemplateChanged) await context.handleTemplateChanged();
 //                await Response.loadRenderingClass("Template", context.template);
             }
             const viewHtml = Response.view(context.view);
@@ -205,6 +206,7 @@ export class Response {
             if (context.head){
                 const headHtml =  Response.viewPart(context.head);
                 Dom("head").html = headHtml;
+                if (context.handleHeadChanged) await context.handleHeadChanged();
             }
         }
 
@@ -214,6 +216,7 @@ export class Response {
             if (context.header){
                 const headerHtml =  Response.viewPart(context.header);
                 Dom("header").html = headerHtml;
+                if (context.handleHeaderChanged) await context.handleHeaderChanged();
             }
         }
 
@@ -223,6 +226,7 @@ export class Response {
             if (context.footer){
                 const foooterHtml =  Response.viewPart(context.footer);
                 Dom("footer").html = foooterHtml;
+                if (context.handleFooterChanged) await context.handleFooterChanged();
             }
         }
 
