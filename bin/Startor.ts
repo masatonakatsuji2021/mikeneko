@@ -1,3 +1,4 @@
+import { App, AppRouteType } from "App";
 import { Routes, Route, DecisionRoute  } from "Routes";
 import { Util } from "Util";
 import { Data } from "Data";
@@ -7,18 +8,31 @@ import { Shortcode } from "Shortcode";
 
 export class Startor {
 
+    private MyApp : typeof App;
+
     public constructor() {
+
+        const MyApp = require("app/config/App");
+        if (!MyApp){
+            throw Error("App Class is not found.");
+        }
+        if (!MyApp.MyApp) {
+            throw Error("App Class is not found.")
+        }
+
+        this.MyApp = MyApp.MyApp;
 
         this.setShortcode();
 
         (async ()=>{
             window.addEventListener("click", (e: MouseEvent) => {
-                this.cliekHandleDelegate(e);
+                return this.cliekHandleDelegate(e);
             });
             window.addEventListener("popstate", async (e : PopStateEvent) => {
                 await this.popStateHandleDelegate(e);
             });
         
+            if (this.MyApp.routeType == AppRouteType.application) Data.push("history", "/");
             await Background.load();
     
             var route : DecisionRoute = Routes.searchRoute();
@@ -27,16 +41,36 @@ export class Startor {
     }
 
     private cliekHandleDelegate(e : MouseEvent){
-        const target : EventTarget = e.target;
         // @ts-ignore
-        if(target.localName !== "a") return;
+        let target : HTMLElement = e.target;
+        for (let n = 0 ; n < 10; n++) {
+            if(!target.tagName) return;
+            if (target.tagName == "A") break;
+            // @ts-ignore
+            target = target.parentNode;
+        }
 
         // @ts-ignore
-        const href = target.getAttribute("href");
+        let href = target.getAttribute("href");
         if(!href) return;
         if(href.indexOf("#") !== 0) return;
+        href = href.substring(1);
 
-        Data.set("stepMode",  true);
+        if (this.MyApp.routeType == AppRouteType.application) {
+            e.preventDefault();
+            Data.push("history", href);
+
+            const route : Route = Routes.searchRoute(href);
+            Response.rendering(route).then(()=>{
+                Data.set("stepMode", false);
+            });
+
+            return false;
+        }
+        else {
+            Data.set("stepMode",  true);
+            return true;
+        }
     }
 
     private async popStateHandleDelegate(e : PopStateEvent){

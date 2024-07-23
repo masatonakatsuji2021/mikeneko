@@ -37,6 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Response = void 0;
+var App_1 = require("App");
 var Routes_1 = require("Routes");
 var Util_1 = require("Util");
 var Data_1 = require("Data");
@@ -45,6 +46,23 @@ var Shortcode_1 = require("Shortcode");
 var Response = /** @class */ (function () {
     function Response() {
     }
+    Response.back = function () {
+        var MyApp = require("app/config/App").MyApp;
+        if (MyApp.routeType == App_1.AppRouteType.application) {
+            console.log(Data_1.Data.get("history"));
+            if (Data_1.Data.getLength("history") == 1)
+                return;
+            Data_1.Data.pop("history");
+            var backUrl = Data_1.Data.now("history");
+            var route = Routes_1.Routes.searchRoute(backUrl);
+            Response.rendering(route).then(function () {
+                Data_1.Data.set("stepMode", false);
+            });
+        }
+        else if (MyApp.routeType == App_1.AppRouteType.web) {
+            history.back();
+        }
+    };
     Response.rendering = function (route) {
         return __awaiter(this, void 0, void 0, function () {
             var befCont, befView, error_1;

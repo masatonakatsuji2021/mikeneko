@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.string = exports.Startor = void 0;
+const App_1 = require("App");
 const Routes_1 = require("Routes");
 const Util_1 = require("Util");
 const Data_1 = require("Data");
@@ -18,31 +19,60 @@ const Response_1 = require("Response");
 const Shortcode_1 = require("Shortcode");
 class Startor {
     constructor() {
+        const MyApp = require("app/config/App");
+        if (!MyApp) {
+            throw Error("App Class is not found.");
+        }
+        if (!MyApp.MyApp) {
+            throw Error("App Class is not found.");
+        }
+        this.MyApp = MyApp.MyApp;
         this.setShortcode();
         (() => __awaiter(this, void 0, void 0, function* () {
             window.addEventListener("click", (e) => {
-                this.cliekHandleDelegate(e);
+                return this.cliekHandleDelegate(e);
             });
             window.addEventListener("popstate", (e) => __awaiter(this, void 0, void 0, function* () {
                 yield this.popStateHandleDelegate(e);
             }));
+            if (this.MyApp.routeType == App_1.AppRouteType.application)
+                Data_1.Data.push("history", "/");
             yield Background_1.Background.load();
             var route = Routes_1.Routes.searchRoute();
             Response_1.Response.rendering(route);
         }))();
     }
     cliekHandleDelegate(e) {
-        const target = e.target;
         // @ts-ignore
-        if (target.localName !== "a")
-            return;
+        let target = e.target;
+        for (let n = 0; n < 10; n++) {
+            if (!target.tagName)
+                return;
+            if (target.tagName == "A")
+                break;
+            // @ts-ignore
+            target = target.parentNode;
+        }
         // @ts-ignore
-        const href = target.getAttribute("href");
+        let href = target.getAttribute("href");
         if (!href)
             return;
         if (href.indexOf("#") !== 0)
             return;
-        Data_1.Data.set("stepMode", true);
+        href = href.substring(1);
+        if (this.MyApp.routeType == "application") {
+            e.preventDefault();
+            Data_1.Data.push("history", href);
+            const route = Routes_1.Routes.searchRoute(href);
+            Response_1.Response.rendering(route).then(() => {
+                Data_1.Data.set("stepMode", false);
+            });
+            return false;
+        }
+        else {
+            Data_1.Data.set("stepMode", true);
+            return true;
+        }
     }
     popStateHandleDelegate(e) {
         return __awaiter(this, void 0, void 0, function* () {

@@ -10,12 +10,30 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Response = void 0;
+const App_1 = require("App");
 const Routes_1 = require("Routes");
 const Util_1 = require("Util");
 const Data_1 = require("Data");
 const Dom_1 = require("Dom");
 const Shortcode_1 = require("Shortcode");
 class Response {
+    static back() {
+        const MyApp = require("app/config/App").MyApp;
+        if (MyApp.routeType == App_1.AppRouteType.application) {
+            console.log(Data_1.Data.get("history"));
+            if (Data_1.Data.getLength("history") == 1)
+                return;
+            Data_1.Data.pop("history");
+            const backUrl = Data_1.Data.now("history");
+            const route = Routes_1.Routes.searchRoute(backUrl);
+            Response.rendering(route).then(() => {
+                Data_1.Data.set("stepMode", false);
+            });
+        }
+        else if (MyApp.routeType == App_1.AppRouteType.web) {
+            history.back();
+        }
+    }
     static rendering(route) {
         return __awaiter(this, void 0, void 0, function* () {
             try {

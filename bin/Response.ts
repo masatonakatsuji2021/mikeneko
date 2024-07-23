@@ -1,4 +1,5 @@
-import { DecisionRoute, DecisionRouteMode } from "Routes";
+import { App, AppRouteType } from "App";
+import { Routes, Route, DecisionRoute, DecisionRouteMode } from "Routes";
 import { Util } from "Util";
 import { Data } from "Data";
 import { Controller } from "Controller";
@@ -7,6 +8,23 @@ import { Dom, VDom } from "Dom";
 import { Shortcode } from "Shortcode";
 
 export class Response {
+
+    public static back() {
+        const MyApp : typeof App = require("app/config/App").MyApp;
+        if (MyApp.routeType == AppRouteType.application) {
+            if (Data.getLength("history") == 1) return;
+            Data.pop("history");
+            const backUrl= Data.now("history");
+            
+            const route : Route = Routes.searchRoute(backUrl);
+            Response.rendering(route).then(()=>{
+                Data.set("stepMode", false);
+            });
+        }
+        else if (MyApp.routeType == AppRouteType.web ) {
+            history.back();
+        }
+    }
 
     public static async rendering (route: DecisionRoute) {
 

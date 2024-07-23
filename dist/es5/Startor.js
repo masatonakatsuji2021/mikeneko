@@ -37,6 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.string = exports.Startor = void 0;
+var App_1 = require("App");
 var Routes_1 = require("Routes");
 var Util_1 = require("Util");
 var Data_1 = require("Data");
@@ -46,6 +47,14 @@ var Shortcode_1 = require("Shortcode");
 var Startor = /** @class */ (function () {
     function Startor() {
         var _this = this;
+        var MyApp = require("app/config/App");
+        if (!MyApp) {
+            throw Error("App Class is not found.");
+        }
+        if (!MyApp.MyApp) {
+            throw Error("App Class is not found.");
+        }
+        this.MyApp = MyApp.MyApp;
         this.setShortcode();
         (function () { return __awaiter(_this, void 0, void 0, function () {
             var route;
@@ -54,7 +63,7 @@ var Startor = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         window.addEventListener("click", function (e) {
-                            _this.cliekHandleDelegate(e);
+                            return _this.cliekHandleDelegate(e);
                         });
                         window.addEventListener("popstate", function (e) { return __awaiter(_this, void 0, void 0, function () {
                             return __generator(this, function (_a) {
@@ -66,6 +75,8 @@ var Startor = /** @class */ (function () {
                                 }
                             });
                         }); });
+                        if (this.MyApp.routeType == App_1.AppRouteType.application)
+                            Data_1.Data.push("history", "/");
                         return [4 /*yield*/, Background_1.Background.load()];
                     case 1:
                         _a.sent();
@@ -77,17 +88,36 @@ var Startor = /** @class */ (function () {
         }); })();
     }
     Startor.prototype.cliekHandleDelegate = function (e) {
-        var target = e.target;
         // @ts-ignore
-        if (target.localName !== "a")
-            return;
+        var target = e.target;
+        for (var n = 0; n < 10; n++) {
+            if (!target.tagName)
+                return;
+            if (target.tagName == "A")
+                break;
+            // @ts-ignore
+            target = target.parentNode;
+        }
         // @ts-ignore
         var href = target.getAttribute("href");
         if (!href)
             return;
         if (href.indexOf("#") !== 0)
             return;
-        Data_1.Data.set("stepMode", true);
+        href = href.substring(1);
+        if (this.MyApp.routeType == "application") {
+            e.preventDefault();
+            Data_1.Data.push("history", href);
+            var route = Routes_1.Routes.searchRoute(href);
+            Response_1.Response.rendering(route).then(function () {
+                Data_1.Data.set("stepMode", false);
+            });
+            return false;
+        }
+        else {
+            Data_1.Data.set("stepMode", true);
+            return true;
+        }
     };
     Startor.prototype.popStateHandleDelegate = function (e) {
         return __awaiter(this, void 0, void 0, function () {
