@@ -238,7 +238,7 @@ The available core library classes are:
 The App class is the initial setting class for the project.  
 Specify the routing for each screen and the Background class to be used.
 
-The App class is written in the project source ``src/app/config/App.ts`` with the following code.  
+The App class is written in the project source ``src/app/config/App.ts`` with the following code.   
 (Make sure to name the class ``MyApp``)
 
 ```typescript
@@ -282,9 +282,12 @@ public static appName : string = "Saiberian App";
  Method for page transition.  
 
 
- -  **web** : Change the browser URL and move to the page. You can go back by pressing the back button on the browser.  <br>It is mainly intended to be used in a web browser.
- * **application*** : In this mode, the history of screen actions is stored internally, so you cannot press the back button on the browser.
-To go back to the previous screen, you need to add a button event and use ``Response.back()`` to go back to the previous screen.<br>
+ -  **web** : Change the browser URL and move to the page.   
+ You can go back by pressing the back button on the browser.    
+ It is mainly intended to be used in a web browser.
+ * **application*** : In this mode, the history of screen actions is stored internally,   
+so you cannot press the back button on the browser.  
+To go back to the previous screen, you need to add a button event and use ``Response.back()`` to go back to the previous screen.  
 This mode is for Android/iOS/Windows apps.
 
 ```typescript
@@ -338,11 +341,55 @@ public static sessionStorage : string = "sab_ss";
 
 <div id="background"></div>
 
-### : Background Class
+#### :: Background Class
 
 <div id="controller"></div>
 
 ### : Controller Class
+
+<div id="data"></div>
+
+### : Data Class
+
+<div id="exception"></div>
+
+### : Exception Class
+
+<div id="keyevent"></div>
+
+### : KeyEvent Class
+
+<div id="modernjs"></div>
+
+### : ModernJS Class
+
+<div id="response"></div>
+
+### : Response Class
+
+<div id="routes"></div>
+
+### : Routes Class
+
+<div id="shortcode"></div>
+
+### : Shortcode Class
+
+<div id="storage"></div>
+
+### : Storage Class
+
+<div id="template"></div>
+
+### : Template Class
+
+<div id="view"></div>
+
+### : View Class
+
+<div id="viewpart"></div>
+
+### : ViewPart Class
 
 
 <div id="term"></div>
