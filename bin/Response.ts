@@ -66,11 +66,16 @@ export class Response {
 
         const viewName = route.action + "View";
         const viewPath : string = "app/view/" + route.controller + "/" + Util.getModulePath(viewName);
-        
+
         let vw : View; 
         if(useExists(viewPath)){
             const View_ = use(viewPath);
-            vw = new View_();
+            if (!View_[Util.getModuleName(viewName)]) {
+                console.error("[WARM] \"" + Util.getModuleName(viewName) + "\"View Class not exists.");
+            }
+            else {
+                vw = new View_[Util.getModuleName(viewName)]();
+            }
         }
 
         let beginStatus = false;
@@ -100,9 +105,7 @@ export class Response {
 
         await cont.handleAfter(beginStatus);
         if(vw) await vw.handleAfter(beginStatus);
-        console.log("rendring ready?");
         await Response.__rendering(route, cont);
-        console.log("rendring?");
 
         await cont.handleRenderBefore(beginStatus);
         if(vw) await vw.handleRenderBefore(beginStatus);

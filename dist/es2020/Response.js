@@ -60,7 +60,12 @@ class Response {
         let vw;
         if (useExists(viewPath)) {
             const View_ = use(viewPath);
-            vw = new View_();
+            if (!View_[Util_1.Util.getModuleName(viewName)]) {
+                console.error("[WARM] \"" + Util_1.Util.getModuleName(viewName) + "\"View Class not exists.");
+            }
+            else {
+                vw = new View_[Util_1.Util.getModuleName(viewName)]();
+            }
         }
         let beginStatus = false;
         if (Data_1.Data.get("beforeControllerPath") != controllerPath) {
@@ -87,9 +92,7 @@ class Response {
         await cont.handleAfter(beginStatus);
         if (vw)
             await vw.handleAfter(beginStatus);
-        console.log("rendring ready?");
         await Response.__rendering(route, cont);
-        console.log("rendring?");
         await cont.handleRenderBefore(beginStatus);
         if (vw)
             await vw.handleRenderBefore(beginStatus);

@@ -123,7 +123,12 @@ var Response = /** @class */ (function () {
                         viewPath = "app/view/" + route.controller + "/" + Util_1.Util.getModulePath(viewName);
                         if (useExists(viewPath)) {
                             View_ = use(viewPath);
-                            vw = new View_();
+                            if (!View_[Util_1.Util.getModuleName(viewName)]) {
+                                console.error("[WARM] \"" + Util_1.Util.getModuleName(viewName) + "\"View Class not exists.");
+                            }
+                            else {
+                                vw = new View_[Util_1.Util.getModuleName(viewName)]();
+                            }
                         }
                         beginStatus = false;
                         if (Data_1.Data.get("beforeControllerPath") != controllerPath) {
@@ -163,12 +168,9 @@ var Response = /** @class */ (function () {
                     case 9:
                         _a.sent();
                         _a.label = 10;
-                    case 10:
-                        console.log("rendring ready?");
-                        return [4 /*yield*/, Response.__rendering(route, cont)];
+                    case 10: return [4 /*yield*/, Response.__rendering(route, cont)];
                     case 11:
                         _a.sent();
-                        console.log("rendring?");
                         return [4 /*yield*/, cont.handleRenderBefore(beginStatus)];
                     case 12:
                         _a.sent();
