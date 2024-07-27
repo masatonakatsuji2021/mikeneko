@@ -141,11 +141,12 @@ export class Builder {
 
             // core module mount
             const coreList : Array<string> = [
+                "Ajax",
                 "App", 
                 "Background", 
                 "Controller", 
                 "Data", 
-                "Dom", 
+                "ModernJS",
                 "Exception", 
                 "KeyEvent", 
                 "Response", 

@@ -5,6 +5,10 @@ const Routes_1 = require("Routes");
 const Response_1 = require("Response");
 class Controller {
     /**
+     * ***mjs**** : Virtual DOM List of ModernJS Classes.
+     */
+    mjs;
+    /**
      * ***view*** : Change the view name to be displayed.
      * If not specified, the "rendering/View/{ControllerName}/{ActionName}.html" file will be displayed as the HTML source by default.
      */
@@ -97,5 +101,9 @@ class Controller {
      * @param {string} action before access controller action name
      */
     handleLeave(action) { }
+    handleTemplateChanged() { }
+    handleHeadChanged() { }
+    handleHeaderChanged() { }
+    handleFooterChanged() { }
 }
 exports.Controller = Controller;

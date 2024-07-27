@@ -63,11 +63,12 @@ class Builder {
             this.jsStart(codeList, tsType, platform.name, debug);
             // core module mount
             const coreList = [
+                "Ajax",
                 "App",
                 "Background",
                 "Controller",
                 "Data",
-                "Dom",
+                "ModernJS",
                 "Exception",
                 "KeyEvent",
                 "Response",

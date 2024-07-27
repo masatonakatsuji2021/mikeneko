@@ -5,13 +5,12 @@ const App_1 = require("App");
 const Routes_1 = require("Routes");
 const Util_1 = require("Util");
 const Data_1 = require("Data");
-const Dom_1 = require("Dom");
+const ModernJS_1 = require("ModernJS");
 const Shortcode_1 = require("Shortcode");
 class Response {
     static back() {
         const MyApp = require("app/config/App").MyApp;
         if (MyApp.routeType == App_1.AppRouteType.application) {
-            console.log(Data_1.Data.get("history"));
             if (Data_1.Data.getLength("history") == 1)
                 return;
             Data_1.Data.pop("history");
@@ -159,23 +158,31 @@ class Response {
             if (beforeTemplate != context.template) {
                 Data_1.Data.set("beforeTemplate", context.template);
                 const templateHtml = Response.template(context.template);
-                (0, Dom_1.Dom)("body").html = templateHtml;
+                (0, ModernJS_1.dom)("body").html = templateHtml;
+                context.mjs = ModernJS_1.ModernJS.reload();
+                if (context.handleTemplateChanged)
+                    await context.handleTemplateChanged();
                 //                await Response.loadRenderingClass("Template", context.template);
             }
             const viewHtml = Response.view(context.view);
-            (0, Dom_1.Dom)("content").html = viewHtml;
+            (0, ModernJS_1.dom)("content").html = viewHtml;
+            context.mjs = ModernJS_1.ModernJS.reload();
         }
         else {
             Data_1.Data.set("beforeTemplate", null);
             const viewHtml = Response.view(context.view);
-            (0, Dom_1.Dom)("body").html = viewHtml;
+            (0, ModernJS_1.dom)("body").html = viewHtml;
+            context.mjs = ModernJS_1.ModernJS.reload();
         }
         const beforeHead = Data_1.Data.get("beforeHead");
         if (beforeHead != context.head) {
             Data_1.Data.set("beforeHead", context.head);
             if (context.head) {
                 const headHtml = Response.viewPart(context.head);
-                (0, Dom_1.Dom)("head").html = headHtml;
+                (0, ModernJS_1.dom)("head").html = headHtml;
+                context.mjs = ModernJS_1.ModernJS.reload();
+                if (context.handleHeadChanged)
+                    await context.handleHeadChanged();
             }
         }
         const beforeHeader = Data_1.Data.get("beforeHeader");
@@ -183,7 +190,10 @@ class Response {
             Data_1.Data.set("beforeHeader", context.header);
             if (context.header) {
                 const headerHtml = Response.viewPart(context.header);
-                (0, Dom_1.Dom)("header").html = headerHtml;
+                (0, ModernJS_1.dom)("header").html = headerHtml;
+                context.mjs = ModernJS_1.ModernJS.reload();
+                if (context.handleHeaderChanged)
+                    await context.handleHeaderChanged();
             }
         }
         const beforeFooter = Data_1.Data.get("beforeFooter");
@@ -191,13 +201,12 @@ class Response {
             Data_1.Data.set("beforeFooter", context.footer);
             if (context.footer) {
                 const foooterHtml = Response.viewPart(context.footer);
-                (0, Dom_1.Dom)("footer").html = foooterHtml;
+                (0, ModernJS_1.dom)("footer").html = foooterHtml;
+                context.mjs = ModernJS_1.ModernJS.reload();
+                if (context.handleFooterChanged)
+                    await context.handleFooterChanged();
             }
         }
-        //      Response.setBindView();
-        //        Response.setBindTemplate();
-        //      Response.setBindViewPart();
-        (0, Dom_1.VDom)().refresh();
     }
     /**
      * ***renderHtml** : Get Rendering HTML content information.

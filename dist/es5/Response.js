@@ -41,7 +41,7 @@ var App_1 = require("App");
 var Routes_1 = require("Routes");
 var Util_1 = require("Util");
 var Data_1 = require("Data");
-var Dom_1 = require("Dom");
+var ModernJS_1 = require("ModernJS");
 var Shortcode_1 = require("Shortcode");
 var Response = /** @class */ (function () {
     function Response() {
@@ -49,7 +49,6 @@ var Response = /** @class */ (function () {
     Response.back = function () {
         var MyApp = require("app/config/App").MyApp;
         if (MyApp.routeType == App_1.AppRouteType.application) {
-            console.log(Data_1.Data.get("history"));
             if (Data_1.Data.getLength("history") == 1)
                 return;
             Data_1.Data.pop("history");
@@ -273,59 +272,80 @@ var Response = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             var beforeTemplate, templateHtml, viewHtml, viewHtml, beforeHead, headHtml, beforeHeader, headerHtml, beforeFooter, foooterHtml;
             return __generator(this, function (_a) {
-                if (!context.view) {
-                    if (route.controller) {
-                        context.view = route.controller + "/" + route.action;
-                    }
-                    else if (route.view) {
-                        context.view = route.view;
-                    }
-                }
-                if (context.template) {
-                    beforeTemplate = Data_1.Data.get("beforeTemplate");
-                    if (beforeTemplate != context.template) {
+                switch (_a.label) {
+                    case 0:
+                        if (!context.view) {
+                            if (route.controller) {
+                                context.view = route.controller + "/" + route.action;
+                            }
+                            else if (route.view) {
+                                context.view = route.view;
+                            }
+                        }
+                        if (!context.template) return [3 /*break*/, 3];
+                        beforeTemplate = Data_1.Data.get("beforeTemplate");
+                        if (!(beforeTemplate != context.template)) return [3 /*break*/, 2];
                         Data_1.Data.set("beforeTemplate", context.template);
                         templateHtml = Response.template(context.template);
-                        (0, Dom_1.Dom)("body").html = templateHtml;
-                        //                await Response.loadRenderingClass("Template", context.template);
-                    }
-                    viewHtml = Response.view(context.view);
-                    (0, Dom_1.Dom)("content").html = viewHtml;
-                }
-                else {
-                    Data_1.Data.set("beforeTemplate", null);
-                    viewHtml = Response.view(context.view);
-                    (0, Dom_1.Dom)("body").html = viewHtml;
-                }
-                beforeHead = Data_1.Data.get("beforeHead");
-                if (beforeHead != context.head) {
-                    Data_1.Data.set("beforeHead", context.head);
-                    if (context.head) {
+                        (0, ModernJS_1.dom)("body").html = templateHtml;
+                        context.mjs = ModernJS_1.ModernJS.reload();
+                        if (!context.handleTemplateChanged) return [3 /*break*/, 2];
+                        return [4 /*yield*/, context.handleTemplateChanged()];
+                    case 1:
+                        _a.sent();
+                        _a.label = 2;
+                    case 2:
+                        viewHtml = Response.view(context.view);
+                        (0, ModernJS_1.dom)("content").html = viewHtml;
+                        context.mjs = ModernJS_1.ModernJS.reload();
+                        return [3 /*break*/, 4];
+                    case 3:
+                        Data_1.Data.set("beforeTemplate", null);
+                        viewHtml = Response.view(context.view);
+                        (0, ModernJS_1.dom)("body").html = viewHtml;
+                        context.mjs = ModernJS_1.ModernJS.reload();
+                        _a.label = 4;
+                    case 4:
+                        beforeHead = Data_1.Data.get("beforeHead");
+                        if (!(beforeHead != context.head)) return [3 /*break*/, 6];
+                        Data_1.Data.set("beforeHead", context.head);
+                        if (!context.head) return [3 /*break*/, 6];
                         headHtml = Response.viewPart(context.head);
-                        (0, Dom_1.Dom)("head").html = headHtml;
-                    }
-                }
-                beforeHeader = Data_1.Data.get("beforeHeader");
-                if (beforeHeader != context.header) {
-                    Data_1.Data.set("beforeHeader", context.header);
-                    if (context.header) {
+                        (0, ModernJS_1.dom)("head").html = headHtml;
+                        context.mjs = ModernJS_1.ModernJS.reload();
+                        if (!context.handleHeadChanged) return [3 /*break*/, 6];
+                        return [4 /*yield*/, context.handleHeadChanged()];
+                    case 5:
+                        _a.sent();
+                        _a.label = 6;
+                    case 6:
+                        beforeHeader = Data_1.Data.get("beforeHeader");
+                        if (!(beforeHeader != context.header)) return [3 /*break*/, 8];
+                        Data_1.Data.set("beforeHeader", context.header);
+                        if (!context.header) return [3 /*break*/, 8];
                         headerHtml = Response.viewPart(context.header);
-                        (0, Dom_1.Dom)("header").html = headerHtml;
-                    }
-                }
-                beforeFooter = Data_1.Data.get("beforeFooter");
-                if (beforeFooter != context.footer) {
-                    Data_1.Data.set("beforeFooter", context.footer);
-                    if (context.footer) {
+                        (0, ModernJS_1.dom)("header").html = headerHtml;
+                        context.mjs = ModernJS_1.ModernJS.reload();
+                        if (!context.handleHeaderChanged) return [3 /*break*/, 8];
+                        return [4 /*yield*/, context.handleHeaderChanged()];
+                    case 7:
+                        _a.sent();
+                        _a.label = 8;
+                    case 8:
+                        beforeFooter = Data_1.Data.get("beforeFooter");
+                        if (!(beforeFooter != context.footer)) return [3 /*break*/, 10];
+                        Data_1.Data.set("beforeFooter", context.footer);
+                        if (!context.footer) return [3 /*break*/, 10];
                         foooterHtml = Response.viewPart(context.footer);
-                        (0, Dom_1.Dom)("footer").html = foooterHtml;
-                    }
+                        (0, ModernJS_1.dom)("footer").html = foooterHtml;
+                        context.mjs = ModernJS_1.ModernJS.reload();
+                        if (!context.handleFooterChanged) return [3 /*break*/, 10];
+                        return [4 /*yield*/, context.handleFooterChanged()];
+                    case 9:
+                        _a.sent();
+                        _a.label = 10;
+                    case 10: return [2 /*return*/];
                 }
-                //      Response.setBindView();
-                //        Response.setBindTemplate();
-                //      Response.setBindViewPart();
-                (0, Dom_1.VDom)().refresh();
-                return [2 /*return*/];
             });
         });
     };

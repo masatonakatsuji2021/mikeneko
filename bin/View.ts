@@ -1,7 +1,13 @@
 import { Routes } from "Routes";
 import { Response } from "Response";
+import { ModernJSList } from "ModernJS";
 
 export class View {
+
+    /**
+     * ***mjs**** : Virtual DOM List of ModernJS Classes.
+     */
+    public mjs : ModernJSList;
 
     /**
      * ***view*** : Change the view name to be displayed.  
@@ -88,42 +94,42 @@ export class View {
      * An event handler that runs automatically when the view is drawn on the screen.  
      * This event is executed only when rendered.
      */
-    handle(...aregment : Array<string>) : void{}
+    public handle(...aregment : Array<string>) : void{}
 
     /**
      * ***handleAlways*** : An event handler that runs automatically when the View is displayed on screen.  
      * This event is always executed even if the same View has already been rendered..
      */
-    handleAlways() : void{}
+    public handleAlways() : void{}
 
 
-    handleBegin() : void{}
+    public handleBegin() : void{}
 
     /**
      * ***handleBefore*** : Event handler executed just before transitioning to the page.
      */
-    handleBefore(beginStatus? : boolean) : void{}
+    public handleBefore(beginStatus? : boolean) : void{}
     
     /**
      * ***handleAfter*** : Event handler executed immediately after transitioning to the page
      */
-    handleAfter(beginStatus? : boolean) : void{}
+    public handleAfter(beginStatus? : boolean) : void{}
 
     /**
      * ***handleRenderBefore*** : Event handler executed immediately after page transition and rendering process to the screen is completed
      */
-    handleRenderBefore(beginStatus? : boolean) : void{}
+    public handleRenderBefore(beginStatus? : boolean) : void{}
 
     /**
      * ***handleRenderAfter*** : Event handler that is executed after page transition, after rendering process to the screen is completed, 
      * and after the event for each action is completed.
      */
-    handleRenderAfter(beginStatus? : boolean) :void{}
+    public handleRenderAfter(beginStatus? : boolean) :void{}
 
     /**
      * ***handleLeave*** : Event handler executed when leaving the page.
      */
-    handleLeave() : void{}
+    public handleLeave() : void{}
 
     public handleTemplateChanged() : void{}
 

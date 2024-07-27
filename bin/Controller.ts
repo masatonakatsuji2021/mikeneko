@@ -1,7 +1,13 @@
 import { Routes } from "Routes";
 import { Response } from "Response";
+import { ModernJSList } from "ModernJS";
 
 export class Controller {
+
+    /**
+     * ***mjs**** : Virtual DOM List of ModernJS Classes.
+     */
+    public mjs : ModernJSList;
 
     /**
      * ***view*** : Change the view name to be displayed.  
@@ -87,29 +93,29 @@ export class Controller {
     /**
      * ***handleBefore*** : Event handler executed just before transitioning to the page.
      */
-    handleBefore(beginStatus? : boolean) : void{ }
+    public handleBefore(beginStatus? : boolean) : void{ }
 
     /**
      * ***handleAfter*** : Event handler executed immediately after transitioning to the page
      */
-    handleAfter(beginStatus? : boolean) : void{}
+    public handleAfter(beginStatus? : boolean) : void{}
 
     /**
      * ***handleRenderBefore*** : Event handler executed immediately after page transition and rendering process to the screen is completed
      */
-    handleRenderBefore(beginStatus? : boolean) : void{}
+    public handleRenderBefore(beginStatus? : boolean) : void{}
 
     /**
      * ***handleRenderAfter*** : Event handler that is executed after page transition, after rendering process to the screen is completed, 
      * and after the event for each action is completed.
      */
-    handleRenderAfter(beginStatus? : boolean) : void{}
+    public handleRenderAfter(beginStatus? : boolean) : void{}
 
     /**
      * ***handleLeave*** : Event handler executed when leaving the page
      * @param {string} action before access controller action name
      */
-    handleLeave(action? : string){}
+    public handleLeave(action? : string){}
 
     public handleTemplateChanged() : void{}
 

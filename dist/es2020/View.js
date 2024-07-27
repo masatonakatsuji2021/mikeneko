@@ -97,5 +97,9 @@ class View {
      * ***handleLeave*** : Event handler executed when leaving the page.
      */
     handleLeave() { }
+    handleTemplateChanged() { }
+    handleHeadChanged() { }
+    handleHeaderChanged() { }
+    handleFooterChanged() { }
 }
 exports.View = View;

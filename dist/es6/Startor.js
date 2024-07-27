@@ -60,7 +60,7 @@ class Startor {
         if (href.indexOf("#") !== 0)
             return;
         href = href.substring(1);
-        if (this.MyApp.routeType == "application") {
+        if (this.MyApp.routeType == App_1.AppRouteType.application) {
             e.preventDefault();
             Data_1.Data.push("history", href);
             const route = Routes_1.Routes.searchRoute(href);

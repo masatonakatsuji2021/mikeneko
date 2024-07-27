@@ -4,7 +4,7 @@ import { Util } from "Util";
 import { Data } from "Data";
 import { Controller } from "Controller";
 import { View } from "View";
-import { Dom, VDom } from "Dom";
+import { ModernJS, dom} from "ModernJS";
 import { Shortcode } from "Shortcode";
 
 export class Response {
@@ -171,7 +171,7 @@ export class Response {
         await vm.handleRenderAfter();
     }
 
-    public static async __rendering(route : DecisionRoute, context){
+    public static async __rendering(route : DecisionRoute, context : Controller | View){
 
         if(!context.view){
             if(route.controller){
@@ -187,17 +187,20 @@ export class Response {
             if(beforeTemplate != context.template){
                 Data.set("beforeTemplate", context.template);
                 const templateHtml = Response.template(context.template);
-                Dom("body").html = templateHtml;
+                dom("body").html = templateHtml;
+                context.mjs = ModernJS.reload();
                 if (context.handleTemplateChanged) await context.handleTemplateChanged();
 //                await Response.loadRenderingClass("Template", context.template);
             }
             const viewHtml = Response.view(context.view);
-            Dom("content").html = viewHtml;    
+            dom("content").html = viewHtml;
+            context.mjs = ModernJS.reload();
         }
         else{
             Data.set("beforeTemplate", null);
             const viewHtml = Response.view(context.view);
-            Dom("body").html = viewHtml;
+            dom("body").html = viewHtml;
+            context.mjs = ModernJS.reload();
         }
 
         const beforeHead = Data.get("beforeHead");
@@ -205,7 +208,8 @@ export class Response {
             Data.set("beforeHead", context.head);
             if (context.head){
                 const headHtml =  Response.viewPart(context.head);
-                Dom("head").html = headHtml;
+                dom("head").html = headHtml;
+                context.mjs = ModernJS.reload();
                 if (context.handleHeadChanged) await context.handleHeadChanged();
             }
         }
@@ -215,7 +219,8 @@ export class Response {
             Data.set("beforeHeader", context.header);
             if (context.header){
                 const headerHtml =  Response.viewPart(context.header);
-                Dom("header").html = headerHtml;
+                dom("header").html = headerHtml;
+                context.mjs = ModernJS.reload();
                 if (context.handleHeaderChanged) await context.handleHeaderChanged();
             }
         }
@@ -225,16 +230,11 @@ export class Response {
             Data.set("beforeFooter", context.footer);
             if (context.footer){
                 const foooterHtml =  Response.viewPart(context.footer);
-                Dom("footer").html = foooterHtml;
+                dom("footer").html = foooterHtml;
+                context.mjs = ModernJS.reload();
                 if (context.handleFooterChanged) await context.handleFooterChanged();
             }
         }
-
-  //      Response.setBindView();
-//        Response.setBindTemplate();
-  //      Response.setBindViewPart();
-
-        VDom().refresh();
     }
 
     /**

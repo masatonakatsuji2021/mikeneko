@@ -87,6 +87,10 @@ var Controller = /** @class */ (function () {
      * @param {string} action before access controller action name
      */
     Controller.prototype.handleLeave = function (action) { };
+    Controller.prototype.handleTemplateChanged = function () { };
+    Controller.prototype.handleHeadChanged = function () { };
+    Controller.prototype.handleHeaderChanged = function () { };
+    Controller.prototype.handleFooterChanged = function () { };
     return Controller;
 }());
 exports.Controller = Controller;

@@ -5,6 +5,10 @@ const Routes_1 = require("Routes");
 const Response_1 = require("Response");
 class View {
     /**
+     * ***mjs**** : Virtual DOM List of ModernJS Classes.
+     */
+    mjs;
+    /**
      * ***view*** : Change the view name to be displayed.
      * If not specified, the "rendering/View/{viewName}.html" file will be displayed as the HTML source by default.
      */
@@ -107,5 +111,9 @@ class View {
      * ***handleLeave*** : Event handler executed when leaving the page.
      */
     handleLeave() { }
+    handleTemplateChanged() { }
+    handleHeadChanged() { }
+    handleHeaderChanged() { }
+    handleFooterChanged() { }
 }
 exports.View = View;

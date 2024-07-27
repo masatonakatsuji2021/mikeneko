@@ -87,5 +87,9 @@ class Controller {
      * @param {string} action before access controller action name
      */
     handleLeave(action) { }
+    handleTemplateChanged() { }
+    handleHeadChanged() { }
+    handleHeaderChanged() { }
+    handleFooterChanged() { }
 }
 exports.Controller = Controller;

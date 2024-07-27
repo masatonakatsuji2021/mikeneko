@@ -102,6 +102,10 @@ var View = /** @class */ (function () {
      * ***handleLeave*** : Event handler executed when leaving the page.
      */
     View.prototype.handleLeave = function () { };
+    View.prototype.handleTemplateChanged = function () { };
+    View.prototype.handleHeadChanged = function () { };
+    View.prototype.handleHeaderChanged = function () { };
+    View.prototype.handleFooterChanged = function () { };
     return View;
 }());
 exports.View = View;
