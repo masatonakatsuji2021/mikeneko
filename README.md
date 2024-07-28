@@ -846,15 +846,73 @@ export class Page1View extends View {
 
 #### :: Head tag settings
 
-comming soon ...
+By using the public variable ``head``, you can automatically set the rendering HTML of the ViewPart in the head tag.
+
+```typescript
+import { View } from "View";
+
+export class Page1View extends View {
+
+    public head : string = "head";
+
+    public handle() {
+        
+    }
+}
+```
+
+Specify the content of the head tag in ``src/rendering/viewpart/head.htm``l as shown below.
+
+```html
+<title>Application Title</title>
+<link rel="stylesheet" href="style.css">
+```
 
 #### :: Setting the heaerd tag
 
-comming soon ...
+By using the public variable ``header``, you can automatically set the rendering HTML of the ViewPart in the header tag.
+
+```typescript
+import { View } from "View";
+
+export class Page1View extends View {
+
+    public header : string = "header";
+
+    public handle() {
+        
+    }
+}
+```
+
+Specify the content of the header tag in ``src/rendering/viewpart/header.htm``l as shown below.
+
+```html
+<h1>Header Title</h1>
+```
 
 #### :: Setting the footer tag
 
-comming soon ...
+By using the public variable ``footer``, you can automatically set the rendering HTML of the ViewPart in the footer tag.
+
+```typescript
+import { View } from "View";
+
+export class Page1View extends View {
+
+    public footer : string = "footer";
+
+    public handle() {
+        
+    }
+}
+```
+
+Specify the content of the footer tag in ``src/rendering/viewpart/footer.htm``l as shown below.
+
+```html
+<p>(C) xxxxxxx 2024</p>
+```
 
 <div id="viewpart"></div>
 
