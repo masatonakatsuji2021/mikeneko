@@ -13,12 +13,12 @@ export class Shortcode {
     }
 
     public static analysis(codeString : string) : string {
-        const regex = /\[short (.*?)\]/g;
+        const regex = /\[short_(.*?)\]/g;
         const matchs = codeString.match(regex);
         if (!matchs) return codeString;
         matchs.forEach((match) => {
-            const match_ = match.substring("[short ".length, match.length -1);
-            const ms = match_.split(" ");
+            const match_ = match.substring("[short_".length, match.length -1);
+            const ms = match_.split(",");
             let name;
             let args = {};
             for (let n = 0 ; n < ms.length ; n++) {

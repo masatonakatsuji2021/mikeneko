@@ -198,8 +198,11 @@ class ModernJS {
         }
         return this;
     }
+    getStyle(name) {
+        return this.els[0].style[name];
+    }
     attr(name, value) {
-        if (value) {
+        if (value != undefined) {
             this.els.forEach((el) => {
                 el.attributes[name].value = value;
             });
@@ -231,7 +234,7 @@ class ModernJS {
         return this;
     }
     data(name, value) {
-        if (value) {
+        if (value != undefined) {
             this.datas[name] = value;
             return this;
         }

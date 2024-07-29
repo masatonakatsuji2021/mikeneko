@@ -309,9 +309,9 @@ var Response = /** @class */ (function () {
                         _a.label = 4;
                     case 4:
                         beforeHead = Data_1.Data.get("beforeHead");
-                        if (!(beforeHead != context.head)) return [3 /*break*/, 6];
+                        if (!(beforeHead != context.head)) return [3 /*break*/, 8];
                         Data_1.Data.set("beforeHead", context.head);
-                        if (!context.head) return [3 /*break*/, 6];
+                        if (!context.head) return [3 /*break*/, 7];
                         headHtml = Response.viewPart(context.head);
                         (0, ModernJS_1.dom)("head").html = headHtml;
                         context.mjs = ModernJS_1.ModernJS.reload();
@@ -320,33 +320,48 @@ var Response = /** @class */ (function () {
                     case 5:
                         _a.sent();
                         _a.label = 6;
-                    case 6:
+                    case 6: return [3 /*break*/, 8];
+                    case 7:
+                        (0, ModernJS_1.dom)("head").html = "";
+                        context.mjs = ModernJS_1.ModernJS.reload();
+                        _a.label = 8;
+                    case 8:
                         beforeHeader = Data_1.Data.get("beforeHeader");
-                        if (!(beforeHeader != context.header)) return [3 /*break*/, 8];
+                        if (!(beforeHeader != context.header)) return [3 /*break*/, 12];
                         Data_1.Data.set("beforeHeader", context.header);
-                        if (!context.header) return [3 /*break*/, 8];
+                        if (!context.header) return [3 /*break*/, 11];
                         headerHtml = Response.viewPart(context.header);
                         (0, ModernJS_1.dom)("header").html = headerHtml;
                         context.mjs = ModernJS_1.ModernJS.reload();
-                        if (!context.handleHeaderChanged) return [3 /*break*/, 8];
+                        if (!context.handleHeaderChanged) return [3 /*break*/, 10];
                         return [4 /*yield*/, context.handleHeaderChanged()];
-                    case 7:
-                        _a.sent();
-                        _a.label = 8;
-                    case 8:
-                        beforeFooter = Data_1.Data.get("beforeFooter");
-                        if (!(beforeFooter != context.footer)) return [3 /*break*/, 10];
-                        Data_1.Data.set("beforeFooter", context.footer);
-                        if (!context.footer) return [3 /*break*/, 10];
-                        foooterHtml = Response.viewPart(context.footer);
-                        (0, ModernJS_1.dom)("footer").html = foooterHtml;
-                        context.mjs = ModernJS_1.ModernJS.reload();
-                        if (!context.handleFooterChanged) return [3 /*break*/, 10];
-                        return [4 /*yield*/, context.handleFooterChanged()];
                     case 9:
                         _a.sent();
                         _a.label = 10;
-                    case 10: return [2 /*return*/];
+                    case 10: return [3 /*break*/, 12];
+                    case 11:
+                        (0, ModernJS_1.dom)("header").html = "";
+                        context.mjs = ModernJS_1.ModernJS.reload();
+                        _a.label = 12;
+                    case 12:
+                        beforeFooter = Data_1.Data.get("beforeFooter");
+                        if (!(beforeFooter != context.footer)) return [3 /*break*/, 16];
+                        Data_1.Data.set("beforeFooter", context.footer);
+                        if (!context.footer) return [3 /*break*/, 15];
+                        foooterHtml = Response.viewPart(context.footer);
+                        (0, ModernJS_1.dom)("footer").html = foooterHtml;
+                        context.mjs = ModernJS_1.ModernJS.reload();
+                        if (!context.handleFooterChanged) return [3 /*break*/, 14];
+                        return [4 /*yield*/, context.handleFooterChanged()];
+                    case 13:
+                        _a.sent();
+                        _a.label = 14;
+                    case 14: return [3 /*break*/, 16];
+                    case 15:
+                        (0, ModernJS_1.dom)("footer").html = "";
+                        context.mjs = ModernJS_1.ModernJS.reload();
+                        _a.label = 16;
+                    case 16: return [2 /*return*/];
                 }
             });
         });
@@ -363,8 +378,9 @@ var Response = /** @class */ (function () {
         }
         var content = use(renderPath);
         content = Util_1.Util.base64Decode(content);
-        content = this.renderConvert(content);
-        return content;
+        var vw = this.createElement(content);
+        this.renderConvert(vw);
+        return vw.innerHTML;
     };
     /**
      * *** view *** : Get View's content information.
@@ -378,8 +394,9 @@ var Response = /** @class */ (function () {
         }
         var content = use(viewPath);
         content = Util_1.Util.base64Decode(content);
-        content = this.renderConvert(content);
-        return content;
+        var vw = this.createElement(content);
+        this.renderConvert(vw);
+        return vw.innerHTML;
     };
     /**
      * ***template*** :
@@ -394,8 +411,9 @@ var Response = /** @class */ (function () {
         }
         var content = use(templatePath);
         content = Util_1.Util.base64Decode(content);
-        content = this.renderConvert(content);
-        return content;
+        var vw = this.createElement(content);
+        this.renderConvert(vw);
+        return vw.innerHTML;
     };
     /**
      * ***viewPart*** :
@@ -410,38 +428,39 @@ var Response = /** @class */ (function () {
         }
         var content = use(viewPartPath);
         content = Util_1.Util.base64Decode(content);
-        content = this.renderConvert(content);
-        var vw = document.createElement("template");
-        vw.innerHTML = content;
-        //        Response.setBindViewPart(vw);
+        var vw = this.createElement(content);
+        this.renderConvert(vw);
         return vw.innerHTML;
     };
+    Response.createElement = function (content) {
+        var tagName = "div";
+        if (content.indexOf("<tr") === 0 || content.indexOf("<td") === 0)
+            tagName = "tbody";
+        var newm = document.createElement(tagName);
+        newm.innerHTML = content;
+        return newm;
+    };
     Response.renderConvert = function (content) {
-        var contentDom = document.createElement("div");
-        contentDom.innerHTML = content;
         // link tag check...
-        var links = contentDom.querySelectorAll("link");
-        for (var n = 0; n < links.length; n++) {
-            var link = links[n];
-            var href = link.attributes["href"].value;
+        var links = content.querySelectorAll("link");
+        links.forEach(function (el) {
+            var href = el.attributes["href"].value;
             if (!Util_1.Util.existResource(href))
-                continue;
+                return;
             var resource = Util_1.Util.getResourceDataUrl(href);
-            link.setAttribute("href", resource);
-        }
+            el.setAttribute("href", resource);
+        });
         // image tag check...
-        var imgs = contentDom.querySelectorAll("img");
-        for (var n = 0; n < imgs.length; n++) {
-            var img = imgs[n];
-            var src = img.attributes["src"].value;
+        var imgs = content.querySelectorAll("img");
+        imgs.forEach(function (el) {
+            var src = el.attributes["src"].value;
             if (!Util_1.Util.existResource(src))
-                continue;
+                return;
             var resource = Util_1.Util.getResourceDataUrl(src);
-            img.setAttribute("src", resource);
-        }
+            el.setAttribute("src", resource);
+        });
         // shortcode analysis
-        contentDom.innerHTML = Shortcode_1.Shortcode.analysis(contentDom.innerHTML);
-        return contentDom.innerHTML;
+        content.innerHTML = Shortcode_1.Shortcode.analysis(content.innerHTML);
     };
     return Response;
 }());

@@ -232,8 +232,12 @@ export class ModernJS {
         return this;
     }
 
+    public getStyle(name: string) : string | number {
+        return this.els[0].style[name];
+    }
+
     public attr(name : string, value? : string | number) : string | ModernJS {
-        if (value) {
+        if (value != undefined) {
             this.els.forEach((el : HTMLElement) => {
                 el.attributes[name].value = value;
             });    
@@ -274,7 +278,7 @@ export class ModernJS {
     public data(name : string, value : any) : ModernJS;
 
     public data(name : string, value? : any) : any | ModernJS {
-        if (value) {
+        if (value != undefined) {
             this.datas[name] = value;
             return this;
         }

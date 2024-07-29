@@ -215,6 +215,10 @@ export class Response {
                 context.mjs = ModernJS.reload();
                 if (context.handleHeadChanged) await context.handleHeadChanged();
             }
+            else {
+                dom("head").html = "";
+                context.mjs = ModernJS.reload();
+            }
         }
 
         const beforeHeader = Data.get("beforeHeader");
@@ -226,6 +230,10 @@ export class Response {
                 context.mjs = ModernJS.reload();
                 if (context.handleHeaderChanged) await context.handleHeaderChanged();
             }
+            else {
+                dom("header").html = "";
+                context.mjs = ModernJS.reload();
+            }
         }
 
         const beforeFooter = Data.get("beforeFooter");
@@ -236,6 +244,10 @@ export class Response {
                 dom("footer").html = foooterHtml;
                 context.mjs = ModernJS.reload();
                 if (context.handleFooterChanged) await context.handleFooterChanged();
+            }
+            else {
+                dom("footer").html = "";
+                context.mjs = ModernJS.reload();
             }
         }
     }
@@ -254,9 +266,10 @@ export class Response {
         
         let content : string = use(renderPath);
         content = Util.base64Decode(content);
-        content = this.renderConvert(content);
+        let vw = this.createElement(content);
+        this.renderConvert(vw);
 
-        return content;
+        return vw.innerHTML;
     }
 
     /**
@@ -273,9 +286,10 @@ export class Response {
         
         let content : string = use(viewPath);
         content = Util.base64Decode(content);
-        content = this.renderConvert(content);
+        let vw = this.createElement(content);
+        this.renderConvert(vw);
 
-        return content;
+        return vw.innerHTML;
     }
 
     /**
@@ -294,9 +308,10 @@ export class Response {
 
         let content : string = use(templatePath);
         content = Util.base64Decode(content);
-        content = this.renderConvert(content);
+        let vw = this.createElement(content);
+        this.renderConvert(vw);
 
-        return content;
+        return vw.innerHTML;
     }
 
     /**
@@ -314,42 +329,40 @@ export class Response {
         
         let content = use(viewPartPath);
         content = Util.base64Decode(content);
-        content = this.renderConvert(content);
-        
-        const vw = document.createElement("template");
-        vw.innerHTML = content;
-//        Response.setBindViewPart(vw);
+        let vw = this.createElement(content);
+        this.renderConvert(vw);
     
         return vw.innerHTML;
     }
 
-    private static renderConvert(content : string) {
-        const contentDom = document.createElement("div");
-        contentDom.innerHTML = content;
+    private static createElement(content : string) : HTMLElement {
+        let tagName = "div";
+        if (content.indexOf("<tr") === 0 || content.indexOf("<td") === 0) tagName = "tbody";
+        const newm = document.createElement(tagName);
+        newm.innerHTML = content;
+        return newm;
+    }
 
+    private static renderConvert(content : HTMLElement) {
         // link tag check...
-        const links =contentDom.querySelectorAll("link");
-        for (let n = 0 ; n < links.length ; n++) {
-            const link = links[n];
-            const href = link.attributes["href"].value;
-            if (!Util.existResource(href)) continue;
+        const links =content.querySelectorAll("link");
+        links.forEach((el) => {
+            const href = el.attributes["href"].value;
+            if (!Util.existResource(href)) return;
             const resource = Util.getResourceDataUrl(href);
-            link.setAttribute("href", resource);
-        }
+            el.setAttribute("href", resource);
+        });
 
         // image tag check...
-        const imgs =contentDom.querySelectorAll("img");
-        for (let n = 0 ; n < imgs.length ; n++) {
-            const img = imgs[n];
-            const src = img.attributes["src"].value;
-            if (!Util.existResource(src)) continue;
+        const imgs =content.querySelectorAll("img");
+        imgs.forEach((el) => {
+            const src = el.attributes["src"].value;
+            if (!Util.existResource(src)) return;
             const resource = Util.getResourceDataUrl(src);
-            img.setAttribute("src", resource);
-        }
+            el.setAttribute("src", resource);
+        });
 
         // shortcode analysis
-        contentDom.innerHTML = Shortcode.analysis(contentDom.innerHTML);
-
-        return contentDom.innerHTML;
+        content.innerHTML = Shortcode.analysis(content.innerHTML);
     }
 }

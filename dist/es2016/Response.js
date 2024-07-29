@@ -203,6 +203,10 @@ class Response {
                     if (context.handleHeadChanged)
                         yield context.handleHeadChanged();
                 }
+                else {
+                    (0, ModernJS_1.dom)("head").html = "";
+                    context.mjs = ModernJS_1.ModernJS.reload();
+                }
             }
             const beforeHeader = Data_1.Data.get("beforeHeader");
             if (beforeHeader != context.header) {
@@ -214,6 +218,10 @@ class Response {
                     if (context.handleHeaderChanged)
                         yield context.handleHeaderChanged();
                 }
+                else {
+                    (0, ModernJS_1.dom)("header").html = "";
+                    context.mjs = ModernJS_1.ModernJS.reload();
+                }
             }
             const beforeFooter = Data_1.Data.get("beforeFooter");
             if (beforeFooter != context.footer) {
@@ -224,6 +232,10 @@ class Response {
                     context.mjs = ModernJS_1.ModernJS.reload();
                     if (context.handleFooterChanged)
                         yield context.handleFooterChanged();
+                }
+                else {
+                    (0, ModernJS_1.dom)("footer").html = "";
+                    context.mjs = ModernJS_1.ModernJS.reload();
                 }
             }
         });
@@ -240,8 +252,9 @@ class Response {
         }
         let content = use(renderPath);
         content = Util_1.Util.base64Decode(content);
-        content = this.renderConvert(content);
-        return content;
+        let vw = this.createElement(content);
+        this.renderConvert(vw);
+        return vw.innerHTML;
     }
     /**
      * *** view *** : Get View's content information.
@@ -255,8 +268,9 @@ class Response {
         }
         let content = use(viewPath);
         content = Util_1.Util.base64Decode(content);
-        content = this.renderConvert(content);
-        return content;
+        let vw = this.createElement(content);
+        this.renderConvert(vw);
+        return vw.innerHTML;
     }
     /**
      * ***template*** :
@@ -271,8 +285,9 @@ class Response {
         }
         let content = use(templatePath);
         content = Util_1.Util.base64Decode(content);
-        content = this.renderConvert(content);
-        return content;
+        let vw = this.createElement(content);
+        this.renderConvert(vw);
+        return vw.innerHTML;
     }
     /**
      * ***viewPart*** :
@@ -287,38 +302,39 @@ class Response {
         }
         let content = use(viewPartPath);
         content = Util_1.Util.base64Decode(content);
-        content = this.renderConvert(content);
-        const vw = document.createElement("template");
-        vw.innerHTML = content;
-        //        Response.setBindViewPart(vw);
+        let vw = this.createElement(content);
+        this.renderConvert(vw);
         return vw.innerHTML;
     }
+    static createElement(content) {
+        let tagName = "div";
+        if (content.indexOf("<tr") === 0 || content.indexOf("<td") === 0)
+            tagName = "tbody";
+        const newm = document.createElement(tagName);
+        newm.innerHTML = content;
+        return newm;
+    }
     static renderConvert(content) {
-        const contentDom = document.createElement("div");
-        contentDom.innerHTML = content;
         // link tag check...
-        const links = contentDom.querySelectorAll("link");
-        for (let n = 0; n < links.length; n++) {
-            const link = links[n];
-            const href = link.attributes["href"].value;
+        const links = content.querySelectorAll("link");
+        links.forEach((el) => {
+            const href = el.attributes["href"].value;
             if (!Util_1.Util.existResource(href))
-                continue;
+                return;
             const resource = Util_1.Util.getResourceDataUrl(href);
-            link.setAttribute("href", resource);
-        }
+            el.setAttribute("href", resource);
+        });
         // image tag check...
-        const imgs = contentDom.querySelectorAll("img");
-        for (let n = 0; n < imgs.length; n++) {
-            const img = imgs[n];
-            const src = img.attributes["src"].value;
+        const imgs = content.querySelectorAll("img");
+        imgs.forEach((el) => {
+            const src = el.attributes["src"].value;
             if (!Util_1.Util.existResource(src))
-                continue;
+                return;
             const resource = Util_1.Util.getResourceDataUrl(src);
-            img.setAttribute("src", resource);
-        }
+            el.setAttribute("src", resource);
+        });
         // shortcode analysis
-        contentDom.innerHTML = Shortcode_1.Shortcode.analysis(contentDom.innerHTML);
-        return contentDom.innerHTML;
+        content.innerHTML = Shortcode_1.Shortcode.analysis(content.innerHTML);
     }
 }
 exports.Response = Response;

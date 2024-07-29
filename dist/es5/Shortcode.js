@@ -12,13 +12,13 @@ var Shortcode = /** @class */ (function () {
     };
     Shortcode.analysis = function (codeString) {
         var _this = this;
-        var regex = /\[short (.*?)\]/g;
+        var regex = /\[short_(.*?)\]/g;
         var matchs = codeString.match(regex);
         if (!matchs)
             return codeString;
         matchs.forEach(function (match) {
-            var match_ = match.substring("[short ".length, match.length - 1);
-            var ms = match_.split(" ");
+            var match_ = match.substring("[short_".length, match.length - 1);
+            var ms = match_.split(",");
             var name;
             var args = {};
             for (var n = 0; n < ms.length; n++) {

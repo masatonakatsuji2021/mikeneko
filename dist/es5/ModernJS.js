@@ -240,8 +240,11 @@ var ModernJS = /** @class */ (function () {
         }
         return this;
     };
+    ModernJS.prototype.getStyle = function (name) {
+        return this.els[0].style[name];
+    };
     ModernJS.prototype.attr = function (name, value) {
-        if (value) {
+        if (value != undefined) {
             this.els.forEach(function (el) {
                 el.attributes[name].value = value;
             });
@@ -273,7 +276,7 @@ var ModernJS = /** @class */ (function () {
         return this;
     };
     ModernJS.prototype.data = function (name, value) {
-        if (value) {
+        if (value != undefined) {
             this.datas[name] = value;
             return this;
         }
