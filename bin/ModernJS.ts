@@ -91,15 +91,23 @@ export class ModernJS {
         });
     }
 
-    public reload() {
+    public reload(context? : ModernJS) {
         this.els.forEach((el : HTMLElement) => {
             const qss = el.querySelectorAll("[v-child]");
             qss.forEach((el2 : HTMLElement) => {
                 const vname = el2.attributes["v-child"].value;
                 el2.removeAttribute("v-child");
-                if (!this.childs[vname]) this.childs[vname] = new ModernJS();
-                this.childs[vname].parent = this;
-                this.childs[vname].addEl(el2);
+
+                if (context) {
+                    if (!context.childs[vname]) context.childs[vname] = new ModernJS();
+                    context.childs[vname].parent = this;
+                    context.childs[vname].addEl(el2);
+                }
+                else {
+                    if (!this.childs[vname]) this.childs[vname] = new ModernJS();
+                    this.childs[vname].parent = this;
+                    this.childs[vname].addEl(el2);    
+                }
             }) ;
         });
     }
@@ -123,6 +131,22 @@ export class ModernJS {
     public index(index: number) : ModernJS {
         const mjs = new ModernJS();
         mjs.addEl(this.els[index]);
+        return mjs;
+    }
+
+    public get prev() : ModernJS {
+        // @ts-ignore
+        const prevEl : HTMLElement = this.els[0].previousElementSibling;
+        const mjs = new ModernJS();
+        mjs.addEl(prevEl);
+        return mjs;
+    }
+
+    public get next() : ModernJS {
+        // @ts-ignore
+        const prevEl : HTMLElement = this.els[0].nextElementSibling;
+        const mjs = new ModernJS();
+        mjs.addEl(prevEl);
         return mjs;
     }
 
@@ -170,6 +194,13 @@ export class ModernJS {
             }
             else if (value instanceof ModernJS) {
                 el.append(value.els[0]);
+
+                const c = Object.keys(value.childs);
+                for (let n = 0 ; n < c.length ; n++) {
+                    const cname = c[n];
+                    const child = value.childs[cname];
+                    this.childs[cname] = child;
+                }
             }
         });
         ModernJS.reload();
@@ -205,6 +236,13 @@ export class ModernJS {
             }
             else if (value instanceof ModernJS) {
                 el.append(value.els[0]);
+
+                const c = Object.keys(value.childs);
+                for (let n = 0 ; n < c.length ; n++) {
+                    const cname = c[n];
+                    const child = value.childs[cname];
+                    this.childs[cname] = child;
+                }
             }
         });
         ModernJS.reload();
@@ -328,6 +366,14 @@ export class ModernJS {
 
     public set onMouseMove (listener : (event : Event, context: ModernJS )=>void) {
         this.on("mousemove", listener);
+    }
+
+    public dispatch(eventName : keyof HTMLElementEventMap) : ModernJS {
+        this.els.forEach((el : HTMLElement) => {
+            let event = new Event(eventName);
+            el.dispatchEvent(event);
+        });
+        return this;
     }
 
     public get value() : string | Array<string> {

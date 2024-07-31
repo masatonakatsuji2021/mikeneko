@@ -4,6 +4,7 @@ exports.View = void 0;
 const Routes_1 = require("Routes");
 const Response_1 = require("Response");
 class View {
+    myMjs;
     /**
      * ***mjs**** : Virtual DOM List of ModernJS Classes.
      */

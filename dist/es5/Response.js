@@ -62,6 +62,19 @@ var Response = /** @class */ (function () {
             history.back();
         }
     };
+    Response.next = function (url) {
+        var MyApp = require("app/config/App").MyApp;
+        if (MyApp.routeType == App_1.AppRouteType.application) {
+            Data_1.Data.push("history", url);
+            var route = Routes_1.Routes.searchRoute(url);
+            Response.rendering(route).then(function () {
+                Data_1.Data.set("stepMode", false);
+            });
+        }
+        else {
+            location.hash = "#" + url;
+        }
+    };
     Response.rendering = function (route) {
         return __awaiter(this, void 0, void 0, function () {
             var befCont, befView, error_1;
@@ -374,13 +387,14 @@ var Response = /** @class */ (function () {
     Response.renderHtml = function (renderName) {
         var renderPath = "rendering/" + renderName + ".html";
         if (!useExists(renderPath)) {
-            return "<div style=\"font-weight:bold;\">[Rendering ERROR] Rendering data does not exist. Check if source file \"" + renderPath + "\" exists.</div>";
+            console.error("[Rendering ERROR] Rendering data does not exist. Check if source file \"" + renderPath + "\" exists.");
+            return;
         }
         var content = use(renderPath);
         content = Util_1.Util.base64Decode(content);
-        var vw = this.createElement(content);
-        this.renderConvert(vw);
-        return vw.innerHTML;
+        content = this.renderConvert(content);
+        ;
+        return content;
     };
     /**
      * *** view *** : Get View's content information.
@@ -388,15 +402,12 @@ var Response = /** @class */ (function () {
      * @returns {string} view contents
      */
     Response.view = function (viewName) {
-        var viewPath = "rendering/view/" + viewName + ".html";
-        if (!useExists(viewPath)) {
-            return "<div style=\"font-weight:bold;\">[Rendering ERROR] View data does not exist. Check if source file \"" + viewPath + "\" exists.</div>";
-        }
-        var content = use(viewPath);
-        content = Util_1.Util.base64Decode(content);
-        var vw = this.createElement(content);
-        this.renderConvert(vw);
-        return vw.innerHTML;
+        return this.renderHtml("view/" + viewName);
+    };
+    Response.vindView = function (mjs, viewName) {
+        mjs.html = this.view(viewName);
+        mjs.reload();
+        return this.loadClass("View", viewName, mjs);
     };
     /**
      * ***template*** :
@@ -405,15 +416,12 @@ var Response = /** @class */ (function () {
      * @returns {string} template contents
      */
     Response.template = function (templateName) {
-        var templatePath = "rendering/template/" + templateName + ".html";
-        if (!useExists(templatePath)) {
-            return "<div style=\"font-weight:bold;\">[Rendering ERROR] Template data does not exist. Check if source file \"" + templatePath + "\" exists.</div>";
-        }
-        var content = use(templatePath);
-        content = Util_1.Util.base64Decode(content);
-        var vw = this.createElement(content);
-        this.renderConvert(vw);
-        return vw.innerHTML;
+        return this.renderHtml("template/" + templateName);
+    };
+    Response.bindTemplate = function (mjs, templateName) {
+        mjs.html = this.template(templateName);
+        mjs.reload();
+        return this.loadClass("Template", templateName, mjs);
     };
     /**
      * ***viewPart*** :
@@ -422,27 +430,42 @@ var Response = /** @class */ (function () {
      * @returns {string} viewPart contents
      */
     Response.viewPart = function (viewPartName) {
-        var viewPartPath = "rendering/viewpart/" + viewPartName + ".html";
-        if (!useExists(viewPartPath)) {
-            return "<div style=\"font-weight:bold;\">ViewPart data does not exist. Check if source file \"" + viewPartPath + "\" exists.</div>";
-        }
-        var content = use(viewPartPath);
-        content = Util_1.Util.base64Decode(content);
-        var vw = this.createElement(content);
-        this.renderConvert(vw);
-        return vw.innerHTML;
+        return this.renderHtml("viewpart/" + viewPartName);
     };
-    Response.createElement = function (content) {
+    Response.bindViewPart = function (mjs, viewPartName) {
+        mjs.html = this.view(viewPartName);
+        mjs.reload();
+        return this.loadClass("ViewPart", viewPartName, mjs);
+    };
+    Response.appendViewPart = function (mjs, viewPartName) {
+        mjs.append(this.view(viewPartName));
+        var myMjs = new ModernJS_1.ModernJS();
+        mjs.reload(myMjs);
+        return this.loadClass("ViewPart", viewPartName, myMjs);
+    };
+    Response.loadClass = function (classType, loadClassName, mjs) {
+        var className = Util_1.Util.getModuleName(loadClassName + classType);
+        var classPath = Util_1.Util.getModulePath("app/" + classType.toLowerCase() + "/" + loadClassName + classType);
+        var classObj;
+        try {
+            var classObj_ = require(classPath);
+            classObj = new classObj_[className]();
+            classObj.myMjs = mjs;
+            classObj.mjs = mjs.childs;
+        }
+        catch (error) { }
+        if (classObj.handle)
+            classObj.handle();
+        return classObj;
+    };
+    Response.renderConvert = function (content) {
         var tagName = "div";
         if (content.indexOf("<tr") === 0 || content.indexOf("<td") === 0)
             tagName = "tbody";
-        var newm = document.createElement(tagName);
-        newm.innerHTML = content;
-        return newm;
-    };
-    Response.renderConvert = function (content) {
+        var el0 = document.createElement(tagName);
+        el0.innerHTML = content;
         // link tag check...
-        var links = content.querySelectorAll("link");
+        var links = el0.querySelectorAll("link");
         links.forEach(function (el) {
             var href = el.attributes["href"].value;
             if (!Util_1.Util.existResource(href))
@@ -451,7 +474,7 @@ var Response = /** @class */ (function () {
             el.setAttribute("href", resource);
         });
         // image tag check...
-        var imgs = content.querySelectorAll("img");
+        var imgs = el0.querySelectorAll("img");
         imgs.forEach(function (el) {
             var src = el.attributes["src"].value;
             if (!Util_1.Util.existResource(src))
@@ -460,7 +483,8 @@ var Response = /** @class */ (function () {
             el.setAttribute("src", resource);
         });
         // shortcode analysis
-        content.innerHTML = Shortcode_1.Shortcode.analysis(content.innerHTML);
+        el0.innerHTML = Shortcode_1.Shortcode.analysis(el0.innerHTML);
+        return el0.innerHTML;
     };
     return Response;
 }());

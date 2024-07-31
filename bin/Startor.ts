@@ -50,6 +50,8 @@ export class Startor {
             target = target.parentNode;
         }
 
+        if (!target.attributes["href"]) return;
+
         // @ts-ignore
         let href = target.getAttribute("href");
         if(!href) return;

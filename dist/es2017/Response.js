@@ -24,6 +24,19 @@ class Response {
             history.back();
         }
     }
+    static next(url) {
+        const MyApp = require("app/config/App").MyApp;
+        if (MyApp.routeType == App_1.AppRouteType.application) {
+            Data_1.Data.push("history", url);
+            const route = Routes_1.Routes.searchRoute(url);
+            Response.rendering(route).then(() => {
+                Data_1.Data.set("stepMode", false);
+            });
+        }
+        else {
+            location.hash = "#" + url;
+        }
+    }
     static async rendering(route) {
         try {
             // Controller & View Leave 
@@ -231,13 +244,14 @@ class Response {
     static renderHtml(renderName) {
         const renderPath = "rendering/" + renderName + ".html";
         if (!useExists(renderPath)) {
-            return "<div style=\"font-weight:bold;\">[Rendering ERROR] Rendering data does not exist. Check if source file \"" + renderPath + "\" exists.</div>";
+            console.error("[Rendering ERROR] Rendering data does not exist. Check if source file \"" + renderPath + "\" exists.");
+            return;
         }
         let content = use(renderPath);
         content = Util_1.Util.base64Decode(content);
-        let vw = this.createElement(content);
-        this.renderConvert(vw);
-        return vw.innerHTML;
+        content = this.renderConvert(content);
+        ;
+        return content;
     }
     /**
      * *** view *** : Get View's content information.
@@ -245,15 +259,12 @@ class Response {
      * @returns {string} view contents
      */
     static view(viewName) {
-        const viewPath = "rendering/view/" + viewName + ".html";
-        if (!useExists(viewPath)) {
-            return "<div style=\"font-weight:bold;\">[Rendering ERROR] View data does not exist. Check if source file \"" + viewPath + "\" exists.</div>";
-        }
-        let content = use(viewPath);
-        content = Util_1.Util.base64Decode(content);
-        let vw = this.createElement(content);
-        this.renderConvert(vw);
-        return vw.innerHTML;
+        return this.renderHtml("view/" + viewName);
+    }
+    static vindView(mjs, viewName) {
+        mjs.html = this.view(viewName);
+        mjs.reload();
+        return this.loadClass("View", viewName, mjs);
     }
     /**
      * ***template*** :
@@ -262,15 +273,12 @@ class Response {
      * @returns {string} template contents
      */
     static template(templateName) {
-        const templatePath = "rendering/template/" + templateName + ".html";
-        if (!useExists(templatePath)) {
-            return "<div style=\"font-weight:bold;\">[Rendering ERROR] Template data does not exist. Check if source file \"" + templatePath + "\" exists.</div>";
-        }
-        let content = use(templatePath);
-        content = Util_1.Util.base64Decode(content);
-        let vw = this.createElement(content);
-        this.renderConvert(vw);
-        return vw.innerHTML;
+        return this.renderHtml("template/" + templateName);
+    }
+    static bindTemplate(mjs, templateName) {
+        mjs.html = this.template(templateName);
+        mjs.reload();
+        return this.loadClass("Template", templateName, mjs);
     }
     /**
      * ***viewPart*** :
@@ -279,27 +287,42 @@ class Response {
      * @returns {string} viewPart contents
      */
     static viewPart(viewPartName) {
-        const viewPartPath = "rendering/viewpart/" + viewPartName + ".html";
-        if (!useExists(viewPartPath)) {
-            return "<div style=\"font-weight:bold;\">ViewPart data does not exist. Check if source file \"" + viewPartPath + "\" exists.</div>";
-        }
-        let content = use(viewPartPath);
-        content = Util_1.Util.base64Decode(content);
-        let vw = this.createElement(content);
-        this.renderConvert(vw);
-        return vw.innerHTML;
+        return this.renderHtml("viewpart/" + viewPartName);
     }
-    static createElement(content) {
+    static bindViewPart(mjs, viewPartName) {
+        mjs.html = this.view(viewPartName);
+        mjs.reload();
+        return this.loadClass("ViewPart", viewPartName, mjs);
+    }
+    static appendViewPart(mjs, viewPartName) {
+        mjs.append(this.view(viewPartName));
+        const myMjs = new ModernJS_1.ModernJS();
+        mjs.reload(myMjs);
+        return this.loadClass("ViewPart", viewPartName, myMjs);
+    }
+    static loadClass(classType, loadClassName, mjs) {
+        const className = Util_1.Util.getModuleName(loadClassName + classType);
+        const classPath = Util_1.Util.getModulePath("app/" + classType.toLowerCase() + "/" + loadClassName + classType);
+        let classObj;
+        try {
+            const classObj_ = require(classPath);
+            classObj = new classObj_[className]();
+            classObj.myMjs = mjs;
+            classObj.mjs = mjs.childs;
+        }
+        catch (error) { }
+        if (classObj.handle)
+            classObj.handle();
+        return classObj;
+    }
+    static renderConvert(content) {
         let tagName = "div";
         if (content.indexOf("<tr") === 0 || content.indexOf("<td") === 0)
             tagName = "tbody";
-        const newm = document.createElement(tagName);
-        newm.innerHTML = content;
-        return newm;
-    }
-    static renderConvert(content) {
+        let el0 = document.createElement(tagName);
+        el0.innerHTML = content;
         // link tag check...
-        const links = content.querySelectorAll("link");
+        const links = el0.querySelectorAll("link");
         links.forEach((el) => {
             const href = el.attributes["href"].value;
             if (!Util_1.Util.existResource(href))
@@ -308,7 +331,7 @@ class Response {
             el.setAttribute("href", resource);
         });
         // image tag check...
-        const imgs = content.querySelectorAll("img");
+        const imgs = el0.querySelectorAll("img");
         imgs.forEach((el) => {
             const src = el.attributes["src"].value;
             if (!Util_1.Util.existResource(src))
@@ -317,7 +340,8 @@ class Response {
             el.setAttribute("src", resource);
         });
         // shortcode analysis
-        content.innerHTML = Shortcode_1.Shortcode.analysis(content.innerHTML);
+        el0.innerHTML = Shortcode_1.Shortcode.analysis(el0.innerHTML);
+        return el0.innerHTML;
     }
 }
 exports.Response = Response;

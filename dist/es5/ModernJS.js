@@ -83,17 +83,25 @@ var ModernJS = /** @class */ (function () {
             }
         });
     };
-    ModernJS.prototype.reload = function () {
+    ModernJS.prototype.reload = function (context) {
         var _this = this;
         this.els.forEach(function (el) {
             var qss = el.querySelectorAll("[v-child]");
             qss.forEach(function (el2) {
                 var vname = el2.attributes["v-child"].value;
                 el2.removeAttribute("v-child");
-                if (!_this.childs[vname])
-                    _this.childs[vname] = new ModernJS();
-                _this.childs[vname].parent = _this;
-                _this.childs[vname].addEl(el2);
+                if (context) {
+                    if (!context.childs[vname])
+                        context.childs[vname] = new ModernJS();
+                    context.childs[vname].parent = _this;
+                    context.childs[vname].addEl(el2);
+                }
+                else {
+                    if (!_this.childs[vname])
+                        _this.childs[vname] = new ModernJS();
+                    _this.childs[vname].parent = _this;
+                    _this.childs[vname].addEl(el2);
+                }
             });
         });
     };
@@ -127,6 +135,28 @@ var ModernJS = /** @class */ (function () {
         mjs.addEl(this.els[index]);
         return mjs;
     };
+    Object.defineProperty(ModernJS.prototype, "prev", {
+        get: function () {
+            // @ts-ignore
+            var prevEl = this.els[0].previousElementSibling;
+            var mjs = new ModernJS();
+            mjs.addEl(prevEl);
+            return mjs;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(ModernJS.prototype, "next", {
+        get: function () {
+            // @ts-ignore
+            var prevEl = this.els[0].nextElementSibling;
+            var mjs = new ModernJS();
+            mjs.addEl(prevEl);
+            return mjs;
+        },
+        enumerable: false,
+        configurable: true
+    });
     Object.defineProperty(ModernJS.prototype, "tagName", {
         get: function () {
             return this.els[0].tagName;
@@ -166,6 +196,7 @@ var ModernJS = /** @class */ (function () {
             return this.els[0].innerHTML;
         },
         set: function (value) {
+            var _this = this;
             this.els.forEach(function (el) {
                 el.childNodes.forEach(function (c) {
                     el.removeChild(c);
@@ -178,6 +209,12 @@ var ModernJS = /** @class */ (function () {
                 }
                 else if (value instanceof ModernJS) {
                     el.append(value.els[0]);
+                    var c = Object.keys(value.childs);
+                    for (var n = 0; n < c.length; n++) {
+                        var cname = c[n];
+                        var child = value.childs[cname];
+                        _this.childs[cname] = child;
+                    }
                 }
             });
             ModernJS.reload();
@@ -204,6 +241,7 @@ var ModernJS = /** @class */ (function () {
         configurable: true
     });
     ModernJS.prototype.append = function (value) {
+        var _this = this;
         this.els.forEach(function (el) {
             if (typeof value == "string") {
                 el.insertAdjacentHTML("beforeend", value);
@@ -213,6 +251,12 @@ var ModernJS = /** @class */ (function () {
             }
             else if (value instanceof ModernJS) {
                 el.append(value.els[0]);
+                var c = Object.keys(value.childs);
+                for (var n = 0; n < c.length; n++) {
+                    var cname = c[n];
+                    var child = value.childs[cname];
+                    _this.childs[cname] = child;
+                }
             }
         });
         ModernJS.reload();
@@ -347,6 +391,13 @@ var ModernJS = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
+    ModernJS.prototype.dispatch = function (eventName) {
+        this.els.forEach(function (el) {
+            var event = new Event(eventName);
+            el.dispatchEvent(event);
+        });
+        return this;
+    };
     Object.defineProperty(ModernJS.prototype, "value", {
         get: function () {
             if (!(this.tagName == "INPUT" ||

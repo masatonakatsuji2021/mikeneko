@@ -98,6 +98,8 @@ var Startor = /** @class */ (function () {
             // @ts-ignore
             target = target.parentNode;
         }
+        if (!target.attributes["href"])
+            return;
         // @ts-ignore
         var href = target.getAttribute("href");
         if (!href)

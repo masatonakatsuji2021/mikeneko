@@ -74,16 +74,24 @@ class ModernJS {
             }
         });
     }
-    reload() {
+    reload(context) {
         this.els.forEach((el) => {
             const qss = el.querySelectorAll("[v-child]");
             qss.forEach((el2) => {
                 const vname = el2.attributes["v-child"].value;
                 el2.removeAttribute("v-child");
-                if (!this.childs[vname])
-                    this.childs[vname] = new ModernJS();
-                this.childs[vname].parent = this;
-                this.childs[vname].addEl(el2);
+                if (context) {
+                    if (!context.childs[vname])
+                        context.childs[vname] = new ModernJS();
+                    context.childs[vname].parent = this;
+                    context.childs[vname].addEl(el2);
+                }
+                else {
+                    if (!this.childs[vname])
+                        this.childs[vname] = new ModernJS();
+                    this.childs[vname].parent = this;
+                    this.childs[vname].addEl(el2);
+                }
             });
         });
     }
@@ -103,6 +111,20 @@ class ModernJS {
     index(index) {
         const mjs = new ModernJS();
         mjs.addEl(this.els[index]);
+        return mjs;
+    }
+    get prev() {
+        // @ts-ignore
+        const prevEl = this.els[0].previousElementSibling;
+        const mjs = new ModernJS();
+        mjs.addEl(prevEl);
+        return mjs;
+    }
+    get next() {
+        // @ts-ignore
+        const prevEl = this.els[0].nextElementSibling;
+        const mjs = new ModernJS();
+        mjs.addEl(prevEl);
         return mjs;
     }
     get tagName() {
@@ -144,6 +166,12 @@ class ModernJS {
             }
             else if (value instanceof ModernJS) {
                 el.append(value.els[0]);
+                const c = Object.keys(value.childs);
+                for (let n = 0; n < c.length; n++) {
+                    const cname = c[n];
+                    const child = value.childs[cname];
+                    this.childs[cname] = child;
+                }
             }
         });
         ModernJS.reload();
@@ -175,6 +203,12 @@ class ModernJS {
             }
             else if (value instanceof ModernJS) {
                 el.append(value.els[0]);
+                const c = Object.keys(value.childs);
+                for (let n = 0; n < c.length; n++) {
+                    const cname = c[n];
+                    const child = value.childs[cname];
+                    this.childs[cname] = child;
+                }
             }
         });
         ModernJS.reload();
@@ -275,6 +309,13 @@ class ModernJS {
     }
     set onMouseMove(listener) {
         this.on("mousemove", listener);
+    }
+    dispatch(eventName) {
+        this.els.forEach((el) => {
+            let event = new Event(eventName);
+            el.dispatchEvent(event);
+        });
+        return this;
     }
     get value() {
         if (!(this.tagName == "INPUT" ||

@@ -1,9 +1,11 @@
 import { Routes } from "Routes";
 import { Response } from "Response";
-import { ModernJSList } from "ModernJS";
+import { ModernJS, ModernJSList } from "ModernJS";
 
 export class View {
 
+    public myMjs : ModernJS;
+    
     /**
      * ***mjs**** : Virtual DOM List of ModernJS Classes.
      */
