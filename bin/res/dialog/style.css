@@ -22,3 +22,20 @@ dialog dwindow {
     background:white;
     color:black;
 }
+dialog table {
+    width:100%;
+    height:100%;
+}
+dialog table tr td {
+    height:100%;
+    vertical-align:top;
+}
+dialog table tr td.middle{
+    vertical-align:middle;
+}
+dialog table tr td.center{
+    text-align:center;
+}
+dialog table tr td.right{
+    text-align:right;
+}

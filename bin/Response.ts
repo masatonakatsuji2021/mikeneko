@@ -8,14 +8,14 @@ import { ViewPart } from "ViewPart";
 import { Template } from "Template";
 import { ModernJS, dom} from "ModernJS";
 import { Shortcode } from "Shortcode";
-import { Dialog } from "Dialog";
+import { Dialog, DialogOption } from "Dialog";
 
 export class Response {
 
-    public static back() {
+    public static back() : boolean {
         const MyApp : typeof App = require("app/config/App").MyApp;
         if (MyApp.routeType == AppRouteType.application) {
-            if (Data.getLength("history") == 1) return;
+            if (Data.getLength("history") == 1) return false;
             Data.pop("history");
             const backUrl= Data.now("history");
             
@@ -27,6 +27,8 @@ export class Response {
         else if (MyApp.routeType == AppRouteType.web ) {
             history.back();
         }
+
+        return true;
     }
 
     public static next(url : string) : void {
@@ -352,10 +354,19 @@ export class Response {
         dom("head").afterBegin("<link rel=\"stylesheet\" m=\"dl\" href=\"data:text/css;base64," + style + "\">");
     }
 
-    public static openDialog(dialogName : string, option? : any) : Dialog {
+    public static openDialog(dialogName : string, option? : DialogOption) : Dialog {
+        if (!option) option = {};
         this.setDialogCss();
         const dialogStr = "<dwindow>" + this.dialog(dialogName) + "</dwindow>";
         const dialogMjs = ModernJS.create(dialogStr, "dialog");
+        
+        if (option.class) {
+            if (typeof option.class == "string") option.class = [ option.class ];
+            option.class.forEach((c) => {
+                dialogMjs.addClass(c);
+            });
+        }
+
         dom("body").append(dialogMjs);
         setTimeout(()=>{
             dialogMjs.addClass("open");
@@ -366,6 +377,7 @@ export class Response {
             dialog.myMjs = dialogMjs;
             dialog.mjs = dialogMjs.childs;
         }
+        if (option.handle) option.handle(dialog);
         return dialog;
     }
 

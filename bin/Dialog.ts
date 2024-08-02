@@ -1,5 +1,12 @@
 import { ModernJS, ModernJSList } from "ModernJS";
 
+export interface DialogOption {
+
+    handle? : (dialog : Dialog) => void,
+
+    class? : Array<string> | string,
+}
+
 export class Dialog {
 
     public myMjs : ModernJS;

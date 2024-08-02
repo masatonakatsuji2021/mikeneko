@@ -51,7 +51,7 @@ var Response = /** @class */ (function () {
         var MyApp = require("app/config/App").MyApp;
         if (MyApp.routeType == App_1.AppRouteType.application) {
             if (Data_1.Data.getLength("history") == 1)
-                return;
+                return false;
             Data_1.Data.pop("history");
             var backUrl = Data_1.Data.now("history");
             var route = Routes_1.Routes.searchRoute(backUrl);
@@ -62,6 +62,7 @@ var Response = /** @class */ (function () {
         else if (MyApp.routeType == App_1.AppRouteType.web) {
             history.back();
         }
+        return true;
     };
     Response.next = function (url) {
         var MyApp = require("app/config/App").MyApp;
@@ -454,9 +455,18 @@ var Response = /** @class */ (function () {
         (0, ModernJS_1.dom)("head").afterBegin("<link rel=\"stylesheet\" m=\"dl\" href=\"data:text/css;base64," + style + "\">");
     };
     Response.openDialog = function (dialogName, option) {
+        if (!option)
+            option = {};
         this.setDialogCss();
         var dialogStr = "<dwindow>" + this.dialog(dialogName) + "</dwindow>";
         var dialogMjs = ModernJS_1.ModernJS.create(dialogStr, "dialog");
+        if (option.class) {
+            if (typeof option.class == "string")
+                option.class = [option.class];
+            option.class.forEach(function (c) {
+                dialogMjs.addClass(c);
+            });
+        }
         (0, ModernJS_1.dom)("body").append(dialogMjs);
         setTimeout(function () {
             dialogMjs.addClass("open");
@@ -467,6 +477,8 @@ var Response = /** @class */ (function () {
             dialog.myMjs = dialogMjs;
             dialog.mjs = dialogMjs.childs;
         }
+        if (option.handle)
+            option.handle(dialog);
         return dialog;
     };
     Response.loadClass = function (classType, loadClassName, mjs) {

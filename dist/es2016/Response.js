@@ -22,7 +22,7 @@ class Response {
         const MyApp = require("app/config/App").MyApp;
         if (MyApp.routeType == App_1.AppRouteType.application) {
             if (Data_1.Data.getLength("history") == 1)
-                return;
+                return false;
             Data_1.Data.pop("history");
             const backUrl = Data_1.Data.now("history");
             const route = Routes_1.Routes.searchRoute(backUrl);
@@ -33,6 +33,7 @@ class Response {
         else if (MyApp.routeType == App_1.AppRouteType.web) {
             history.back();
         }
+        return true;
     }
     static next(url) {
         const MyApp = require("app/config/App").MyApp;
@@ -328,9 +329,18 @@ class Response {
         (0, ModernJS_1.dom)("head").afterBegin("<link rel=\"stylesheet\" m=\"dl\" href=\"data:text/css;base64," + style + "\">");
     }
     static openDialog(dialogName, option) {
+        if (!option)
+            option = {};
         this.setDialogCss();
         const dialogStr = "<dwindow>" + this.dialog(dialogName) + "</dwindow>";
         const dialogMjs = ModernJS_1.ModernJS.create(dialogStr, "dialog");
+        if (option.class) {
+            if (typeof option.class == "string")
+                option.class = [option.class];
+            option.class.forEach((c) => {
+                dialogMjs.addClass(c);
+            });
+        }
         (0, ModernJS_1.dom)("body").append(dialogMjs);
         setTimeout(() => {
             dialogMjs.addClass("open");
@@ -341,6 +351,8 @@ class Response {
             dialog.myMjs = dialogMjs;
             dialog.mjs = dialogMjs.childs;
         }
+        if (option.handle)
+            option.handle(dialog);
         return dialog;
     }
     static loadClass(classType, loadClassName, mjs) {
