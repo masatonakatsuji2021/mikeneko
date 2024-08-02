@@ -7,6 +7,7 @@ const Util_1 = require("Util");
 const Data_1 = require("Data");
 const ModernJS_1 = require("ModernJS");
 const Shortcode_1 = require("Shortcode");
+const Dialog_1 = require("Dialog");
 class Response {
     static back() {
         const MyApp = require("app/config/App").MyApp;
@@ -295,10 +296,35 @@ class Response {
         return this.loadClass("ViewPart", viewPartName, mjs);
     }
     static appendViewPart(mjs, viewPartName) {
-        mjs.append(this.view(viewPartName));
+        mjs.append(this.viewPart(viewPartName), true);
         const myMjs = new ModernJS_1.ModernJS();
         mjs.reload(myMjs);
         return this.loadClass("ViewPart", viewPartName, myMjs);
+    }
+    static dialog(dialogName) {
+        return this.renderHtml("dialog/" + dialogName);
+    }
+    static setDialogCss() {
+        if ((0, ModernJS_1.dom)("head").querySelector("link[m=dl]").length > 0)
+            return;
+        const style = require("CORERES/dialog/style.css");
+        (0, ModernJS_1.dom)("head").afterBegin("<link rel=\"stylesheet\" m=\"dl\" href=\"data:text/css;base64," + style + "\">");
+    }
+    static openDialog(dialogName, option) {
+        this.setDialogCss();
+        const dialogStr = "<dwindow>" + this.dialog(dialogName) + "</dwindow>";
+        const dialogMjs = ModernJS_1.ModernJS.create(dialogStr, "dialog");
+        (0, ModernJS_1.dom)("body").append(dialogMjs);
+        setTimeout(() => {
+            dialogMjs.addClass("open");
+        }, 100);
+        let dialog = this.loadClass("Dialog", dialogName, dialogMjs);
+        if (!dialog) {
+            dialog = new Dialog_1.Dialog();
+            dialog.myMjs = dialogMjs;
+            dialog.mjs = dialogMjs.childs;
+        }
+        return dialog;
     }
     static loadClass(classType, loadClassName, mjs) {
         const className = Util_1.Util.getModuleName(loadClassName + classType);
@@ -310,7 +336,9 @@ class Response {
             classObj.myMjs = mjs;
             classObj.mjs = mjs.childs;
         }
-        catch (error) { }
+        catch (error) {
+            return;
+        }
         if (classObj.handle)
             classObj.handle();
         return classObj;

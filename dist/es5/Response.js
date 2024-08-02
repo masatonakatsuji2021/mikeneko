@@ -43,6 +43,7 @@ var Util_1 = require("Util");
 var Data_1 = require("Data");
 var ModernJS_1 = require("ModernJS");
 var Shortcode_1 = require("Shortcode");
+var Dialog_1 = require("Dialog");
 var Response = /** @class */ (function () {
     function Response() {
     }
@@ -438,10 +439,35 @@ var Response = /** @class */ (function () {
         return this.loadClass("ViewPart", viewPartName, mjs);
     };
     Response.appendViewPart = function (mjs, viewPartName) {
-        mjs.append(this.view(viewPartName));
+        mjs.append(this.viewPart(viewPartName), true);
         var myMjs = new ModernJS_1.ModernJS();
         mjs.reload(myMjs);
         return this.loadClass("ViewPart", viewPartName, myMjs);
+    };
+    Response.dialog = function (dialogName) {
+        return this.renderHtml("dialog/" + dialogName);
+    };
+    Response.setDialogCss = function () {
+        if ((0, ModernJS_1.dom)("head").querySelector("link[m=dl]").length > 0)
+            return;
+        var style = require("CORERES/dialog/style.css");
+        (0, ModernJS_1.dom)("head").afterBegin("<link rel=\"stylesheet\" m=\"dl\" href=\"data:text/css;base64," + style + "\">");
+    };
+    Response.openDialog = function (dialogName, option) {
+        this.setDialogCss();
+        var dialogStr = "<dwindow>" + this.dialog(dialogName) + "</dwindow>";
+        var dialogMjs = ModernJS_1.ModernJS.create(dialogStr, "dialog");
+        (0, ModernJS_1.dom)("body").append(dialogMjs);
+        setTimeout(function () {
+            dialogMjs.addClass("open");
+        }, 100);
+        var dialog = this.loadClass("Dialog", dialogName, dialogMjs);
+        if (!dialog) {
+            dialog = new Dialog_1.Dialog();
+            dialog.myMjs = dialogMjs;
+            dialog.mjs = dialogMjs.childs;
+        }
+        return dialog;
     };
     Response.loadClass = function (classType, loadClassName, mjs) {
         var className = Util_1.Util.getModuleName(loadClassName + classType);
@@ -453,7 +479,9 @@ var Response = /** @class */ (function () {
             classObj.myMjs = mjs;
             classObj.mjs = mjs.childs;
         }
-        catch (error) { }
+        catch (error) {
+            return;
+        }
         if (classObj.handle)
             classObj.handle();
         return classObj;

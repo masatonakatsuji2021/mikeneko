@@ -48,9 +48,9 @@ export class ModernJS {
         return this.buffers;
     }
     
-    public static create(text? : string) : ModernJS {
+    public static create(text? : string, tagName? : string) : ModernJS {
         const mjs = new ModernJS();
-        let tagName = "div";
+        if (!tagName) tagName = "div";
         if (text.indexOf("<tr") === 0 || text.indexOf("<td") === 0) tagName = "table";
         const el = document.createElement(tagName);
         mjs.addEl(el);
@@ -154,17 +154,6 @@ export class ModernJS {
         return this.els[0].tagName;
     }
 
-    public set text(value : string) {
-        this.els.forEach((el : HTMLElement) => {
-            el.childNodes.forEach((c)=>{
-                el.removeChild(c);
-            });
-            el.innerText = value;
-        });
-        ModernJS.reload();
-        this.reload();
-    }
-
     public querySelector(queryString: string) : ModernJS {
         const mjs = new ModernJS();
         this.els.forEach((el : HTMLElement) => {
@@ -176,11 +165,30 @@ export class ModernJS {
         return mjs;
     }
 
+    public set text(value : string) {
+        this.els.forEach((el : HTMLElement) => {
+            el.childNodes.forEach((c)=>{
+                el.removeChild(c);
+            });
+            el.innerText = value;
+        });
+        ModernJS.reload();
+        this.reload();
+    }
+
     public get text() : string {
         return this.els[0].innerText;
     }
 
     public set html(value : string | HTMLElement | ModernJS) {
+        this.setHtml(value);
+    }
+
+    public get html() : string {
+        return this.els[0].innerHTML;
+    }
+
+    public setHtml(value : string | HTMLElement | ModernJS, noReload? : boolean) {
         this.els.forEach((el : HTMLElement) => {
             el.childNodes.forEach((c)=>{
                 el.removeChild(c);
@@ -203,12 +211,11 @@ export class ModernJS {
                 }
             }
         });
-        ModernJS.reload();
-        this.reload();
-    }
-
-    public get html() : string {
-        return this.els[0].innerHTML;
+        if (!noReload) {
+            ModernJS.reload();
+            this.reload();    
+        }
+        return this;
     }
 
     public set outerHtml(value : string) {
@@ -226,7 +233,33 @@ export class ModernJS {
         return this.els[0].outerHTML;
     }
 
-    public append(value : string | HTMLElement | ModernJS) {
+    public afterBegin(value : string | HTMLElement | ModernJS, noReload? : boolean) : ModernJS {
+        this.els.forEach((el : HTMLElement) => {
+            if (typeof value == "string") {
+                el.insertAdjacentHTML("afterbegin", value);
+            }
+            else if (value instanceof HTMLElement) {
+                el.insertAdjacentElement("afterbegin", value);
+            }
+            else if (value instanceof ModernJS) {
+                el.insertAdjacentElement("afterbegin", value.els[0]);
+
+                const c = Object.keys(value.childs);
+                for (let n = 0 ; n < c.length ; n++) {
+                    const cname = c[n];
+                    const child = value.childs[cname];
+                    this.childs[cname] = child;
+                }
+            }
+        });
+        if (!noReload) {
+            ModernJS.reload();
+            this.reload();    
+        }
+        return this;
+    }
+
+    public append(value : string | HTMLElement | ModernJS, noReload? : boolean) : ModernJS {
         this.els.forEach((el : HTMLElement) => {
             if (typeof value == "string") {
                 el.insertAdjacentHTML("beforeend", value);
@@ -245,8 +278,10 @@ export class ModernJS {
                 }
             }
         });
-        ModernJS.reload();
-        this.reload();
+        if (!noReload) {
+            ModernJS.reload();
+            this.reload();    
+        }
         return this;
     }
 

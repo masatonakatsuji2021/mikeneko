@@ -30,9 +30,10 @@ class ModernJS {
         });
         return this.buffers;
     }
-    static create(text) {
+    static create(text, tagName) {
         const mjs = new ModernJS();
-        let tagName = "div";
+        if (!tagName)
+            tagName = "div";
         if (text.indexOf("<tr") === 0 || text.indexOf("<td") === 0)
             tagName = "table";
         const el = document.createElement(tagName);
@@ -130,16 +131,6 @@ class ModernJS {
     get tagName() {
         return this.els[0].tagName;
     }
-    set text(value) {
-        this.els.forEach((el) => {
-            el.childNodes.forEach((c) => {
-                el.removeChild(c);
-            });
-            el.innerText = value;
-        });
-        ModernJS.reload();
-        this.reload();
-    }
     querySelector(queryString) {
         const mjs = new ModernJS();
         this.els.forEach((el) => {
@@ -150,10 +141,26 @@ class ModernJS {
         });
         return mjs;
     }
+    set text(value) {
+        this.els.forEach((el) => {
+            el.childNodes.forEach((c) => {
+                el.removeChild(c);
+            });
+            el.innerText = value;
+        });
+        ModernJS.reload();
+        this.reload();
+    }
     get text() {
         return this.els[0].innerText;
     }
     set html(value) {
+        this.setHtml(value);
+    }
+    get html() {
+        return this.els[0].innerHTML;
+    }
+    setHtml(value, noReload) {
         this.els.forEach((el) => {
             el.childNodes.forEach((c) => {
                 el.removeChild(c);
@@ -174,11 +181,11 @@ class ModernJS {
                 }
             }
         });
-        ModernJS.reload();
-        this.reload();
-    }
-    get html() {
-        return this.els[0].innerHTML;
+        if (!noReload) {
+            ModernJS.reload();
+            this.reload();
+        }
+        return this;
     }
     set outerHtml(value) {
         this.els.forEach((el) => {
@@ -193,7 +200,31 @@ class ModernJS {
     get outerHtml() {
         return this.els[0].outerHTML;
     }
-    append(value) {
+    afterBegin(value, noReload) {
+        this.els.forEach((el) => {
+            if (typeof value == "string") {
+                el.insertAdjacentHTML("afterbegin", value);
+            }
+            else if (value instanceof HTMLElement) {
+                el.insertAdjacentElement("afterbegin", value);
+            }
+            else if (value instanceof ModernJS) {
+                el.insertAdjacentElement("afterbegin", value.els[0]);
+                const c = Object.keys(value.childs);
+                for (let n = 0; n < c.length; n++) {
+                    const cname = c[n];
+                    const child = value.childs[cname];
+                    this.childs[cname] = child;
+                }
+            }
+        });
+        if (!noReload) {
+            ModernJS.reload();
+            this.reload();
+        }
+        return this;
+    }
+    append(value, noReload) {
         this.els.forEach((el) => {
             if (typeof value == "string") {
                 el.insertAdjacentHTML("beforeend", value);
@@ -211,8 +242,10 @@ class ModernJS {
                 }
             }
         });
-        ModernJS.reload();
-        this.reload();
+        if (!noReload) {
+            ModernJS.reload();
+            this.reload();
+        }
         return this;
     }
     remove() {

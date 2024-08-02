@@ -68,6 +68,7 @@ class Builder {
                 "Background",
                 "Controller",
                 "Data",
+                "Dialog",
                 "ModernJS",
                 "Exception",
                 "KeyEvent",
@@ -82,8 +83,11 @@ class Builder {
                 "ViewPart",
             ];
             coreList.forEach((core) => {
+                // core module mount
                 this.coreModuleMount(codeList, tsType, core);
             });
+            // core resource mount
+            this.coreResourceMount(codeList, rootDir);
             // local module mount
             this.localModuleMount(codeList, rootDir, platform.name);
             // rendering html mount
@@ -137,11 +141,23 @@ class Builder {
         }
     }
     static coreModuleMount(codeList, tsType, name) {
-        console.log("# core module".padEnd(30) + " " + name);
+        console.log("# core module mount".padEnd(30) + " " + name);
         const fullPath = path.dirname(__dirname) + "/dist/" + tsType + "/" + name + ".js";
         let contents = fs.readFileSync(fullPath).toString();
         contents = "var exports = {};\n" + contents + ";\nreturn exports;";
         codeList[name] = this.setFn(name, contents, true);
+    }
+    static coreResourceMount(codeList, tsType) {
+        const targetPath = path.dirname(__dirname) + "/bin/res";
+        this.search(targetPath, (file) => {
+            const fullPath = file.path + "/" + file.name;
+            let basePath = "CORERES/" + fullPath.substring((targetPath + "/").length);
+            basePath = basePath.split("\\").join("/");
+            basePath = basePath.split("//").join("/");
+            const contentB64 = Buffer.from(fs.readFileSync(fullPath)).toString("base64");
+            codeList[basePath] = this.setFn(basePath, "\"" + contentB64 + "\"");
+            console.log(("# core resource mount").padEnd(30) + " " + basePath);
+        });
     }
     static localModuleMount(codeList, rootDir, platformName) {
         let targetPaths = [

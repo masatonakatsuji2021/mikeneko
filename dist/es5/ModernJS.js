@@ -35,9 +35,10 @@ var ModernJS = /** @class */ (function () {
         });
         return this.buffers;
     };
-    ModernJS.create = function (text) {
+    ModernJS.create = function (text, tagName) {
         var mjs = new ModernJS();
-        var tagName = "div";
+        if (!tagName)
+            tagName = "div";
         if (text.indexOf("<tr") === 0 || text.indexOf("<td") === 0)
             tagName = "table";
         var el = document.createElement(tagName);
@@ -164,6 +165,16 @@ var ModernJS = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
+    ModernJS.prototype.querySelector = function (queryString) {
+        var mjs = new ModernJS();
+        this.els.forEach(function (el) {
+            var qss = el.querySelectorAll(queryString);
+            qss.forEach(function (qs) {
+                mjs.addEl(qs);
+            });
+        });
+        return mjs;
+    };
     Object.defineProperty(ModernJS.prototype, "text", {
         get: function () {
             return this.els[0].innerText;
@@ -181,48 +192,44 @@ var ModernJS = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
-    ModernJS.prototype.querySelector = function (queryString) {
-        var mjs = new ModernJS();
-        this.els.forEach(function (el) {
-            var qss = el.querySelectorAll(queryString);
-            qss.forEach(function (qs) {
-                mjs.addEl(qs);
-            });
-        });
-        return mjs;
-    };
     Object.defineProperty(ModernJS.prototype, "html", {
         get: function () {
             return this.els[0].innerHTML;
         },
         set: function (value) {
-            var _this = this;
-            this.els.forEach(function (el) {
-                el.childNodes.forEach(function (c) {
-                    el.removeChild(c);
-                });
-                if (typeof value == "string") {
-                    el.innerHTML = value;
-                }
-                else if (value instanceof HTMLElement) {
-                    el.append(value);
-                }
-                else if (value instanceof ModernJS) {
-                    el.append(value.els[0]);
-                    var c = Object.keys(value.childs);
-                    for (var n = 0; n < c.length; n++) {
-                        var cname = c[n];
-                        var child = value.childs[cname];
-                        _this.childs[cname] = child;
-                    }
-                }
-            });
-            ModernJS.reload();
-            this.reload();
+            this.setHtml(value);
         },
         enumerable: false,
         configurable: true
     });
+    ModernJS.prototype.setHtml = function (value, noReload) {
+        var _this = this;
+        this.els.forEach(function (el) {
+            el.childNodes.forEach(function (c) {
+                el.removeChild(c);
+            });
+            if (typeof value == "string") {
+                el.innerHTML = value;
+            }
+            else if (value instanceof HTMLElement) {
+                el.append(value);
+            }
+            else if (value instanceof ModernJS) {
+                el.append(value.els[0]);
+                var c = Object.keys(value.childs);
+                for (var n = 0; n < c.length; n++) {
+                    var cname = c[n];
+                    var child = value.childs[cname];
+                    _this.childs[cname] = child;
+                }
+            }
+        });
+        if (!noReload) {
+            ModernJS.reload();
+            this.reload();
+        }
+        return this;
+    };
     Object.defineProperty(ModernJS.prototype, "outerHtml", {
         get: function () {
             return this.els[0].outerHTML;
@@ -240,7 +247,32 @@ var ModernJS = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
-    ModernJS.prototype.append = function (value) {
+    ModernJS.prototype.afterBegin = function (value, noReload) {
+        var _this = this;
+        this.els.forEach(function (el) {
+            if (typeof value == "string") {
+                el.insertAdjacentHTML("afterbegin", value);
+            }
+            else if (value instanceof HTMLElement) {
+                el.insertAdjacentElement("afterbegin", value);
+            }
+            else if (value instanceof ModernJS) {
+                el.insertAdjacentElement("afterbegin", value.els[0]);
+                var c = Object.keys(value.childs);
+                for (var n = 0; n < c.length; n++) {
+                    var cname = c[n];
+                    var child = value.childs[cname];
+                    _this.childs[cname] = child;
+                }
+            }
+        });
+        if (!noReload) {
+            ModernJS.reload();
+            this.reload();
+        }
+        return this;
+    };
+    ModernJS.prototype.append = function (value, noReload) {
         var _this = this;
         this.els.forEach(function (el) {
             if (typeof value == "string") {
@@ -259,8 +291,10 @@ var ModernJS = /** @class */ (function () {
                 }
             }
         });
-        ModernJS.reload();
-        this.reload();
+        if (!noReload) {
+            ModernJS.reload();
+            this.reload();
+        }
         return this;
     };
     ModernJS.prototype.remove = function () {

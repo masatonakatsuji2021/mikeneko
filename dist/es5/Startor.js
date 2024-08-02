@@ -63,7 +63,7 @@ var Startor = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         window.addEventListener("click", function (e) {
-                            return _this.cliekHandleDelegate(e);
+                            return _this.clickHandleDelegate(e);
                         });
                         window.addEventListener("popstate", function (e) { return __awaiter(_this, void 0, void 0, function () {
                             return __generator(this, function (_a) {
@@ -87,7 +87,7 @@ var Startor = /** @class */ (function () {
             });
         }); })();
     }
-    Startor.prototype.cliekHandleDelegate = function (e) {
+    Startor.prototype.clickHandleDelegate = function (e) {
         // @ts-ignore
         var target = e.target;
         for (var n = 0; n < 10; n++) {
@@ -98,6 +98,8 @@ var Startor = /** @class */ (function () {
             // @ts-ignore
             target = target.parentNode;
         }
+        if (!target.attributes)
+            return;
         if (!target.attributes["href"])
             return;
         // @ts-ignore

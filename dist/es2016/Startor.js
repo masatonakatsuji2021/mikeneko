@@ -30,7 +30,7 @@ class Startor {
         this.setShortcode();
         (() => __awaiter(this, void 0, void 0, function* () {
             window.addEventListener("click", (e) => {
-                return this.cliekHandleDelegate(e);
+                return this.clickHandleDelegate(e);
             });
             window.addEventListener("popstate", (e) => __awaiter(this, void 0, void 0, function* () {
                 yield this.popStateHandleDelegate(e);
@@ -42,7 +42,7 @@ class Startor {
             Response_1.Response.rendering(route);
         }))();
     }
-    cliekHandleDelegate(e) {
+    clickHandleDelegate(e) {
         // @ts-ignore
         let target = e.target;
         for (let n = 0; n < 10; n++) {
@@ -53,6 +53,8 @@ class Startor {
             // @ts-ignore
             target = target.parentNode;
         }
+        if (!target.attributes)
+            return;
         if (!target.attributes["href"])
             return;
         // @ts-ignore

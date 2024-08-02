@@ -146,6 +146,7 @@ export class Builder {
                 "Background", 
                 "Controller", 
                 "Data", 
+                "Dialog",
                 "ModernJS",
                 "Exception", 
                 "KeyEvent", 
@@ -161,8 +162,12 @@ export class Builder {
             ];
 
             coreList.forEach((core : string) => {
-                this.coreModuleMount(codeList, tsType, core);
+                 // core module mount
+                 this.coreModuleMount(codeList, tsType, core);
              });
+
+             // core resource mount
+             this.coreResourceMount(codeList, rootDir);
 
             // local module mount
             this.localModuleMount(codeList, rootDir, platform.name);
@@ -226,11 +231,24 @@ export class Builder {
     }
 
     private static coreModuleMount(codeList : {[name : string] : string}, tsType : string, name : string) {
-        console.log("# core module".padEnd(30) + " " + name);
+        console.log("# core module mount".padEnd(30) + " " + name);
         const fullPath : string = path.dirname(__dirname) + "/dist/" + tsType + "/" + name + ".js"; 
         let contents : string = fs.readFileSync(fullPath).toString() ;
         contents = "var exports = {};\n" + contents + ";\nreturn exports;";
         codeList[name] = this.setFn(name, contents, true);
+    }
+
+    private static coreResourceMount(codeList : {[name : string] : string}, tsType : string) {
+        const targetPath = path.dirname(__dirname) + "/bin/res";
+        this.search(targetPath, (file) => {
+            const fullPath = file.path + "/" + file.name;
+            let basePath = "CORERES/"+ fullPath.substring((targetPath + "/").length);
+            basePath = basePath.split("\\").join("/");
+            basePath = basePath.split("//").join("/");
+            const contentB64 = Buffer.from(fs.readFileSync(fullPath)).toString("base64");
+            codeList[basePath] = this.setFn(basePath,  "\"" + contentB64 + "\"") ;
+            console.log(("# core resource mount").padEnd(30) + " " + basePath);
+        });
     }
 
     private static localModuleMount(codeList : {[name : string] : string}, rootDir : string, platformName : string) {

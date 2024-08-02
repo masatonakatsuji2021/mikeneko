@@ -8,6 +8,7 @@ import { ViewPart } from "ViewPart";
 import { Template } from "Template";
 import { ModernJS, dom} from "ModernJS";
 import { Shortcode } from "Shortcode";
+import { Dialog } from "Dialog";
 
 export class Response {
 
@@ -335,22 +336,51 @@ export class Response {
     }
 
     public static appendViewPart(mjs: ModernJS, viewPartName : string) {
-        mjs.append(this.view(viewPartName));
+        mjs.append(this.viewPart(viewPartName), true);
         const myMjs = new ModernJS();
         mjs.reload(myMjs);
         return this.loadClass("ViewPart", viewPartName, myMjs);
     }
 
+    public static dialog(dialogName : string) : string {
+        return this.renderHtml("dialog/" + dialogName);
+    }
+
+    private static setDialogCss(){
+        if (dom("head").querySelector("link[m=dl]").length > 0)  return;
+        const style = require("CORERES/dialog/style.css");
+        dom("head").afterBegin("<link rel=\"stylesheet\" m=\"dl\" href=\"data:text/css;base64," + style + "\">");
+    }
+
+    public static openDialog(dialogName : string, option? : any) : Dialog {
+        this.setDialogCss();
+        const dialogStr = "<dwindow>" + this.dialog(dialogName) + "</dwindow>";
+        const dialogMjs = ModernJS.create(dialogStr, "dialog");
+        dom("body").append(dialogMjs);
+        setTimeout(()=>{
+            dialogMjs.addClass("open");
+        }, 100);
+        let dialog : Dialog = this.loadClass("Dialog", dialogName, dialogMjs);
+        if (!dialog) {
+            dialog = new Dialog();
+            dialog.myMjs = dialogMjs;
+            dialog.mjs = dialogMjs.childs;
+        }
+        return dialog;
+    }
+
     private static loadClass(classType : string, loadClassName : string, mjs : ModernJS) {
         const className = Util.getModuleName(loadClassName + classType);
         const classPath = Util.getModulePath("app/" + classType.toLowerCase() + "/" + loadClassName + classType);
-        let classObj : View | ViewPart | Template;
+        let classObj;
         try {
             const classObj_ = require(classPath);
             classObj = new classObj_[className]();
             classObj.myMjs = mjs;
             classObj.mjs = mjs.childs;
-        }catch(error){}
+        }catch(error){
+            return;
+        }
 
         if (classObj.handle) classObj.handle();
 

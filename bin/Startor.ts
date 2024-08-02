@@ -26,7 +26,7 @@ export class Startor {
 
         (async ()=>{
             window.addEventListener("click", (e: MouseEvent) => {
-                return this.cliekHandleDelegate(e);
+                return this.clickHandleDelegate(e);
             });
             window.addEventListener("popstate", async (e : PopStateEvent) => {
                 await this.popStateHandleDelegate(e);
@@ -40,7 +40,7 @@ export class Startor {
         })();
     }
 
-    private cliekHandleDelegate(e : MouseEvent){
+    private clickHandleDelegate(e : MouseEvent){
         // @ts-ignore
         let target : HTMLElement = e.target;
         for (let n = 0 ; n < 10; n++) {
@@ -49,7 +49,7 @@ export class Startor {
             // @ts-ignore
             target = target.parentNode;
         }
-
+        if (!target.attributes) return;
         if (!target.attributes["href"]) return;
 
         // @ts-ignore
