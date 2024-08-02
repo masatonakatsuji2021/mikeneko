@@ -5,23 +5,44 @@
 A framework for SPA (Single-Page-Action) that can be installed on Web, Android, and iOS.  
 ([The Japanese version of the document is here](https://github.com/masatonakatsuji2021/saiberian/wiki/Saiberian(%E6%97%A5%E6%9C%AC%E8%AA%9E%E3%83%9A%E3%83%BC%E3%82%B8)))
 
-## # How to use
+# Installation
+
+To install, use the following npm command to install globally:
+
+```
+npm i -g git+https://github.com/masatonakatsuji2021/saiberian.git
+```
+
+After installation, the ``sab`` command will be available.  
+From now on, use the sab command to create projects and run builds.
 
 We will proceed in the following order:
 
 1. [Create Project](#create_project)
-2. [Modify and add project sources](#source)
+2. Modify and add project sources
 3. [Build output from project](#build)
+
+[I will explain point 2 later here,](#-structure) so I will explain points 1 and 3 first.
 
 ---
 
 <div id="create_project"></div>
 
-### 1. Create Project
+## 1. Create Project
 
-* 2024.7.13 Project creation commands not implemented  
-Instead, we have prepared a test sample below, so please refer to it here
+First, create a project for the development environment.  
+To create a project, just use the ``sab create`` command and enter the name of the project you want to create.
+
+```
+$ sab create test
+```
+
+In the above case, a ``test`` directory will be created in the current directory,  
+and a set of default source files will be automatically generated in it.
+
+We have prepared a test sample below, so please refer to it here.  
 [https://github.com/masatonakatsuji2021/saiberian_build_sample](https://github.com/masatonakatsuji2021/saiberian_build_sample)
+
 This will be explained later in the test sample.
 
 The actual test sample deployment results are as follows:  
@@ -37,9 +58,11 @@ The actual test sample deployment results are as follows:
             L background
             L config
             L controller
+            L dialog
             L view
             ...
         L rendering
+            L dialog
             L template
             L view
             L viewpart
@@ -54,24 +77,15 @@ The actual test sample deployment results are as follows:
 For the structure of each directory, [see here](#structure).
 
 ---
-
-<div id="source"></div>
-
-### 2. Modify and add project sources
-
-* 2024.7.13 Details coming soon...
----
 <div id="build"></div>
 
-### 3. Build output from project
+## 3. Build output from project
 
-* 2024.7.13 Details coming soon...
+To build the project, run the ``sab build`` command.  
+After that, the build will start automatically and the compiled html and js files will be output to the output directory.
 
-Execute the following command in the path directly under the project.  
-(Make sure that the build file ``index.js`` exists directly under the project directory.)
-
-```console
-node .
+```
+$ sab build
 ```
 
 After that, the console output will be displayed as shown below,
@@ -124,7 +138,7 @@ After that, just move this build data to the deployment location.
 
 <div id="structure"></div>
 
-## # Structure
+# Structure
 
 For an explanation of each file and directory area, see below.  
 For the terms used in each directory, see [Terminology](#term).
@@ -137,11 +151,13 @@ For the terms used in each directory, see [Terminology](#term).
 | - -  background|Background class directory.[Explanation here](#background)|
 | -  - config|Directory for various setting classes. [Explanation here](#config)|
 | -  - controller|Controller placement directory. [Explanation here](#controller)|
+| - -  dialog|Dialog class directory.[Explanation here](#dialog)|
 | - -  view|View class directory.[Explanation here](#view)|
 | - rendering|Rendering HTML placement directory|
-| - - template|Directory for placing template HTML. [Explanation here](#template)|
+| - - dialog|Directory for placing dialog HTML. [Explanation here](#dialog_html)|
+| - - template|Directory for placing template HTML. [Explanation here](#template_html)|
 | - - view|Directory for placing HTML for View. [Explanation here](#view_html)|
-| - - viewpart|Directory for placing HTML for ViewPart. [Explanation here](#viewpart)|
+| - - viewpart|Directory for placing HTML for ViewPart. [Explanation here](#viewpart_html)|
 |〜resource|Directory for placing resource contents. [Explanation here](#resource)|
 |src_{platform_name}|Platform-specific source code directories<br>If you want to place or change code information at build time for each platform, add it here.|
 |init.d.ts|Type definition file for TypeScript|
@@ -150,43 +166,49 @@ For the terms used in each directory, see [Terminology](#term).
 
 <div id="config"></div>
 
-### : Config (App Class)
+## # Config (App Class)
 
 Currently being adjusted...
 
-<div id="temlate"></div>
+<div id="temlate_html"></div>
 
-### : Template (HTML)
+## # Template (HTML)
 
 Currently being adjusted...
 
 <div id="view_html"></div>
 
-### : View (HTML)
+## # View (HTML)
 
 Currently being adjusted...
 
-<div id="viewpart"></div>
+<div id="viewpart_html"></div>
 
-### : ViewPart (HTML)
+##  #: ViewPart (HTML)
+
+Currently being adjusted...
+
+<div id="dialog_html"></div>
+
+## # Dialog (HTML)
 
 Currently being adjusted...
 
 <div id="resource"></div>
 
-### : Resource
+## # Resource
 
 Currently being adjusted...
 
 <div id="package.json"></div>
 
-### : package.json
+## # package.json
 
 Currently being adjusted...
 
 <div id="corelib"></div>
 
-## # Core Library Class
+# Core Library Class
 
 When building Saiberian, the minimum classes required for operation are already provided.  
 By using this class, you can easily set page settings or click events.
@@ -215,6 +237,7 @@ The available core library classes are:
 |Background|Classes to run when the app starts.<br>[Click here for details](#background)|
 |Controller|Class to be executed when transitioning between pages.<br>Multiple pages can be managed by a single Controller class.<br>[Click here for details](#controller)|
 |Data|Data sharing management class.<br>[Click here for details](#data)|
+|Dialog|Class for displaying dialogs.<br>[Click here for details](#dialog)|
 |Exception|Class when an error occurs.<br>[Click here for details](#exception)|
 |KeyEvent|Class for key operation events.<br>[Click here for details](#keyevent)|
 |ModernJS|Virtual DOM or modern JS classes for DOM manipulation.<br>[Click here for details](#modernjs)|
@@ -341,35 +364,39 @@ public static sessionStorage : string = "sab_ss";
 
 <div id="background"></div>
 
-### : Background Class
+## # Background Class
 
 <div id="controller"></div>
 
-### : Controller Class
+## # Controller Class
 
 <div id="data"></div>
 
-### : Data Class
+## #: Data Class
+
+<div id="dialog"></div>
+
+## # Dialog Class
 
 <div id="exception"></div>
 
-### : Exception Class
+## # Exception Class
 
 <div id="keyevent"></div>
 
-### : KeyEvent Class
+## # KeyEvent Class
 
 <div id="modernjs"></div>
 
-### : ModernJS Class
+## # ModernJS Class
 
 <div id="response"></div>
 
-### : Response Class
+## # Response Class
 
 <div id="routes"></div>
 
-### : Routes Class
+## # Routes Class
 
 The Routes class is used to set the destination of each screen and the Controller class or View class to be used.  
 By performing routing, you can easily switch screens using a specified URL, and you can see at a glance the relationship between the URL and the Controller class or View class to be used.
@@ -388,7 +415,7 @@ public static routes : Routes = {
 };
 ```
 
-#### :: Screen transitions using URLs and link buttons
+### : Screen transitions using URLs and link buttons
 
 The URL in routing corresponds to the identifier of each screen.  
 Enter the key name starting with ``/`` as shown below.
@@ -407,7 +434,7 @@ For example, if you want to place a link button (a tag) on ​​a page that wil
 The href attribute is the same as for normal page transitions, but here you must put ``#`` before it.   
 By adding ``#``, it will be treated as an internal link, and when used on the web, the screen transition will be completed only within the page, without the browser performing page redirection operations.
 
-#### :: Routing with Views
+### : Routing with Views
 
 To associate a view class or view-rendered HTML with a specific URL, use the following:
 
@@ -440,7 +467,7 @@ export class Page1View extends View {
 When specifying a View class, you need to write the View class for each screen in a separate ts file, but by using a Controller instead, you can write multiple screens in a single ts file.  
 (The method for specifying routing inthe Controller is described below.)
 
-#### :: Routing with Controller
+### : Routing with Controller
 
 To associate a Controller class and action (public method) with a specific URL instead of the View class above, specify it as follows:
 
@@ -494,7 +521,7 @@ export class Page2Controller extends Controller {
 }
 ```
 
-#### :: URL description using scope
+### : URL description using scope
 
 You can simplify the description of the routing URL by specifying a range (scoping) for a part of it.
 
@@ -531,7 +558,7 @@ Scoping can be done at any stage.
 },
 ```
 
-#### :: Dynamic support for some URLs
+### : Dynamic support for some URLs
 
 To make the URL dynamic, use ``{}``.
 
@@ -597,7 +624,7 @@ You can also specify it not only at the end of the URL but also in the middle as
 "/page3/{id}/detail": "page3Detail",
 ```
 
-#### :: Dynamic support for some URLs (Optional)
+### : Dynamic support for some URLs (Optional)
 
 To make a part of the URL correspond to an arbitrary value, write it using ``{?}``.  
 This allows you to route regardless of whether there is a value in the ``{?}`` section.
@@ -653,24 +680,24 @@ export class Page3Controller extends Controller {
 
 <div id="shortcode"></div>
 
-### : Shortcode Class
+## # Shortcode Class
 
 <div id="storage"></div>
 
-### : Storage Class
+## # Storage Class
 
 <div id="template"></div>
 
-### : Template Class
+## # Template Class
 
 <div id="view"></div>
 
-### : View Class
+## # View Class
 
 The View class is a class for specifying the processing content before and after each screen display.  
 This mainly involves setting up event handlers that are executed before and after the screen is displayed, and configuring the template to be used.
 
-#### :: Basic description
+### : Basic description
 
 The view file should be written as follows in the specified path for each route:
 
@@ -694,7 +721,7 @@ export class Page1View extends View {
 
 Now, when you access ``/page1``, the ``handle`` in the Page1View class above will be executed as an event handler and ``page1 .... ok`` will be displayed in the console.
 
-#### :: LifeCycle
+### : LifeCycle
 
 The lifecycle of the View class is as follows:
 
@@ -726,7 +753,7 @@ Generally, the ``handle`` method is used as an event handler, but if you create 
 
 If you need to include termination processing when transitioning from a View to another Controller or View, use ``handleave``.
 
-#### :: Using Virtual Dom (ModernJS)
+### : Using Virtual Dom (ModernJS)
 
 By using a virtual Dom, you can simplify element selection when performing complex Dom control.
 
@@ -759,7 +786,7 @@ Write the following v attribute in the rendering HTML ``src/rendering/view/page1
 <div v="description"></div>
 ```
 
-#### :: Template settings
+### : Template settings
 
 There are two ways to set a template as a rendering:
 ( For an explanation of templates, [see here.](#template))  
@@ -802,7 +829,7 @@ export class Page1View extends View {
 }
 ```
 
-#### :: Changing the rendered HTML
+### : Changing the rendered HTML
 
 There are two ways to change the rendered HTML (view):
 
@@ -844,7 +871,7 @@ export class Page1View extends View {
 }
 ```
 
-#### :: Head tag settings
+### :: Head tag settings
 
 By using the public variable ``head``, you can automatically set the rendering HTML of the ViewPart in the head tag.
 
@@ -868,7 +895,7 @@ Specify the content of the head tag in ``src/rendering/viewpart/head.htm``l as s
 <link rel="stylesheet" href="style.css">
 ```
 
-#### :: Setting the heaerd tag
+### : Setting the heaerd tag
 
 By using the public variable ``header``, you can automatically set the rendering HTML of the ViewPart in the header tag.
 
@@ -891,7 +918,7 @@ Specify the content of the header tag in ``src/rendering/viewpart/header.htm``l 
 <h1>Header Title</h1>
 ```
 
-#### :: Setting the footer tag
+### :: Setting the footer tag
 
 By using the public variable ``footer``, you can automatically set the rendering HTML of the ViewPart in the footer tag.
 
@@ -916,10 +943,10 @@ Specify the content of the footer tag in ``src/rendering/viewpart/footer.htm``l 
 
 <div id="viewpart"></div>
 
-### : ViewPart Class
+## # ViewPart Class
 
 <div id="term"></div>
 
-## # Terminology
+# Terminology
 
 Currently being adjusted...

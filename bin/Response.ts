@@ -4,8 +4,6 @@ import { Util } from "Util";
 import { Data } from "Data";
 import { Controller } from "Controller";
 import { View } from "View";
-import { ViewPart } from "ViewPart";
-import { Template } from "Template";
 import { ModernJS, dom} from "ModernJS";
 import { Shortcode } from "Shortcode";
 import { Dialog, DialogOption } from "Dialog";
