@@ -406,10 +406,17 @@ var Response = /** @class */ (function () {
     Response.view = function (viewName) {
         return this.renderHtml("view/" + viewName);
     };
-    Response.vindView = function (mjs, viewName) {
+    /**
+     * ***bindView***
+     * @param mjs
+     * @param viewName
+     * @param sendData
+     * @returns
+     */
+    Response.bindView = function (mjs, viewName, sendData) {
         mjs.html = this.view(viewName);
         mjs.reload();
-        return this.loadClass("View", viewName, mjs);
+        return this.loadClass("View", viewName, mjs, sendData);
     };
     /**
      * ***template*** :
@@ -420,10 +427,17 @@ var Response = /** @class */ (function () {
     Response.template = function (templateName) {
         return this.renderHtml("template/" + templateName);
     };
-    Response.bindTemplate = function (mjs, templateName) {
+    /**
+     * ***bindTemplate***
+     * @param mjs
+     * @param templateName
+     * @param sendData
+    * @returns
+     */
+    Response.bindTemplate = function (mjs, templateName, sendData) {
         mjs.html = this.template(templateName);
         mjs.reload();
-        return this.loadClass("Template", templateName, mjs);
+        return this.loadClass("Template", templateName, mjs, sendData);
     };
     /**
      * ***viewPart*** :
@@ -434,26 +448,45 @@ var Response = /** @class */ (function () {
     Response.viewPart = function (viewPartName) {
         return this.renderHtml("viewpart/" + viewPartName);
     };
-    Response.bindViewPart = function (mjs, viewPartName) {
-        mjs.html = this.view(viewPartName);
+    /**
+     * ***bindViewPart***
+     * @param mjs
+     * @param viewPartName
+     * @param sendData
+     * @returns
+     */
+    Response.bindViewPart = function (mjs, viewPartName, sendData) {
+        mjs.html = this.viewPart(viewPartName);
         mjs.reload();
-        return this.loadClass("ViewPart", viewPartName, mjs);
+        return this.loadClass("ViewPart", viewPartName, mjs, sendData);
     };
-    Response.appendViewPart = function (mjs, viewPartName) {
+    /**
+     * ***appendViewPart***
+     * @param mjs
+     * @param viewPartName
+     * @param sendData
+     * @returns
+     */
+    Response.appendViewPart = function (mjs, viewPartName, sendData) {
         mjs.append(this.viewPart(viewPartName), true);
         var myMjs = new ModernJS_1.ModernJS();
         mjs.reload(myMjs);
-        return this.loadClass("ViewPart", viewPartName, myMjs);
+        return this.loadClass("ViewPart", viewPartName, myMjs, sendData);
     };
+    /**
+     * ***dialog***
+     * @param dialogName
+     * @returns
+     */
     Response.dialog = function (dialogName) {
         return this.renderHtml("dialog/" + dialogName);
     };
-    Response.setDialogCss = function () {
-        if ((0, ModernJS_1.dom)("head").querySelector("link[m=dl]").length > 0)
-            return;
-        var style = require("CORERES/dialog/style.css");
-        (0, ModernJS_1.dom)("head").afterBegin("<link rel=\"stylesheet\" m=\"dl\" href=\"data:text/css;base64," + style + "\">");
-    };
+    /**
+     * ***openDialog***
+     * @param dialogName
+     * @param option
+     * @returns
+     */
     Response.openDialog = function (dialogName, option) {
         if (!option)
             option = {};
@@ -471,7 +504,7 @@ var Response = /** @class */ (function () {
         setTimeout(function () {
             dialogMjs.addClass("open");
         }, 100);
-        var dialog = this.loadClass("Dialog", dialogName, dialogMjs);
+        var dialog = this.loadClass("Dialog", dialogName, dialogMjs, option.sendData);
         if (!dialog) {
             dialog = new Dialog_1.Dialog();
             dialog.myMjs = dialogMjs;
@@ -481,7 +514,13 @@ var Response = /** @class */ (function () {
             option.handle(dialog);
         return dialog;
     };
-    Response.loadClass = function (classType, loadClassName, mjs) {
+    Response.setDialogCss = function () {
+        if ((0, ModernJS_1.dom)("head").querySelector("link[m=dl]").length > 0)
+            return;
+        var style = require("CORERES/dialog/style.css");
+        (0, ModernJS_1.dom)("head").afterBegin("<link rel=\"stylesheet\" m=\"dl\" href=\"data:text/css;base64," + style + "\">");
+    };
+    Response.loadClass = function (classType, loadClassName, mjs, sendData) {
         var className = Util_1.Util.getModuleName(loadClassName + classType);
         var classPath = Util_1.Util.getModulePath("app/" + classType.toLowerCase() + "/" + loadClassName + classType);
         var classObj;
@@ -495,7 +534,7 @@ var Response = /** @class */ (function () {
             return;
         }
         if (classObj.handle)
-            classObj.handle();
+            classObj.handle(sendData);
         return classObj;
     };
     Response.renderConvert = function (content) {

@@ -4,6 +4,6 @@ exports.Template = void 0;
 class Template {
     myMjs;
     mjs;
-    handle() { }
+    handle(sendData) { }
 }
 exports.Template = Template;

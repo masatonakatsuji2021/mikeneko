@@ -4,6 +4,8 @@ import { Util } from "Util";
 import { Data } from "Data";
 import { Controller } from "Controller";
 import { View } from "View";
+import { Template } from "Template";
+import { ViewPart } from "ViewPart";
 import { ModernJS, dom} from "ModernJS";
 import { Shortcode } from "Shortcode";
 import { Dialog, DialogOption } from "Dialog";
@@ -297,10 +299,17 @@ export class Response {
         return this.renderHtml("view/" + viewName);
     }
 
-    public static vindView(mjs: ModernJS, viewName : string) {
+    /**
+     * ***bindView*** 
+     * @param mjs 
+     * @param viewName 
+     * @param sendData 
+     * @returns 
+     */
+    public static bindView(mjs: ModernJS, viewName : string, sendData? : any) : View {
         mjs.html = this.view(viewName);
         mjs.reload();
-        return this.loadClass("View", viewName, mjs);
+        return this.loadClass("View", viewName, mjs, sendData);
     }
 
     /**
@@ -313,10 +322,17 @@ export class Response {
         return this.renderHtml("template/" + templateName);
     }
 
-    public static bindTemplate(mjs: ModernJS, templateName : string) {
+    /**
+     * ***bindTemplate***
+     * @param mjs 
+     * @param templateName 
+     * @param sendData
+    * @returns 
+     */
+    public static bindTemplate(mjs: ModernJS, templateName : string, sendData? : any) : Template {
         mjs.html = this.template(templateName);
         mjs.reload();
-        return this.loadClass("Template", templateName, mjs);
+        return this.loadClass("Template", templateName, mjs, sendData);
     }
 
     /**
@@ -329,29 +345,48 @@ export class Response {
         return this.renderHtml("viewpart/" + viewPartName);
     }
 
-    public static bindViewPart(mjs: ModernJS, viewPartName : string) {
-        mjs.html = this.view(viewPartName);
+    /**
+     * ***bindViewPart***
+     * @param mjs 
+     * @param viewPartName 
+     * @param sendData
+     * @returns 
+     */
+    public static bindViewPart(mjs: ModernJS, viewPartName : string, sendData? : any) : ViewPart {
+        mjs.html = this.viewPart(viewPartName);
         mjs.reload();
-        return this.loadClass("ViewPart", viewPartName, mjs);
+        return this.loadClass("ViewPart", viewPartName, mjs, sendData);
     }
 
-    public static appendViewPart(mjs: ModernJS, viewPartName : string) {
+    /**
+     * ***appendViewPart***
+     * @param mjs 
+     * @param viewPartName 
+     * @param sendData 
+     * @returns 
+     */
+    public static appendViewPart(mjs: ModernJS, viewPartName : string, sendData?: any) : ViewPart {
         mjs.append(this.viewPart(viewPartName), true);
         const myMjs = new ModernJS();
         mjs.reload(myMjs);
-        return this.loadClass("ViewPart", viewPartName, myMjs);
+        return this.loadClass("ViewPart", viewPartName, myMjs, sendData);
     }
 
+    /**
+     * ***dialog***
+     * @param dialogName 
+     * @returns 
+     */
     public static dialog(dialogName : string) : string {
         return this.renderHtml("dialog/" + dialogName);
     }
 
-    private static setDialogCss(){
-        if (dom("head").querySelector("link[m=dl]").length > 0)  return;
-        const style = require("CORERES/dialog/style.css");
-        dom("head").afterBegin("<link rel=\"stylesheet\" m=\"dl\" href=\"data:text/css;base64," + style + "\">");
-    }
-
+    /**
+     * ***openDialog***
+     * @param dialogName 
+     * @param option 
+     * @returns 
+     */
     public static openDialog(dialogName : string, option? : DialogOption) : Dialog {
         if (!option) option = {};
         this.setDialogCss();
@@ -369,7 +404,7 @@ export class Response {
         setTimeout(()=>{
             dialogMjs.addClass("open");
         }, 100);
-        let dialog : Dialog = this.loadClass("Dialog", dialogName, dialogMjs);
+        let dialog : Dialog = this.loadClass("Dialog", dialogName, dialogMjs, option.sendData);
         if (!dialog) {
             dialog = new Dialog();
             dialog.myMjs = dialogMjs;
@@ -379,7 +414,13 @@ export class Response {
         return dialog;
     }
 
-    private static loadClass(classType : string, loadClassName : string, mjs : ModernJS) {
+    private static setDialogCss(){
+        if (dom("head").querySelector("link[m=dl]").length > 0)  return;
+        const style = require("CORERES/dialog/style.css");
+        dom("head").afterBegin("<link rel=\"stylesheet\" m=\"dl\" href=\"data:text/css;base64," + style + "\">");
+    }
+
+    private static loadClass(classType : string, loadClassName : string, mjs : ModernJS, sendData? : any) {
         const className = Util.getModuleName(loadClassName + classType);
         const classPath = Util.getModulePath("app/" + classType.toLowerCase() + "/" + loadClassName + classType);
         let classObj;
@@ -392,7 +433,7 @@ export class Response {
             return;
         }
 
-        if (classObj.handle) classObj.handle();
+        if (classObj.handle) classObj.handle(sendData);
 
         return classObj;
     }

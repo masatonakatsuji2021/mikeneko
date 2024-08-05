@@ -280,10 +280,17 @@ class Response {
     static view(viewName) {
         return this.renderHtml("view/" + viewName);
     }
-    static vindView(mjs, viewName) {
+    /**
+     * ***bindView***
+     * @param mjs
+     * @param viewName
+     * @param sendData
+     * @returns
+     */
+    static bindView(mjs, viewName, sendData) {
         mjs.html = this.view(viewName);
         mjs.reload();
-        return this.loadClass("View", viewName, mjs);
+        return this.loadClass("View", viewName, mjs, sendData);
     }
     /**
      * ***template*** :
@@ -294,10 +301,17 @@ class Response {
     static template(templateName) {
         return this.renderHtml("template/" + templateName);
     }
-    static bindTemplate(mjs, templateName) {
+    /**
+     * ***bindTemplate***
+     * @param mjs
+     * @param templateName
+     * @param sendData
+    * @returns
+     */
+    static bindTemplate(mjs, templateName, sendData) {
         mjs.html = this.template(templateName);
         mjs.reload();
-        return this.loadClass("Template", templateName, mjs);
+        return this.loadClass("Template", templateName, mjs, sendData);
     }
     /**
      * ***viewPart*** :
@@ -308,26 +322,45 @@ class Response {
     static viewPart(viewPartName) {
         return this.renderHtml("viewpart/" + viewPartName);
     }
-    static bindViewPart(mjs, viewPartName) {
-        mjs.html = this.view(viewPartName);
+    /**
+     * ***bindViewPart***
+     * @param mjs
+     * @param viewPartName
+     * @param sendData
+     * @returns
+     */
+    static bindViewPart(mjs, viewPartName, sendData) {
+        mjs.html = this.viewPart(viewPartName);
         mjs.reload();
-        return this.loadClass("ViewPart", viewPartName, mjs);
+        return this.loadClass("ViewPart", viewPartName, mjs, sendData);
     }
-    static appendViewPart(mjs, viewPartName) {
+    /**
+     * ***appendViewPart***
+     * @param mjs
+     * @param viewPartName
+     * @param sendData
+     * @returns
+     */
+    static appendViewPart(mjs, viewPartName, sendData) {
         mjs.append(this.viewPart(viewPartName), true);
         const myMjs = new ModernJS_1.ModernJS();
         mjs.reload(myMjs);
-        return this.loadClass("ViewPart", viewPartName, myMjs);
+        return this.loadClass("ViewPart", viewPartName, myMjs, sendData);
     }
+    /**
+     * ***dialog***
+     * @param dialogName
+     * @returns
+     */
     static dialog(dialogName) {
         return this.renderHtml("dialog/" + dialogName);
     }
-    static setDialogCss() {
-        if ((0, ModernJS_1.dom)("head").querySelector("link[m=dl]").length > 0)
-            return;
-        const style = require("CORERES/dialog/style.css");
-        (0, ModernJS_1.dom)("head").afterBegin("<link rel=\"stylesheet\" m=\"dl\" href=\"data:text/css;base64," + style + "\">");
-    }
+    /**
+     * ***openDialog***
+     * @param dialogName
+     * @param option
+     * @returns
+     */
     static openDialog(dialogName, option) {
         if (!option)
             option = {};
@@ -345,7 +378,7 @@ class Response {
         setTimeout(() => {
             dialogMjs.addClass("open");
         }, 100);
-        let dialog = this.loadClass("Dialog", dialogName, dialogMjs);
+        let dialog = this.loadClass("Dialog", dialogName, dialogMjs, option.sendData);
         if (!dialog) {
             dialog = new Dialog_1.Dialog();
             dialog.myMjs = dialogMjs;
@@ -355,7 +388,13 @@ class Response {
             option.handle(dialog);
         return dialog;
     }
-    static loadClass(classType, loadClassName, mjs) {
+    static setDialogCss() {
+        if ((0, ModernJS_1.dom)("head").querySelector("link[m=dl]").length > 0)
+            return;
+        const style = require("CORERES/dialog/style.css");
+        (0, ModernJS_1.dom)("head").afterBegin("<link rel=\"stylesheet\" m=\"dl\" href=\"data:text/css;base64," + style + "\">");
+    }
+    static loadClass(classType, loadClassName, mjs, sendData) {
         const className = Util_1.Util.getModuleName(loadClassName + classType);
         const classPath = Util_1.Util.getModulePath("app/" + classType.toLowerCase() + "/" + loadClassName + classType);
         let classObj;
@@ -369,7 +408,7 @@ class Response {
             return;
         }
         if (classObj.handle)
-            classObj.handle();
+            classObj.handle(sendData);
         return classObj;
     }
     static renderConvert(content) {

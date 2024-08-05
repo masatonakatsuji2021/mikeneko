@@ -2,6 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ViewPart = void 0;
 class ViewPart {
-    handle() { }
+    handle(sendData) { }
 }
 exports.ViewPart = ViewPart;

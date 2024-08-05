@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Dialog = void 0;
 class Dialog {
-    handle() { }
+    handle(sendData) { }
     close() {
         this.myMjs.removeClass("open");
         setTimeout(() => {

@@ -4,7 +4,7 @@ exports.Dialog = void 0;
 class Dialog {
     myMjs;
     mjs;
-    handle() { }
+    handle(sendData) { }
     close() {
         this.myMjs.removeClass("open");
         setTimeout(() => {

@@ -4,7 +4,7 @@ exports.Dialog = void 0;
 var Dialog = /** @class */ (function () {
     function Dialog() {
     }
-    Dialog.prototype.handle = function () { };
+    Dialog.prototype.handle = function (sendData) { };
     Dialog.prototype.close = function () {
         var _this = this;
         this.myMjs.removeClass("open");

@@ -4,6 +4,6 @@ exports.ViewPart = void 0;
 class ViewPart {
     myMjs;
     mjs;
-    handle() { }
+    handle(sendData) { }
 }
 exports.ViewPart = ViewPart;

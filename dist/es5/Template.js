@@ -4,7 +4,7 @@ exports.Template = void 0;
 var Template = /** @class */ (function () {
     function Template() {
     }
-    Template.prototype.handle = function () { };
+    Template.prototype.handle = function (sendData) { };
     return Template;
 }());
 exports.Template = Template;

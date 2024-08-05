@@ -4,7 +4,7 @@ exports.ViewPart = void 0;
 var ViewPart = /** @class */ (function () {
     function ViewPart() {
     }
-    ViewPart.prototype.handle = function () { };
+    ViewPart.prototype.handle = function (sendData) { };
     return ViewPart;
 }());
 exports.ViewPart = ViewPart;

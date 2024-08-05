@@ -6,5 +6,5 @@ export class Template {
 
     public mjs : ModernJSList;
 
-    public handle() : void { }    
+    public handle(sendData?: any) : void { }    
 }

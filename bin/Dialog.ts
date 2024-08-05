@@ -5,6 +5,8 @@ export interface DialogOption {
     handle? : (dialog : Dialog) => void,
 
     class? : Array<string> | string,
+
+    sendData?: any,
 }
 
 export class Dialog {
@@ -13,7 +15,7 @@ export class Dialog {
 
     public mjs : ModernJSList;
 
-    public handle() : void {}
+    public handle(sendData?: any) : void {}
 
     public close() {
         this.myMjs.removeClass("open");
