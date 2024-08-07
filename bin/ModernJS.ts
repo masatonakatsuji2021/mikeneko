@@ -365,12 +365,19 @@ export class ModernJS {
         return this;
     }
 
+    public on(event : keyof HTMLElementEventMap, listener : (event : Event, context: ModernJS) => void) : ModernJS;
+
+    public on(event : keyof HTMLElementEventMap, listener : (event : Event, context: ModernJS) => void, options?: boolean | AddEventListenerOptions) : ModernJS;
+
     public on(event : keyof HTMLElementEventMap, listener : (event : Event, context: ModernJS) => void, options?: boolean | AddEventListenerOptions) : ModernJS {
-        const listener_ = (event : Event) => {
-            listener(event, this);
-        };
         this.els.forEach((el : HTMLElement) => {
-            el.addEventListener(event, listener_,options);
+            const listener_ = (event : Event) => {
+                const my : ModernJS = new ModernJS();
+                my.addEl(el);
+                my.datas = this.datas;
+                listener(event, my);
+            };
+            el.addEventListener(event, listener_, options);
         });
         return this;
     }
@@ -610,6 +617,20 @@ export class ModernJS {
     public selectResetParam() : ModernJS {
         this.text = "";
         return this;
+    }
+
+    public get selectedText() : string | Array<string> {
+        const values = [];
+        this.els.forEach((el : HTMLSelectElement) => {
+            const value = el.options[el.selectedIndex].text;
+            values.push(value);
+        });
+        if (this.length > 1) {
+            return values;
+        }
+        else {
+            return values[0];
+        }
     }
 
     public get childValues() : {[name : string] : string | number | Array<string | number>} {

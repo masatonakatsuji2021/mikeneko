@@ -9,6 +9,8 @@ export class Controller {
      */
     public mjs : ModernJSList;
 
+    public sendData: any;
+
     /**
      * ***view*** : Change the view name to be displayed.  
      * If not specified, the "rendering/View/{ControllerName}/{ActionName}.html" file will be displayed as the HTML source by default.

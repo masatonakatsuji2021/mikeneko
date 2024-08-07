@@ -31,12 +31,16 @@ export class Response {
         return true;
     }
 
-    public static next(url : string) : void {
+    public static next(url : string) : void;
+
+    public static next(url : string, send : any) : void;
+
+    public static next(url : string, send? : any) : void {
         const MyApp : typeof App = require("app/config/App").MyApp;
         if (MyApp.routeType == AppRouteType.application) {
             Data.push("history", url);
             const route : Route = Routes.searchRoute(url);
-            Response.rendering(route).then(()=>{
+            Response.rendering(route, send).then(()=>{
                 Data.set("stepMode", false);
             });
         }
@@ -45,7 +49,7 @@ export class Response {
         }
     }
 
-    public static async rendering (route: DecisionRoute) {
+    public static async rendering (route: DecisionRoute, send? : any) {
 
         try{
 
@@ -61,10 +65,10 @@ export class Response {
             if(route.mode == DecisionRouteMode.Notfound) throw("Page Not found");
 
             if(route.controller){
-                await Response.renderingOnController(route);
+                await Response.renderingOnController(route, send);
             }
             else if(route.view){
-                await Response.renderingOnView(route);
+                await Response.renderingOnView(route, send);
             }
 
         }catch(error) {
@@ -73,7 +77,7 @@ export class Response {
         }
     }
 
-    private static async renderingOnController(route : DecisionRoute) {
+    private static async renderingOnController(route : DecisionRoute, send?: any) {
         const controllerName : string = Util.getModuleName(route.controller + "Controller");
         const controllerPath : string = "app/controller/" + Util.getModulePath(route.controller + "Controller");
         if(!useExists(controllerPath)){
@@ -82,6 +86,7 @@ export class Response {
 
         const controllerClass = use(controllerPath);
         const cont : Controller = new controllerClass[controllerName]();
+        cont.sendData = send;
 
         const viewName = route.action + "View";
         const viewPath : string = "app/view/" + route.controller + "/" + Util.getModulePath(viewName);
@@ -94,6 +99,7 @@ export class Response {
             }
             else {
                 vw = new View_[Util.getModuleName(viewName)]();
+                vw.sendData = send;
             }
         }
 
@@ -153,7 +159,7 @@ export class Response {
     }
 
 
-    private static async renderingOnView(route : DecisionRoute) {
+    private static async renderingOnView(route : DecisionRoute, send?: any) {
         const viewName : string = Util.getModuleName(route.view + "View");
         const viewPath : string = "app/view/" + Util.getModulePath(route.view + "View");
 
@@ -163,7 +169,8 @@ export class Response {
 
         const View_ = use(viewPath);
         const vm : View = new View_[viewName]();
-
+        vm.sendData = send;
+        
         if(Data.get("beforeViewPath") != viewPath){
             Data.set("beforeViewPath", viewPath);
             if(vm.handleBegin) await vm.handleBegin();
