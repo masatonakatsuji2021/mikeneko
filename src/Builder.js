@@ -161,8 +161,8 @@ class Builder {
     }
     static localModuleMount(codeList, rootDir, platformName) {
         let targetPaths = [
-            rootDir + "/src/app",
-            rootDir + "/src_" + platformName + "/app",
+            rootDir + "/dist/src/app",
+            rootDir + "/dist/src_" + platformName + "/app",
         ];
         let strs = "";
         targetPaths.forEach((targetPath) => {

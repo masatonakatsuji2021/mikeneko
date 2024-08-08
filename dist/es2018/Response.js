@@ -26,12 +26,12 @@ class Response {
         }
         return true;
     }
-    static next(url) {
+    static next(url, send) {
         const MyApp = require("app/config/App").MyApp;
         if (MyApp.routeType == App_1.AppRouteType.application) {
             Data_1.Data.push("history", url);
             const route = Routes_1.Routes.searchRoute(url);
-            Response.rendering(route).then(() => {
+            Response.rendering(route, send).then(() => {
                 Data_1.Data.set("stepMode", false);
             });
         }
@@ -39,7 +39,7 @@ class Response {
             location.hash = "#" + url;
         }
     }
-    static async rendering(route) {
+    static async rendering(route, send) {
         try {
             // Controller & View Leave 
             const befCont = Data_1.Data.get("beforeController");
@@ -52,17 +52,17 @@ class Response {
             if (route.mode == Routes_1.DecisionRouteMode.Notfound)
                 throw ("Page Not found");
             if (route.controller) {
-                await Response.renderingOnController(route);
+                await Response.renderingOnController(route, send);
             }
             else if (route.view) {
-                await Response.renderingOnView(route);
+                await Response.renderingOnView(route, send);
             }
         }
         catch (error) {
             console.error(error);
         }
     }
-    static async renderingOnController(route) {
+    static async renderingOnController(route, send) {
         const controllerName = Util_1.Util.getModuleName(route.controller + "Controller");
         const controllerPath = "app/controller/" + Util_1.Util.getModulePath(route.controller + "Controller");
         if (!useExists(controllerPath)) {
@@ -70,6 +70,7 @@ class Response {
         }
         const controllerClass = use(controllerPath);
         const cont = new controllerClass[controllerName]();
+        cont.sendData = send;
         const viewName = route.action + "View";
         const viewPath = "app/view/" + route.controller + "/" + Util_1.Util.getModulePath(viewName);
         let vw;
@@ -80,6 +81,7 @@ class Response {
             }
             else {
                 vw = new View_[Util_1.Util.getModuleName(viewName)]();
+                vw.sendData = send;
             }
         }
         let beginStatus = false;
@@ -132,7 +134,7 @@ class Response {
         if (vw)
             await vw.handleRenderAfter(beginStatus);
     }
-    static async renderingOnView(route) {
+    static async renderingOnView(route, send) {
         const viewName = Util_1.Util.getModuleName(route.view + "View");
         const viewPath = "app/view/" + Util_1.Util.getModulePath(route.view + "View");
         if (!useExists(viewPath)) {
@@ -140,6 +142,7 @@ class Response {
         }
         const View_ = use(viewPath);
         const vm = new View_[viewName]();
+        vm.sendData = send;
         if (Data_1.Data.get("beforeViewPath") != viewPath) {
             Data_1.Data.set("beforeViewPath", viewPath);
             if (vm.handleBegin)

@@ -253,8 +253,8 @@ export class Builder {
 
     private static localModuleMount(codeList : {[name : string] : string}, rootDir : string, platformName : string) {
         let targetPaths = [
-            rootDir + "/src/app",
-            rootDir + "/src_" + platformName + "/app",
+            rootDir + "/dist/src/app",
+            rootDir + "/dist/src_" + platformName + "/app",
         ];
 
         let strs : string = "";

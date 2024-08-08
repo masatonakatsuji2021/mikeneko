@@ -324,7 +324,7 @@ var ModernJS = /** @class */ (function () {
     ModernJS.prototype.attr = function (name, value) {
         if (value != undefined) {
             this.els.forEach(function (el) {
-                el.attributes[name].value = value;
+                el.setAttribute(name, value.toString());
             });
             return this;
         }
@@ -368,10 +368,13 @@ var ModernJS = /** @class */ (function () {
     };
     ModernJS.prototype.on = function (event, listener, options) {
         var _this = this;
-        var listener_ = function (event) {
-            listener(event, _this);
-        };
         this.els.forEach(function (el) {
+            var listener_ = function (event) {
+                var my = new ModernJS();
+                my.addEl(el);
+                my.datas = _this.datas;
+                listener(event, my);
+            };
             el.addEventListener(event, listener_, options);
         });
         return this;
@@ -631,6 +634,23 @@ var ModernJS = /** @class */ (function () {
         this.text = "";
         return this;
     };
+    Object.defineProperty(ModernJS.prototype, "selectedText", {
+        get: function () {
+            var values = [];
+            this.els.forEach(function (el) {
+                var value = el.options[el.selectedIndex].text;
+                values.push(value);
+            });
+            if (this.length > 1) {
+                return values;
+            }
+            else {
+                return values[0];
+            }
+        },
+        enumerable: false,
+        configurable: true
+    });
     Object.defineProperty(ModernJS.prototype, "childValues", {
         get: function () {
             var c = Object.keys(this.childs);

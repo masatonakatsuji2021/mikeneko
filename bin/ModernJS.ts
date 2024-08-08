@@ -312,7 +312,7 @@ export class ModernJS {
     public attr(name : string, value? : string | number) : string | ModernJS {
         if (value != undefined) {
             this.els.forEach((el : HTMLElement) => {
-                el.attributes[name].value = value;
+                el.setAttribute(name, value.toString());
             });    
             return this;
         }

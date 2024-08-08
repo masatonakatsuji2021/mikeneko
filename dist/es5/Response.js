@@ -64,12 +64,12 @@ var Response = /** @class */ (function () {
         }
         return true;
     };
-    Response.next = function (url) {
+    Response.next = function (url, send) {
         var MyApp = require("app/config/App").MyApp;
         if (MyApp.routeType == App_1.AppRouteType.application) {
             Data_1.Data.push("history", url);
             var route = Routes_1.Routes.searchRoute(url);
-            Response.rendering(route).then(function () {
+            Response.rendering(route, send).then(function () {
                 Data_1.Data.set("stepMode", false);
             });
         }
@@ -77,7 +77,7 @@ var Response = /** @class */ (function () {
             location.hash = "#" + url;
         }
     };
-    Response.rendering = function (route) {
+    Response.rendering = function (route, send) {
         return __awaiter(this, void 0, void 0, function () {
             var befCont, befView, error_1;
             return __generator(this, function (_a) {
@@ -101,13 +101,13 @@ var Response = /** @class */ (function () {
                         if (route.mode == Routes_1.DecisionRouteMode.Notfound)
                             throw ("Page Not found");
                         if (!route.controller) return [3 /*break*/, 6];
-                        return [4 /*yield*/, Response.renderingOnController(route)];
+                        return [4 /*yield*/, Response.renderingOnController(route, send)];
                     case 5:
                         _a.sent();
                         return [3 /*break*/, 8];
                     case 6:
                         if (!route.view) return [3 /*break*/, 8];
-                        return [4 /*yield*/, Response.renderingOnView(route)];
+                        return [4 /*yield*/, Response.renderingOnView(route, send)];
                     case 7:
                         _a.sent();
                         _a.label = 8;
@@ -121,7 +121,7 @@ var Response = /** @class */ (function () {
             });
         });
     };
-    Response.renderingOnController = function (route) {
+    Response.renderingOnController = function (route, send) {
         return __awaiter(this, void 0, void 0, function () {
             var controllerName, controllerPath, controllerClass, cont, viewName, viewPath, vw, View_, beginStatus, method, method;
             return __generator(this, function (_a) {
@@ -134,6 +134,7 @@ var Response = /** @class */ (function () {
                         }
                         controllerClass = use(controllerPath);
                         cont = new controllerClass[controllerName]();
+                        cont.sendData = send;
                         viewName = route.action + "View";
                         viewPath = "app/view/" + route.controller + "/" + Util_1.Util.getModulePath(viewName);
                         if (useExists(viewPath)) {
@@ -143,6 +144,7 @@ var Response = /** @class */ (function () {
                             }
                             else {
                                 vw = new View_[Util_1.Util.getModuleName(viewName)]();
+                                vw.sendData = send;
                             }
                         }
                         beginStatus = false;
@@ -230,7 +232,7 @@ var Response = /** @class */ (function () {
             });
         });
     };
-    Response.renderingOnView = function (route) {
+    Response.renderingOnView = function (route, send) {
         return __awaiter(this, void 0, void 0, function () {
             var viewName, viewPath, View_, vm;
             return __generator(this, function (_a) {
@@ -243,6 +245,7 @@ var Response = /** @class */ (function () {
                         }
                         View_ = use(viewPath);
                         vm = new View_[viewName]();
+                        vm.sendData = send;
                         if (!(Data_1.Data.get("beforeViewPath") != viewPath)) return [3 /*break*/, 2];
                         Data_1.Data.set("beforeViewPath", viewPath);
                         if (!vm.handleBegin) return [3 /*break*/, 2];

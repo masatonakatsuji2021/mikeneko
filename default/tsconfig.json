@@ -3,6 +3,8 @@
     "target": "es6",
     "module": "commonjs",
     "lib": ["es6","dom"],
+    "rootDir": "./",
+    "outDir": "./dist",
     "paths": {
       "*": ["./*", "../bin/*"],
       "app/*" : [ "./src/app/*" ]

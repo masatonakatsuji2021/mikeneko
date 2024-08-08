@@ -271,7 +271,7 @@ class ModernJS {
     attr(name, value) {
         if (value != undefined) {
             this.els.forEach((el) => {
-                el.attributes[name].value = value;
+                el.setAttribute(name, value.toString());
             });
             return this;
         }
@@ -314,10 +314,13 @@ class ModernJS {
         return this;
     }
     on(event, listener, options) {
-        const listener_ = (event) => {
-            listener(event, this);
-        };
         this.els.forEach((el) => {
+            const listener_ = (event) => {
+                const my = new ModernJS();
+                my.addEl(el);
+                my.datas = this.datas;
+                listener(event, my);
+            };
             el.addEventListener(event, listener_, options);
         });
         return this;
@@ -543,6 +546,19 @@ class ModernJS {
     selectResetParam() {
         this.text = "";
         return this;
+    }
+    get selectedText() {
+        const values = [];
+        this.els.forEach((el) => {
+            const value = el.options[el.selectedIndex].text;
+            values.push(value);
+        });
+        if (this.length > 1) {
+            return values;
+        }
+        else {
+            return values[0];
+        }
     }
     get childValues() {
         const c = Object.keys(this.childs);
