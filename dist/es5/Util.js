@@ -128,6 +128,17 @@ var Util = /** @class */ (function () {
             }, time);
         });
     };
+    Util.importResourceScript = function (scriptName, resultVars) {
+        var script = this.getResource(scriptName);
+        if (resultVars) {
+            if (typeof resultVars == "string")
+                resultVars = [resultVars];
+            script += "\n evalRes = {" + resultVars.join(",") + "};";
+        }
+        var evalRes;
+        eval(script);
+        return evalRes;
+    };
     return Util;
 }());
 exports.Util = Util;

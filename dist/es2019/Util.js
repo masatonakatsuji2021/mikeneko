@@ -126,6 +126,17 @@ class Util {
             }, time);
         });
     }
+    static importResourceScript(scriptName, resultVars) {
+        let script = this.getResource(scriptName);
+        if (resultVars) {
+            if (typeof resultVars == "string")
+                resultVars = [resultVars];
+            script += "\n evalRes = {" + resultVars.join(",") + "};";
+        }
+        let evalRes;
+        eval(script);
+        return evalRes;
+    }
 }
 exports.Util = Util;
 class SbnDateTime {

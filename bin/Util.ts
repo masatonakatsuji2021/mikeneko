@@ -167,6 +167,17 @@ export class Util {
             },time);
         });
     }
+
+    public static importResourceScript(scriptName : string, resultVars? : string | Array<string>) {
+        let script = this.getResource(scriptName);
+        if (resultVars) {
+            if (typeof resultVars == "string")  resultVars = [ resultVars ];
+            script += "\n evalRes = {" + resultVars.join(",") + "};";
+        }
+        let evalRes;
+        eval(script);
+        return evalRes;
+    }
 }
 
 export class SbnDateTime{
