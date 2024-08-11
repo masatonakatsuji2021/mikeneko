@@ -80,7 +80,7 @@ class Builder {
                 "Template",
                 "Util",
                 "View",
-                "ViewPart",
+                "UI",
             ];
             coreList.forEach((core) => {
                 // core module mount

@@ -99,10 +99,10 @@ class Startor {
                 return;
             return Response_1.Response.view(args.path);
         });
-        Shortcode_1.Shortcode.add("viewpart", (args) => {
+        Shortcode_1.Shortcode.add("ui", (args) => {
             if (!args.path)
                 return;
-            return Response_1.Response.viewPart(args.path);
+            return Response_1.Response.UI(args.path);
         });
         Shortcode_1.Shortcode.add("template", (args) => {
             if (!args.path)

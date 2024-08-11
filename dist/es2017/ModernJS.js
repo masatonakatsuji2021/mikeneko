@@ -20,15 +20,20 @@ class ModernJS {
             if (!buffer.els.length)
                 delete this.buffers[name];
         }
-        const qss = document.querySelectorAll("[v]");
-        qss.forEach((el) => {
-            const vname = el.attributes["v"].value;
-            el.removeAttribute("v");
-            if (!this.buffers[vname])
-                this.buffers[vname] = new ModernJS();
-            this.buffers[vname].addEl(el);
+        this.virtualAttributes("v", (attrValue, el) => {
+            if (!this.buffers[attrValue])
+                this.buffers[attrValue] = new ModernJS();
+            this.buffers[attrValue].addEl(el);
         });
         return this.buffers;
+    }
+    static virtualAttributes(target, handler) {
+        const qss = document.querySelectorAll("[" + target + "]");
+        qss.forEach((el) => {
+            const attrValue = el.attributes[target].value;
+            el.removeAttribute(target);
+            handler(attrValue, el);
+        });
     }
     static create(text, tagName) {
         const mjs = new ModernJS();

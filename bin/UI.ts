@@ -1,6 +1,6 @@
 import { ModernJS, ModernJSList } from "ModernJS";
 
-export class ViewPart {
+export class UI {
 
     public myMjs : ModernJS;
 

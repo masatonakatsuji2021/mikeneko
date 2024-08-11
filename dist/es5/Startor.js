@@ -164,10 +164,10 @@ var Startor = /** @class */ (function () {
                 return;
             return Response_1.Response.view(args.path);
         });
-        Shortcode_1.Shortcode.add("viewpart", function (args) {
+        Shortcode_1.Shortcode.add("ui", function (args) {
             if (!args.path)
                 return;
-            return Response_1.Response.viewPart(args.path);
+            return Response_1.Response.UI(args.path);
         });
         Shortcode_1.Shortcode.add("template", function (args) {
             if (!args.path)

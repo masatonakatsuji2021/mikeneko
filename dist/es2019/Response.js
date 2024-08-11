@@ -177,30 +177,28 @@ class Response {
         if (context.template) {
             const beforeTemplate = Data_1.Data.get("beforeTemplate");
             if (beforeTemplate != context.template) {
+                // Template Rendering...
                 Data_1.Data.set("beforeTemplate", context.template);
-                const templateHtml = Response.template(context.template);
-                (0, ModernJS_1.dom)("body").html = templateHtml;
+                this.bindTemplate((0, ModernJS_1.dom)("body"), context.template);
                 context.mjs = ModernJS_1.ModernJS.reload();
                 if (context.handleTemplateChanged)
                     await context.handleTemplateChanged();
-                //                await Response.loadRenderingClass("Template", context.template);
             }
-            const viewHtml = Response.view(context.view);
-            (0, ModernJS_1.dom)("content").html = viewHtml;
-            context.mjs = ModernJS_1.ModernJS.reload();
         }
         else {
             Data_1.Data.set("beforeTemplate", null);
-            const viewHtml = Response.view(context.view);
-            (0, ModernJS_1.dom)("body").html = viewHtml;
-            context.mjs = ModernJS_1.ModernJS.reload();
         }
+        // View Rendering...
+        const viewHtml = Response.view(context.view);
+        if (!(0, ModernJS_1.dom)("main").length)
+            (0, ModernJS_1.dom)("body").append("<main></main>");
+        (0, ModernJS_1.dom)("main").html = "<article>" + viewHtml + "</article>";
+        context.mjs = ModernJS_1.ModernJS.reload();
         const beforeHead = Data_1.Data.get("beforeHead");
         if (beforeHead != context.head) {
             Data_1.Data.set("beforeHead", context.head);
             if (context.head) {
-                const headHtml = Response.viewPart(context.head);
-                (0, ModernJS_1.dom)("head").html = headHtml;
+                this.bindUI((0, ModernJS_1.dom)("head"), context.head);
                 context.mjs = ModernJS_1.ModernJS.reload();
                 if (context.handleHeadChanged)
                     await context.handleHeadChanged();
@@ -214,8 +212,7 @@ class Response {
         if (beforeHeader != context.header) {
             Data_1.Data.set("beforeHeader", context.header);
             if (context.header) {
-                const headerHtml = Response.viewPart(context.header);
-                (0, ModernJS_1.dom)("header").html = headerHtml;
+                this.bindUI((0, ModernJS_1.dom)("header"), context.header);
                 context.mjs = ModernJS_1.ModernJS.reload();
                 if (context.handleHeaderChanged)
                     await context.handleHeaderChanged();
@@ -229,8 +226,7 @@ class Response {
         if (beforeFooter != context.footer) {
             Data_1.Data.set("beforeFooter", context.footer);
             if (context.footer) {
-                const foooterHtml = Response.viewPart(context.footer);
-                (0, ModernJS_1.dom)("footer").html = foooterHtml;
+                this.bindUI((0, ModernJS_1.dom)("footer"), context.footer);
                 context.mjs = ModernJS_1.ModernJS.reload();
                 if (context.handleFooterChanged)
                     await context.handleFooterChanged();
@@ -300,38 +296,38 @@ class Response {
         return this.loadClass("Template", templateName, mjs, sendData);
     }
     /**
-     * ***viewPart*** :
-     * Get viewPart content information.
-     * @param {string} viewPartName ViewPart Name
-     * @returns {string} viewPart contents
+     * ***UI*** :
+     * Get UI content information.
+     * @param {string} uiName UI Name
+     * @returns {string} UI contents
      */
-    static viewPart(viewPartName) {
-        return this.renderHtml("viewpart/" + viewPartName);
+    static UI(uiName) {
+        return this.renderHtml("ui/" + uiName);
     }
     /**
-     * ***bindViewPart***
+     * ***bindUI***
      * @param mjs
-     * @param viewPartName
+     * @param UIName
      * @param sendData
      * @returns
      */
-    static bindViewPart(mjs, viewPartName, sendData) {
-        mjs.html = this.viewPart(viewPartName);
+    static bindUI(mjs, UIName, sendData) {
+        mjs.html = this.UI(UIName);
         mjs.reload();
-        return this.loadClass("ViewPart", viewPartName, mjs, sendData);
+        return this.loadClass("UI", UIName, mjs, sendData);
     }
     /**
-     * ***appendViewPart***
+     * ***appendUI***
      * @param mjs
-     * @param viewPartName
+     * @param UIName
      * @param sendData
      * @returns
      */
-    static appendViewPart(mjs, viewPartName, sendData) {
-        mjs.append(this.viewPart(viewPartName), true);
+    static appendUI(mjs, UIName, sendData) {
+        mjs.append(this.UI(UIName), true);
         const myMjs = new ModernJS_1.ModernJS();
         mjs.reload(myMjs);
-        return this.loadClass("ViewPart", viewPartName, myMjs, sendData);
+        return this.loadClass("UI", UIName, myMjs, sendData);
     }
     /**
      * ***dialog***

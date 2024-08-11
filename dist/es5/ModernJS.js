@@ -25,15 +25,20 @@ var ModernJS = /** @class */ (function () {
         for (var n = 0; n < c.length; n++) {
             _loop_1(n);
         }
-        var qss = document.querySelectorAll("[v]");
-        qss.forEach(function (el) {
-            var vname = el.attributes["v"].value;
-            el.removeAttribute("v");
-            if (!_this.buffers[vname])
-                _this.buffers[vname] = new ModernJS();
-            _this.buffers[vname].addEl(el);
+        this.virtualAttributes("v", function (attrValue, el) {
+            if (!_this.buffers[attrValue])
+                _this.buffers[attrValue] = new ModernJS();
+            _this.buffers[attrValue].addEl(el);
         });
         return this.buffers;
+    };
+    ModernJS.virtualAttributes = function (target, handler) {
+        var qss = document.querySelectorAll("[" + target + "]");
+        qss.forEach(function (el) {
+            var attrValue = el.attributes[target].value;
+            el.removeAttribute(target);
+            handler(attrValue, el);
+        });
     };
     ModernJS.create = function (text, tagName) {
         var mjs = new ModernJS();

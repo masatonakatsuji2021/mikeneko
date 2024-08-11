@@ -37,16 +37,23 @@ export class ModernJS {
             if (!buffer.els.length) delete this.buffers[name];
         }
 
-        const qss = document.querySelectorAll("[v]");
-        qss.forEach((el : HTMLElement) => {
-            const vname = el.attributes["v"].value;
-            el.removeAttribute("v");
-            if (!this.buffers[vname]) this.buffers[vname] = new ModernJS();
-            this.buffers[vname].addEl(el);
-        }) ;
+        this.virtualAttributes("v", (attrValue: string, el : HTMLElement) => {
+            if (!this.buffers[attrValue]) this.buffers[attrValue] = new ModernJS();
+            this.buffers[attrValue].addEl(el);
+        });
 
         return this.buffers;
     }
+
+    private static virtualAttributes(target : string, handler : (attrValue: string, el : HTMLElement) => void) {
+        const qss = document.querySelectorAll("[" + target + "]");
+        qss.forEach((el : HTMLElement) => {
+            const attrValue = el.attributes[target].value;
+            el.removeAttribute(target);
+            handler(attrValue,el);
+        });
+    }
+
     
     public static create(text? : string, tagName? : string) : ModernJS {
         const mjs = new ModernJS();
@@ -308,6 +315,10 @@ export class ModernJS {
     public getStyle(name: string) : string | number {
         return this.els[0].style[name];
     }
+
+    public attr(name : string) : string;
+
+    public attr(name : string, value : string | number) : ModernJS;
 
     public attr(name : string, value? : string | number) : string | ModernJS {
         if (value != undefined) {

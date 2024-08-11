@@ -65,7 +65,7 @@ The actual test sample deployment results are as follows:
             L dialog
             L template
             L view
-            L viewpart
+            L ui
         L resource
     L src_android
         ...
@@ -157,7 +157,7 @@ For the terms used in each directory, see [Terminology](#term).
 | - - dialog|Directory for placing dialog HTML. [Explanation here](#dialog_html)|
 | - - template|Directory for placing template HTML. [Explanation here](#template_html)|
 | - - view|Directory for placing HTML for View. [Explanation here](#view_html)|
-| - - viewpart|Directory for placing HTML for ViewPart. [Explanation here](#viewpart_html)|
+| - - ui|Directory for placing HTML for UI. [Explanation here](#ui)|
 |〜resource|Directory for placing resource contents. [Explanation here](#resource)|
 |src_{platform_name}|Platform-specific source code directories<br>If you want to place or change code information at build time for each platform, add it here.|
 |init.d.ts|Type definition file for TypeScript|
@@ -182,9 +182,9 @@ Currently being adjusted...
 
 Currently being adjusted...
 
-<div id="viewpart_html"></div>
+<div id="ui_html"></div>
 
-##  #: ViewPart (HTML)
+##  #: UI (HTML)
 
 Currently being adjusted...
 
@@ -248,7 +248,7 @@ The available core library classes are:
 |Template|Template class.<br>[](#template)|
 |Util|A class that provides methods for basic operations.<br>[Click here for details](#util)|
 |View|View Class<br>[Click here for details](#view)|
-|ViewPart|ViewPart Class<br>[Click here for details](#viewpart)|
+|UI|UI Class<br>[Click here for details](#ui)|
 
 <div id="ajax"></div>
 
@@ -564,7 +564,7 @@ export class MainController extends Controller {
 
 ### : Head tag settings
 
-By using the public variable ``head``, you can automatically set the rendering HTML of the ViewPart in the head tag.
+By using the public variable ``head``, you can automatically set the rendering HTML of the UI in the head tag.
 
 ```typescript
 import { Controller } from "Controller";
@@ -579,7 +579,7 @@ export class MainController extends Controller {
 }
 ```
 
-Specify the content of the head tag in ``src/rendering/viewpart/head.html`` as shown below.
+Specify the content of the head tag in ``src/rendering/ui/head.html`` as shown below.
 
 ```html
 <title>Application Title</title>
@@ -588,7 +588,7 @@ Specify the content of the head tag in ``src/rendering/viewpart/head.html`` as s
 
 ### : Setting the heaerd tag
 
-By using the public variable ``header``, you can automatically set the rendering HTML of the ViewPart in the header tag.
+By using the public variable ``header``, you can automatically set the rendering HTML of the UI in the header tag.
 
 ```typescript
 import { Controller } from "Controller";
@@ -603,7 +603,7 @@ export class MainController extends Controller {
 }
 ```
 
-Specify the content of the header tag in ``src/rendering/viewpart/header.html`` as shown below.
+Specify the content of the header tag in ``src/rendering/ui/header.html`` as shown below.
 
 ```html
 <h1>Header Title</h1>
@@ -611,7 +611,7 @@ Specify the content of the header tag in ``src/rendering/viewpart/header.html`` 
 
 ### : Setting the footer tag
 
-By using the public variable ``footer``, you can automatically set the rendering HTML of the ViewPart in the footer tag.
+By using the public variable ``footer``, you can automatically set the rendering HTML of the UI in the footer tag.
 
 ```typescript
 import { Controller } from "Controller";
@@ -626,7 +626,7 @@ export class MainController extends Controller {
 }
 ```
 
-Specify the content of the footer tag in ``src/rendering/viewpart/footer.html`` as shown below.
+Specify the content of the footer tag in ``src/rendering/ui/footer.html`` as shown below.
 
 ```html
 <p>(C) xxxxxxx 2024</p>
@@ -1135,7 +1135,7 @@ export class Page1View extends View {
 
 ### :: Head tag settings
 
-By using the public variable ``head``, you can automatically set the rendering HTML of the ViewPart in the head tag.
+By using the public variable ``head``, you can automatically set the rendering HTML of the UI in the head tag.
 
 ```typescript
 import { View } from "View";
@@ -1150,7 +1150,7 @@ export class Page1View extends View {
 }
 ```
 
-Specify the content of the head tag in ``src/rendering/viewpart/head.htm``l as shown below.
+Specify the content of the head tag in ``src/rendering/ui/head.htm``l as shown below.
 
 ```html
 <title>Application Title</title>
@@ -1159,7 +1159,7 @@ Specify the content of the head tag in ``src/rendering/viewpart/head.htm``l as s
 
 ### : Setting the heaerd tag
 
-By using the public variable ``header``, you can automatically set the rendering HTML of the ViewPart in the header tag.
+By using the public variable ``header``, you can automatically set the rendering HTML of the UI in the header tag.
 
 ```typescript
 import { View } from "View";
@@ -1174,7 +1174,7 @@ export class Page1View extends View {
 }
 ```
 
-Specify the content of the header tag in ``src/rendering/viewpart/header.htm``l as shown below.
+Specify the content of the header tag in ``src/rendering/ui/header.htm``l as shown below.
 
 ```html
 <h1>Header Title</h1>
@@ -1182,7 +1182,7 @@ Specify the content of the header tag in ``src/rendering/viewpart/header.htm``l 
 
 ### :: Setting the footer tag
 
-By using the public variable ``footer``, you can automatically set the rendering HTML of the ViewPart in the footer tag.
+By using the public variable ``footer``, you can automatically set the rendering HTML of the UI in the footer tag.
 
 ```typescript
 import { View } from "View";
@@ -1197,15 +1197,101 @@ export class Page1View extends View {
 }
 ```
 
-Specify the content of the footer tag in ``src/rendering/viewpart/footer.htm``l as shown below.
+Specify the content of the footer tag in ``src/rendering/ui/footer.htm``l as shown below.
 
 ```html
 <p>(C) xxxxxxx 2024</p>
 ```
 
-<div id="viewpart"></div>
+<div id="UI"></div>
 
-## # ViewPart Class
+## # UI Class
+
+The UI class is a class for modularizing individual HTML tags such as headers, footers, or tag information for each list item into a user interface.
+
+By using UI classes, you can modularize common HTML tags and reuse them in various Controllers, Views, etc.
+
+### : Basic description
+
+For example, if you want to use form tags in common,
+first write the HTML tag in ``rendering/ui/formtag.html`` as shown below.
+
+```html
+<form>
+<div>Email</div>
+<input type="text" v-child="email">
+<div>Message</div>
+<textarea v-child="message"></textarea>
+<button v-child="send">Send</button>
+</form>
+```
+
+Place the FormtagUI class in the ``app/ui/FormtagUI.ts`` file with the following code:  
+The ``handle`` method is an event handler that runs when the UI is bound.  
+
+```typescript
+import { UI } from "UI";
+
+export class FormtagUI extends UI {
+
+    public handle() {
+
+        this.mjs.send.onClick = () => {
+            // When the Send button is pressed
+            console.log({
+                email: this.mjs.email.value,
+                message: this.mjs.message.value,
+            });
+        };
+    }
+}
+```
+
+Define a virtual DOM(ModernJS) by specifying the ``v`` attribute on the tag where you want to apply this in the rendering HTML of the ``View`` or ``Controller``.
+
+```html
+<div v="form_area"></div>
+```
+
+Then, in the derived View class or derived Controller class, bind the UI to the applicable location as shown below.  
+The easiest way to bind to the virtual Domain is to use the ``Response.bindUI`` method.  
+(For more information on ``Response.bindUI``, [see here](#response_bindui))
+
+```typescript
+import { View } from "View";
+import { Response } from "Response";
+
+export class Form1View extends View {
+
+    public handle() {
+
+        // bind FormTag UI
+        Response.bindUI(this.mjs.form_area, "formtag");
+    }
+}
+```
+
+You can also use the ``response.UI`` method to get and paste only the HTML tags as shown below:  
+However, in this case, even if the form can be displayed, the ``FormtagUI.handle`` will not be executed.  
+(For more information on ``Response.UI``, [see here](#response.ui))
+
+```typescript
+import { View } from "View";
+import { Response } from "Response";
+
+export class Form1View extends View {
+
+    public handle() {
+
+        // get FormTag UI
+        const formTag : string = Response.UI("formtag");
+
+        // bind FormTag
+        this.mjs.form_area.html = formTag;
+    }
+}
+```
+
 
 
 

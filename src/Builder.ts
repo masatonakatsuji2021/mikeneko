@@ -158,7 +158,7 @@ export class Builder {
                 "Template", 
                 "Util", 
                 "View", 
-                "ViewPart", 
+                "UI", 
             ];
 
             coreList.forEach((core : string) => {

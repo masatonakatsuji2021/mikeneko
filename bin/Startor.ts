@@ -110,9 +110,9 @@ export class Startor {
             return Response.view(args.path);
         });
 
-        Shortcode.add("viewpart", (args : {[name : string] : string}) : string => {
+        Shortcode.add("ui", (args : {[name : string] : string}) : string => {
             if(!args.path) return;
-            return Response.viewPart(args.path);
+            return Response.UI(args.path);
         });
 
         Shortcode.add("template", (args : {[name : string] : string}) : string => {

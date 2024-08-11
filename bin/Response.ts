@@ -5,7 +5,7 @@ import { Data } from "Data";
 import { Controller } from "Controller";
 import { View } from "View";
 import { Template } from "Template";
-import { ViewPart } from "ViewPart";
+import { UI } from "UI";
 import { ModernJS, dom} from "ModernJS";
 import { Shortcode } from "Shortcode";
 import { Dialog, DialogOption } from "Dialog";
@@ -213,31 +213,30 @@ export class Response {
 
         if(context.template){
             const beforeTemplate : string = Data.get("beforeTemplate");
+
             if(beforeTemplate != context.template){
+                // Template Rendering...
                 Data.set("beforeTemplate", context.template);
-                const templateHtml = Response.template(context.template);
-                dom("body").html = templateHtml;
+                this.bindTemplate(dom("body"), context.template);
                 context.mjs = ModernJS.reload();
                 if (context.handleTemplateChanged) await context.handleTemplateChanged();
-//                await Response.loadRenderingClass("Template", context.template);
             }
-            const viewHtml = Response.view(context.view);
-            dom("content").html = viewHtml;
-            context.mjs = ModernJS.reload();
         }
         else{
             Data.set("beforeTemplate", null);
-            const viewHtml = Response.view(context.view);
-            dom("body").html = viewHtml;
-            context.mjs = ModernJS.reload();
         }
+
+        // View Rendering...
+        const viewHtml = Response.view(context.view);
+        if (!dom("main").length) dom("body").append("<main></main>");
+        dom("main").html = "<article>" + viewHtml + "</article>";
+        context.mjs = ModernJS.reload();
 
         const beforeHead = Data.get("beforeHead");
         if (beforeHead != context.head) {
             Data.set("beforeHead", context.head);
             if (context.head){
-                const headHtml =  Response.viewPart(context.head);
-                dom("head").html = headHtml;
+                this.bindUI(dom("head"), context.head);
                 context.mjs = ModernJS.reload();
                 if (context.handleHeadChanged) await context.handleHeadChanged();
             }
@@ -251,8 +250,7 @@ export class Response {
         if (beforeHeader != context.header) {
             Data.set("beforeHeader", context.header);
             if (context.header){
-                const headerHtml =  Response.viewPart(context.header);
-                dom("header").html = headerHtml;
+                this.bindUI(dom("header"), context.header);
                 context.mjs = ModernJS.reload();
                 if (context.handleHeaderChanged) await context.handleHeaderChanged();
             }
@@ -266,8 +264,7 @@ export class Response {
         if (beforeFooter != context.footer) {
             Data.set("beforeFooter", context.footer);
             if (context.footer){
-                const foooterHtml =  Response.viewPart(context.footer);
-                dom("footer").html = foooterHtml;
+                this.bindUI(dom("footer"), context.footer);
                 context.mjs = ModernJS.reload();
                 if (context.handleFooterChanged) await context.handleFooterChanged();
             }
@@ -343,40 +340,40 @@ export class Response {
     }
 
     /**
-     * ***viewPart*** : 
-     * Get viewPart content information.
-     * @param {string} viewPartName ViewPart Name
-     * @returns {string} viewPart contents
+     * ***UI*** : 
+     * Get UI content information.
+     * @param {string} uiName UI Name
+     * @returns {string} UI contents
      */
-    public static viewPart(viewPartName : string) : string{
-        return this.renderHtml("viewpart/" + viewPartName);
+    public static UI(uiName : string) : string{
+        return this.renderHtml("ui/" + uiName);
     }
 
     /**
-     * ***bindViewPart***
+     * ***bindUI***
      * @param mjs 
-     * @param viewPartName 
+     * @param UIName 
      * @param sendData
      * @returns 
      */
-    public static bindViewPart(mjs: ModernJS, viewPartName : string, sendData? : any) : ViewPart {
-        mjs.html = this.viewPart(viewPartName);
+    public static bindUI(mjs: ModernJS, UIName : string, sendData? : any) : UI {
+        mjs.html = this.UI(UIName);
         mjs.reload();
-        return this.loadClass("ViewPart", viewPartName, mjs, sendData);
+        return this.loadClass("UI", UIName, mjs, sendData);
     }
 
     /**
-     * ***appendViewPart***
+     * ***appendUI***
      * @param mjs 
-     * @param viewPartName 
+     * @param UIName 
      * @param sendData 
      * @returns 
      */
-    public static appendViewPart(mjs: ModernJS, viewPartName : string, sendData?: any) : ViewPart {
-        mjs.append(this.viewPart(viewPartName), true);
+    public static appendUI(mjs: ModernJS, UIName : string, sendData?: any) : UI {
+        mjs.append(this.UI(UIName), true);
         const myMjs = new ModernJS();
         mjs.reload(myMjs);
-        return this.loadClass("ViewPart", viewPartName, myMjs, sendData);
+        return this.loadClass("UI", UIName, myMjs, sendData);
     }
 
     /**
