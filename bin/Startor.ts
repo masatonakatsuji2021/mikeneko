@@ -50,19 +50,17 @@ export class Startor {
             target = target.parentNode;
         }
         if (!target.attributes) return;
-        if (!target.attributes["href"]) return;
+        if (!target.attributes["url"]) return;
 
         // @ts-ignore
-        let href = target.getAttribute("href");
-        if(!href) return;
-        if(href.indexOf("#") !== 0) return;
-        href = href.substring(1);
+        let url = target.getAttribute("url");
+        if(!url) return;
 
         if (this.MyApp.routeType == AppRouteType.application) {
             e.preventDefault();
-            Data.push("history", href);
+            Data.push("history", url);
 
-            const route : Route = Routes.searchRoute(href);
+            const route : Route = Routes.searchRoute(url);
             Response.rendering(route).then(()=>{
                 Data.set("stepMode", false);
             });

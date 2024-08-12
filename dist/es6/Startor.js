@@ -55,19 +55,16 @@ class Startor {
         }
         if (!target.attributes)
             return;
-        if (!target.attributes["href"])
+        if (!target.attributes["url"])
             return;
         // @ts-ignore
-        let href = target.getAttribute("href");
-        if (!href)
+        let url = target.getAttribute("url");
+        if (!url)
             return;
-        if (href.indexOf("#") !== 0)
-            return;
-        href = href.substring(1);
         if (this.MyApp.routeType == App_1.AppRouteType.application) {
             e.preventDefault();
-            Data_1.Data.push("history", href);
-            const route = Routes_1.Routes.searchRoute(href);
+            Data_1.Data.push("history", url);
+            const route = Routes_1.Routes.searchRoute(url);
             Response_1.Response.rendering(route).then(() => {
                 Data_1.Data.set("stepMode", false);
             });

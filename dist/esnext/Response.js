@@ -370,6 +370,30 @@ class Response {
             option.handle(dialog);
         return dialog;
     }
+    static openDialogOrigin(dialogHtml, option) {
+        if (!option)
+            option = {};
+        this.setDialogCss();
+        const dialogStr = "<dwindow>" + dialogHtml + "</dwindow>";
+        const dialogMjs = ModernJS_1.ModernJS.create(dialogStr, "dialog");
+        if (option.class) {
+            if (typeof option.class == "string")
+                option.class = [option.class];
+            option.class.forEach((c) => {
+                dialogMjs.addClass(c);
+            });
+        }
+        (0, ModernJS_1.dom)("body").append(dialogMjs);
+        setTimeout(() => {
+            dialogMjs.addClass("open");
+        }, 100);
+        let dialog = new Dialog_1.Dialog();
+        dialog.myMjs = dialogMjs;
+        dialog.mjs = dialogMjs.childs;
+        if (option.handle)
+            option.handle(dialog);
+        return dialog;
+    }
     static setDialogCss() {
         if ((0, ModernJS_1.dom)("head").querySelector("link[m=dl]").length > 0)
             return;

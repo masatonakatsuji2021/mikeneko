@@ -100,19 +100,16 @@ var Startor = /** @class */ (function () {
         }
         if (!target.attributes)
             return;
-        if (!target.attributes["href"])
+        if (!target.attributes["url"])
             return;
         // @ts-ignore
-        var href = target.getAttribute("href");
-        if (!href)
+        var url = target.getAttribute("url");
+        if (!url)
             return;
-        if (href.indexOf("#") !== 0)
-            return;
-        href = href.substring(1);
         if (this.MyApp.routeType == App_1.AppRouteType.application) {
             e.preventDefault();
-            Data_1.Data.push("history", href);
-            var route = Routes_1.Routes.searchRoute(href);
+            Data_1.Data.push("history", url);
+            var route = Routes_1.Routes.searchRoute(url);
             Response_1.Response.rendering(route).then(function () {
                 Data_1.Data.set("stepMode", false);
             });

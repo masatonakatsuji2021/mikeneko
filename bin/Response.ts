@@ -418,6 +418,31 @@ export class Response {
         return dialog;
     }
 
+    public static openDialogOrigin(dialogHtml : string, option? : DialogOption) : Dialog {
+        if (!option) option = {};
+        this.setDialogCss();
+        const dialogStr = "<dwindow>" + dialogHtml + "</dwindow>";
+        const dialogMjs = ModernJS.create(dialogStr, "dialog");
+
+        
+        if (option.class) {
+            if (typeof option.class == "string") option.class = [ option.class ];
+            option.class.forEach((c) => {
+                dialogMjs.addClass(c);
+            });
+        }
+
+        dom("body").append(dialogMjs);
+        setTimeout(()=>{
+            dialogMjs.addClass("open");
+        }, 100);
+        let dialog = new Dialog();
+        dialog.myMjs = dialogMjs;
+        dialog.mjs = dialogMjs.childs;
+        if (option.handle) option.handle(dialog);
+        return dialog;
+    }
+
     private static setDialogCss(){
         if (dom("head").querySelector("link[m=dl]").length > 0)  return;
         const style = require("CORERES/dialog/style.css");

@@ -512,6 +512,30 @@ var Response = /** @class */ (function () {
             option.handle(dialog);
         return dialog;
     };
+    Response.openDialogOrigin = function (dialogHtml, option) {
+        if (!option)
+            option = {};
+        this.setDialogCss();
+        var dialogStr = "<dwindow>" + dialogHtml + "</dwindow>";
+        var dialogMjs = ModernJS_1.ModernJS.create(dialogStr, "dialog");
+        if (option.class) {
+            if (typeof option.class == "string")
+                option.class = [option.class];
+            option.class.forEach(function (c) {
+                dialogMjs.addClass(c);
+            });
+        }
+        (0, ModernJS_1.dom)("body").append(dialogMjs);
+        setTimeout(function () {
+            dialogMjs.addClass("open");
+        }, 100);
+        var dialog = new Dialog_1.Dialog();
+        dialog.myMjs = dialogMjs;
+        dialog.mjs = dialogMjs.childs;
+        if (option.handle)
+            option.handle(dialog);
+        return dialog;
+    };
     Response.setDialogCss = function () {
         if ((0, ModernJS_1.dom)("head").querySelector("link[m=dl]").length > 0)
             return;
