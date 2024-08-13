@@ -424,7 +424,6 @@ export class Response {
         const dialogStr = "<dwindow>" + dialogHtml + "</dwindow>";
         const dialogMjs = ModernJS.create(dialogStr, "dialog");
 
-        
         if (option.class) {
             if (typeof option.class == "string") option.class = [ option.class ];
             option.class.forEach((c) => {
