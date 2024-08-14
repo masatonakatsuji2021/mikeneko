@@ -5,6 +5,7 @@ const App_1 = require("App");
 const Routes_1 = require("Routes");
 const Util_1 = require("Util");
 const Data_1 = require("Data");
+const UI_1 = require("UI");
 const ModernJS_1 = require("ModernJS");
 const Shortcode_1 = require("Shortcode");
 const Dialog_1 = require("Dialog");
@@ -29,6 +30,7 @@ class Response {
     static next(url, send) {
         const MyApp = require("app/config/App").MyApp;
         if (MyApp.routeType == App_1.AppRouteType.application) {
+            Data_1.Data.set("stepMode", true);
             Data_1.Data.push("history", url);
             const route = Routes_1.Routes.searchRoute(url);
             Response.rendering(route, send).then(() => {
@@ -38,6 +40,17 @@ class Response {
         else {
             location.hash = "#" + url;
         }
+    }
+    static historyClear() {
+        Data_1.Data.set("history", []);
+    }
+    static isNext() {
+        if (Data_1.Data.get("stepMode"))
+            return true;
+        return false;
+    }
+    static isBack() {
+        return !this.isNext();
     }
     static async rendering(route, send) {
         try {
@@ -84,14 +97,13 @@ class Response {
                 vw.sendData = send;
             }
         }
-        let beginStatus = false;
         if (Data_1.Data.get("beforeControllerPath") != controllerPath) {
             Data_1.Data.set("beforeControllerPath", controllerPath);
-            beginStatus = true;
+            cont.beginStatus = true;
         }
-        await cont.handleBefore(beginStatus);
+        await cont.handleBefore();
         if (vw)
-            await vw.handleBefore(beginStatus);
+            await vw.handleBefore();
         Data_1.Data.set("beforeController", cont);
         Data_1.Data.set("beforeControllerAction", route.action);
         Data_1.Data.set("beforeView", null);
@@ -106,13 +118,13 @@ class Response {
                 await cont[method]();
             }
         }
-        await cont.handleAfter(beginStatus);
+        await cont.handleAfter();
         if (vw)
-            await vw.handleAfter(beginStatus);
+            await vw.handleAfter();
         await Response.__rendering(route, cont);
-        await cont.handleRenderBefore(beginStatus);
+        await cont.handleRenderBefore();
         if (vw)
-            await vw.handleRenderBefore(beginStatus);
+            await vw.handleRenderBefore();
         if (cont[route.action]) {
             const method = route.action;
             if (route.args) {
@@ -130,9 +142,9 @@ class Response {
                 await vw.handle();
             }
         }
-        await cont.handleRenderAfter(beginStatus);
+        await cont.handleRenderAfter();
         if (vw)
-            await vw.handleRenderAfter(beginStatus);
+            await vw.handleRenderAfter();
     }
     static async renderingOnView(route, send) {
         const viewName = Util_1.Util.getModuleName(route.view + "View");
@@ -411,7 +423,17 @@ class Response {
             classObj.mjs = mjs.childs;
         }
         catch (error) {
-            return;
+            if (classType == "UI") {
+                classObj = new UI_1.UI();
+                classObj.myMjs = mjs;
+                classObj.mjs = mjs.childs;
+            }
+            else if (classType == "Dialog") {
+                classObj = new Dialog_1.Dialog();
+                classObj.myMjs = mjs;
+                classObj.mjs = mjs.childs;
+            }
+            return classObj;
         }
         if (classObj.handle)
             classObj.handle(sendData);

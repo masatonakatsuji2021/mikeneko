@@ -41,6 +41,7 @@ var App_1 = require("App");
 var Routes_1 = require("Routes");
 var Util_1 = require("Util");
 var Data_1 = require("Data");
+var UI_1 = require("UI");
 var ModernJS_1 = require("ModernJS");
 var Shortcode_1 = require("Shortcode");
 var Dialog_1 = require("Dialog");
@@ -67,6 +68,7 @@ var Response = /** @class */ (function () {
     Response.next = function (url, send) {
         var MyApp = require("app/config/App").MyApp;
         if (MyApp.routeType == App_1.AppRouteType.application) {
+            Data_1.Data.set("stepMode", true);
             Data_1.Data.push("history", url);
             var route = Routes_1.Routes.searchRoute(url);
             Response.rendering(route, send).then(function () {
@@ -76,6 +78,17 @@ var Response = /** @class */ (function () {
         else {
             location.hash = "#" + url;
         }
+    };
+    Response.historyClear = function () {
+        Data_1.Data.set("history", []);
+    };
+    Response.isNext = function () {
+        if (Data_1.Data.get("stepMode"))
+            return true;
+        return false;
+    };
+    Response.isBack = function () {
+        return !this.isNext();
     };
     Response.rendering = function (route, send) {
         return __awaiter(this, void 0, void 0, function () {
@@ -123,7 +136,7 @@ var Response = /** @class */ (function () {
     };
     Response.renderingOnController = function (route, send) {
         return __awaiter(this, void 0, void 0, function () {
-            var controllerName, controllerPath, controllerClass, cont, viewName, viewPath, vw, View_, beginStatus, method, method;
+            var controllerName, controllerPath, controllerClass, cont, viewName, viewPath, vw, View_, method, method;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -147,16 +160,15 @@ var Response = /** @class */ (function () {
                                 vw.sendData = send;
                             }
                         }
-                        beginStatus = false;
                         if (Data_1.Data.get("beforeControllerPath") != controllerPath) {
                             Data_1.Data.set("beforeControllerPath", controllerPath);
-                            beginStatus = true;
+                            cont.beginStatus = true;
                         }
-                        return [4 /*yield*/, cont.handleBefore(beginStatus)];
+                        return [4 /*yield*/, cont.handleBefore()];
                     case 1:
                         _a.sent();
                         if (!vw) return [3 /*break*/, 3];
-                        return [4 /*yield*/, vw.handleBefore(beginStatus)];
+                        return [4 /*yield*/, vw.handleBefore()];
                     case 2:
                         _a.sent();
                         _a.label = 3;
@@ -177,22 +189,22 @@ var Response = /** @class */ (function () {
                     case 6:
                         _a.sent();
                         _a.label = 7;
-                    case 7: return [4 /*yield*/, cont.handleAfter(beginStatus)];
+                    case 7: return [4 /*yield*/, cont.handleAfter()];
                     case 8:
                         _a.sent();
                         if (!vw) return [3 /*break*/, 10];
-                        return [4 /*yield*/, vw.handleAfter(beginStatus)];
+                        return [4 /*yield*/, vw.handleAfter()];
                     case 9:
                         _a.sent();
                         _a.label = 10;
                     case 10: return [4 /*yield*/, Response.__rendering(route, cont)];
                     case 11:
                         _a.sent();
-                        return [4 /*yield*/, cont.handleRenderBefore(beginStatus)];
+                        return [4 /*yield*/, cont.handleRenderBefore()];
                     case 12:
                         _a.sent();
                         if (!vw) return [3 /*break*/, 14];
-                        return [4 /*yield*/, vw.handleRenderBefore(beginStatus)];
+                        return [4 /*yield*/, vw.handleRenderBefore()];
                     case 13:
                         _a.sent();
                         _a.label = 14;
@@ -219,11 +231,11 @@ var Response = /** @class */ (function () {
                     case 21:
                         _a.sent();
                         _a.label = 22;
-                    case 22: return [4 /*yield*/, cont.handleRenderAfter(beginStatus)];
+                    case 22: return [4 /*yield*/, cont.handleRenderAfter()];
                     case 23:
                         _a.sent();
                         if (!vw) return [3 /*break*/, 25];
-                        return [4 /*yield*/, vw.handleRenderAfter(beginStatus)];
+                        return [4 /*yield*/, vw.handleRenderAfter()];
                     case 24:
                         _a.sent();
                         _a.label = 25;
@@ -553,7 +565,17 @@ var Response = /** @class */ (function () {
             classObj.mjs = mjs.childs;
         }
         catch (error) {
-            return;
+            if (classType == "UI") {
+                classObj = new UI_1.UI();
+                classObj.myMjs = mjs;
+                classObj.mjs = mjs.childs;
+            }
+            else if (classType == "Dialog") {
+                classObj = new Dialog_1.Dialog();
+                classObj.myMjs = mjs;
+                classObj.mjs = mjs.childs;
+            }
+            return classObj;
         }
         if (classObj.handle)
             classObj.handle(sendData);

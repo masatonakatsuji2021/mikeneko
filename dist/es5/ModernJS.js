@@ -189,7 +189,7 @@ var ModernJS = /** @class */ (function () {
                 el.childNodes.forEach(function (c) {
                     el.removeChild(c);
                 });
-                el.innerText = value;
+                el.innerText = value.toString();
             });
             ModernJS.reload();
             this.reload();

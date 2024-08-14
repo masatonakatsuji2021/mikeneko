@@ -108,6 +108,7 @@ var Startor = /** @class */ (function () {
             return;
         if (this.MyApp.routeType == App_1.AppRouteType.application) {
             e.preventDefault();
+            Data_1.Data.set("stepMode", true);
             Data_1.Data.push("history", url);
             var route = Routes_1.Routes.searchRoute(url);
             Response_1.Response.rendering(route).then(function () {

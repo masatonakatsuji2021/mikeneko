@@ -5,6 +5,7 @@ const Routes_1 = require("Routes");
 const Response_1 = require("Response");
 class View {
     constructor() {
+        this.beginStatus = false;
         /**
          * ***view*** : Change the view name to be displayed.
          * If not specified, the "rendering/View/{viewName}.html" file will be displayed as the HTML source by default.

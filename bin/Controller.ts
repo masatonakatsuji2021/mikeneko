@@ -11,6 +11,8 @@ export class Controller {
 
     public sendData: any;
 
+    public beginStatus : boolean = false;
+
     /**
      * ***view*** : Change the view name to be displayed.  
      * If not specified, the "rendering/View/{ControllerName}/{ActionName}.html" file will be displayed as the HTML source by default.
@@ -95,23 +97,23 @@ export class Controller {
     /**
      * ***handleBefore*** : Event handler executed just before transitioning to the page.
      */
-    public handleBefore(beginStatus? : boolean) : void{ }
+    public handleBefore() : void{ }
 
     /**
      * ***handleAfter*** : Event handler executed immediately after transitioning to the page
      */
-    public handleAfter(beginStatus? : boolean) : void{}
+    public handleAfter() : void{}
 
     /**
      * ***handleRenderBefore*** : Event handler executed immediately after page transition and rendering process to the screen is completed
      */
-    public handleRenderBefore(beginStatus? : boolean) : void{}
+    public handleRenderBefore() : void{}
 
     /**
      * ***handleRenderAfter*** : Event handler that is executed after page transition, after rendering process to the screen is completed, 
      * and after the event for each action is completed.
      */
-    public handleRenderAfter(beginStatus? : boolean) : void{}
+    public handleRenderAfter() : void{}
 
     /**
      * ***handleLeave*** : Event handler executed when leaving the page

@@ -9,6 +9,7 @@ class Controller {
      */
     mjs;
     sendData;
+    beginStatus = false;
     /**
      * ***view*** : Change the view name to be displayed.
      * If not specified, the "rendering/View/{ControllerName}/{ActionName}.html" file will be displayed as the HTML source by default.
@@ -83,20 +84,20 @@ class Controller {
     /**
      * ***handleBefore*** : Event handler executed just before transitioning to the page.
      */
-    handleBefore(beginStatus) { }
+    handleBefore() { }
     /**
      * ***handleAfter*** : Event handler executed immediately after transitioning to the page
      */
-    handleAfter(beginStatus) { }
+    handleAfter() { }
     /**
      * ***handleRenderBefore*** : Event handler executed immediately after page transition and rendering process to the screen is completed
      */
-    handleRenderBefore(beginStatus) { }
+    handleRenderBefore() { }
     /**
      * ***handleRenderAfter*** : Event handler that is executed after page transition, after rendering process to the screen is completed,
      * and after the event for each action is completed.
      */
-    handleRenderAfter(beginStatus) { }
+    handleRenderAfter() { }
     /**
      * ***handleLeave*** : Event handler executed when leaving the page
      * @param {string} action before access controller action name

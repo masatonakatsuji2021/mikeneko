@@ -5,6 +5,7 @@ var Routes_1 = require("Routes");
 var Response_1 = require("Response");
 var Controller = /** @class */ (function () {
     function Controller() {
+        this.beginStatus = false;
         /**
          * ***view*** : Change the view name to be displayed.
          * If not specified, the "rendering/View/{ControllerName}/{ActionName}.html" file will be displayed as the HTML source by default.
@@ -68,20 +69,20 @@ var Controller = /** @class */ (function () {
     /**
      * ***handleBefore*** : Event handler executed just before transitioning to the page.
      */
-    Controller.prototype.handleBefore = function (beginStatus) { };
+    Controller.prototype.handleBefore = function () { };
     /**
      * ***handleAfter*** : Event handler executed immediately after transitioning to the page
      */
-    Controller.prototype.handleAfter = function (beginStatus) { };
+    Controller.prototype.handleAfter = function () { };
     /**
      * ***handleRenderBefore*** : Event handler executed immediately after page transition and rendering process to the screen is completed
      */
-    Controller.prototype.handleRenderBefore = function (beginStatus) { };
+    Controller.prototype.handleRenderBefore = function () { };
     /**
      * ***handleRenderAfter*** : Event handler that is executed after page transition, after rendering process to the screen is completed,
      * and after the event for each action is completed.
      */
-    Controller.prototype.handleRenderAfter = function (beginStatus) { };
+    Controller.prototype.handleRenderAfter = function () { };
     /**
      * ***handleLeave*** : Event handler executed when leaving the page
      * @param {string} action before access controller action name

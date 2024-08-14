@@ -172,12 +172,12 @@ export class ModernJS {
         return mjs;
     }
 
-    public set text(value : string) {
+    public set text(value : string | number) {
         this.els.forEach((el : HTMLElement) => {
             el.childNodes.forEach((c)=>{
                 el.removeChild(c);
             });
-            el.innerText = value;
+            el.innerText = value.toString();
         });
         ModernJS.reload();
         this.reload();

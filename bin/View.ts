@@ -13,6 +13,8 @@ export class View {
 
     public sendData: any;
     
+    public beginStatus : boolean = false;
+    
     /**
      * ***view*** : Change the view name to be displayed.  
      * If not specified, the "rendering/View/{viewName}.html" file will be displayed as the HTML source by default.
@@ -98,7 +100,7 @@ export class View {
      * An event handler that runs automatically when the view is drawn on the screen.  
      * This event is executed only when rendered.
      */
-    public handle(...aregment : Array<string>) : void{}
+    public handle(...aregment : Array<string | number>) : void{}
 
     /**
      * ***handleAlways*** : An event handler that runs automatically when the View is displayed on screen.  

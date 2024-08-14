@@ -58,6 +58,8 @@ export class Startor {
 
         if (this.MyApp.routeType == AppRouteType.application) {
             e.preventDefault();
+
+            Data.set("stepMode", true);
             Data.push("history", url);
 
             const route : Route = Routes.searchRoute(url);

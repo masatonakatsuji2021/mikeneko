@@ -10,6 +10,7 @@ class View {
      */
     mjs;
     sendData;
+    beginStatus = false;
     /**
      * ***view*** : Change the view name to be displayed.
      * If not specified, the "rendering/View/{viewName}.html" file will be displayed as the HTML source by default.

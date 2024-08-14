@@ -5,6 +5,7 @@ var Routes_1 = require("Routes");
 var Response_1 = require("Response");
 var View = /** @class */ (function () {
     function View() {
+        this.beginStatus = false;
         /**
          * ***view*** : Change the view name to be displayed.
          * If not specified, the "rendering/View/{viewName}.html" file will be displayed as the HTML source by default.

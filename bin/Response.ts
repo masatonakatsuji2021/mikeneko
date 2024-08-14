@@ -38,6 +38,7 @@ export class Response {
     public static next(url : string, send? : any) : void {
         const MyApp : typeof App = require("app/config/App").MyApp;
         if (MyApp.routeType == AppRouteType.application) {
+            Data.set("stepMode",true);
             Data.push("history", url);
             const route : Route = Routes.searchRoute(url);
             Response.rendering(route, send).then(()=>{
@@ -47,6 +48,19 @@ export class Response {
         else {
             location.hash = "#" + url;
         }
+    }
+
+    public static historyClear() : void {
+        Data.set("history", []);
+    }
+
+    public static isNext() : boolean {
+        if (Data.get("stepMode")) return true;
+        return false;
+    }
+
+    public static isBack() : boolean {
+        return !this.isNext();
     }
 
     public static async rendering (route: DecisionRoute, send? : any) {
@@ -103,14 +117,13 @@ export class Response {
             }
         }
 
-        let beginStatus = false;
         if(Data.get("beforeControllerPath")  != controllerPath){
             Data.set("beforeControllerPath", controllerPath);
-            beginStatus = true;
+            cont.beginStatus = true;
         }
 
-        await cont.handleBefore(beginStatus);
-        if(vw) await vw.handleBefore(beginStatus);
+        await cont.handleBefore();
+        if(vw) await vw.handleBefore();
 
         Data.set("beforeController", cont);
         Data.set("beforeControllerAction", route.action);
@@ -128,12 +141,12 @@ export class Response {
             }
         }
 
-        await cont.handleAfter(beginStatus);
-        if(vw) await vw.handleAfter(beginStatus);
+        await cont.handleAfter();
+        if(vw) await vw.handleAfter();
         await Response.__rendering(route, cont);
 
-        await cont.handleRenderBefore(beginStatus);
-        if(vw) await vw.handleRenderBefore(beginStatus);
+        await cont.handleRenderBefore();
+        if(vw) await vw.handleRenderBefore();
 
         if(cont[route.action]){
             const method : string = route.action;
@@ -154,8 +167,8 @@ export class Response {
             }
         }
 
-        await cont.handleRenderAfter(beginStatus); 
-        if(vw) await vw.handleRenderAfter(beginStatus);
+        await cont.handleRenderAfter(); 
+        if(vw) await vw.handleRenderAfter();
     }
 
 
@@ -458,7 +471,17 @@ export class Response {
             classObj.myMjs = mjs;
             classObj.mjs = mjs.childs;
         }catch(error){
-            return;
+            if (classType == "UI") {
+                classObj = new UI();
+                classObj.myMjs = mjs;
+                classObj.mjs = mjs.childs;
+            }
+            else if (classType == "Dialog") {
+                classObj = new Dialog();
+                classObj.myMjs = mjs;
+                classObj.mjs = mjs.childs;
+            }
+            return classObj;
         }
 
         if (classObj.handle) classObj.handle(sendData);

@@ -14,6 +14,7 @@ const App_1 = require("App");
 const Routes_1 = require("Routes");
 const Util_1 = require("Util");
 const Data_1 = require("Data");
+const UI_1 = require("UI");
 const ModernJS_1 = require("ModernJS");
 const Shortcode_1 = require("Shortcode");
 const Dialog_1 = require("Dialog");
@@ -38,6 +39,7 @@ class Response {
     static next(url, send) {
         const MyApp = require("app/config/App").MyApp;
         if (MyApp.routeType == App_1.AppRouteType.application) {
+            Data_1.Data.set("stepMode", true);
             Data_1.Data.push("history", url);
             const route = Routes_1.Routes.searchRoute(url);
             Response.rendering(route, send).then(() => {
@@ -47,6 +49,17 @@ class Response {
         else {
             location.hash = "#" + url;
         }
+    }
+    static historyClear() {
+        Data_1.Data.set("history", []);
+    }
+    static isNext() {
+        if (Data_1.Data.get("stepMode"))
+            return true;
+        return false;
+    }
+    static isBack() {
+        return !this.isNext();
     }
     static rendering(route, send) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -96,14 +109,13 @@ class Response {
                     vw.sendData = send;
                 }
             }
-            let beginStatus = false;
             if (Data_1.Data.get("beforeControllerPath") != controllerPath) {
                 Data_1.Data.set("beforeControllerPath", controllerPath);
-                beginStatus = true;
+                cont.beginStatus = true;
             }
-            yield cont.handleBefore(beginStatus);
+            yield cont.handleBefore();
             if (vw)
-                yield vw.handleBefore(beginStatus);
+                yield vw.handleBefore();
             Data_1.Data.set("beforeController", cont);
             Data_1.Data.set("beforeControllerAction", route.action);
             Data_1.Data.set("beforeView", null);
@@ -118,13 +130,13 @@ class Response {
                     yield cont[method]();
                 }
             }
-            yield cont.handleAfter(beginStatus);
+            yield cont.handleAfter();
             if (vw)
-                yield vw.handleAfter(beginStatus);
+                yield vw.handleAfter();
             yield Response.__rendering(route, cont);
-            yield cont.handleRenderBefore(beginStatus);
+            yield cont.handleRenderBefore();
             if (vw)
-                yield vw.handleRenderBefore(beginStatus);
+                yield vw.handleRenderBefore();
             if (cont[route.action]) {
                 const method = route.action;
                 if (route.args) {
@@ -142,9 +154,9 @@ class Response {
                     yield vw.handle();
                 }
             }
-            yield cont.handleRenderAfter(beginStatus);
+            yield cont.handleRenderAfter();
             if (vw)
-                yield vw.handleRenderAfter(beginStatus);
+                yield vw.handleRenderAfter();
         });
     }
     static renderingOnView(route, send) {
@@ -428,7 +440,17 @@ class Response {
             classObj.mjs = mjs.childs;
         }
         catch (error) {
-            return;
+            if (classType == "UI") {
+                classObj = new UI_1.UI();
+                classObj.myMjs = mjs;
+                classObj.mjs = mjs.childs;
+            }
+            else if (classType == "Dialog") {
+                classObj = new Dialog_1.Dialog();
+                classObj.myMjs = mjs;
+                classObj.mjs = mjs.childs;
+            }
+            return classObj;
         }
         if (classObj.handle)
             classObj.handle(sendData);

@@ -151,7 +151,7 @@ class ModernJS {
             el.childNodes.forEach((c) => {
                 el.removeChild(c);
             });
-            el.innerText = value;
+            el.innerText = value.toString();
         });
         ModernJS.reload();
         this.reload();
