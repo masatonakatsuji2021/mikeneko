@@ -147,17 +147,23 @@ class ModernJS {
         return mjs;
     }
     set text(value) {
+        this.setText(value);
+    }
+    get text() {
+        return this.els[0].innerText;
+    }
+    setText(value, noReload) {
         this.els.forEach((el) => {
             el.childNodes.forEach((c) => {
                 el.removeChild(c);
             });
             el.innerText = value.toString();
         });
-        ModernJS.reload();
-        this.reload();
-    }
-    get text() {
-        return this.els[0].innerText;
+        if (!noReload) {
+            ModernJS.reload();
+            this.reload();
+        }
+        return this;
     }
     set html(value) {
         this.setHtml(value);

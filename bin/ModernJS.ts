@@ -173,18 +173,25 @@ export class ModernJS {
     }
 
     public set text(value : string | number) {
+        this.setText(value);
+    }
+
+    public get text() : string {
+        return this.els[0].innerText;
+    }
+
+    public setText(value : string | number, noReload? : boolean) : ModernJS  {
         this.els.forEach((el : HTMLElement) => {
             el.childNodes.forEach((c)=>{
                 el.removeChild(c);
             });
             el.innerText = value.toString();
         });
-        ModernJS.reload();
-        this.reload();
-    }
-
-    public get text() : string {
-        return this.els[0].innerText;
+        if (!noReload) {
+            ModernJS.reload();
+            this.reload();    
+        }
+        return this;
     }
 
     public set html(value : string | HTMLElement | ModernJS) {

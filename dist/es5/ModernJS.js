@@ -185,18 +185,24 @@ var ModernJS = /** @class */ (function () {
             return this.els[0].innerText;
         },
         set: function (value) {
-            this.els.forEach(function (el) {
-                el.childNodes.forEach(function (c) {
-                    el.removeChild(c);
-                });
-                el.innerText = value.toString();
-            });
-            ModernJS.reload();
-            this.reload();
+            this.setText(value);
         },
         enumerable: false,
         configurable: true
     });
+    ModernJS.prototype.setText = function (value, noReload) {
+        this.els.forEach(function (el) {
+            el.childNodes.forEach(function (c) {
+                el.removeChild(c);
+            });
+            el.innerText = value.toString();
+        });
+        if (!noReload) {
+            ModernJS.reload();
+            this.reload();
+        }
+        return this;
+    };
     Object.defineProperty(ModernJS.prototype, "html", {
         get: function () {
             return this.els[0].innerHTML;
