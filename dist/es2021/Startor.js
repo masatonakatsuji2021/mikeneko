@@ -34,18 +34,30 @@ class Startor {
         })();
     }
     clickHandleDelegate(e) {
+        if (Response_1.Response.lock)
+            return false;
         // @ts-ignore
         let target = e.target;
         for (let n = 0; n < 10; n++) {
-            if (!target.tagName)
+            try {
+                if (!target.tagName)
+                    return;
+            }
+            catch (error) {
                 return;
+            }
             if (target.tagName == "A")
                 break;
             // @ts-ignore
             target = target.parentNode;
         }
-        if (!target.attributes)
+        try {
+            if (!target.attributes)
+                return;
+        }
+        catch (error) {
             return;
+        }
         if (!target.attributes["url"])
             return;
         // @ts-ignore
@@ -54,6 +66,8 @@ class Startor {
             return;
         if (this.MyApp.routeType == App_1.AppRouteType.application) {
             e.preventDefault();
+            if (Data_1.Data.now("history") == url)
+                return false;
             Data_1.Data.set("stepMode", true);
             Data_1.Data.push("history", url);
             const route = Routes_1.Routes.searchRoute(url);
@@ -63,7 +77,10 @@ class Startor {
             return false;
         }
         else {
+            if (location.hash == "#" + url)
+                return false;
             Data_1.Data.set("stepMode", true);
+            location.hash = "#" + url;
             return true;
         }
     }

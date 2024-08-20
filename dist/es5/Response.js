@@ -49,6 +49,8 @@ var Response = /** @class */ (function () {
     function Response() {
     }
     Response.back = function () {
+        if (Response.lock)
+            return false;
         var MyApp = require("app/config/App").MyApp;
         if (MyApp.routeType == App_1.AppRouteType.application) {
             if (Data_1.Data.getLength("history") == 1)
@@ -66,6 +68,8 @@ var Response = /** @class */ (function () {
         return true;
     };
     Response.next = function (url, send) {
+        if (Response.lock)
+            return;
         var MyApp = require("app/config/App").MyApp;
         if (MyApp.routeType == App_1.AppRouteType.application) {
             Data_1.Data.set("stepMode", true);
@@ -609,6 +613,7 @@ var Response = /** @class */ (function () {
         el0.innerHTML = Shortcode_1.Shortcode.analysis(el0.innerHTML);
         return el0.innerHTML;
     };
+    Response.lock = false;
     return Response;
 }());
 exports.Response = Response;

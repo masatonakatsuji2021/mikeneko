@@ -13,6 +13,7 @@ import { Dialog, DialogOption } from "Dialog";
 export class Response {
 
     public static back() : boolean {
+        if (Response.lock) return false;
         const MyApp : typeof App = require("app/config/App").MyApp;
         if (MyApp.routeType == AppRouteType.application) {
             if (Data.getLength("history") == 1) return false;
@@ -36,6 +37,7 @@ export class Response {
     public static next(url : string, send : any) : void;
 
     public static next(url : string, send? : any) : void {
+        if (Response.lock) return;
         const MyApp : typeof App = require("app/config/App").MyApp;
         if (MyApp.routeType == AppRouteType.application) {
             Data.set("stepMode",true);
@@ -62,6 +64,8 @@ export class Response {
     public static isBack() : boolean {
         return !this.isNext();
     }
+
+    public static lock : boolean = false;
 
     public static async rendering (route: DecisionRoute, send? : any) {
 

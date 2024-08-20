@@ -20,6 +20,8 @@ const Shortcode_1 = require("Shortcode");
 const Dialog_1 = require("Dialog");
 class Response {
     static back() {
+        if (Response.lock)
+            return false;
         const MyApp = require("app/config/App").MyApp;
         if (MyApp.routeType == App_1.AppRouteType.application) {
             if (Data_1.Data.getLength("history") == 1)
@@ -37,6 +39,8 @@ class Response {
         return true;
     }
     static next(url, send) {
+        if (Response.lock)
+            return;
         const MyApp = require("app/config/App").MyApp;
         if (MyApp.routeType == App_1.AppRouteType.application) {
             Data_1.Data.set("stepMode", true);
@@ -486,3 +490,4 @@ class Response {
     }
 }
 exports.Response = Response;
+Response.lock = false;

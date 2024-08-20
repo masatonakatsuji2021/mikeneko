@@ -41,15 +41,20 @@ export class Startor {
     }
 
     private clickHandleDelegate(e : MouseEvent){
+        if (Response.lock) return false;
         // @ts-ignore
         let target : HTMLElement = e.target;
         for (let n = 0 ; n < 10; n++) {
-            if(!target.tagName) return;
+            try {
+                if(!target.tagName) return;
+            }catch(error) { return; }
             if (target.tagName == "A") break;
             // @ts-ignore
             target = target.parentNode;
         }
-        if (!target.attributes) return;
+        try {
+            if (!target.attributes) return;
+        }catch(error) { return; }
         if (!target.attributes["url"]) return;
 
         // @ts-ignore
@@ -58,6 +63,8 @@ export class Startor {
 
         if (this.MyApp.routeType == AppRouteType.application) {
             e.preventDefault();
+
+            if (Data.now("history") == url) return false;
 
             Data.set("stepMode", true);
             Data.push("history", url);
@@ -70,7 +77,9 @@ export class Startor {
             return false;
         }
         else {
+            if (location.hash == "#" + url) return false;
             Data.set("stepMode",  true);
+            location.hash = "#" + url;
             return true;
         }
     }
