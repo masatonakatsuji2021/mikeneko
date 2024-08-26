@@ -79,6 +79,7 @@ class Builder {
                 "Shortcode",
                 "Template",
                 "Util",
+                "Validation",
                 "View",
                 "UI",
             ];

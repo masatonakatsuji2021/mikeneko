@@ -67,6 +67,9 @@ class Response {
     }
     static rendering(route, send) {
         return __awaiter(this, void 0, void 0, function* () {
+            const MyApp = require("app/config/App").MyApp;
+            if (MyApp.delay)
+                yield Util_1.Util.sleep(MyApp.delay);
             try {
                 // Controller & View Leave 
                 const befCont = Data_1.Data.get("beforeController");

@@ -33,5 +33,9 @@ class App {
      * ***localStorage*** : LocalStorage Identifiers
      */
     static localStorage;
+    /**
+     * +++delay*** : Specify the delay time for screen transitions.
+     */
+    static delay;
 }
 exports.App = App;

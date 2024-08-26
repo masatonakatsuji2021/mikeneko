@@ -96,44 +96,51 @@ var Response = /** @class */ (function () {
     };
     Response.rendering = function (route, send) {
         return __awaiter(this, void 0, void 0, function () {
-            var befCont, befView, error_1;
+            var MyApp, befCont, befView, error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 9, , 10]);
-                        befCont = Data_1.Data.get("beforeController");
-                        if (!befCont) return [3 /*break*/, 2];
-                        return [4 /*yield*/, befCont.handleLeave(Data_1.Data.get("beforeControllerAction"))];
+                        MyApp = require("app/config/App").MyApp;
+                        if (!MyApp.delay) return [3 /*break*/, 2];
+                        return [4 /*yield*/, Util_1.Util.sleep(MyApp.delay)];
                     case 1:
                         _a.sent();
                         _a.label = 2;
                     case 2:
-                        befView = Data_1.Data.get("beforeView");
-                        if (!befView) return [3 /*break*/, 4];
-                        return [4 /*yield*/, befView.handleLeave()];
+                        _a.trys.push([2, 11, , 12]);
+                        befCont = Data_1.Data.get("beforeController");
+                        if (!befCont) return [3 /*break*/, 4];
+                        return [4 /*yield*/, befCont.handleLeave(Data_1.Data.get("beforeControllerAction"))];
                     case 3:
                         _a.sent();
                         _a.label = 4;
                     case 4:
-                        if (route.mode == Routes_1.DecisionRouteMode.Notfound)
-                            throw ("Page Not found");
-                        if (!route.controller) return [3 /*break*/, 6];
-                        return [4 /*yield*/, Response.renderingOnController(route, send)];
+                        befView = Data_1.Data.get("beforeView");
+                        if (!befView) return [3 /*break*/, 6];
+                        return [4 /*yield*/, befView.handleLeave()];
                     case 5:
                         _a.sent();
-                        return [3 /*break*/, 8];
+                        _a.label = 6;
                     case 6:
-                        if (!route.view) return [3 /*break*/, 8];
-                        return [4 /*yield*/, Response.renderingOnView(route, send)];
+                        if (route.mode == Routes_1.DecisionRouteMode.Notfound)
+                            throw ("Page Not found");
+                        if (!route.controller) return [3 /*break*/, 8];
+                        return [4 /*yield*/, Response.renderingOnController(route, send)];
                     case 7:
                         _a.sent();
-                        _a.label = 8;
-                    case 8: return [3 /*break*/, 10];
+                        return [3 /*break*/, 10];
+                    case 8:
+                        if (!route.view) return [3 /*break*/, 10];
+                        return [4 /*yield*/, Response.renderingOnView(route, send)];
                     case 9:
+                        _a.sent();
+                        _a.label = 10;
+                    case 10: return [3 /*break*/, 12];
+                    case 11:
                         error_1 = _a.sent();
                         console.error(error_1);
-                        return [3 /*break*/, 10];
-                    case 10: return [2 /*return*/];
+                        return [3 /*break*/, 12];
+                    case 12: return [2 /*return*/];
                 }
             });
         });

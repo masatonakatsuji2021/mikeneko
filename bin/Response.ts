@@ -69,6 +69,9 @@ export class Response {
 
     public static async rendering (route: DecisionRoute, send? : any) {
 
+        const MyApp : typeof App = require("app/config/App").MyApp;
+        if (MyApp.delay) await Util.sleep(MyApp.delay);
+
         try{
 
             // Controller & View Leave 
@@ -218,6 +221,7 @@ export class Response {
     }
 
     public static async __rendering(route : DecisionRoute, context : Controller | View){
+
 
         if(!context.view){
             if(route.controller){

@@ -58,6 +58,9 @@ class Response {
     }
     static lock = false;
     static async rendering(route, send) {
+        const MyApp = require("app/config/App").MyApp;
+        if (MyApp.delay)
+            await Util_1.Util.sleep(MyApp.delay);
         try {
             // Controller & View Leave 
             const befCont = Data_1.Data.get("beforeController");

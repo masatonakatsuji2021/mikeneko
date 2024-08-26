@@ -40,4 +40,9 @@ export class App {
      * ***localStorage*** : LocalStorage Identifiers
      */
     public static localStorage : string;
+
+    /**
+     * +++delay*** : Specify the delay time for screen transitions.
+     */
+    public static delay : number;
 }
