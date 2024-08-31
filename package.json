@@ -1,15 +1,15 @@
 {
-    "name": "saiberian",
+    "name": "mikeneko",
     "description": "A web framework for the client side that can deploy spa (single-page-action) simply and quickly. Package for framework provision.",
     "author": "masato nakatsuji",
     "license": "MIT",
     "version": "1.0.0-beta.0",
     "bin": {
-        "sab": "src/command"
+        "mike": "src/command"
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/masatonakatsuji2021/saiberian.git"
+        "url": "git+https://github.com/masatonakatsuji2021/mikeneko.git"
     },
     "devDependencies": {
         "@types/node": "^20.10.1",

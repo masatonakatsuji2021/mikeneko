@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ValidateMethod = exports.Validation = exports.ValidateResult = exports.ValidateRule = void 0;
+exports.ValidateMethod = exports.Validation = exports.ValidateErrorResult = exports.ValidateRule = void 0;
 var ValidateRule;
 (function (ValidateRule) {
     /**
@@ -185,7 +185,7 @@ var ValidateRule;
      */
     ValidateRule["custom"] = "custom";
 })(ValidateRule || (exports.ValidateRule = ValidateRule = {}));
-class ValidateResult {
+class ValidateErrorResult {
     constructor() {
         this.status = true;
         this.fields = [];
@@ -239,22 +239,21 @@ class ValidateResult {
     }
     bind(mjs, name, index) {
         if (name) {
-            if (!mjs[name])
+            const errorName = "error." + name;
+            if (!mjs[errorName])
                 return;
             let target;
             let result;
             if (index) {
-                target = mjs[name].index(index);
-                if (!target)
-                    return;
+                target = mjs[errorName].index(index);
                 result = this.get(name, index);
             }
             else {
-                target = mjs[name];
-                if (!target)
-                    return;
+                target = mjs[errorName];
                 result = this.get(name);
             }
+            if (!target)
+                return;
             if (result) {
                 target.addClass("active").text = result.join("\n");
             }
@@ -277,7 +276,7 @@ class ValidateResult {
         }
     }
 }
-exports.ValidateResult = ValidateResult;
+exports.ValidateErrorResult = ValidateErrorResult;
 class Validation {
     static verify(data, rules) {
         const my = new this();
@@ -288,7 +287,7 @@ class Validation {
     verify(data) {
         const vm = new ValidateMethod(data, this);
         const c = Object.keys(this.rules);
-        let result = new ValidateResult();
+        let result = new ValidateErrorResult();
         for (let n = 0; n < c.length; n++) {
             const name = c[n];
             const rules = this.rules[name];
@@ -302,7 +301,6 @@ class Validation {
                     value.forEach((v_, index) => {
                         const status = vm[rule.rule](v_, rule.args);
                         if (!status) {
-                            result.status = false;
                             if (!result.errors[name])
                                 result.errors[name] = [];
                             result.errors[name].push({
@@ -317,7 +315,6 @@ class Validation {
                 else {
                     const status = vm[rule.rule](data[name], rule.args);
                     if (!status) {
-                        result.status = false;
                         if (!result.errors[name])
                             result.errors[name] = [];
                         result.errors[name].push({
@@ -329,12 +326,19 @@ class Validation {
                 }
             });
         }
+        if (Object.keys(result.errors).length)
+            result.status = false;
         return result;
+    }
+    static verifyBind(mjs, data, rules) {
+        const my = new this();
+        if (rules)
+            my.rules = rules;
+        return my.verifyBind(mjs, data);
     }
     verifyBind(mjs, data) {
         const result = this.verify(data);
-        if (result)
-            result.bind(mjs);
+        result.bind(mjs);
         return result;
     }
 }
@@ -345,8 +349,8 @@ class ValidateMethod {
         this.context = context;
     }
     getArgValue(value) {
-        if (value.indexOf("@") === 0) {
-            return this.input[value.substring(0)];
+        if (value.toString().indexOf("@") === 0) {
+            return this.input[value.toString().substring(0)];
         }
         return value;
     }

@@ -1,6 +1,6 @@
-import { Builder, BuildOption, BuildPlatrom } from "saiberian/src/Builder";
+import { Builder, BuildOption, BuildPlatrom } from "mikeneko/src/Builder";
 
-export class Saiberian {
+export class Mikeneko {
     public static build (option? : BuildOption) {
         Builder.build(option);
     }

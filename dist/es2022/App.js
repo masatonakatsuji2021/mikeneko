@@ -36,6 +36,6 @@ class App {
     /**
      * +++delay*** : Specify the delay time for screen transitions.
      */
-    static delay;
+    static delay = 100;
 }
 exports.App = App;

@@ -15,6 +15,10 @@ var App = /** @class */ (function () {
      * application =
      */
     App.routeType = AppRouteType.web;
+    /**
+     * +++delay*** : Specify the delay time for screen transitions.
+     */
+    App.delay = 100;
     return App;
 }());
 exports.App = App;

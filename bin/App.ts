@@ -44,5 +44,5 @@ export class App {
     /**
      * +++delay*** : Specify the delay time for screen transitions.
      */
-    public static delay : number;
+    public static delay : number = 100;
 }

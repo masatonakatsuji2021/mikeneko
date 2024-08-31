@@ -1,20 +1,20 @@
-# Saiberian 
+# Mikeneko 
 
 * 2024.7.13 Details coming soon...
 
 A framework for SPA (Single-Page-Action) that can be installed on Web, Android, and iOS.  
-([The Japanese version of the document is here](https://github.com/masatonakatsuji2021/saiberian/wiki/Saiberian(%E6%97%A5%E6%9C%AC%E8%AA%9E%E3%83%9A%E3%83%BC%E3%82%B8)))
+([The Japanese version of the document is here](https://github.com/masatonakatsuji2021/mikeneko/wiki/Mikeneko(%E6%97%A5%E6%9C%AC%E8%AA%9E%E3%83%9A%E3%83%BC%E3%82%B8)))
 
 # Installation
 
 To install, use the following npm command to install globally:
 
 ```
-npm i -g git+https://github.com/masatonakatsuji2021/saiberian.git
+npm i -g git+https://github.com/masatonakatsuji2021/mikeneko.git
 ```
 
-After installation, the ``sab`` command will be available.  
-From now on, use the sab command to create projects and run builds.
+After installation, the ``mike`` command will be available.  
+From now on, use the mike command to create projects and run builds.
 
 We will proceed in the following order:
 
@@ -31,17 +31,17 @@ We will proceed in the following order:
 ## 1. Create Project
 
 First, create a project for the development environment.  
-To create a project, just use the ``sab create`` command and enter the name of the project you want to create.
+To create a project, just use the ``mike create`` command and enter the name of the project you want to create.
 
 ```
-$ sab create test
+$ mike create test
 ```
 
 In the above case, a ``test`` directory will be created in the current directory,  
 and a set of default source files will be automatically generated in it.
 
 We have prepared a test sample below, so please refer to it here.  
-[https://github.com/masatonakatsuji2021/saiberian_build_sample](https://github.com/masatonakatsuji2021/saiberian_build_sample)
+[https://github.com/masatonakatsuji2021/mikeneko_build_sample](https://github.com/masatonakatsuji2021/mikeneko_build_sample)
 
 This will be explained later in the test sample.
 
@@ -81,25 +81,25 @@ For the structure of each directory, [see here](#structure).
 
 ## 3. Build output from project
 
-To build the project, run the ``sab build`` command.  
+To build the project, run the ``mike build`` command.  
 After that, the build will start automatically and the compiled html and js files will be output to the output directory.
 
 ```
-$ sab build
+$ mike build
 ```
 
 After that, the console output will be displayed as shown below,
 and transcompilation within the project will be automatically performed, and each set of source files will be integrated and optimized.
 
 ```console
-saiberian build start
+mikeneko build start
 # TranceComplieType = es6
 # Trance Complie...
 # ..OK
 # already build data ... on delete.
-# mkdir /home/nktj2024/desctop/test/saiberian/build_test/output
+# mkdir /home/nktj2024/desctop/test/mikeneko/build_test/output
 # platform = web
-# mkdir /home/nktj2024/desctop/test/saiberian/build_test/output/web
+# mkdir /home/nktj2024/desctop/test/mikeneko/build_test/output/web
 # build Start
 # core module                  App
 .....
@@ -210,7 +210,7 @@ Currently being adjusted...
 
 # Core Library Class
 
-When building Saiberian, the minimum classes required for operation are already provided.  
+When building Mikeneko, the minimum classes required for operation are already provided.  
 By using this class, you can easily set page settings or click events.
 
 To use it, load it first in any ts file using ``import`` or ``require``.
@@ -270,7 +270,7 @@ import { App, Routes, AppRouteType } from "App";
 export class MyApp extends App {
 
     // Application Name
-    public static appName : string = "Saiberian App";
+    public static appName : string = "Mikeneko App";
 
     // Route Type
     public static routeType : AppRouteType = AppRouteType.application;
@@ -297,7 +297,7 @@ export class MyApp extends App {
 Name of the application. 
 
 ```typescript
-public static appName : string = "Saiberian App";
+public static appName : string = "Mikeneko App";
 ```
 
 #### :: routeType
@@ -351,7 +351,7 @@ public static backgrounds: Array<string> = [
  SessionStorage Identifier
 
 ```typescript
-public static sessionStorage : string = "sab_ss";
+public static sessionStorage : string = "mike_ss";
 ```
 
 #### :: localStorage
@@ -359,7 +359,7 @@ public static sessionStorage : string = "sab_ss";
  LocalStorage Identifiers.
  
  ```typescript
- public static localStorage : string = "sab_local";
+ public static localStorage : string = "mike_local";
  ```
 
 <div id="background"></div>

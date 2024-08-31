@@ -5,7 +5,7 @@ import * as UglifyJS  from "uglify-js";
 import * as strip from "strip-comments";
 import { execSync } from "child_process";
 import * as obfucator from "javascript-obfuscator";
-import { BuildHandle } from "saiberian";
+import { BuildHandle } from "mikeneko";
 
 export interface BuildOption {
     /**
@@ -93,7 +93,7 @@ export class Builder {
         if (option.tranceComplied == undefined) option.tranceComplied = true;
         if (option.platforms == undefined) option.platforms = [ { name: "web" } ];
 
-        console.log("saiberian build start");
+        console.log("mikeneko build start");
         const rootDir : string = option.rootDir;
 
         // typescript trance complie

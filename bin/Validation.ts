@@ -199,7 +199,7 @@ export interface ValidateRuleMap {
     message? : string,
 }
 
-export class ValidateResult {
+export class ValidateErrorResult {
 
     public status : boolean = true;
 
@@ -264,19 +264,20 @@ export class ValidateResult {
 
     public bind(mjs : ModernJSList, name? : string, index? : number) : void {
         if (name) {
-            if (!mjs[name]) return;
+            const errorName = "error." + name;
+            if (!mjs[errorName]) return;
             let target : ModernJS;
             let result;
             if (index) {
-                target = mjs[name].index(index);
-                if (!target) return;
+                target = mjs[errorName].index(index);
                 result = this.get(name, index);
             }
             else {
-                target = mjs[name];
-                if (!target) return;
+                target = mjs[errorName];
                 result = this.get(name);
             }
+
+            if (!target) return;
 
             if (result) {
                 target.addClass("active").text = result.join("\n");
@@ -305,21 +306,21 @@ export class Validation {
 
     public rules : ValidateRuleMaps;
 
-    public static verify(data: any) : ValidateResult;
+    public static verify(data: any) : ValidateErrorResult;
 
-    public static verify(data: any, rules : ValidateRuleMaps) : ValidateResult;
+    public static verify(data: any, rules : ValidateRuleMaps) : ValidateErrorResult;
 
-    public static verify(data: any, rules? : ValidateRuleMaps) : ValidateResult {
+    public static verify(data: any, rules? : ValidateRuleMaps) : ValidateErrorResult {
         const my = new this();
         if (rules) my.rules = rules;
         return my.verify(data);
     }
 
-    public verify(data : any) : ValidateResult {
+    public verify(data : any) : ValidateErrorResult {
         const vm = new ValidateMethod(data, this);
         const c = Object.keys(this.rules);
 
-        let result = new ValidateResult();
+        let result = new ValidateErrorResult();
 
         for (let n = 0 ; n < c.length ; n++) {
             const name = c[n];
@@ -338,7 +339,6 @@ export class Validation {
                     value.forEach((v_, index) => {
                         const status = vm[rule.rule](v_, rule.args);
                         if (!status) {
-                            result.status= false;
                             if (!result.errors[name]) result.errors[name] = []; 
                             result.errors[name].push({
                                 rule: rule.rule,
@@ -352,7 +352,6 @@ export class Validation {
                 else {
                     const status = vm[rule.rule](data[name], rule.args);
                     if (!status) {
-                        result.status= false;
                         if (!result.errors[name]) result.errors[name] = []; 
                         result.errors[name].push({
                             rule: rule.rule,
@@ -364,14 +363,24 @@ export class Validation {
             });
         }
 
+        if (Object.keys(result.errors).length) result.status = false;
+
         return result;
     }
 
-    public verifyBind(mjs: ModernJSList, data : any) : ValidateResult {
+    public static verifyBind(mjs: ModernJSList, data: any, rules? : ValidateRuleMaps) : ValidateErrorResult {
+        const my = new this();
+        if (rules) my.rules = rules;
+        return my.verifyBind(mjs, data);
+    }
+
+    public verifyBind(mjs: ModernJSList, data : any) : ValidateErrorResult {
         const result = this.verify(data);
-        if (result) result.bind(mjs);
+        result.bind(mjs);
         return result;
     }
+
+
 }
 
 export class ValidateMethod {
@@ -386,8 +395,8 @@ export class ValidateMethod {
     }
 
     private getArgValue(value : string) {
-        if (value.indexOf("@") === 0) {
-            return this.input[value.substring(0)];
+        if (value.toString().indexOf("@") === 0) {
+            return this.input[value.toString().substring(0)];
         }
         return value;
     }

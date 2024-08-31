@@ -9,7 +9,7 @@ export const command = ()=>{
     argv.shift();
 
     console.log("=====================================");
-    console.log("Saiberian CLI");
+    console.log("Mikeneko CLI");
     console.log("=====================================");
     console.log("");
 
@@ -20,7 +20,7 @@ export const command = ()=>{
         try {
             const configPath = process.cwd() + "/package.json";
             const config = require(configPath);
-            const BuildOption : BuildOption = config.saiberianBuild;
+            const BuildOption : BuildOption = config.mikenekoBuild;
             Builder.build(BuildOption);
         }catch(error){
             console.error(error);

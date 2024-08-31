@@ -8,7 +8,7 @@ const command = () => {
     argv.shift();
     argv.shift();
     console.log("=====================================");
-    console.log("Saiberian CLI");
+    console.log("Mikeneko CLI");
     console.log("=====================================");
     console.log("");
     if (argv[0] == "create") {
@@ -18,7 +18,7 @@ const command = () => {
         try {
             const configPath = process.cwd() + "/package.json";
             const config = require(configPath);
-            const BuildOption = config.saiberianBuild;
+            const BuildOption = config.mikenekoBuild;
             Builder_1.Builder.build(BuildOption);
         }
         catch (error) {

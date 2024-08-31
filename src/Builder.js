@@ -8,7 +8,7 @@ const UglifyJS = require("uglify-js");
 const strip = require("strip-comments");
 const child_process_1 = require("child_process");
 const obfucator = require("javascript-obfuscator");
-const saiberian_1 = require("saiberian");
+const mikeneko_1 = require("mikeneko");
 class Builder {
     static build(option) {
         if (!option)
@@ -21,7 +21,7 @@ class Builder {
             option.tranceComplied = true;
         if (option.platforms == undefined)
             option.platforms = [{ name: "web" }];
-        console.log("saiberian build start");
+        console.log("mikeneko build start");
         const rootDir = option.rootDir;
         // typescript trance complie
         let tsType = "es6";
@@ -33,7 +33,7 @@ class Builder {
         for (let n = 0; n < option.platforms.length; n++) {
             // platforms building 
             const platform = option.platforms[n];
-            let buildhandle = saiberian_1.BuildHandle;
+            let buildhandle = mikeneko_1.BuildHandle;
             try {
                 buildhandle = require(rootDir + "/src/BuildHandle").BuildHandle;
             }

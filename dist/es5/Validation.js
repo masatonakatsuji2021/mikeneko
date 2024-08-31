@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ValidateMethod = exports.Validation = exports.ValidateResult = exports.ValidateRule = void 0;
+exports.ValidateMethod = exports.Validation = exports.ValidateErrorResult = exports.ValidateRule = void 0;
 var ValidateRule;
 (function (ValidateRule) {
     /**
@@ -185,14 +185,14 @@ var ValidateRule;
      */
     ValidateRule["custom"] = "custom";
 })(ValidateRule || (exports.ValidateRule = ValidateRule = {}));
-var ValidateResult = /** @class */ (function () {
-    function ValidateResult() {
+var ValidateErrorResult = /** @class */ (function () {
+    function ValidateErrorResult() {
         this.status = true;
         this.fields = [];
         this.fieldIndexs = {};
         this.errors = {};
     }
-    ValidateResult.prototype.get = function (name, index) {
+    ValidateErrorResult.prototype.get = function (name, index) {
         var _this = this;
         var res;
         if (name) {
@@ -238,25 +238,24 @@ var ValidateResult = /** @class */ (function () {
         }
         return res;
     };
-    ValidateResult.prototype.bind = function (mjs, name, index) {
+    ValidateErrorResult.prototype.bind = function (mjs, name, index) {
         var _this = this;
         if (name) {
-            if (!mjs[name])
+            var errorName = "error." + name;
+            if (!mjs[errorName])
                 return;
             var target = void 0;
             var result = void 0;
             if (index) {
-                target = mjs[name].index(index);
-                if (!target)
-                    return;
+                target = mjs[errorName].index(index);
                 result = this.get(name, index);
             }
             else {
-                target = mjs[name];
-                if (!target)
-                    return;
+                target = mjs[errorName];
                 result = this.get(name);
             }
+            if (!target)
+                return;
             if (result) {
                 target.addClass("active").text = result.join("\n");
             }
@@ -278,9 +277,9 @@ var ValidateResult = /** @class */ (function () {
             });
         }
     };
-    return ValidateResult;
+    return ValidateErrorResult;
 }());
-exports.ValidateResult = ValidateResult;
+exports.ValidateErrorResult = ValidateErrorResult;
 var Validation = /** @class */ (function () {
     function Validation() {
     }
@@ -293,7 +292,7 @@ var Validation = /** @class */ (function () {
     Validation.prototype.verify = function (data) {
         var vm = new ValidateMethod(data, this);
         var c = Object.keys(this.rules);
-        var result = new ValidateResult();
+        var result = new ValidateErrorResult();
         var _loop_1 = function (n) {
             var name_1 = c[n];
             var rules = this_1.rules[name_1];
@@ -307,7 +306,6 @@ var Validation = /** @class */ (function () {
                     value.forEach(function (v_, index) {
                         var status = vm[rule.rule](v_, rule.args);
                         if (!status) {
-                            result.status = false;
                             if (!result.errors[name_1])
                                 result.errors[name_1] = [];
                             result.errors[name_1].push({
@@ -322,7 +320,6 @@ var Validation = /** @class */ (function () {
                 else {
                     var status_1 = vm[rule.rule](data[name_1], rule.args);
                     if (!status_1) {
-                        result.status = false;
                         if (!result.errors[name_1])
                             result.errors[name_1] = [];
                         result.errors[name_1].push({
@@ -338,12 +335,19 @@ var Validation = /** @class */ (function () {
         for (var n = 0; n < c.length; n++) {
             _loop_1(n);
         }
+        if (Object.keys(result.errors).length)
+            result.status = false;
         return result;
+    };
+    Validation.verifyBind = function (mjs, data, rules) {
+        var my = new this();
+        if (rules)
+            my.rules = rules;
+        return my.verifyBind(mjs, data);
     };
     Validation.prototype.verifyBind = function (mjs, data) {
         var result = this.verify(data);
-        if (result)
-            result.bind(mjs);
+        result.bind(mjs);
         return result;
     };
     return Validation;
@@ -355,8 +359,8 @@ var ValidateMethod = /** @class */ (function () {
         this.context = context;
     }
     ValidateMethod.prototype.getArgValue = function (value) {
-        if (value.indexOf("@") === 0) {
-            return this.input[value.substring(0)];
+        if (value.toString().indexOf("@") === 0) {
+            return this.input[value.toString().substring(0)];
         }
         return value;
     };
