@@ -134,9 +134,21 @@ var ValidateRule;
      */
     ValidateRule["confirmed"] = "confirmed";
     /**
+     * ***like*** : If the value does not contain the specified string, an error occurs.
+     */
+    ValidateRule["like"] = "like";
+    /**
+     * ***characterExists*** : If the value contains characters that do not exist in the specified string, an error occurs..
+     */
+    ValidateRule["characterExists"] = "characterExists";
+    /**
      * ***alphaNumeric*** : If the value contains any characters other than half-width alphanumeric characters and specified special characters, an error is detected.
      */
     ValidateRule["alphaNumeric"] = "alphaNumeric";
+    /**
+     * ***alpha*** : An error is detected if the value contains any characters other than half-width English characters and the specified special characters.
+     */
+    ValidateRule["alpha"] = "alpha";
     /**
      * ***alphaNumeric*** : If the value contains any characters other than alphanumeric characters and the specified special characters, an error is detected.
      */
@@ -151,7 +163,25 @@ var ValidateRule;
     ValidateRule["isKatakana"] = "isKatakana";
     /**
      * ***custom*** : For custom validation
-     * Execute validation using the specified function
+     * Execute validation using the specified function.
+     *
+     * ```typescript
+     * {
+     *   rule: ValidateRule.custom,
+     *   args: [ "customValidate" ],
+     * }
+     * ```
+     *
+     * Then, place the customValidate method in the Validation-derived class as follows:
+     *
+     * ```typescript
+     * public customValidate (value : string, args :Array<string>, context : ValidateMethod) {
+     *    if (value === "custom value") {
+     *        return true;
+     *    }
+     * }
+     * ```
+     *
      */
     ValidateRule["custom"] = "custom";
 })(ValidateRule || (exports.ValidateRule = ValidateRule = {}));
@@ -159,8 +189,95 @@ var ValidateResult = /** @class */ (function () {
     function ValidateResult() {
         this.status = true;
         this.fields = [];
+        this.fieldIndexs = {};
         this.errors = {};
     }
+    ValidateResult.prototype.get = function (name, index) {
+        var _this = this;
+        var res;
+        if (name) {
+            res = [];
+            var errors = this.errors[name];
+            if (!errors)
+                return;
+            errors.forEach(function (error) {
+                if (index && index != error.index)
+                    return;
+                var message = error.message;
+                if (!message) {
+                    message = "rule = " + error.rule;
+                    if (error.args)
+                        message += ", args = [" + error.args.join(",") + "]";
+                    if (index)
+                        message += ", index = " + index;
+                }
+                res.push(message);
+            });
+        }
+        else {
+            res = {};
+            this.fields.forEach(function (field) {
+                var fieldCount = _this.fieldIndexs[field];
+                if (fieldCount) {
+                    for (var n = 0; n < fieldCount; n++) {
+                        var buffer = _this.get(field, n);
+                        if (buffer) {
+                            if (!res[field])
+                                res[field] = [];
+                            res[field] = buffer;
+                        }
+                    }
+                }
+                else {
+                    var buffer = _this.get(field);
+                    if (buffer) {
+                        res[field] = buffer;
+                    }
+                }
+            });
+        }
+        return res;
+    };
+    ValidateResult.prototype.bind = function (mjs, name, index) {
+        var _this = this;
+        if (name) {
+            if (!mjs[name])
+                return;
+            var target = void 0;
+            var result = void 0;
+            if (index) {
+                target = mjs[name].index(index);
+                if (!target)
+                    return;
+                result = this.get(name, index);
+            }
+            else {
+                target = mjs[name];
+                if (!target)
+                    return;
+                result = this.get(name);
+            }
+            if (result) {
+                target.addClass("active").text = result.join("\n");
+            }
+            else {
+                target.removeClass("active").text = "";
+            }
+        }
+        else {
+            this.fields.forEach(function (field) {
+                if (_this.fieldIndexs[field]) {
+                    var fieldCount = _this.fieldIndexs[field];
+                    for (var n = 0; n < fieldCount; n++) {
+                        _this.bind(mjs, field, n);
+                    }
+                }
+                else {
+                    _this.bind(mjs, field);
+                }
+            });
+        }
+    };
     return ValidateResult;
 }());
 exports.ValidateResult = ValidateResult;
@@ -186,6 +303,7 @@ var Validation = /** @class */ (function () {
                     return;
                 var value = data[name_1];
                 if (Array.isArray(value) && rule.rule.indexOf("selectedLength") === -1) {
+                    result.fieldIndexs[name_1] = value.length;
                     value.forEach(function (v_, index) {
                         var status = vm[rule.rule](v_, rule.args);
                         if (!status) {
@@ -222,6 +340,12 @@ var Validation = /** @class */ (function () {
         }
         return result;
     };
+    Validation.prototype.verifyBind = function (mjs, data) {
+        var result = this.verify(data);
+        if (result)
+            result.bind(mjs);
+        return result;
+    };
     return Validation;
 }());
 exports.Validation = Validation;
@@ -230,6 +354,12 @@ var ValidateMethod = /** @class */ (function () {
         this.input = input;
         this.context = context;
     }
+    ValidateMethod.prototype.getArgValue = function (value) {
+        if (value.indexOf("@") === 0) {
+            return this.input[value.substring(0)];
+        }
+        return value;
+    };
     ValidateMethod.prototype.required = function (value) {
         if (value === undefined ||
             value === null ||
@@ -241,7 +371,7 @@ var ValidateMethod = /** @class */ (function () {
     ValidateMethod.prototype.length = function (value, args) {
         if (!this.required(value))
             return true;
-        var target = args[0];
+        var target = this.getArgValue(args[0]);
         if (value.length !== target)
             return false;
         return true;
@@ -249,7 +379,7 @@ var ValidateMethod = /** @class */ (function () {
     ValidateMethod.prototype.lengthMin = function (value, args) {
         if (!this.required(value))
             return true;
-        var target = args[0];
+        var target = this.getArgValue(args[0]);
         if (value.length < target)
             return false;
         return true;
@@ -257,7 +387,7 @@ var ValidateMethod = /** @class */ (function () {
     ValidateMethod.prototype.lengthMax = function (value, args) {
         if (!this.required(value))
             return true;
-        var target = args[0];
+        var target = this.getArgValue(args[0]);
         if (value.length > target)
             return false;
         return true;
@@ -265,8 +395,8 @@ var ValidateMethod = /** @class */ (function () {
     ValidateMethod.prototype.lengthBetween = function (value, args) {
         if (!this.required(value))
             return true;
-        var targetMin = args[0];
-        var targetMax = args[1];
+        var targetMin = this.getArgValue(args[0]);
+        var targetMax = this.getArgValue(args[1]);
         if (value.length < targetMin)
             return false;
         if (value.length > targetMax)
@@ -276,7 +406,7 @@ var ValidateMethod = /** @class */ (function () {
     ValidateMethod.prototype.value = function (value, args) {
         if (!this.required(value))
             return true;
-        var target = args[0];
+        var target = this.getArgValue(args[0]);
         if (value !== target)
             return false;
         return true;
@@ -284,7 +414,7 @@ var ValidateMethod = /** @class */ (function () {
     ValidateMethod.prototype.valueMin = function (value, args) {
         if (!this.required(value))
             return true;
-        var target = args[0];
+        var target = this.getArgValue(args[0]);
         if (value < target)
             return false;
         return true;
@@ -292,7 +422,7 @@ var ValidateMethod = /** @class */ (function () {
     ValidateMethod.prototype.valueMax = function (value, args) {
         if (!this.required(value))
             return true;
-        var target = args[0];
+        var target = this.getArgValue(args[0]);
         if (value > target)
             return false;
         return true;
@@ -300,8 +430,8 @@ var ValidateMethod = /** @class */ (function () {
     ValidateMethod.prototype.valueBetween = function (value, args) {
         if (!this.required(value))
             return true;
-        var targetMin = args[0];
-        var targetMax = args[1];
+        var targetMin = this.getArgValue(args[0]);
+        var targetMax = this.getArgValue(args[1]);
         if (value < targetMin)
             return false;
         if (value > targetMax)
@@ -318,7 +448,7 @@ var ValidateMethod = /** @class */ (function () {
     ValidateMethod.prototype.selectedLength = function (value, args) {
         if (!this.required(value))
             return true;
-        var target = args[0];
+        var target = this.getArgValue(args[0]);
         if (value.length !== target)
             return false;
         return true;
@@ -326,7 +456,7 @@ var ValidateMethod = /** @class */ (function () {
     ValidateMethod.prototype.selectedLengthMin = function (value, args) {
         if (!this.required(value))
             return true;
-        var target = args[0];
+        var target = this.getArgValue(args[0]);
         if (value.length < target)
             return false;
         return true;
@@ -334,7 +464,7 @@ var ValidateMethod = /** @class */ (function () {
     ValidateMethod.prototype.selectedLengthMax = function (value, args) {
         if (!this.required(value))
             return true;
-        var target = args[0];
+        var target = this.getArgValue(args[0]);
         if (value.length > target)
             return false;
         return true;
@@ -342,8 +472,8 @@ var ValidateMethod = /** @class */ (function () {
     ValidateMethod.prototype.selectedLengthBetween = function (value, args) {
         if (!this.required(value))
             return true;
-        var targetMin = args[0];
-        var targetMax = args[0];
+        var targetMin = this.getArgValue(args[0]);
+        var targetMax = this.getArgValue(args[1]);
         if (value.length < targetMin)
             return false;
         if (value.length > targetMax)
@@ -351,22 +481,88 @@ var ValidateMethod = /** @class */ (function () {
         return true;
     };
     ValidateMethod.prototype.confirmed = function (value, args) {
+        if (!this.required(value))
+            return true;
+        var target = this.getArgValue(args[0]);
+        if (value != target)
+            return false;
         return true;
+    };
+    ValidateMethod.prototype.like = function (value, args) {
+        if (!this.required(value))
+            return true;
+        var target = this.getArgValue(args[0]);
+        if (value.indexOf(target) === -1)
+            return false;
+        return true;
+    };
+    ValidateMethod.prototype.characterExists = function (value, args) {
+        if (!this.required(value))
+            return true;
+        var target = this.getArgValue(args[0]);
+        var status = true;
+        for (var n = 0; n < value.toString().length; n++) {
+            var v = value.toString()[n];
+            if (target.indexOf(v) !== -1) {
+                status = false;
+                break;
+            }
+        }
+        return status;
     };
     ValidateMethod.prototype.alphaNumeric = function (value, args) {
-        return true;
+        if (!this.required(value))
+            return true;
+        var addChars = this.getArgValue(args[0]);
+        var target = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        if (addChars)
+            target += addChars;
+        return this.characterExists(value, [target]);
+    };
+    ValidateMethod.prototype.alpha = function (value, args) {
+        if (!this.required(value))
+            return true;
+        var addChars = this.getArgValue(args[0]);
+        var target = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        if (addChars)
+            target += addChars;
+        return this.characterExists(value, [target]);
     };
     ValidateMethod.prototype.numeric = function (value, args) {
-        return true;
+        if (!this.required(value))
+            return true;
+        var addChars = this.getArgValue(args[0]);
+        var target = "0123456789";
+        if (addChars) {
+            target += addChars;
+        }
+        return this.characterExists(value, [target]);
     };
     ValidateMethod.prototype.isHiranaga = function (value, args) {
-        return true;
+        if (!this.required(value))
+            return true;
+        var addChars = this.getArgValue(args[0]);
+        var target = "あいうえおかきくけこがぎぐげござじずぜそただちつてとだぢづでとなにぬねのはひふへほばびぶべぼぱぴぷぺぽまみむめもやゆよらりるれろわをん";
+        if (addChars) {
+            target += addChars;
+        }
+        return this.characterExists(value, [target]);
     };
     ValidateMethod.prototype.isKatakana = function (value, args) {
-        return true;
+        if (!this.required(value))
+            return true;
+        var addChars = this.getArgValue(args[0]);
+        var target = "アイウエオカキクケコガギグゲゴザジズゼソタダチツテトダヂヅデトナニヌネノハヒフヘホバビブベボパピプペポマミムメモヤユヨラリルレロワヲン";
+        if (addChars) {
+            target += addChars;
+        }
+        return this.characterExists(value, [target]);
     };
     ValidateMethod.prototype.custom = function (value, args) {
-        return true;
+        var custom = this.context[args[0]];
+        if (!custom)
+            return true;
+        return custom(value, args, this);
     };
     return ValidateMethod;
 }());

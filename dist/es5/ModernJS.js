@@ -91,6 +91,7 @@ var ModernJS = /** @class */ (function () {
     };
     ModernJS.prototype.reload = function (context) {
         var _this = this;
+        ModernJS.reload();
         this.els.forEach(function (el) {
             var qss = el.querySelectorAll("[v-child]");
             qss.forEach(function (el2) {
@@ -198,7 +199,6 @@ var ModernJS = /** @class */ (function () {
             el.innerText = value.toString();
         });
         if (!noReload) {
-            ModernJS.reload();
             this.reload();
         }
         return this;
@@ -236,7 +236,6 @@ var ModernJS = /** @class */ (function () {
             }
         });
         if (!noReload) {
-            ModernJS.reload();
             this.reload();
         }
         return this;
@@ -252,7 +251,6 @@ var ModernJS = /** @class */ (function () {
                 });
                 el.outerHTML = value;
             });
-            ModernJS.reload();
             this.reload();
         },
         enumerable: false,
@@ -278,7 +276,6 @@ var ModernJS = /** @class */ (function () {
             }
         });
         if (!noReload) {
-            ModernJS.reload();
             this.reload();
         }
         return this;
@@ -303,7 +300,6 @@ var ModernJS = /** @class */ (function () {
             }
         });
         if (!noReload) {
-            ModernJS.reload();
             this.reload();
         }
         return this;
@@ -342,6 +338,13 @@ var ModernJS = /** @class */ (function () {
         else {
             return this.els[0].attributes[name].value;
         }
+    };
+    ModernJS.prototype.isAttr = function (name) {
+        if (!this.els[0])
+            return false;
+        if (this.els[0].attributes[name])
+            return true;
+        return false;
     };
     ModernJS.prototype.removeAttr = function (name) {
         this.els.forEach(function (el) {

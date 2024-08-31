@@ -99,6 +99,7 @@ export class ModernJS {
     }
 
     public reload(context? : ModernJS) {
+        ModernJS.reload();
         this.els.forEach((el : HTMLElement) => {
             const qss = el.querySelectorAll("[v-child]");
             qss.forEach((el2 : HTMLElement) => {
@@ -188,7 +189,6 @@ export class ModernJS {
             el.innerText = value.toString();
         });
         if (!noReload) {
-            ModernJS.reload();
             this.reload();    
         }
         return this;
@@ -226,7 +226,6 @@ export class ModernJS {
             }
         });
         if (!noReload) {
-            ModernJS.reload();
             this.reload();    
         }
         return this;
@@ -239,7 +238,6 @@ export class ModernJS {
             });
             el.outerHTML = value;
         });
-        ModernJS.reload();
         this.reload();
     }
 
@@ -267,7 +265,6 @@ export class ModernJS {
             }
         });
         if (!noReload) {
-            ModernJS.reload();
             this.reload();    
         }
         return this;
@@ -293,7 +290,6 @@ export class ModernJS {
             }
         });
         if (!noReload) {
-            ModernJS.reload();
             this.reload();    
         }
         return this;
@@ -337,6 +333,12 @@ export class ModernJS {
         else {
             return this.els[0].attributes[name].value;
         }
+    }
+
+    public isAttr(name : string) : boolean {
+        if (!this.els[0]) return false;
+        if (this.els[0].attributes[name]) return true;
+        return false;
     }
 
     public removeAttr(name : string) : ModernJS {
@@ -436,7 +438,7 @@ export class ModernJS {
         return this;
     }
 
-    public get value() : string | Array<string> {
+    public get value() : string | number | Array<string | number> {
         if (!(
             this.tagName == "INPUT" ||
             this.tagName == "SELECT" ||

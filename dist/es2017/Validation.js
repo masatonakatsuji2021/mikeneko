@@ -134,9 +134,21 @@ var ValidateRule;
      */
     ValidateRule["confirmed"] = "confirmed";
     /**
+     * ***like*** : If the value does not contain the specified string, an error occurs.
+     */
+    ValidateRule["like"] = "like";
+    /**
+     * ***characterExists*** : If the value contains characters that do not exist in the specified string, an error occurs..
+     */
+    ValidateRule["characterExists"] = "characterExists";
+    /**
      * ***alphaNumeric*** : If the value contains any characters other than half-width alphanumeric characters and specified special characters, an error is detected.
      */
     ValidateRule["alphaNumeric"] = "alphaNumeric";
+    /**
+     * ***alpha*** : An error is detected if the value contains any characters other than half-width English characters and the specified special characters.
+     */
+    ValidateRule["alpha"] = "alpha";
     /**
      * ***alphaNumeric*** : If the value contains any characters other than alphanumeric characters and the specified special characters, an error is detected.
      */
@@ -151,7 +163,25 @@ var ValidateRule;
     ValidateRule["isKatakana"] = "isKatakana";
     /**
      * ***custom*** : For custom validation
-     * Execute validation using the specified function
+     * Execute validation using the specified function.
+     *
+     * ```typescript
+     * {
+     *   rule: ValidateRule.custom,
+     *   args: [ "customValidate" ],
+     * }
+     * ```
+     *
+     * Then, place the customValidate method in the Validation-derived class as follows:
+     *
+     * ```typescript
+     * public customValidate (value : string, args :Array<string>, context : ValidateMethod) {
+     *    if (value === "custom value") {
+     *        return true;
+     *    }
+     * }
+     * ```
+     *
      */
     ValidateRule["custom"] = "custom";
 })(ValidateRule || (exports.ValidateRule = ValidateRule = {}));
@@ -159,7 +189,92 @@ class ValidateResult {
     constructor() {
         this.status = true;
         this.fields = [];
+        this.fieldIndexs = {};
         this.errors = {};
+    }
+    get(name, index) {
+        let res;
+        if (name) {
+            res = [];
+            const errors = this.errors[name];
+            if (!errors)
+                return;
+            errors.forEach((error) => {
+                if (index && index != error.index)
+                    return;
+                let message = error.message;
+                if (!message) {
+                    message = "rule = " + error.rule;
+                    if (error.args)
+                        message += ", args = [" + error.args.join(",") + "]";
+                    if (index)
+                        message += ", index = " + index;
+                }
+                res.push(message);
+            });
+        }
+        else {
+            res = {};
+            this.fields.forEach((field) => {
+                const fieldCount = this.fieldIndexs[field];
+                if (fieldCount) {
+                    for (let n = 0; n < fieldCount; n++) {
+                        const buffer = this.get(field, n);
+                        if (buffer) {
+                            if (!res[field])
+                                res[field] = [];
+                            res[field] = buffer;
+                        }
+                    }
+                }
+                else {
+                    const buffer = this.get(field);
+                    if (buffer) {
+                        res[field] = buffer;
+                    }
+                }
+            });
+        }
+        return res;
+    }
+    bind(mjs, name, index) {
+        if (name) {
+            if (!mjs[name])
+                return;
+            let target;
+            let result;
+            if (index) {
+                target = mjs[name].index(index);
+                if (!target)
+                    return;
+                result = this.get(name, index);
+            }
+            else {
+                target = mjs[name];
+                if (!target)
+                    return;
+                result = this.get(name);
+            }
+            if (result) {
+                target.addClass("active").text = result.join("\n");
+            }
+            else {
+                target.removeClass("active").text = "";
+            }
+        }
+        else {
+            this.fields.forEach((field) => {
+                if (this.fieldIndexs[field]) {
+                    const fieldCount = this.fieldIndexs[field];
+                    for (let n = 0; n < fieldCount; n++) {
+                        this.bind(mjs, field, n);
+                    }
+                }
+                else {
+                    this.bind(mjs, field);
+                }
+            });
+        }
     }
 }
 exports.ValidateResult = ValidateResult;
@@ -183,6 +298,7 @@ class Validation {
                     return;
                 const value = data[name];
                 if (Array.isArray(value) && rule.rule.indexOf("selectedLength") === -1) {
+                    result.fieldIndexs[name] = value.length;
                     value.forEach((v_, index) => {
                         const status = vm[rule.rule](v_, rule.args);
                         if (!status) {
@@ -215,12 +331,24 @@ class Validation {
         }
         return result;
     }
+    verifyBind(mjs, data) {
+        const result = this.verify(data);
+        if (result)
+            result.bind(mjs);
+        return result;
+    }
 }
 exports.Validation = Validation;
 class ValidateMethod {
     constructor(input, context) {
         this.input = input;
         this.context = context;
+    }
+    getArgValue(value) {
+        if (value.indexOf("@") === 0) {
+            return this.input[value.substring(0)];
+        }
+        return value;
     }
     required(value) {
         if (value === undefined ||
@@ -233,7 +361,7 @@ class ValidateMethod {
     length(value, args) {
         if (!this.required(value))
             return true;
-        const target = args[0];
+        const target = this.getArgValue(args[0]);
         if (value.length !== target)
             return false;
         return true;
@@ -241,7 +369,7 @@ class ValidateMethod {
     lengthMin(value, args) {
         if (!this.required(value))
             return true;
-        const target = args[0];
+        const target = this.getArgValue(args[0]);
         if (value.length < target)
             return false;
         return true;
@@ -249,7 +377,7 @@ class ValidateMethod {
     lengthMax(value, args) {
         if (!this.required(value))
             return true;
-        const target = args[0];
+        const target = this.getArgValue(args[0]);
         if (value.length > target)
             return false;
         return true;
@@ -257,8 +385,8 @@ class ValidateMethod {
     lengthBetween(value, args) {
         if (!this.required(value))
             return true;
-        const targetMin = args[0];
-        const targetMax = args[1];
+        const targetMin = this.getArgValue(args[0]);
+        const targetMax = this.getArgValue(args[1]);
         if (value.length < targetMin)
             return false;
         if (value.length > targetMax)
@@ -268,7 +396,7 @@ class ValidateMethod {
     value(value, args) {
         if (!this.required(value))
             return true;
-        const target = args[0];
+        const target = this.getArgValue(args[0]);
         if (value !== target)
             return false;
         return true;
@@ -276,7 +404,7 @@ class ValidateMethod {
     valueMin(value, args) {
         if (!this.required(value))
             return true;
-        const target = args[0];
+        const target = this.getArgValue(args[0]);
         if (value < target)
             return false;
         return true;
@@ -284,7 +412,7 @@ class ValidateMethod {
     valueMax(value, args) {
         if (!this.required(value))
             return true;
-        const target = args[0];
+        const target = this.getArgValue(args[0]);
         if (value > target)
             return false;
         return true;
@@ -292,8 +420,8 @@ class ValidateMethod {
     valueBetween(value, args) {
         if (!this.required(value))
             return true;
-        const targetMin = args[0];
-        const targetMax = args[1];
+        const targetMin = this.getArgValue(args[0]);
+        const targetMax = this.getArgValue(args[1]);
         if (value < targetMin)
             return false;
         if (value > targetMax)
@@ -310,7 +438,7 @@ class ValidateMethod {
     selectedLength(value, args) {
         if (!this.required(value))
             return true;
-        const target = args[0];
+        const target = this.getArgValue(args[0]);
         if (value.length !== target)
             return false;
         return true;
@@ -318,7 +446,7 @@ class ValidateMethod {
     selectedLengthMin(value, args) {
         if (!this.required(value))
             return true;
-        const target = args[0];
+        const target = this.getArgValue(args[0]);
         if (value.length < target)
             return false;
         return true;
@@ -326,7 +454,7 @@ class ValidateMethod {
     selectedLengthMax(value, args) {
         if (!this.required(value))
             return true;
-        const target = args[0];
+        const target = this.getArgValue(args[0]);
         if (value.length > target)
             return false;
         return true;
@@ -334,8 +462,8 @@ class ValidateMethod {
     selectedLengthBetween(value, args) {
         if (!this.required(value))
             return true;
-        const targetMin = args[0];
-        const targetMax = args[0];
+        const targetMin = this.getArgValue(args[0]);
+        const targetMax = this.getArgValue(args[1]);
         if (value.length < targetMin)
             return false;
         if (value.length > targetMax)
@@ -343,22 +471,88 @@ class ValidateMethod {
         return true;
     }
     confirmed(value, args) {
+        if (!this.required(value))
+            return true;
+        const target = this.getArgValue(args[0]);
+        if (value != target)
+            return false;
         return true;
+    }
+    like(value, args) {
+        if (!this.required(value))
+            return true;
+        const target = this.getArgValue(args[0]);
+        if (value.indexOf(target) === -1)
+            return false;
+        return true;
+    }
+    characterExists(value, args) {
+        if (!this.required(value))
+            return true;
+        const target = this.getArgValue(args[0]);
+        let status = true;
+        for (let n = 0; n < value.toString().length; n++) {
+            const v = value.toString()[n];
+            if (target.indexOf(v) !== -1) {
+                status = false;
+                break;
+            }
+        }
+        return status;
     }
     alphaNumeric(value, args) {
-        return true;
+        if (!this.required(value))
+            return true;
+        const addChars = this.getArgValue(args[0]);
+        let target = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        if (addChars)
+            target += addChars;
+        return this.characterExists(value, [target]);
+    }
+    alpha(value, args) {
+        if (!this.required(value))
+            return true;
+        const addChars = this.getArgValue(args[0]);
+        let target = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        if (addChars)
+            target += addChars;
+        return this.characterExists(value, [target]);
     }
     numeric(value, args) {
-        return true;
+        if (!this.required(value))
+            return true;
+        const addChars = this.getArgValue(args[0]);
+        let target = "0123456789";
+        if (addChars) {
+            target += addChars;
+        }
+        return this.characterExists(value, [target]);
     }
     isHiranaga(value, args) {
-        return true;
+        if (!this.required(value))
+            return true;
+        const addChars = this.getArgValue(args[0]);
+        let target = "あいうえおかきくけこがぎぐげござじずぜそただちつてとだぢづでとなにぬねのはひふへほばびぶべぼぱぴぷぺぽまみむめもやゆよらりるれろわをん";
+        if (addChars) {
+            target += addChars;
+        }
+        return this.characterExists(value, [target]);
     }
     isKatakana(value, args) {
-        return true;
+        if (!this.required(value))
+            return true;
+        const addChars = this.getArgValue(args[0]);
+        let target = "アイウエオカキクケコガギグゲゴザジズゼソタダチツテトダヂヅデトナニヌネノハヒフヘホバビブベボパピプペポマミムメモヤユヨラリルレロワヲン";
+        if (addChars) {
+            target += addChars;
+        }
+        return this.characterExists(value, [target]);
     }
     custom(value, args) {
-        return true;
+        const custom = this.context[args[0]];
+        if (!custom)
+            return true;
+        return custom(value, args, this);
     }
 }
 exports.ValidateMethod = ValidateMethod;

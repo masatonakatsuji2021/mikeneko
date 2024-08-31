@@ -81,6 +81,7 @@ class ModernJS {
         });
     }
     reload(context) {
+        ModernJS.reload();
         this.els.forEach((el) => {
             const qss = el.querySelectorAll("[v-child]");
             qss.forEach((el2) => {
@@ -160,7 +161,6 @@ class ModernJS {
             el.innerText = value.toString();
         });
         if (!noReload) {
-            ModernJS.reload();
             this.reload();
         }
         return this;
@@ -193,7 +193,6 @@ class ModernJS {
             }
         });
         if (!noReload) {
-            ModernJS.reload();
             this.reload();
         }
         return this;
@@ -205,7 +204,6 @@ class ModernJS {
             });
             el.outerHTML = value;
         });
-        ModernJS.reload();
         this.reload();
     }
     get outerHtml() {
@@ -230,7 +228,6 @@ class ModernJS {
             }
         });
         if (!noReload) {
-            ModernJS.reload();
             this.reload();
         }
         return this;
@@ -254,7 +251,6 @@ class ModernJS {
             }
         });
         if (!noReload) {
-            ModernJS.reload();
             this.reload();
         }
         return this;
@@ -289,6 +285,13 @@ class ModernJS {
         else {
             return this.els[0].attributes[name].value;
         }
+    }
+    isAttr(name) {
+        if (!this.els[0])
+            return false;
+        if (this.els[0].attributes[name])
+            return true;
+        return false;
     }
     removeAttr(name) {
         this.els.forEach((el) => {
