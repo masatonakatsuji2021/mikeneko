@@ -1,5 +1,3 @@
-Mikeneko ------------------------------------------------------
-
 # Installation
 
 To install, use the following npm command to install globally:
@@ -17,7 +15,7 @@ We will proceed in the following order:
 2. Modify and add project sources
 3. [Build output from project](#build)
 
-[I will explain point 2 later here,](#-structure) so I will explain points 1 and 3 first.
+[I will explain point 2 later here,](structure.md) so I will explain points 1 and 3 first.
 
 ---
 
@@ -35,9 +33,6 @@ $ mike create test
 
 In the above case, a ``test`` directory will be created in the current directory,  
 and a set of default source files will be automatically generated in it.
-
-We have prepared a test sample below, so please refer to it here.  
-[https://github.com/masatonakatsuji2021/mikeneko_build_sample](https://github.com/masatonakatsuji2021/mikeneko_build_sample)
 
 This will be explained later in the test sample.
 
@@ -70,7 +65,7 @@ The actual test sample deployment results are as follows:
     L tsconfig.json
 ```
 
-For the structure of each directory, [see here](#structure).
+For the structure of each directory, [see here](structure.md).
 
 ---
 <div id="build"></div>
