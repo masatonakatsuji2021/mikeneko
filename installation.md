@@ -124,3 +124,6 @@ index.html      index.js
 ```
 
 After that, just move this build data to the deployment location.
+
+Build options can be set in package.json.  
+[Learn more](packagejson.md#platform)
