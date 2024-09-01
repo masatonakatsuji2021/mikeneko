@@ -8,9 +8,11 @@ When using it, be sure to load the Response class with import as shown below.
 import { Response } from "Response";
 ```
 
+---
+
 <div id="response_ui"></div>
 
-### : load UI (Response.UI)
+## # load UI (Response.UI)
 
 Use the ``Response.UI`` method to get the HTML tag of the UI.  
 Be sure to specify the UI name as an argument.
@@ -21,9 +23,11 @@ const test : string = Response.UI("test");
 
 In the above case, the HTML tag information of ``rendering/ui/test.html`` is obtained.
 
+---
+
 <div id="response_bindui"></div>
 
-### : Bind UI (Response.bindUI)
+## # Bind UI (Response.bindUI)
 
 The ``Response.bindUI`` method binds a specified UI to a specified element (ModernJS class).
 The event handler is executed immediately after binding,   
@@ -55,9 +59,11 @@ export class TestUI extends UI {
 }
 ```
 
+---
+
 <div id="response_appendui"></div>
 
-### : Append UI (Response.appendUI)
+## # Append UI (Response.appendUI)
 
 The ``Response.appendUI`` method appends to a specified element (ModernJS class).  
 While ``Response.bindUI`` overwrites the tag information of the specified UI, this is added.  

@@ -25,4 +25,3 @@ A framework for SPA (Single-Page-Action) that can be installed on Web, Android, 
     - [View](view.md)
     - [UI](ui.md)
     - [Validation](validation.md)
----

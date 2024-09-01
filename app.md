@@ -64,7 +64,7 @@ public static routeType : AppRouteType = AppRouteType.web;
 This is the routing setting item.<br>
 Specify each path during screen transition, the destination view or controller, and the action name (public method name).
 
-For information on setting up routing, [see here](#routes)
+For information on setting up routing, [see here](routes.md)
 
 ```typescript
 // Routing
@@ -82,6 +82,8 @@ public static routes : Routes = {
 Background class list to run.   
 Execution will begin in the order specified in the list.
 
+For an overview of the Background class, [see here](background.md)
+
 ```typescript
 public static backgrounds: Array<string> = [
     "Background",
@@ -90,7 +92,8 @@ public static backgrounds: Array<string> = [
 
 ## # sessionStorage
 
- SessionStorage Identifier
+SessionStorage Identifier.  
+For an overview of the session-storage, [see here](storage.md#session)
 
 ```typescript
 public static sessionStorage : string = "mike_ss";
@@ -98,8 +101,19 @@ public static sessionStorage : string = "mike_ss";
 
 ## # localStorage
 
- LocalStorage Identifiers.
- 
+ LocalStorage Identifiers.  
+ For an overview of the local-storage, [see here](storage.md#local)
+
  ```typescript
  public static localStorage : string = "mike_local";
+ ```
+
+ ## # Delay during screen transitions
+
+Set this variable if you want to delay temporarily when transitioning to another screen.  
+The unit is specified in milliseconds.  
+(The default is 100ms.)
+
+ ```typescript
+ public static delay : number = 100;
  ```

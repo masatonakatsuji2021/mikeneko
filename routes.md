@@ -18,6 +18,8 @@ public static routes : Routes = {
 };
 ```
 
+---
+
 ## # Screen transitions using URLs and link buttons
 
 The URL in routing corresponds to the identifier of each screen.  
@@ -36,6 +38,8 @@ For example, if you want to place a link button (a tag) on ​​a page that wil
 
 The href attribute is the same as for normal page transitions, but here you must put ``#`` before it.   
 By adding ``#``, it will be treated as an internal link, and when used on the web, the screen transition will be completed only within the page, without the browser performing page redirection operations.
+
+---
 
 ## # Routing with Views
 
@@ -69,6 +73,8 @@ export class Page1View extends View {
 
 When specifying a View class, you need to write the View class for each screen in a separate ts file, but by using a Controller instead, you can write multiple screens in a single ts file.  
 (The method for specifying routing inthe Controller is described below.)
+
+---
 
 ## # Routing with Controller
 
@@ -124,6 +130,8 @@ export class Page2Controller extends Controller {
 }
 ```
 
+---
+
 ## # URL description using scope
 
 You can simplify the description of the routing URL by specifying a range (scoping) for a part of it.
@@ -160,6 +168,7 @@ Scoping can be done at any stage.
     },
 },
 ```
+---
 
 ## # Dynamic support for some URLs
 
@@ -226,6 +235,8 @@ You can also specify it not only at the end of the URL but also in the middle as
 ```typescript
 "/page3/{id}/detail": "page3Detail",
 ```
+
+---
 
 ## # Dynamic support for some URLs (Optional)
 
