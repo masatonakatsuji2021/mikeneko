@@ -60,6 +60,54 @@ export enum ValidateRule {
      */
     lengthBetween = "lengthBetween",
     /**
+     * ***byteLength*** : If the length of the value (string) is not the specified byte length, an error is detected.    
+     *   
+     * Below is an example of an error being detected if the value is not 20 byte.
+     * ```typescript
+     * {
+     *   rule: ValidateRule.byteLength,
+     *   args: [ 20 ],
+     * }
+     * ```
+     */
+    byteLength = "byteLength",
+    /**
+     * ***byteLengthMin*** : If the length of the value (string) is less than the specified byte length, an error is detected.
+     *   
+     * Below is an example of an error being detected if the value is 10 byte or less.  
+     * ```typescript
+     * {
+     *   rule: ValidateRule.byteLengthMin,
+     *   args: [ 20 ],
+     * }
+     * ```
+     */
+    byteLengthMin = "byteLengthMin",
+    /**
+     * ***byteLengthMax*** : If the length of the value (string) is greater than or equal to the specified byte length, an error is detected.
+     *   
+     * Below is an example of an error being detected if the value is 128 byte or more.  
+     * ```typescript
+     * {
+     *   rule: ValidateRule.byteLengthMax,
+     *   args: [ 128 ],
+     * }
+     * ```
+     */
+    byteLengthMax = "byteLengthMax",
+    /**
+     * ***byteLengthBetween*** : If the length of the value (string) is outside the specified byte length range, an error is detected.
+     *   
+     * Below is an example of an error being detected if the value is outside the range of 10 to 128 byte.  
+     * ```typescript
+     * {
+     *   rule: ValidateRule.byteLengthBetween,
+     *   args: [ 10, 128 ],
+     * }
+     * ```
+     */
+    byteLengthBetween = "byteLengthBetween",
+    /**
      * ***value*** : If the value is not equal to the specified value, an error occurs.
      *   
      * Below is an example of an error being detected if the value is other than 20.  
@@ -145,9 +193,25 @@ export enum ValidateRule {
      */
     alphaNumeric = "alphaNumeric",
     /**
+     * ***alphaNumericLower*** : If the value contains any characters other than half-width alphanumeric characters and specified special characters, an error is detected.
+     */
+    alphaNumericLower = "alphaNumericLower",
+    /**
+     * ***alphaNumericUpper*** : If the value contains any characters other than half-width alphanumeric characters and specified special characters, an error is detected.
+     */
+    alphaNumericUpper = "alphaNumericUpper",
+    /**
      * ***alpha*** : An error is detected if the value contains any characters other than half-width English characters and the specified special characters.
      */
     alpha = "alpha",
+    /**
+     * ***alphaLower*** : An error is detected if the value contains any characters other than half-width English characters and the specified special characters.
+     */
+    alphaLower = "alphaLower",
+    /**
+     * ***alphaUpper*** : An error is detected if the value contains any characters other than half-width English characters and the specified special characters.
+     */
+    alphaUpper = "alphaUpper",
     /**
      * ***alphaNumeric*** : If the value contains any characters other than alphanumeric characters and the specified special characters, an error is detected.
      */
@@ -266,14 +330,18 @@ export class ValidateErrorResult {
         if (name) {
             const errorName = "error." + name;
             if (!mjs[errorName]) return;
-            let target : ModernJS;
+            let target : ModernJS = mjs[errorName];
             let result;
             if (index) {
-                target = mjs[errorName].index(index);
-                result = this.get(name, index);
+                if (target.index(index)) {
+                    target = target.index(index);
+                    result = this.get(name, index);
+                }
+                else {
+                    result = this.get(name);
+                }
             }
             else {
-                target = mjs[errorName];
                 result = this.get(name);
             }
 
@@ -394,11 +462,13 @@ export class ValidateMethod {
         this.context = context;
     }
 
-    private getArgValue(value : string) {
-        if (value.toString().indexOf("@") === 0) {
-            return this.input[value.toString().substring(0)];
+    private getArgValue(args : Array<string>, index : number) {
+        if (!args) return;
+        if (!args[index]) return;
+        if (args[index].toString().indexOf("@") === 0) {
+            return this.input[args[index].toString().substring(0)];
         }
-        return value;
+        return args[index];
     }
 
     public required(value : any) : boolean {
@@ -414,59 +484,93 @@ export class ValidateMethod {
 
     public length(value: any, args : Array<any>) : boolean {
         if (!this.required(value)) return true;
-        const target = this.getArgValue(args[0]);
+        const target = this.getArgValue(args, 0);
         if (value.length !== target) return false;
         return true;
     }
 
     public lengthMin(value: any, args : Array<any>) : boolean {
         if (!this.required(value)) return true;
-        const target = this.getArgValue(args[0]);
+        const target = this.getArgValue(args, 0);
         if (value.length < target) return false;
         return true;
     }
 
     public lengthMax(value: any, args : Array<any>) : boolean {
         if (!this.required(value)) return true;
-        const target = this.getArgValue(args[0]);
+        const target = this.getArgValue(args, 0);
         if (value.length > target) return false;
         return true;
     }
 
     public lengthBetween(value: any, args : Array<any>) : boolean {
         if (!this.required(value)) return true;
-        const targetMin = this.getArgValue(args[0]);
-        const targetMax = this.getArgValue(args[1]);
+        const targetMin = this.getArgValue(args, 0);
+        const targetMax = this.getArgValue(args, 1);
         if (value.length < targetMin) return false;
         if (value.length > targetMax) return false;
         return true;
     }
 
+    public byteLength(value: any, args : Array<any>) : boolean {
+        if (!this.required(value)) return true;
+        const target = this.getArgValue(args, 0);
+        const byteValue = new TextEncoder().encode(value);
+        if (byteValue.byteLength !== target) return false;
+        return true;
+    }
+
+    public byteLengthMin(value: any, args : Array<any>) : boolean {
+        if (!this.required(value)) return true;
+        const target = this.getArgValue(args, 0);
+        const byteValue = new TextEncoder().encode(value);
+        if (byteValue.byteLength < target) return false;
+        return true;
+    }
+
+    public byteLengthMax(value: any, args : Array<any>) : boolean {
+        if (!this.required(value)) return true;
+        const target = this.getArgValue(args, 0);
+        const byteValue = new TextEncoder().encode(value);
+        if (byteValue.byteLength > target) return false;
+        return true;
+    }
+
+    public byteLengthBetween(value: any, args : Array<any>) : boolean {
+        if (!this.required(value)) return true;
+        const targetMin = this.getArgValue(args, 0);
+        const targetMax = this.getArgValue(args, 1);
+        const byteValue = new TextEncoder().encode(value);
+        if (byteValue.byteLength < targetMin) return false;
+        if (byteValue.byteLength > targetMax) return false;
+        return true;
+    }
+
     public value(value: any, args : Array<any>) : boolean {
         if (!this.required(value)) return true;
-        const target = this.getArgValue(args[0]);
+        const target = this.getArgValue(args, 0);
         if (value !== target) return false;
         return true;
     }
 
     public valueMin(value: any, args : Array<any>) : boolean {
         if (!this.required(value)) return true;
-        const target = this.getArgValue(args[0]);
+        const target = this.getArgValue(args, 0);
         if (value < target) return false;
         return true;
     }
 
     public valueMax(value: any, args : Array<any>) : boolean {
         if (!this.required(value)) return true;
-        const target = this.getArgValue(args[0]);
+        const target = this.getArgValue(args, 0);
         if (value > target) return false;
         return true;
     }
 
     public valueBetween(value: any, args : Array<any>) : boolean {
         if (!this.required(value)) return true;
-        const targetMin = this.getArgValue(args[0]);
-        const targetMax = this.getArgValue(args[1]);
+        const targetMin = this.getArgValue(args, 0);
+        const targetMax = this.getArgValue(args, 1);
         if (value < targetMin) return false;
         if (value > targetMax) return false;
         return true;
@@ -480,29 +584,29 @@ export class ValidateMethod {
 
     public selectedLength(value : any, args : Array<any>) : boolean {
         if (!this.required(value)) return true;
-        const target = this.getArgValue(args[0]);
+        const target = this.getArgValue(args, 0);
         if (value.length !== target) return false;
         return true;
     }
     
     public selectedLengthMin(value : any, args : Array<any>) : boolean {
         if (!this.required(value)) return true;
-        const target = this.getArgValue(args[0]);
+        const target = this.getArgValue(args, 0);
         if (value.length < target) return false;
         return true;
     }
 
     public selectedLengthMax(value : any, args : Array<any>) : boolean {
         if (!this.required(value)) return true;
-        const target = this.getArgValue(args[0]);
+        const target = this.getArgValue(args, 0);
         if (value.length > target) return false;
         return true;
     }
 
     public selectedLengthBetween(value : any, args : Array<any>) : boolean {
         if (!this.required(value)) return true;
-        const targetMin = this.getArgValue(args[0]);
-        const targetMax = this.getArgValue(args[1]);
+        const targetMin = this.getArgValue(args, 0);
+        const targetMax = this.getArgValue(args, 1);
         if (value.length < targetMin) return false;
         if (value.length > targetMax) return false;
         return true;
@@ -510,25 +614,25 @@ export class ValidateMethod {
 
     public confirmed(value : any, args : Array<any>) : boolean {
         if (!this.required(value)) return true;
-        const target = this.getArgValue(args[0]);
+        const target = this.getArgValue(args, 0);
         if (value != target) return false;
         return true;
     }
 
     public like(value : any, args : Array<any>) : boolean {
         if (!this.required(value)) return true;
-        const target = this.getArgValue(args[0]);
+        const target = this.getArgValue(args, 0);
         if (value.indexOf(target) === -1) return false;
         return true;
     }
 
     public characterExists(value : any, args: Array<any>) : boolean {
         if (!this.required(value)) return true;
-        const target = this.getArgValue(args[0]);
+        const target = this.getArgValue(args, 0);
         let status : boolean = true;
         for (let n = 0 ; n < value.toString().length ; n++) {
             const v = value.toString()[n];
-            if (target.indexOf(v) !== -1) {
+            if (target.indexOf(v) === -1) {
                 status = false;
                 break;
             }
@@ -538,47 +642,73 @@ export class ValidateMethod {
 
     public alphaNumeric(value : any, args : Array<any>) : boolean {
         if (!this.required(value)) return true;
-        const addChars = this.getArgValue(args[0]);
+        const addChars = this.getArgValue(args, 0);
         let target = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        if (addChars) target += addChars;
+        return this.characterExists(value, [target]);
+    }
+
+    public alphaNumericLower(value : any, args : Array<any>) : boolean {
+        if (!this.required(value)) return true;
+        const addChars = this.getArgValue(args, 0);
+        let target = "abcdefghijklmnopqrstuvwxyz";
+        if (addChars) target += addChars;
+        return this.characterExists(value, [target]);
+    }
+
+    public alphaNumericUpper(value : any, args : Array<any>) : boolean {
+        if (!this.required(value)) return true;
+        const addChars = this.getArgValue(args, 0);
+        let target = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         if (addChars) target += addChars;
         return this.characterExists(value, [target]);
     }
 
     public alpha(value : any, args : Array<any>) : boolean {
         if (!this.required(value)) return true;
-        const addChars = this.getArgValue(args[0]);
+        const addChars = this.getArgValue(args, 0);
         let target = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        if (addChars) target += addChars;
+        return this.characterExists(value, [target]);
+    }
+
+    public alphaLower(value : any, args : Array<any>) : boolean {
+        if (!this.required(value)) return true;
+        const addChars = this.getArgValue(args, 0);
+        let target = "abcdefghijklmnopqrstuvwxyz";
+        if (addChars) target += addChars;
+        return this.characterExists(value, [target]);
+    }
+
+    public alphaUpper(value : any, args : Array<any>) : boolean {
+        if (!this.required(value)) return true;
+        const addChars = this.getArgValue(args, 0);
+        let target = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         if (addChars) target += addChars;
         return this.characterExists(value, [target]);
     }
 
     public numeric(value : any, args : Array<any>) : boolean {
         if (!this.required(value)) return true;
-        const addChars = this.getArgValue(args[0]);
+        const addChars = this.getArgValue(args, 0);
         let target = "0123456789";
-        if (addChars) {
-            target += addChars;
-        }
+        if (addChars) target += addChars;
         return this.characterExists(value, [target]);
     }
 
     public isHiranaga(value : any, args : Array<any>) : boolean {
         if (!this.required(value)) return true;
-        const addChars = this.getArgValue(args[0]);
+        const addChars = this.getArgValue(args, 0);
         let target = "あいうえおかきくけこがぎぐげござじずぜそただちつてとだぢづでとなにぬねのはひふへほばびぶべぼぱぴぷぺぽまみむめもやゆよらりるれろわをん";
-        if (addChars) {
-            target += addChars;
-        }
+        if (addChars) target += addChars;
         return this.characterExists(value, [target]);
     }
 
     public isKatakana(value : any, args : Array<any>) : boolean {
         if (!this.required(value)) return true;
-        const addChars = this.getArgValue(args[0]);
+        const addChars = this.getArgValue(args, 0);
         let target = "アイウエオカキクケコガギグゲゴザジズゼソタダチツテトダヂヅデトナニヌネノハヒフヘホバビブベボパピプペポマミムメモヤユヨラリルレロワヲン";
-        if (addChars) {
-            target += addChars;
-        }
+        if (addChars) target += addChars;
         return this.characterExists(value, [target]);
     }
 

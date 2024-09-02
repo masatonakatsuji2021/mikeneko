@@ -139,6 +139,8 @@ var ModernJS = /** @class */ (function () {
     });
     ModernJS.prototype.index = function (index) {
         var mjs = new ModernJS();
+        if (!this.els[index])
+            return;
         mjs.addEl(this.els[index]);
         return mjs;
     };
@@ -203,6 +205,14 @@ var ModernJS = /** @class */ (function () {
         }
         return this;
     };
+    Object.defineProperty(ModernJS.prototype, "brText", {
+        set: function (value) {
+            value = value.toString().split("\n").join("<br>");
+            this.text = value;
+        },
+        enumerable: false,
+        configurable: true
+    });
     Object.defineProperty(ModernJS.prototype, "html", {
         get: function () {
             return this.els[0].innerHTML;

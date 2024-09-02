@@ -117,6 +117,8 @@ class ModernJS {
     }
     index(index) {
         const mjs = new ModernJS();
+        if (!this.els[index])
+            return;
         mjs.addEl(this.els[index]);
         return mjs;
     }
@@ -164,6 +166,10 @@ class ModernJS {
             this.reload();
         }
         return this;
+    }
+    set brText(value) {
+        value = value.toString().split("\n").join("<br>");
+        this.text = value;
     }
     set html(value) {
         this.setHtml(value);

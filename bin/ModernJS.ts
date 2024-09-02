@@ -138,6 +138,7 @@ export class ModernJS {
 
     public index(index: number) : ModernJS {
         const mjs = new ModernJS();
+        if (!this.els[index]) return;
         mjs.addEl(this.els[index]);
         return mjs;
     }
@@ -192,6 +193,11 @@ export class ModernJS {
             this.reload();    
         }
         return this;
+    }
+
+    public set brText(value : string | number) {
+        value = value.toString().split("\n").join("<br>");
+        this.text = value;
     }
 
     public set html(value : string | HTMLElement | ModernJS) {
