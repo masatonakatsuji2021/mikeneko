@@ -27,11 +27,13 @@ class Startor {
             window.addEventListener("popstate", async (e) => {
                 await this.popStateHandleDelegate(e);
             });
-            if (this.MyApp.routeType == App_1.AppRouteType.application)
-                Data_1.Data.push("history", "/");
             await Background_1.Background.load();
-            var route = Routes_1.Routes.searchRoute();
-            Response_1.Response.rendering(route);
+            let url = "/";
+            if (this.MyApp.routeType == App_1.AppRouteType.web) {
+                if (location.hash)
+                    url = location.hash.substring(1);
+            }
+            Response_1.Response.next(url);
         })();
     }
     clickHandleDelegate(e) {
@@ -65,25 +67,7 @@ class Startor {
         let url = target.getAttribute("url");
         if (!url)
             return;
-        if (this.MyApp.routeType == App_1.AppRouteType.application) {
-            e.preventDefault();
-            if (Data_1.Data.now("history") == url)
-                return false;
-            Data_1.Data.set("stepMode", true);
-            Data_1.Data.push("history", url);
-            const route = Routes_1.Routes.searchRoute(url);
-            Response_1.Response.rendering(route).then(() => {
-                Data_1.Data.set("stepMode", false);
-            });
-            return false;
-        }
-        else {
-            if (location.hash == "#" + url)
-                return false;
-            Data_1.Data.set("stepMode", true);
-            location.hash = "#" + url;
-            return true;
-        }
+        Response_1.Response.next(url);
     }
     async popStateHandleDelegate(e) {
         if (Data_1.Data.get("pageDisable")) {
@@ -101,8 +85,9 @@ class Startor {
         if (!url)
             url = "/";
         const route = Routes_1.Routes.searchRoute(url);
-        await Response_1.Response.rendering(route);
-        Data_1.Data.set("stepMode", false);
+        Response_1.Response.rendering(route).then(() => {
+            Response_1.Response.isBack = false;
+        });
     }
     setShortcode() {
         Shortcode_1.Shortcode.add("rendering", (args) => {

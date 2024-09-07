@@ -57,7 +57,7 @@ var Startor = /** @class */ (function () {
         this.MyApp = MyApp.MyApp;
         this.setShortcode();
         (function () { return __awaiter(_this, void 0, void 0, function () {
-            var route;
+            var url;
             var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -75,13 +75,15 @@ var Startor = /** @class */ (function () {
                                 }
                             });
                         }); });
-                        if (this.MyApp.routeType == App_1.AppRouteType.application)
-                            Data_1.Data.push("history", "/");
                         return [4 /*yield*/, Background_1.Background.load()];
                     case 1:
                         _a.sent();
-                        route = Routes_1.Routes.searchRoute();
-                        Response_1.Response.rendering(route);
+                        url = "/";
+                        if (this.MyApp.routeType == App_1.AppRouteType.web) {
+                            if (location.hash)
+                                url = location.hash.substring(1);
+                        }
+                        Response_1.Response.next(url);
                         return [2 /*return*/];
                 }
             });
@@ -118,53 +120,31 @@ var Startor = /** @class */ (function () {
         var url = target.getAttribute("url");
         if (!url)
             return;
-        if (this.MyApp.routeType == App_1.AppRouteType.application) {
-            e.preventDefault();
-            if (Data_1.Data.now("history") == url)
-                return false;
-            Data_1.Data.set("stepMode", true);
-            Data_1.Data.push("history", url);
-            var route = Routes_1.Routes.searchRoute(url);
-            Response_1.Response.rendering(route).then(function () {
-                Data_1.Data.set("stepMode", false);
-            });
-            return false;
-        }
-        else {
-            if (location.hash == "#" + url)
-                return false;
-            Data_1.Data.set("stepMode", true);
-            location.hash = "#" + url;
-            return true;
-        }
+        Response_1.Response.next(url);
     };
     Startor.prototype.popStateHandleDelegate = function (e) {
         return __awaiter(this, void 0, void 0, function () {
             var beforeUrl, url, route;
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        if (Data_1.Data.get("pageDisable")) {
-                            beforeUrl = Data_1.Data.get("beforeUrl");
-                            if (beforeUrl) {
-                                history.pushState(null, null, beforeUrl);
-                            }
-                            else {
-                                history.pushState(null, null);
-                            }
-                            return [2 /*return*/, false];
-                        }
-                        Data_1.Data.set("beforeUrl", location.hash);
-                        url = location.hash.substring(1);
-                        if (!url)
-                            url = "/";
-                        route = Routes_1.Routes.searchRoute(url);
-                        return [4 /*yield*/, Response_1.Response.rendering(route)];
-                    case 1:
-                        _a.sent();
-                        Data_1.Data.set("stepMode", false);
-                        return [2 /*return*/];
+                if (Data_1.Data.get("pageDisable")) {
+                    beforeUrl = Data_1.Data.get("beforeUrl");
+                    if (beforeUrl) {
+                        history.pushState(null, null, beforeUrl);
+                    }
+                    else {
+                        history.pushState(null, null);
+                    }
+                    return [2 /*return*/, false];
                 }
+                Data_1.Data.set("beforeUrl", location.hash);
+                url = location.hash.substring(1);
+                if (!url)
+                    url = "/";
+                route = Routes_1.Routes.searchRoute(url);
+                Response_1.Response.rendering(route).then(function () {
+                    Response_1.Response.isBack = false;
+                });
+                return [2 /*return*/];
             });
         });
     };

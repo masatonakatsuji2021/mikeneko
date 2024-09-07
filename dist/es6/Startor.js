@@ -35,11 +35,13 @@ class Startor {
             window.addEventListener("popstate", (e) => __awaiter(this, void 0, void 0, function* () {
                 yield this.popStateHandleDelegate(e);
             }));
-            if (this.MyApp.routeType == App_1.AppRouteType.application)
-                Data_1.Data.push("history", "/");
             yield Background_1.Background.load();
-            var route = Routes_1.Routes.searchRoute();
-            Response_1.Response.rendering(route);
+            let url = "/";
+            if (this.MyApp.routeType == App_1.AppRouteType.web) {
+                if (location.hash)
+                    url = location.hash.substring(1);
+            }
+            Response_1.Response.next(url);
         }))();
     }
     clickHandleDelegate(e) {
@@ -73,25 +75,7 @@ class Startor {
         let url = target.getAttribute("url");
         if (!url)
             return;
-        if (this.MyApp.routeType == App_1.AppRouteType.application) {
-            e.preventDefault();
-            if (Data_1.Data.now("history") == url)
-                return false;
-            Data_1.Data.set("stepMode", true);
-            Data_1.Data.push("history", url);
-            const route = Routes_1.Routes.searchRoute(url);
-            Response_1.Response.rendering(route).then(() => {
-                Data_1.Data.set("stepMode", false);
-            });
-            return false;
-        }
-        else {
-            if (location.hash == "#" + url)
-                return false;
-            Data_1.Data.set("stepMode", true);
-            location.hash = "#" + url;
-            return true;
-        }
+        Response_1.Response.next(url);
     }
     popStateHandleDelegate(e) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -110,8 +94,9 @@ class Startor {
             if (!url)
                 url = "/";
             const route = Routes_1.Routes.searchRoute(url);
-            yield Response_1.Response.rendering(route);
-            Data_1.Data.set("stepMode", false);
+            Response_1.Response.rendering(route).then(() => {
+                Response_1.Response.isBack = false;
+            });
         });
     }
     setShortcode() {

@@ -48,52 +48,81 @@ var Dialog_1 = require("Dialog");
 var Response = /** @class */ (function () {
     function Response() {
     }
+    Object.defineProperty(Response, "routeType", {
+        get: function () {
+            var MyApp = require("app/config/App").MyApp;
+            return MyApp.routeType;
+        },
+        enumerable: false,
+        configurable: true
+    });
     Response.back = function () {
+        var _this = this;
         if (Response.lock)
             return false;
-        var MyApp = require("app/config/App").MyApp;
-        if (MyApp.routeType == App_1.AppRouteType.application) {
+        if (this.isBack)
+            return false;
+        this.isBack = true;
+        var backUrl;
+        if (this.routeType == App_1.AppRouteType.application) {
             if (Data_1.Data.getLength("history") == 1)
                 return false;
             Data_1.Data.pop("history");
-            var backUrl = Data_1.Data.now("history");
-            var route = Routes_1.Routes.searchRoute(backUrl);
-            Response.rendering(route).then(function () {
-                Data_1.Data.set("stepMode", false);
-            });
+            backUrl = Data_1.Data.now("history");
         }
-        else if (MyApp.routeType == App_1.AppRouteType.web) {
+        else if (this.routeType == App_1.AppRouteType.web) {
             history.back();
+            return true;
         }
+        var route = Routes_1.Routes.searchRoute(backUrl);
+        Response.rendering(route).then(function () {
+            _this.isBack = false;
+        });
         return true;
     };
     Response.next = function (url, send) {
         if (Response.lock)
             return;
-        var MyApp = require("app/config/App").MyApp;
-        if (MyApp.routeType == App_1.AppRouteType.application) {
-            Data_1.Data.set("stepMode", true);
-            Data_1.Data.push("history", url);
-            var route = Routes_1.Routes.searchRoute(url);
-            Response.rendering(route, send).then(function () {
-                Data_1.Data.set("stepMode", false);
-            });
-        }
-        else {
-            location.hash = "#" + url;
-        }
+        this.isBack = false;
+        Data_1.Data.push("history", url);
+        var route = Routes_1.Routes.searchRoute(url);
+        Response.rendering(route, send);
+        if (this.routeType == App_1.AppRouteType.web)
+            location.href = "#" + url;
     };
     Response.historyClear = function () {
         Data_1.Data.set("history", []);
     };
-    Response.isNext = function () {
-        if (Data_1.Data.get("stepMode"))
-            return true;
-        return false;
+    Response.pop = function () {
+        Data_1.Data.pop("history");
     };
-    Response.isBack = function () {
-        return !this.isNext();
+    Response.replace = function (url, send) {
+        this.pop();
+        this.next(url, send);
     };
+    Object.defineProperty(Response, "isNext", {
+        get: function () {
+            return !this.isBack;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Response, "nowView", {
+        get: function () {
+            if (Data_1.Data.get("beforeView"))
+                return Data_1.Data.get("beforeView");
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Response, "nowController", {
+        get: function () {
+            if (Data_1.Data.get("beforeController"))
+                return Data_1.Data.get("beforeController");
+        },
+        enumerable: false,
+        configurable: true
+    });
     Response.rendering = function (route, send) {
         return __awaiter(this, void 0, void 0, function () {
             var MyApp, befCont, befView, error_1;
@@ -620,6 +649,7 @@ var Response = /** @class */ (function () {
         el0.innerHTML = Shortcode_1.Shortcode.analysis(el0.innerHTML);
         return el0.innerHTML;
     };
+    Response.isBack = false;
     Response.lock = false;
     return Response;
 }());

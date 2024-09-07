@@ -32,11 +32,12 @@ export class Startor {
                 await this.popStateHandleDelegate(e);
             });
         
-            if (this.MyApp.routeType == AppRouteType.application) Data.push("history", "/");
             await Background.load();
-    
-            var route : DecisionRoute = Routes.searchRoute();
-            Response.rendering(route);
+            let url : string = "/";
+            if (this.MyApp.routeType == AppRouteType.web) {
+                if (location.hash) url = location.hash.substring(1);
+            }
+            Response.next(url);
         })();
     }
 
@@ -61,27 +62,7 @@ export class Startor {
         let url = target.getAttribute("url");
         if(!url) return;
 
-        if (this.MyApp.routeType == AppRouteType.application) {
-            e.preventDefault();
-
-            if (Data.now("history") == url) return false;
-
-            Data.set("stepMode", true);
-            Data.push("history", url);
-
-            const route : Route = Routes.searchRoute(url);
-            Response.rendering(route).then(()=>{
-                Data.set("stepMode", false);
-            });
-
-            return false;
-        }
-        else {
-            if (location.hash == "#" + url) return false;
-            Data.set("stepMode",  true);
-            location.hash = "#" + url;
-            return true;
-        }
+        Response.next(url);
     }
 
     private async popStateHandleDelegate(e : PopStateEvent){
@@ -97,14 +78,15 @@ export class Startor {
             return false;
         }
 
-        Data.set("beforeUrl", location.hash);        
+        Data.set("beforeUrl", location.hash);
         let url : string = location.hash.substring(1);
+
         if (!url) url = "/";
 
         const route : Route = Routes.searchRoute(url);
-        await Response.rendering(route);
-
-        Data.set("stepMode", false);
+        Response.rendering(route).then(()=>{
+            Response.isBack = false;
+        });
     }
 
     private setShortcode(){
