@@ -1,9 +1,8 @@
 # Mikeneko 
 
-* 2024.7.13 Details coming soon...
+[Japanese version here.](jp/index.md)
 
 A framework for SPA (Single-Page-Action) that can be installed on Web, Android, and iOS.  
-
 - [Installation](installation.md)
 - [Structure](structure.md)
     - [Resouces](resource.md)
