@@ -354,6 +354,56 @@ export class ModernJS {
         return this;
     }
 
+
+    public set src(value : string) {
+        this.attr("src", value);
+    }
+
+    public get src() : string {
+        return this.attr("src");
+    }
+
+    public set placefolder(value: string) {
+        this.attr("placefolder", value);
+    }
+
+    public get placefolder() : string {
+        return this.attr("placefolder");
+    }
+
+    public set href(value : string) {
+        this.attr("href", value);
+    }
+
+    public get href() : string {
+        return this.attr("href");
+    }
+
+    public set display(status: boolean) {
+        if (status) {
+            this.style({ display: "none"});
+        }
+        else {
+            this.style({ display: null});
+        }
+    }
+
+    public set id(value: string) {
+        this.attr("id", value);
+    }
+
+    public get id() : string {
+        return this.attr("id");
+    }
+
+    public set name(value : string) {
+        this.attr("name", value);
+    }
+
+    public get name() : string {
+        return this.attr("name");
+    }
+
     public isClass(className : string)  : boolean {
         return this.els[0].classList.contains(className);
     }

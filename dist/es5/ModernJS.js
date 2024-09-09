@@ -362,6 +362,68 @@ var ModernJS = /** @class */ (function () {
         });
         return this;
     };
+    Object.defineProperty(ModernJS.prototype, "src", {
+        get: function () {
+            return this.attr("src");
+        },
+        set: function (value) {
+            this.attr("src", value);
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(ModernJS.prototype, "placefolder", {
+        get: function () {
+            return this.attr("placefolder");
+        },
+        set: function (value) {
+            this.attr("placefolder", value);
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(ModernJS.prototype, "href", {
+        get: function () {
+            return this.attr("href");
+        },
+        set: function (value) {
+            this.attr("href", value);
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(ModernJS.prototype, "display", {
+        set: function (status) {
+            if (status) {
+                this.style({ display: "none" });
+            }
+            else {
+                this.style({ display: null });
+            }
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(ModernJS.prototype, "id", {
+        get: function () {
+            return this.attr("id");
+        },
+        set: function (value) {
+            this.attr("id", value);
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(ModernJS.prototype, "name", {
+        get: function () {
+            return this.attr("name");
+        },
+        set: function (value) {
+            this.attr("name", value);
+        },
+        enumerable: false,
+        configurable: true
+    });
     ModernJS.prototype.isClass = function (className) {
         return this.els[0].classList.contains(className);
     };

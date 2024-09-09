@@ -37,7 +37,7 @@ export class Response {
             return true;
         }
        
-        const route : Route = Routes.searchRoute(backUrl);
+        const route : DecisionRoute = Routes.searchRoute(backUrl);
         Response.rendering(route).then(()=>{
             this.isBack = false;
         });
@@ -53,9 +53,15 @@ export class Response {
         if (Response.lock) return;
         this.isBack = false;
         Data.push("history", url);
-        const route : Route = Routes.searchRoute(url);
+        const route : DecisionRoute = Routes.searchRoute(url);
         Response.rendering(route, send);
         if (this.routeType == AppRouteType.web) location.href = "#" + url;
+    }
+
+    public static addHistory(url : string) : void {
+        if (Response.lock) return;
+        this.isBack = false;
+        Data.push("history", url);
     }
 
     public static historyClear() : void {
@@ -73,6 +79,10 @@ export class Response {
     public static replace(url : string, send?: any) : void {
         this.pop();
         this.next(url, send);
+    }
+
+    public static now() : string {
+        return Routes.getRoute().url;
     }
 
     public static get isNext() : boolean {

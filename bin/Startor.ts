@@ -83,7 +83,7 @@ export class Startor {
 
         if (!url) url = "/";
 
-        const route : Route = Routes.searchRoute(url);
+        const route : DecisionRoute = Routes.searchRoute(url);
         Response.rendering(route).then(()=>{
             Response.isBack = false;
         });

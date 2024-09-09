@@ -305,6 +305,44 @@ class ModernJS {
         });
         return this;
     }
+    set src(value) {
+        this.attr("src", value);
+    }
+    get src() {
+        return this.attr("src");
+    }
+    set placefolder(value) {
+        this.attr("placefolder", value);
+    }
+    get placefolder() {
+        return this.attr("placefolder");
+    }
+    set href(value) {
+        this.attr("href", value);
+    }
+    get href() {
+        return this.attr("href");
+    }
+    set display(status) {
+        if (status) {
+            this.style({ display: "none" });
+        }
+        else {
+            this.style({ display: null });
+        }
+    }
+    set id(value) {
+        this.attr("id", value);
+    }
+    get id() {
+        return this.attr("id");
+    }
+    set name(value) {
+        this.attr("name", value);
+    }
+    get name() {
+        return this.attr("name");
+    }
     isClass(className) {
         return this.els[0].classList.contains(className);
     }

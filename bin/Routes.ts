@@ -24,7 +24,7 @@ export interface DecisionRoute {
 export class Routes{
 
     public static _routes : {[url : string] : Route} = null;
-    public static _decision = null;
+    public static _decision : DecisionRoute = null;
 
     public static searchRoute(url: string = null){
 
@@ -52,7 +52,7 @@ export class Routes{
         return Routes._decision;
     }
 
-    public static getRoute(){
+    public static getRoute() : DecisionRoute{
         return Routes._decision;
     }
 

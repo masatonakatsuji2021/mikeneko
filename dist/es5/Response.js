@@ -90,6 +90,12 @@ var Response = /** @class */ (function () {
         if (this.routeType == App_1.AppRouteType.web)
             location.href = "#" + url;
     };
+    Response.addHistory = function (url) {
+        if (Response.lock)
+            return;
+        this.isBack = false;
+        Data_1.Data.push("history", url);
+    };
     Response.historyClear = function () {
         Data_1.Data.set("history", []);
     };
@@ -99,6 +105,9 @@ var Response = /** @class */ (function () {
     Response.replace = function (url, send) {
         this.pop();
         this.next(url, send);
+    };
+    Response.now = function () {
+        return Routes_1.Routes.getRoute().url;
     };
     Object.defineProperty(Response, "isNext", {
         get: function () {

@@ -47,6 +47,12 @@ class Response {
         if (this.routeType == App_1.AppRouteType.web)
             location.href = "#" + url;
     }
+    static addHistory(url) {
+        if (Response.lock)
+            return;
+        this.isBack = false;
+        Data_1.Data.push("history", url);
+    }
     static historyClear() {
         Data_1.Data.set("history", []);
     }
@@ -56,6 +62,9 @@ class Response {
     static replace(url, send) {
         this.pop();
         this.next(url, send);
+    }
+    static now() {
+        return Routes_1.Routes.getRoute().url;
     }
     static get isNext() {
         return !this.isBack;
