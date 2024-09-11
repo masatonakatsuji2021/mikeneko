@@ -301,10 +301,11 @@ class ValidateErrorResult {
     }
     bind(mjs, name, index) {
         if (name) {
-            const errorName = "error." + name;
-            if (!mjs[errorName])
+            if (!mjs.error)
                 return;
-            let target = mjs[errorName];
+            if (!mjs.error.childs[name])
+                return;
+            let target = mjs.error.childs[name];
             let result;
             if (index) {
                 if (target.index(index)) {

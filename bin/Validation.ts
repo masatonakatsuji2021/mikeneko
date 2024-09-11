@@ -328,9 +328,9 @@ export class ValidateErrorResult {
 
     public bind(mjs : ModernJSList, name? : string, index? : number) : void {
         if (name) {
-            const errorName = "error." + name;
-            if (!mjs[errorName]) return;
-            let target : ModernJS = mjs[errorName];
+            if (!mjs.error) return;
+            if (!mjs.error.childs[name]) return;
+            let target : ModernJS = mjs.error.childs[name];
             let result;
             if (index) {
                 if (target.index(index)) {

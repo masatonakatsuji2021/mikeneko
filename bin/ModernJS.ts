@@ -37,20 +37,44 @@ export class ModernJS {
             if (!buffer.els.length) delete this.buffers[name];
         }
 
-        this.virtualAttributes("v", (attrValue: string, el : HTMLElement) => {
-            if (!this.buffers[attrValue]) this.buffers[attrValue] = new ModernJS();
-            this.buffers[attrValue].addEl(el);
+        this.virtualAttributes("v", (parent: ModernJS, attrValue: string, el : HTMLElement) => {
+            if (parent) {
+                if (!parent.childs[attrValue]) parent.childs[attrValue] = new ModernJS();
+                parent.childs[attrValue].addEl(el);
+            }
+            else {
+                if (!this.buffers[attrValue]) this.buffers[attrValue] = new ModernJS();
+                this.buffers[attrValue].addEl(el);    
+            }
         });
 
         return this.buffers;
     }
 
-    private static virtualAttributes(target : string, handler : (attrValue: string, el : HTMLElement) => void) {
+    private static virtualAttributes(target : string, handler : (parent: ModernJS, attrValue: string, el : HTMLElement) => void) {
         const qss = document.querySelectorAll("[" + target + "]");
         qss.forEach((el : HTMLElement) => {
-            const attrValue = el.attributes[target].value;
+            let attrValue = el.attributes[target].value;
             el.removeAttribute(target);
-            handler(attrValue,el);
+            let parent : ModernJS;
+            const attrValues = attrValue.split(".");
+            if (attrValues.length > 1) {
+                attrValue = attrValues[attrValues.length -1];
+                attrValues.forEach((a_, index) => {
+                    if (index == (attrValues.length - 1)) return;
+                    if (index == 0) {
+                        if (!this.buffers[a_]) this.buffers[a_] = new ModernJS();
+                        this.buffers[a_].addEl(el);
+                        parent = this.buffers[a_];
+                    }
+                    else {
+                        if (!parent.childs[a_]) parent.childs[a_] = new ModernJS();
+                        parent = parent.childs[a_];
+                    }
+                });
+            }
+
+            handler(parent, attrValue, el);
         });
     }
 
@@ -363,12 +387,12 @@ export class ModernJS {
         return this.attr("src");
     }
 
-    public set placefolder(value: string) {
-        this.attr("placefolder", value);
+    public set placeHolder(value: string) {
+        this.attr("placeholder", value);
     }
 
-    public get placefolder() : string {
-        return this.attr("placefolder");
+    public get placeHolder() : string {
+        return this.attr("placeholder");
     }
 
     public set href(value : string) {
@@ -381,10 +405,10 @@ export class ModernJS {
 
     public set display(status: boolean) {
         if (status) {
-            this.style({ display: "none"});
+            this.style({ display: null});
         }
         else {
-            this.style({ display: null});
+            this.style({ display: "none"});
         }
     }
 
@@ -617,6 +641,18 @@ export class ModernJS {
                 }    
             });
         }
+    }
+
+    public set checked(status: boolean) {
+        // @ts-ignore
+        const el : HTMLInputElement = this.els[0];
+        el.checked = status;
+    }
+
+    public get checked() : boolean {
+        // @ts-ignore
+        const el : HTMLInputElement = this.els[0];
+        return el.checked;
     }
 
     public reset() : ModernJS {

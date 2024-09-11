@@ -305,10 +305,11 @@ var ValidateErrorResult = /** @class */ (function () {
     ValidateErrorResult.prototype.bind = function (mjs, name, index) {
         var _this = this;
         if (name) {
-            var errorName = "error." + name;
-            if (!mjs[errorName])
+            if (!mjs.error)
                 return;
-            var target = mjs[errorName];
+            if (!mjs.error.childs[name])
+                return;
+            var target = mjs.error.childs[name];
             var result = void 0;
             if (index) {
                 if (target.index(index)) {

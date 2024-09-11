@@ -25,19 +25,47 @@ var ModernJS = /** @class */ (function () {
         for (var n = 0; n < c.length; n++) {
             _loop_1(n);
         }
-        this.virtualAttributes("v", function (attrValue, el) {
-            if (!_this.buffers[attrValue])
-                _this.buffers[attrValue] = new ModernJS();
-            _this.buffers[attrValue].addEl(el);
+        this.virtualAttributes("v", function (parent, attrValue, el) {
+            if (parent) {
+                if (!parent.childs[attrValue])
+                    parent.childs[attrValue] = new ModernJS();
+                parent.childs[attrValue].addEl(el);
+            }
+            else {
+                if (!_this.buffers[attrValue])
+                    _this.buffers[attrValue] = new ModernJS();
+                _this.buffers[attrValue].addEl(el);
+            }
         });
         return this.buffers;
     };
     ModernJS.virtualAttributes = function (target, handler) {
+        var _this = this;
         var qss = document.querySelectorAll("[" + target + "]");
         qss.forEach(function (el) {
             var attrValue = el.attributes[target].value;
             el.removeAttribute(target);
-            handler(attrValue, el);
+            var parent;
+            var attrValues = attrValue.split(".");
+            if (attrValues.length > 1) {
+                attrValue = attrValues[attrValues.length - 1];
+                attrValues.forEach(function (a_, index) {
+                    if (index == (attrValues.length - 1))
+                        return;
+                    if (index == 0) {
+                        if (!_this.buffers[a_])
+                            _this.buffers[a_] = new ModernJS();
+                        _this.buffers[a_].addEl(el);
+                        parent = _this.buffers[a_];
+                    }
+                    else {
+                        if (!parent.childs[a_])
+                            parent.childs[a_] = new ModernJS();
+                        parent = parent.childs[a_];
+                    }
+                });
+            }
+            handler(parent, attrValue, el);
         });
     };
     ModernJS.create = function (text, tagName) {
@@ -372,12 +400,12 @@ var ModernJS = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
-    Object.defineProperty(ModernJS.prototype, "placefolder", {
+    Object.defineProperty(ModernJS.prototype, "placeHolder", {
         get: function () {
-            return this.attr("placefolder");
+            return this.attr("placeholder");
         },
         set: function (value) {
-            this.attr("placefolder", value);
+            this.attr("placeholder", value);
         },
         enumerable: false,
         configurable: true
@@ -395,10 +423,10 @@ var ModernJS = /** @class */ (function () {
     Object.defineProperty(ModernJS.prototype, "display", {
         set: function (status) {
             if (status) {
-                this.style({ display: "none" });
+                this.style({ display: null });
             }
             else {
-                this.style({ display: null });
+                this.style({ display: "none" });
             }
         },
         enumerable: false,
@@ -643,6 +671,20 @@ var ModernJS = /** @class */ (function () {
                     }
                 });
             }
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(ModernJS.prototype, "checked", {
+        get: function () {
+            // @ts-ignore
+            var el = this.els[0];
+            return el.checked;
+        },
+        set: function (status) {
+            // @ts-ignore
+            var el = this.els[0];
+            el.checked = status;
         },
         enumerable: false,
         configurable: true

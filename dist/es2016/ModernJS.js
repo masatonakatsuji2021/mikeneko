@@ -20,19 +20,46 @@ class ModernJS {
             if (!buffer.els.length)
                 delete this.buffers[name];
         }
-        this.virtualAttributes("v", (attrValue, el) => {
-            if (!this.buffers[attrValue])
-                this.buffers[attrValue] = new ModernJS();
-            this.buffers[attrValue].addEl(el);
+        this.virtualAttributes("v", (parent, attrValue, el) => {
+            if (parent) {
+                if (!parent.childs[attrValue])
+                    parent.childs[attrValue] = new ModernJS();
+                parent.childs[attrValue].addEl(el);
+            }
+            else {
+                if (!this.buffers[attrValue])
+                    this.buffers[attrValue] = new ModernJS();
+                this.buffers[attrValue].addEl(el);
+            }
         });
         return this.buffers;
     }
     static virtualAttributes(target, handler) {
         const qss = document.querySelectorAll("[" + target + "]");
         qss.forEach((el) => {
-            const attrValue = el.attributes[target].value;
+            let attrValue = el.attributes[target].value;
             el.removeAttribute(target);
-            handler(attrValue, el);
+            let parent;
+            const attrValues = attrValue.split(".");
+            if (attrValues.length > 1) {
+                attrValue = attrValues[attrValues.length - 1];
+                attrValues.forEach((a_, index) => {
+                    if (index == (attrValues.length - 1))
+                        return;
+                    if (index == 0) {
+                        if (!this.buffers[a_])
+                            this.buffers[a_] = new ModernJS();
+                        this.buffers[a_].addEl(el);
+                        parent = this.buffers[a_];
+                    }
+                    else {
+                        if (!parent.childs[a_])
+                            parent.childs[a_] = new ModernJS();
+                        parent = parent.childs[a_];
+                    }
+                });
+            }
+            handler(parent, attrValue, el);
         });
     }
     static create(text, tagName) {
@@ -311,11 +338,11 @@ class ModernJS {
     get src() {
         return this.attr("src");
     }
-    set placefolder(value) {
-        this.attr("placefolder", value);
+    set placeHolder(value) {
+        this.attr("placeholder", value);
     }
-    get placefolder() {
-        return this.attr("placefolder");
+    get placeHolder() {
+        return this.attr("placeholder");
     }
     set href(value) {
         this.attr("href", value);
@@ -325,10 +352,10 @@ class ModernJS {
     }
     set display(status) {
         if (status) {
-            this.style({ display: "none" });
+            this.style({ display: null });
         }
         else {
-            this.style({ display: null });
+            this.style({ display: "none" });
         }
     }
     set id(value) {
@@ -532,6 +559,16 @@ class ModernJS {
                 }
             });
         }
+    }
+    set checked(status) {
+        // @ts-ignore
+        const el = this.els[0];
+        el.checked = status;
+    }
+    get checked() {
+        // @ts-ignore
+        const el = this.els[0];
+        return el.checked;
     }
     reset() {
         if (this.tagName == "INPUT") {
