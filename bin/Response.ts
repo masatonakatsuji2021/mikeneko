@@ -107,11 +107,15 @@ export class Response {
             // Controller & View Leave 
             const befCont : Controller = Data.get("beforeController");
             if(befCont){
-                await befCont.handleLeave(Data.get("beforeControllerAction"));
+                const res = await befCont.handleLeave(Data.get("beforeControllerAction"));
+                if (typeof res == "boolean" && res === false) return;
             }
 
             const befView = Data.get("beforeView");
-            if(befView) await befView.handleLeave();
+            if(befView) {
+                const res = await befView.handleLeave();
+                if (typeof res == "boolean" && res === false) return;
+            }
 
             if(route.mode == DecisionRouteMode.Notfound) throw("Page Not found");
 

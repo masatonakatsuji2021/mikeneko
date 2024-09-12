@@ -49,8 +49,9 @@ class ModernJS {
                     if (index == 0) {
                         if (!this.buffers[a_])
                             this.buffers[a_] = new ModernJS();
-                        this.buffers[a_].addEl(el);
                         parent = this.buffers[a_];
+                        if (!parent.els.length)
+                            parent.addEl(el);
                     }
                     else {
                         if (!parent.childs[a_])
@@ -559,6 +560,7 @@ class ModernJS {
                 }
             });
         }
+        this.dispatch("change");
     }
     set checked(status) {
         // @ts-ignore

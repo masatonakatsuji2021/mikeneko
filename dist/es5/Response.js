@@ -134,7 +134,7 @@ var Response = /** @class */ (function () {
     });
     Response.rendering = function (route, send) {
         return __awaiter(this, void 0, void 0, function () {
-            var MyApp, befCont, befView, error_1;
+            var MyApp, befCont, res, befView, res, error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -150,14 +150,18 @@ var Response = /** @class */ (function () {
                         if (!befCont) return [3 /*break*/, 4];
                         return [4 /*yield*/, befCont.handleLeave(Data_1.Data.get("beforeControllerAction"))];
                     case 3:
-                        _a.sent();
+                        res = _a.sent();
+                        if (typeof res == "boolean" && res === false)
+                            return [2 /*return*/];
                         _a.label = 4;
                     case 4:
                         befView = Data_1.Data.get("beforeView");
                         if (!befView) return [3 /*break*/, 6];
                         return [4 /*yield*/, befView.handleLeave()];
                     case 5:
-                        _a.sent();
+                        res = _a.sent();
+                        if (typeof res == "boolean" && res === false)
+                            return [2 /*return*/];
                         _a.label = 6;
                     case 6:
                         if (route.mode == Routes_1.DecisionRouteMode.Notfound)

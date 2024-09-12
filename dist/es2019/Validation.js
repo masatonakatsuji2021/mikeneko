@@ -629,7 +629,7 @@ class ValidateMethod {
         if (!this.required(value))
             return true;
         const addChars = this.getArgValue(args, 0);
-        let target = "abcdefghijklmnopqrstuvwxyz";
+        let target = "0123456789abcdefghijklmnopqrstuvwxyz";
         if (addChars)
             target += addChars;
         return this.characterExists(value, [target]);

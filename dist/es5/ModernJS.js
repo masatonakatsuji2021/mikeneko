@@ -55,8 +55,9 @@ var ModernJS = /** @class */ (function () {
                     if (index == 0) {
                         if (!_this.buffers[a_])
                             _this.buffers[a_] = new ModernJS();
-                        _this.buffers[a_].addEl(el);
                         parent = _this.buffers[a_];
+                        if (!parent.els.length)
+                            parent.addEl(el);
                     }
                     else {
                         if (!parent.childs[a_])
@@ -671,6 +672,7 @@ var ModernJS = /** @class */ (function () {
                     }
                 });
             }
+            this.dispatch("change");
         },
         enumerable: false,
         configurable: true

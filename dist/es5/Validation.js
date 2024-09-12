@@ -639,7 +639,7 @@ var ValidateMethod = /** @class */ (function () {
         if (!this.required(value))
             return true;
         var addChars = this.getArgValue(args, 0);
-        var target = "abcdefghijklmnopqrstuvwxyz";
+        var target = "0123456789abcdefghijklmnopqrstuvwxyz";
         if (addChars)
             target += addChars;
         return this.characterExists(value, [target]);

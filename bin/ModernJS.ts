@@ -64,8 +64,8 @@ export class ModernJS {
                     if (index == (attrValues.length - 1)) return;
                     if (index == 0) {
                         if (!this.buffers[a_]) this.buffers[a_] = new ModernJS();
-                        this.buffers[a_].addEl(el);
                         parent = this.buffers[a_];
+                        if (!parent.els.length) parent.addEl(el);
                     }
                     else {
                         if (!parent.childs[a_]) parent.childs[a_] = new ModernJS();
@@ -641,6 +641,7 @@ export class ModernJS {
                 }    
             });
         }
+        this.dispatch("change");
     }
 
     public set checked(status: boolean) {
