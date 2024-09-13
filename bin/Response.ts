@@ -12,8 +12,16 @@ import { Dialog, DialogOption } from "Dialog";
 
 export class Response {
 
+    /**
+     * ***isBack*** : A flag that determines if you are back from the previous screen.  
+     * True if you return from the previous screen, false if you proceed from the previous screen
+     */
     public static isBack : boolean = false;
 
+    /**
+     * ***lock*** : Flag to lock screen transition operations.  
+     * If set to true, back operations such as Response.back will be temporarily disabled.
+     */
     public static lock : boolean = false;
 
     private static get routeType() : AppRouteType {
@@ -21,6 +29,13 @@ export class Response {
         return MyApp.routeType;
     }
 
+    /**
+     * ***back*** : Return to the previous screen.  
+     * However, this cannot be used if there is no history of the previous screen  
+     * or if screen transitions are disabled using lock.  
+     * The return value indicates whether the return to the previous screen was successful.
+     * @returns {boolean} 
+     */
     public static back() : boolean {
         if (Response.lock) return false;
         if (this.isBack) return false;
@@ -49,6 +64,23 @@ export class Response {
 
     public static next(url : string, send : any) : void;
 
+    /**
+     * ***next*** : Transition to the specified URL (route path)  
+     * It cannot be used if screen transitions are disabled by lock, etc.  
+     * @param {string} url route path
+     * @returns {void}
+     */
+    public static next(url : string) : void;
+
+    /**
+     * ***next*** : Transition to the specified URL (route path)  
+     * It cannot be used if screen transitions are disabled by lock, etc.  
+     * @param {string} url route path
+     * @param {any?} send Transmission data contents
+     * @returns {void}
+     */
+    public static next(url : string, send : any) : void;
+
     public static next(url : string, send? : any) : void {
         if (Response.lock) return;
         this.isBack = false;
@@ -58,45 +90,84 @@ export class Response {
         if (this.routeType == AppRouteType.web) location.href = "#" + url;
     }
 
+    /**
+     * ***addhistory*** : Add root path to screen transition history.  
+     * It will only be added to the history and will not change the screen.
+     * @param {string} url route path
+     * @returns {void}
+     */
     public static addHistory(url : string) : void {
         if (Response.lock) return;
         this.isBack = false;
         Data.push("history", url);
     }
 
+    /**
+     * ***historyClear*** : Clear screen transition history
+     * @returns {void}
+     */
     public static historyClear() : void {
         Data.set("history", []);
     }
 
+    /**
+     * ***pop*** : Go back to the previous screen transition.
+     * @returns {void}
+     */
     public static pop() : void {
         Data.pop("history");
     }
 
+    /**
+     * ***replace*** : Overwrite the screen transition history and move to the specified root path.  
+     * @param {string} url route path
+     * @returns {void}
+     */
     public static replace(url : string) : void;
 
+    /**
+     * ***replace*** : Overwrite the screen transition history and move to the specified root path.  
+     * @param {string} url route path
+     * @param {any} send Transmission data contents
+     * @returns {void}
+     */
     public static replace(url : string, send: any) : void;
-
+    
     public static replace(url : string, send?: any) : void {
         this.pop();
         this.next(url, send);
     }
 
+    /**
+     * ***now*** : Get current route path.
+     * @returns {string}
+     */
     public static now() : string {
         return Routes.getRoute().url;
     }
 
+    /**
+     * ***isNext*** : A flag that determines if you have proceeded from the next screen.
+     */
     public static get isNext() : boolean {
         return !this.isBack;
     }
 
+    /**
+     * ***nowView*** : Get the current View class object if there is one.
+     */
     public static get nowView() : View {
         if (Data.get("beforeView")) return Data.get("beforeView");
     }
-
+    
+    /**
+     * ***nowController*** : Get the current Controller class object if there is one.
+     */
     public static get nowController() : Controller {
         if (Data.get("beforeController")) return Data.get("beforeController");
     }
 
+    // rendering....
     public static async rendering (route: DecisionRoute, send? : any) {
 
         const MyApp : typeof App = require("app/config/App").MyApp;
@@ -350,7 +421,7 @@ export class Response {
     }
 
     /**
-     * *** view *** : Get View's content information.
+     * ***view *** : Get View's content information.
      * @param {string} viewName View Name
      * @returns {string} view contents
      */
@@ -359,12 +430,22 @@ export class Response {
     }
 
     /**
-     * ***bindView*** 
-     * @param mjs 
-     * @param viewName 
-     * @param sendData 
-     * @returns 
+     * ***bindView*** : Binds the view's content to a specified virtual DOM class.
+     * @param {ModernJS} mjs Bind Virtual Dom
+     * @param {string} viewName view name
+     * @returns {View}
      */
+    public static bindView(mjs: ModernJS, viewName : string) : View;
+
+    /**
+     * ***bindView*** : Binds the view's content to a specified virtual DOM class.
+     * @param {ModernJS} mjs Bind Virtual Dom
+     * @param {string} viewName view name
+     * @param {any} sendData Transmission data contents
+     * @returns {View}
+     */
+    public static bindView(mjs: ModernJS, viewName : string, sendData : any) : View;
+    
     public static bindView(mjs: ModernJS, viewName : string, sendData? : any) : View {
         mjs.html = this.view(viewName);
         mjs.reload();
@@ -372,8 +453,7 @@ export class Response {
     }
 
     /**
-     * ***template*** : 
-     * Get template content information.
+     * ***template*** : Get template content information.
      * @param {string} templateName Template Name
      * @returns {string} template contents
      */
@@ -382,12 +462,22 @@ export class Response {
     }
 
     /**
-     * ***bindTemplate***
-     * @param mjs 
-     * @param templateName 
-     * @param sendData
-    * @returns 
+     * ***bindTemplate*** : Binds the template's content to a specified virtual DOM class.
+     * @param {ModernJS} mjs Bind Virtual Dom
+     * @param {string} templateName template name
+     * @returns {Template}
      */
+    public static bindTemplate(mjs: ModernJS, templateName : string) : Template;
+
+    /**
+     * ***bindTemplate*** : Binds the template's content to a specified virtual DOM class.
+     * @param {ModernJS} mjs Bind Virtual Dom
+     * @param {string} templateName template name
+     * @param {any} sendData Transmission data contents
+     * @returns {Template}
+     */
+    public static bindTemplate(mjs: ModernJS, templateName : string, sendData : any) : Template;
+
     public static bindTemplate(mjs: ModernJS, templateName : string, sendData? : any) : Template {
         mjs.html = this.template(templateName);
         mjs.reload();
@@ -395,8 +485,7 @@ export class Response {
     }
 
     /**
-     * ***UI*** : 
-     * Get UI content information.
+     * ***UI*** : Get UI content information.
      * @param {string} uiName UI Name
      * @returns {string} UI contents
      */
@@ -405,12 +494,22 @@ export class Response {
     }
 
     /**
-     * ***bindUI***
-     * @param mjs 
-     * @param UIName 
-     * @param sendData
-     * @returns 
+     * ***bindUI*** : Binds the ui's content to a specified virtual DOM class.
+     * @param {ModernJS} mjs Bind Virtual Dom
+     * @param {string} UIName UI name
+     * @returns {UI}
      */
+    public static bindUI(mjs: ModernJS, UIName : string) : UI;
+    
+    /**
+     * ***bindUI*** : Appends the UI content to the specified virtual DOM class.
+     * @param {ModernJS} mjs Bind Virtual Dom
+     * @param {string} UIName UI name
+     * @param {any} sendData Transmission data contents
+     * @returns {UI}
+     */
+    public static bindUI(mjs: ModernJS, UIName : string, sendData : any) : UI;
+
     public static bindUI(mjs: ModernJS, UIName : string, sendData? : any) : UI {
         mjs.html = this.UI(UIName);
         mjs.reload();
@@ -418,12 +517,22 @@ export class Response {
     }
 
     /**
-     * ***appendUI***
-     * @param mjs 
-     * @param UIName 
-     * @param sendData 
-     * @returns 
+     * ***appendUI*** : Appends the UI content to the specified virtual DOM class.
+     * @param {ModernJS} mjs Bind Virtual Dom
+     * @param {string} UIName UI name
+     * @returns {UI}
      */
+    public static appendUI(mjs: ModernJS, UIName : string) : UI;
+
+    /**
+     * ***appendUI*** : Appends the UI content to the specified virtual DOM class.
+     * @param {ModernJS} mjs Bind Virtual Dom
+     * @param {string} UIName UI name
+     * @param {any} sendData Transmission data contents
+     * @returns {UI}
+     */
+    public static appendUI(mjs: ModernJS, UIName : string, sendData: any) : UI;
+
     public static appendUI(mjs: ModernJS, UIName : string, sendData?: any) : UI {
         mjs.append(this.UI(UIName), true);
         const myMjs = new ModernJS();
@@ -432,20 +541,29 @@ export class Response {
     }
 
     /**
-     * ***dialog***
-     * @param dialogName 
-     * @returns 
+     * ***dialog*** : Get Dialog content information.
+     * @param {string} dialogName dialog name
+     * @returns {string}
      */
     public static dialog(dialogName : string) : string {
         return this.renderHtml("dialog/" + dialogName);
     }
 
     /**
-     * ***openDialog***
-     * @param dialogName 
-     * @param option 
-     * @returns 
+     * ***openDialog*** : Displays the specified dialog.
+     * @param {string} dialogName dialog name
+     * @returns {Dialog}
      */
+    public static openDialog(dialogName : string) : Dialog;
+
+    /**
+     * ***openDialog*** : Displays the specified dialog.
+     * @param {string} dialogName dialog name
+     * @param {DialogOption} option dialog options
+     * @returns {Dialog}
+     */
+    public static openDialog(dialogName : string, option : DialogOption) : Dialog;
+    
     public static openDialog(dialogName : string, option? : DialogOption) : Dialog {
         if (!option) option = {};
         this.setDialogCss();
@@ -473,6 +591,21 @@ export class Response {
         return dialog;
     }
 
+    /**
+     * ***openDialogOrigin*** : Create and open your own dialog by specifying the HTML tag for the dialog.  
+     * @param {string} dialogHtml dialog html tags
+     * @returns {Dialog}
+     */
+    public static openDialogOrigin(dialogHtml : string) : Dialog;
+
+    /**
+     * ***openDialogOrigin*** : Create and open your own dialog by specifying the HTML tag for the dialog.  
+     * @param {string} dialogHtml dialog html tags
+     * @param {DialogOption} option dialog options
+     * @returns {Dialog}
+     */
+    public static openDialogOrigin(dialogHtml : string, option : DialogOption) : Dialog;
+    
     public static openDialogOrigin(dialogHtml : string, option? : DialogOption) : Dialog {
         if (!option) option = {};
         this.setDialogCss();
