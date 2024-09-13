@@ -14,12 +14,24 @@ export class ModernJS {
 
     public static buffers : ModernJSList = {};
 
+    /**
+     * ***els*** : List of target Element classes in the virtual DOM class.
+     */
     public els : Array<HTMLElement> = [];
 
+    /**
+     * ***childs*** : The child ModernJS class for this virtual DOM.
+     */
     public childs : ModernJSList = {};
 
+    /**
+     * ***datas*** : Virtual Data Objects.
+     */
     public datas : {[name : string] : any} = {};
 
+    /**
+     * ***parent*** : The virtual DOM class of this virtual DOM's parent element。
+     */
     public parent : ModernJS;
 
     private fileBuffers : Array<any> = [];
@@ -78,7 +90,28 @@ export class ModernJS {
         });
     }
 
-    
+    /**
+     * ***create*** : Create an empty virtual DOM class.
+     * @returns {ModernJS}
+     */
+    public static create() : ModernJS;
+
+    /**
+     * ***create*** : Creates a virtual DOM class with the specified content tag.
+     * @param {string} text Content Tags
+     * @returns {ModernJS}
+     */
+    public static create(text : string) : ModernJS;
+
+    /**
+     * ***create*** : Creates a virtual DOM class with the specified content tag.  
+     * You can also specify the tag name.
+     * @param {string} text Content Tags
+     * @param {string} tagName Tag Name
+     * @returns {ModernJS}
+     */
+    public static create(text : string, tagName : string) : ModernJS;
+
     public static create(text? : string, tagName? : string) : ModernJS {
         const mjs = new ModernJS();
         if (!tagName) tagName = "div";
@@ -89,6 +122,11 @@ export class ModernJS {
         return mjs;
     }
 
+    /**
+     * ***dom*** : Finds an element for the specified query path and returns the virtual DOM class that contains the element.
+     * @param {string} queryString QueryString
+     * @returns {ModernJS}
+     */
     public static dom(queryString : string) : ModernJS {
         const mjs = new ModernJS();
         const qss = document.querySelectorAll(queryString);
@@ -98,7 +136,12 @@ export class ModernJS {
         return mjs;
     }
 
-    public addEl(el : HTMLElement){
+    /**
+     * ***addEl*** : Manually adding elements to the Virtual DOM.
+     * @param {HTMLElement} el HTMLElement
+     * @returns {MOdernJS}
+     */
+    public addEl(el : HTMLElement) : ModernJS {
         this.els.push(el);
 
         if (el.tagName != "INPUT") return;
@@ -120,8 +163,14 @@ export class ModernJS {
                 reader.readAsText(file);
             }
         });
+        return this;
     }
 
+    /**
+     * ***reload*** : Get the virtual DOM of the v-child attribute from the virtual DOM element.  
+     * The results can be obtained in children.
+     * @param {ModernJS?} context 
+     */
     public reload(context? : ModernJS) {
         ModernJS.reload();
         this.els.forEach((el : HTMLElement) => {
@@ -144,22 +193,36 @@ export class ModernJS {
         });
     }
 
+    /**
+     * ***length*** : Get the number of elements
+     */
     public get length() : number {
         return this.els.length;
     }
 
+    /**
+     * ***first*** : Get the virtual DOM class that contains the first element  
+     */
     public get first() : ModernJS {
         const mjs = new ModernJS();
         mjs.addEl(this.els[0]);
         return mjs;
     }
 
+    /**
+     * ***last*** : Get the virtual DOM class that contains the last element.
+     */
     public get last() : ModernJS {
         const mjs = new ModernJS();
         mjs.addEl(this.els[this.els.length - 1]);
         return mjs;
     }
 
+    /**
+     * ***index*** : Gets the virtual DOM class that contains the element at the specified index.
+     * @param {number} index Element Index Number
+     * @returns {ModernJS}
+     */
     public index(index: number) : ModernJS {
         const mjs = new ModernJS();
         if (!this.els[index]) return;
@@ -167,6 +230,9 @@ export class ModernJS {
         return mjs;
     }
 
+    /**
+     * ***prev*** : Get the prev element in the virtual DOM by its virtual DOM class.
+     */
     public get prev() : ModernJS {
         // @ts-ignore
         const prevEl : HTMLElement = this.els[0].previousElementSibling;
@@ -175,6 +241,9 @@ export class ModernJS {
         return mjs;
     }
 
+    /**
+     * ***next*** : Get the next element in the virtual DOM by its virtual DOM class.
+     */
     public get next() : ModernJS {
         // @ts-ignore
         const prevEl : HTMLElement = this.els[0].nextElementSibling;
@@ -183,10 +252,18 @@ export class ModernJS {
         return mjs;
     }
 
+    /**
+     * ***tagName*** : Get tag name.
+     */
     public get tagName() : string {
         return this.els[0].tagName;
     }
 
+    /**
+     * ***querySelector*** : Searches for an element in the virtual DOM for the specified query path and returns the Virtual DOM Class that contains that element.
+     * @param {string} queryString QueryString
+     * @returns {ModernJS}
+     */
     public querySelector(queryString: string) : ModernJS {
         const mjs = new ModernJS();
         this.els.forEach((el : HTMLElement) => {
@@ -198,13 +275,34 @@ export class ModernJS {
         return mjs;
     }
 
+    /**
+     * ***text*** : Gets or sets the specified text.
+     */
     public set text(value : string | number) {
         this.setText(value);
     }
 
+    /**
+     * ***text*** : Gets or sets the specified text.
+     */
     public get text() : string {
         return this.els[0].innerText;
     }
+
+    /**
+     * ***setText*** : Gets or sets the specified text.
+     * @param {string | number} value Text content
+     * @returns {ModernJS}
+     */
+    public setText(value : string | number) : ModernJS;
+
+    /**
+     * ***setText*** : Gets or sets the specified text.
+     * @param {string | number} value Text content
+     * @param {boolean?} noReload Whether or not reload can be executed
+     * @returns {ModernJS}
+     */
+    public setText(value : string | number, noReload : boolean) : ModernJS;
 
     public setText(value : string | number, noReload? : boolean) : ModernJS  {
         this.els.forEach((el : HTMLElement) => {
@@ -219,19 +317,35 @@ export class ModernJS {
         return this;
     }
 
+    /**
+     * ***brText*** : Set the text content.  
+     * Line breaks will be converted to line break tags.
+     */
     public set brText(value : string | number) {
         value = value.toString().split("\n").join("<br>");
         this.text = value;
     }
 
+    /**
+     * ***html*** : Gets or sets an HTML tag.
+     */
     public set html(value : string | HTMLElement | ModernJS) {
         this.setHtml(value);
     }
 
+    /**
+     * ***html*** : Gets or sets an HTML tag.
+     */
     public get html() : string {
         return this.els[0].innerHTML;
     }
 
+    /**
+     * ***setHtml*** : Gets or sets an HTML tag.
+     * @param {string | HTMLElement | ModernJS} value HTML tag content or HTMLElement, ModernJS class
+     * @param {boolean?} noReload Whether or not reload can be executed
+     * @returns {ModernJS}
+     */
     public setHtml(value : string | HTMLElement | ModernJS, noReload? : boolean) {
         this.els.forEach((el : HTMLElement) => {
             el.childNodes.forEach((c)=>{
@@ -261,6 +375,9 @@ export class ModernJS {
         return this;
     }
 
+    /**
+     * ***outerHTML*** : Get or set the outerHTML.
+     */
     public set outerHtml(value : string) {
         this.els.forEach((el : HTMLElement) => {
             el.childNodes.forEach((c)=>{
@@ -271,9 +388,29 @@ export class ModernJS {
         this.reload();
     }
 
+    /**
+     * ***outerHTML*** : Get or set the outerHTML.
+     */
     public get outerHtml() : string {
         return this.els[0].outerHTML;
     }
+
+
+    /**
+     * ***afterBegin*** : Inserts content immediately below the target element, before the first child.
+     * @param {string | HTMLElement | ModernJS} value Inserted Content
+     * @returns {ModernJS}
+     */
+    public afterBegin(value : string | HTMLElement | ModernJS) : ModernJS;
+
+    /**
+     * ***afterBegin*** : Inserts content immediately below the target element, before the first child.
+     * @param {string | HTMLElement | ModernJS} value Inserted Content
+     * @param {boolean?} noReload Whether or not reload can be executed
+     * @returns {ModernJS}
+     */
+    public afterBegin(value : string | HTMLElement | ModernJS, noReload : boolean) : ModernJS;
+
 
     public afterBegin(value : string | HTMLElement | ModernJS, noReload? : boolean) : ModernJS {
         this.els.forEach((el : HTMLElement) => {
@@ -300,6 +437,21 @@ export class ModernJS {
         return this;
     }
 
+    /**
+     * ***append*** : Inserts content directly below the target element, after the last child.
+     * @param {string | HTMLElement | ModernJS} value Inserted Content
+     * @returns {ModernJS}
+     */
+    public append(value : string | HTMLElement | ModernJS) : ModernJS;
+
+    /**
+     * ***append*** : Inserts content directly below the target element, after the last child.
+     * @param {string | HTMLElement | ModernJS} value Inserted Content
+     * @param {boolean?} noReload Whether or not reload can be executed
+     * @returns {ModernJS}
+     */
+    public append(value : string | HTMLElement | ModernJS, noReload : boolean) : ModernJS;
+
     public append(value : string | HTMLElement | ModernJS, noReload? : boolean) : ModernJS {
         this.els.forEach((el : HTMLElement) => {
             if (typeof value == "string") {
@@ -325,6 +477,10 @@ export class ModernJS {
         return this;
     }
 
+    /**
+     * ***remove*** : Delete the target element.
+     * @returns {ModernJS}
+     */
     public remove() : ModernJS {
         this.els.forEach((el : HTMLElement)=>{
             el.remove();
@@ -332,6 +488,11 @@ export class ModernJS {
         return this;
     }
 
+    /**
+     * ***style*** : Setting style(stylesheets) attributes for an element
+     * @param {[name : string] : string | number} stylesheets Style attribute information
+     * @returns {ModernJS}
+     */
     public style(stylesheets : {[name : string] : string | number}) : ModernJS {
         const c = Object.keys(stylesheets);
         for (let n = 0 ; n < c.length ; n++) {
@@ -345,12 +506,28 @@ export class ModernJS {
         return this;
     }
 
+    /**
+     * ***getStyle*** : Get style information for the specified selector.
+     * @param {string} name selector
+     * @returns {string | number}
+     */
     public getStyle(name: string) : string | number {
         return this.els[0].style[name];
     }
 
+    /**
+     * ***attr** : Get the value for an element attribute name
+     * @param {string} name attribute name
+     * @returns {string}
+     */
     public attr(name : string) : string;
 
+    /**
+     * ***attr*** : Set attribute information for an element.
+     * @param {string} name attribute name
+     * @param {string | number} value attribute value
+     * @returns {ModernJS}
+     */
     public attr(name : string, value : string | number) : ModernJS;
 
     public attr(name : string, value? : string | number) : string | ModernJS {
@@ -365,12 +542,22 @@ export class ModernJS {
         }
     }
 
+    /**
+     * ***isAttr*** : Whether the specified attribute name exists for the element.
+     * @param {string} name attribute name
+     * @returns {boolean}
+     */
     public isAttr(name : string) : boolean {
         if (!this.els[0]) return false;
         if (this.els[0].attributes[name]) return true;
         return false;
     }
 
+    /**
+     * ***removeAttr*** : Remove attribute information from an element
+     * @param {string} name The name of the attribute to be deleted.
+     * @returns {ModernJS}
+     */
     public removeAttr(name : string) : ModernJS {
         this.els.forEach((el : HTMLElement) => {
             el.removeAttribute(name);
@@ -378,31 +565,51 @@ export class ModernJS {
         return this;
     }
 
-
+    /**
+     * ***src*** : Get or set the src attribute value.
+     */
     public set src(value : string) {
         this.attr("src", value);
     }
 
+    /**
+     * ***src*** : Get or set the src attribute value.
+     */
     public get src() : string {
         return this.attr("src");
     }
 
+    /**
+     * ***placeHolder*** : Get or set the placeholder attribute value.
+     */
     public set placeHolder(value: string) {
         this.attr("placeholder", value);
     }
 
+    /**
+     * ***placeHolder*** : Get or set the placeholder attribute value.
+     */
     public get placeHolder() : string {
         return this.attr("placeholder");
     }
 
+    /**
+     * ***href*** : Get or set the href attribute value.
+     */
     public set href(value : string) {
         this.attr("href", value);
     }
 
+    /**
+     * ***href*** : Get or set the href attribute value.
+     */
     public get href() : string {
         return this.attr("href");
     }
 
+    /**
+     * ***display*** : Set whether elements are visible or hidden.
+     */
     public set display(status: boolean) {
         if (status) {
             this.style({ display: null});
@@ -412,26 +619,48 @@ export class ModernJS {
         }
     }
 
+    /**
+     * ***id*** : Gets or sets the ID attribute value of an element.
+     */
     public set id(value: string) {
         this.attr("id", value);
     }
 
+    /**
+     * ***id*** : Gets or sets the ID attribute value of an element.
+     */
     public get id() : string {
         return this.attr("id");
     }
 
+    /**
+     * ***name*** : Gets or sets the name attribute value of an element.
+     */
     public set name(value : string) {
         this.attr("name", value);
     }
 
+    /**
+     * ***name*** : Gets or sets the name attribute value of an element.
+     */
     public get name() : string {
         return this.attr("name");
     }
 
+    /**
+     * ***isClass*** : Gets whether the class attribute of an element exists.
+     * @param {string} className Target class attribute
+     * @returns {boolean}
+     */
     public isClass(className : string)  : boolean {
         return this.els[0].classList.contains(className);
     }
 
+    /**
+     * ***addClass*** : Adds the specified class attribute to an element.
+     * @param {string} className add class attribute
+     * @returns {ModernJS}
+     */
     public addClass(className : string) : ModernJS {
         this.els.forEach((el : HTMLElement) => {
             el.classList.add(className);
@@ -439,6 +668,11 @@ export class ModernJS {
         return this;
     }
 
+    /**
+     * ***removeClass*** : Remove a class attribute from an element.
+     * @param {string} className delete class attribute
+     * @returns {ModernJS}
+     */
     public removeClass(className : string) : ModernJS {
         this.els.forEach((el : HTMLElement) => {
             el.classList.remove(className);
@@ -446,8 +680,19 @@ export class ModernJS {
         return this;
     }
 
+    /**
+     * ***data*** : Get the data stored in the Virtual DOM class.
+     * @param {string} name data name
+     * @returns {any}
+     */
     public data(name : string) : any;
 
+    /**
+     * ***data*** : Storing data in virtual DOM classes.
+     * @param {string} name save data name
+     * @param {any} value value
+     * @returns {ModernJS}
+     */
     public data(name : string, value : any) : ModernJS;
 
     public data(name : string, value? : any) : any | ModernJS {
@@ -460,13 +705,31 @@ export class ModernJS {
         }
     }
 
+    /**
+     * ***removeData*** : Deletes data stored in the virtual DOM.
+     * @param {string} name delete data name
+     * @returns {ModernJS}
+     */
     public removeData(name : string) : ModernJS {
         delete this.datas[name];
         return this;
     }
 
+    /**
+     * ***on*** : Sets a listener for events on a virtual DOM element.
+     * @param {HTMLElementEventMap} event Event name
+     * @param {event : Event, context: ModernJS) => void} listener Event Listener
+     * @returns {ModernJS}
+     */
     public on(event : keyof HTMLElementEventMap, listener : (event : Event, context: ModernJS) => void) : ModernJS;
 
+    /**
+     * ***on*** : Sets a listener for events on a virtual DOM element.
+     * @param {HTMLElementEventMap} event Event name
+     * @param {event : Event, context: ModernJS) => void} listener Event Listener
+     * @param {boolean | AddEventListenerOptions} options option settings
+     * @returns {ModernJS}
+     */
     public on(event : keyof HTMLElementEventMap, listener : (event : Event, context: ModernJS) => void, options?: boolean | AddEventListenerOptions) : ModernJS;
 
     public on(event : keyof HTMLElementEventMap, listener : (event : Event, context: ModernJS) => void, options?: boolean | AddEventListenerOptions) : ModernJS {
@@ -482,34 +745,60 @@ export class ModernJS {
         return this;
     }
 
+    /**
+     * ***onClick*** : Set an event listener for when an element is clicked.
+     */
     public set onClick (listener : (event : Event, context: ModernJS )=>void) {
         this.on("click", listener);
     }
 
+    /**
+     * ***onDblClick*** : Sets an event listener for when an element is double-clicked
+     */
     public set onDblClick (listener : (event : Event, context: ModernJS )=>void) {
         this.on("dblclick", listener);
     }
 
+    /**
+     * ***onFocus*** : Sets an event listener for when an element is focused.
+     */
     public set onFocus (listener : (event : Event, context: ModernJS )=>void) {
         this.on("focus", listener);
     }
 
+    /**
+     * ***onChange*** : Sets an event listener for when an element's input value is changed.
+     */
     public set onChange (listener : (event : Event, context: ModernJS )=>void) {
         this.on("change", listener);
     }
 
+    /**
+     * ***onMouseDown*** : Sets an event listener for when the mouse button is pressed on an element.
+     */
     public set onMouseDown (listener : (event : Event, context: ModernJS )=>void) {
         this.on("mousedown", listener);
     }
 
+    /**
+     * ***onMouseUp*** : Sets an event listener for when a mouse button is released on an element.
+     */
     public set onMouseUp (listener : (event : Event, context: ModernJS )=>void) {
         this.on("mouseup", listener);
     }
 
+    /**
+     * ***onMouseMove*** : Sets an event listener for when the mouse cursor moves within an element.
+     */
     public set onMouseMove (listener : (event : Event, context: ModernJS )=>void) {
         this.on("mousemove", listener);
     }
 
+    /**
+     * ***dispatch*** : Executes a specified event on an element.
+     * @param {HTMLElementEventMap} eventName dispatch event name
+     * @returns {ModernJS}
+     */
     public dispatch(eventName : keyof HTMLElementEventMap) : ModernJS {
         this.els.forEach((el : HTMLElement) => {
             let event = new Event(eventName);
@@ -518,6 +807,9 @@ export class ModernJS {
         return this;
     }
 
+    /**
+     * ***value*** : If the element is an input field, gets the entered or selected value.
+     */
     public get value() : string | number | Array<string | number> {
         if (!(
             this.tagName == "INPUT" ||
@@ -576,6 +868,9 @@ export class ModernJS {
         return value;
     }
 
+    /**
+     * ***value*** : If the element is an input field, set the input value or selected value.
+     */
     public set value(value : string | number | Array<string | number>) {
         if (!(
             this.tagName == "INPUT" ||
@@ -644,18 +939,28 @@ export class ModernJS {
         this.dispatch("change");
     }
 
+    /**
+     * ***checked*** : If the element is a checkbox, sets whether it can be selected.
+     */
     public set checked(status: boolean) {
         // @ts-ignore
         const el : HTMLInputElement = this.els[0];
         el.checked = status;
     }
 
+    /**
+     * ***checked*** : If the element is a checkbox, gets the selection status.
+     */
     public get checked() : boolean {
         // @ts-ignore
         const el : HTMLInputElement = this.els[0];
         return el.checked;
     }
 
+    /**
+     * ***reset*** : If the element is an input field, resets the input or selected value.
+     * @returns {ModernJS}
+     */
     public reset() : ModernJS {
         if (this.tagName == "INPUT") {
             if (this.attr("type") == "radio") {
@@ -691,6 +996,21 @@ export class ModernJS {
         return this;
     }
 
+    /**
+     * ***selectAddParam*** : If the element is a select tag, add an item option.
+     * @param {ModernJSSelectOption} params Item options
+     * @returns {ModernJS}
+     */
+    public selectAddParam(params : ModernJSSelectOption) : ModernJS;
+
+    /**
+     * ***selectAddParam*** : If the element is a select tag, add an item option.
+     * @param {ModernJSSelectOption} params Item options
+     * @param {HTMLOptGroupElement} optgroup optgroup element
+     * @returns {ModernJS}
+     */
+    public selectAddParam(params : ModernJSSelectOption, optgroup : HTMLOptGroupElement) : ModernJS;
+
     public selectAddParam(params : ModernJSSelectOption, optgroup? : HTMLOptGroupElement) : ModernJS {
         const c = Object.keys(params);
         for (let n = 0 ; n < c.length ; n++) {
@@ -717,6 +1037,11 @@ export class ModernJS {
         return this;
     }
 
+    /**
+     * ***selectEmpty*** : If the element is a select tag, set the empty selection.
+     * @param {string} text Selection Text Name
+     * @returns {ModernJS}
+     */
     public selectEmpty(text : string) : ModernJS {
         const optionEl = document.createElement("option");
         optionEl.value = "";
@@ -727,11 +1052,18 @@ export class ModernJS {
         return this;
     }
 
+    /**
+     * ***selectResetParam*** : If the element is a Select tag, reset the options.
+     * @returns {ModernJS}
+     */
     public selectResetParam() : ModernJS {
         this.text = "";
         return this;
     }
 
+    /**
+     * ***selectedText*** : If the element is a checkbox, gets the display text of the selected item.
+     */
     public get selectedText() : string | Array<string> {
         const values = [];
         this.els.forEach((el : HTMLSelectElement) => {
@@ -746,6 +1078,9 @@ export class ModernJS {
         }
     }
 
+    /**
+     * ***childValues*** : Get all input values ​​of virtual DOM of childs.
+     */
     public get childValues() : {[name : string] : string | number | Array<string | number>} {
         const c = Object.keys(this.childs);
         let values = {};
@@ -757,5 +1092,11 @@ export class ModernJS {
         return values;
     }
 }
+
+/**
+ * ***dom*** : Finds an element for the specified query path and returns the virtual DOM class that contains the element.
+ * @param {string} queryString QueryString
+ * @returns {ModernJS}
+ */
 export const dom = ModernJS.dom;
 export const mjs = ModernJS.reload;

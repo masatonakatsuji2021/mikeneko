@@ -23,5 +23,5 @@ export class Background {
     /**
      * ***handle*** : A handler that is executed immediately after the application starts.
      */
-    public handle() : void {}
+    public handle() : void | Promise<void> {}
 }
