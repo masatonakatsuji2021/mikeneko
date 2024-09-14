@@ -3,8 +3,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.View = void 0;
 var Routes_1 = require("Routes");
 var Response_1 = require("Response");
+/**
+ * ***View*** : Main class for each screen.
+ */
 var View = /** @class */ (function () {
     function View() {
+        /**
+         * ***beginStatus*** :
+         */
         this.beginStatus = false;
         /**
          * ***view*** : Change the view name to be displayed.
@@ -39,7 +45,7 @@ var View = /** @class */ (function () {
         Response_1.Response.__rendering(routes, this);
     };
     /**
-     * ***setHead*** :
+     * ***setHead*** : If there is a UI to set in the head tag, you can specify it.
      * @param headName
      */
     View.prototype.setHead = function (headName) {
@@ -48,7 +54,7 @@ var View = /** @class */ (function () {
         Response_1.Response.__rendering(routes, this);
     };
     /**
-     * ***setHeader*** :
+     * ***setHeader*** : If there is a UI to set in the header tag, you can specify it.
      * @param headerName
      */
     View.prototype.setHeader = function (headerName) {
@@ -57,7 +63,7 @@ var View = /** @class */ (function () {
         Response_1.Response.__rendering(routes, this);
     };
     /**
-     * ***setFooter*** :
+     * ***setFooter*** : If there is a UI to set in the footer tag, you can specify it.
      * @param footerName
      */
     View.prototype.setFooter = function (footerName) {
@@ -81,6 +87,9 @@ var View = /** @class */ (function () {
      * This event is always executed even if the same View has already been rendered..
      */
     View.prototype.handleAlways = function () { };
+    /**
+     * ***handleBegin*** : Event handler executed just before transitioning to the page.
+     */
     View.prototype.handleBegin = function () { };
     /**
      * ***handleBefore*** : Event handler executed just before transitioning to the page.
@@ -103,9 +112,21 @@ var View = /** @class */ (function () {
      * ***handleLeave*** : Event handler executed when leaving the page.
      */
     View.prototype.handleLeave = function () { };
+    /**
+     * ***handleTemplateChanged*** : An event handler that runs when the template specified in the member variable template changes.
+     */
     View.prototype.handleTemplateChanged = function () { };
+    /**
+     * ***handleHeadChanged*** : An event handler that runs when the template specified in the member variable head tag changes.
+     */
     View.prototype.handleHeadChanged = function () { };
+    /**
+     * ***handleHeaderChanged*** : An event handler that runs when the template specified in the member variable header tag changes.
+     */
     View.prototype.handleHeaderChanged = function () { };
+    /**
+     * ***handleFooterChanged*** : An event handler that runs when the template specified in the member variable footer tag changes.
+     */
     View.prototype.handleFooterChanged = function () { };
     return View;
 }());

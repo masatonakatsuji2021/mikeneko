@@ -2,6 +2,9 @@ import { Routes } from "Routes";
 import { Response } from "Response";
 import { ModernJS, ModernJSList } from "ModernJS";
 
+/**
+ * ***View*** : Main class for each screen.
+ */
 export class View {
 
     /**

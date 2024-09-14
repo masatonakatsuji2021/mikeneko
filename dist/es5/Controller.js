@@ -3,8 +3,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Controller = void 0;
 var Routes_1 = require("Routes");
 var Response_1 = require("Response");
+/**
+ * ***Controller*** : Main class for each screen.
+ * Event handlers for multiple screens can be managed collectively using public methods.
+ */
 var Controller = /** @class */ (function () {
     function Controller() {
+        /**
+         * ***beginStatus*** :
+         */
         this.beginStatus = false;
         /**
          * ***view*** : Change the view name to be displayed.
@@ -40,7 +47,7 @@ var Controller = /** @class */ (function () {
         Response_1.Response.__rendering(routes, this);
     };
     /**
-     * ***setHead*** :
+     * ***setHead*** : If there is a UI to set in the head tag, you can specify it.
      * @param headName
      */
     Controller.prototype.setHead = function (headName) {
@@ -49,7 +56,7 @@ var Controller = /** @class */ (function () {
         Response_1.Response.__rendering(routes, this);
     };
     /**
-     * ***setHeader*** :
+     * ***setHeader*** : If there is a UI to set in the header tag, you can specify it.
      * @param headerName
      */
     Controller.prototype.setHeader = function (headerName) {
@@ -58,7 +65,7 @@ var Controller = /** @class */ (function () {
         Response_1.Response.__rendering(routes, this);
     };
     /**
-     * ***setFooter*** :
+     * ***setFooter*** : If there is a UI to set in the footer tag, you can specify it.
      * @param footerName
      */
     Controller.prototype.setFooter = function (footerName) {
@@ -88,9 +95,21 @@ var Controller = /** @class */ (function () {
      * @param {string} action before access controller action name
      */
     Controller.prototype.handleLeave = function (action) { };
+    /**
+     * ***handleTemplateChanged*** : An event handler that runs when the template specified in the member variable template changes.
+     */
     Controller.prototype.handleTemplateChanged = function () { };
+    /**
+     * ***handleHeadChanged*** : An event handler that runs when the template specified in the member variable head tag changes.
+     */
     Controller.prototype.handleHeadChanged = function () { };
+    /**
+     * ***handleHeaderChanged*** : An event handler that runs when the template specified in the member variable header tag changes.
+     */
     Controller.prototype.handleHeaderChanged = function () { };
+    /**
+     * ***handleFooterChanged*** : An event handler that runs when the template specified in the member variable footer tag changes.
+     */
     Controller.prototype.handleFooterChanged = function () { };
     return Controller;
 }());

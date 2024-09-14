@@ -3,8 +3,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.View = void 0;
 const Routes_1 = require("Routes");
 const Response_1 = require("Response");
+/**
+ * ***View*** : Main class for each screen.
+ */
 class View {
     constructor() {
+        /**
+         * ***beginStatus*** :
+         */
         this.beginStatus = false;
         /**
          * ***view*** : Change the view name to be displayed.
@@ -39,7 +45,7 @@ class View {
         Response_1.Response.__rendering(routes, this);
     }
     /**
-     * ***setHead*** :
+     * ***setHead*** : If there is a UI to set in the head tag, you can specify it.
      * @param headName
      */
     setHead(headName) {
@@ -48,7 +54,7 @@ class View {
         Response_1.Response.__rendering(routes, this);
     }
     /**
-     * ***setHeader*** :
+     * ***setHeader*** : If there is a UI to set in the header tag, you can specify it.
      * @param headerName
      */
     setHeader(headerName) {
@@ -57,7 +63,7 @@ class View {
         Response_1.Response.__rendering(routes, this);
     }
     /**
-     * ***setFooter*** :
+     * ***setFooter*** : If there is a UI to set in the footer tag, you can specify it.
      * @param footerName
      */
     setFooter(footerName) {
@@ -76,6 +82,9 @@ class View {
      * This event is always executed even if the same View has already been rendered..
      */
     handleAlways() { }
+    /**
+     * ***handleBegin*** : Event handler executed just before transitioning to the page.
+     */
     handleBegin() { }
     /**
      * ***handleBefore*** : Event handler executed just before transitioning to the page.
@@ -98,9 +107,21 @@ class View {
      * ***handleLeave*** : Event handler executed when leaving the page.
      */
     handleLeave() { }
+    /**
+     * ***handleTemplateChanged*** : An event handler that runs when the template specified in the member variable template changes.
+     */
     handleTemplateChanged() { }
+    /**
+     * ***handleHeadChanged*** : An event handler that runs when the template specified in the member variable head tag changes.
+     */
     handleHeadChanged() { }
+    /**
+     * ***handleHeaderChanged*** : An event handler that runs when the template specified in the member variable header tag changes.
+     */
     handleHeaderChanged() { }
+    /**
+     * ***handleFooterChanged*** : An event handler that runs when the template specified in the member variable footer tag changes.
+     */
     handleFooterChanged() { }
 }
 exports.View = View;

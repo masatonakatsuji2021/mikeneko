@@ -1,6 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ValidateMethod = exports.Validation = exports.ValidateErrorResult = exports.ValidateRule = void 0;
+/**
+ * ***ValidateRule*** : Validation check rule enumeration.
+ */
 var ValidateRule;
 (function (ValidateRule) {
     /**
@@ -159,70 +162,230 @@ var ValidateRule;
     ValidateRule["valueBetween"] = "valueBetween";
     /**
      * ***selected*** : If the value is not one of the options, an error occurs.
+     * ```typescript
+     * {
+     *    rule: ValidateRule.selected,
+     *    args: [ "apple", "orange", "kiwi", "banana" ],
+     * }
+     * ```
      */
     ValidateRule["selected"] = "selected";
     /**
-     * ***selectedLength*** : If the value (array value) is not the specified number, an error is detected.
+     * ***selectedLength*** : If the value (array value) does not select the specified number of items, an error will be detected.
+     * ```typescript
+     * {
+     *    rule: ValidateRule.selectedLength,
+     *    args: [ 3 ],
+     * }
+     * ```
      */
     ValidateRule["selectedLength"] = "selectedLength";
     /**
-     * ***selectedLengthMin*** : If the value (array value) is less than the specified number, an error is detected.
+     * ***selectedLengthMin*** : If the number of values ​​(array values) selected is less than the specified number, an error will be detected.
+     * ```typescript
+     * {
+     *    rule: ValidateRule.selectedLengthMin,
+     *    args: [ 4 ],
+     * }
+     * ```
      */
     ValidateRule["selectedLengthMin"] = "selectedLengthMin";
     /**
-     * ***selectedLengthMax*** : If the value (array value) is greater than or equal to the specified number, an error occurs.
-     */
+     * ***selectedLengthMax*** : If the number of selected values ​​(array values) is greater than the specified number, an error will occur.
+     * ```typescript
+     * {
+     *    rule: ValidateRule.selectedLengthMax,
+     *    args: [ 10 ],
+     * }
+     * ```
+    */
     ValidateRule["selectedLengthMax"] = "selectedLengthMax";
     /**
-     * ***selectedLengthBetween*** : If the value (array value) is outside the specified range, an error is detected.
-     */
+     * ***selectedLengthBetween*** : If you select a number of values ​​(array values) outside the specified range, an error will be detected.
+     * ```typescript
+     * {
+     *    rule: ValidateRule.selectedLengthBetween,
+     *    args: [ 5, 10 ],
+     * }
+     * ```
+    */
     ValidateRule["selectedLengthBetween"] = "selectedLengthBetween";
     /**
      * ***confirmed*** : If the value is not the same as the specified value, an error occurs.
+     * ```typescript
+     * {
+     *    rule: ValidateRule.confirmed,
+     *    args: [ "password" ],
+     * }
+     * ```
      */
     ValidateRule["confirmed"] = "confirmed";
     /**
      * ***like*** : If the value does not contain the specified string, an error occurs.
+     * ```typescript
+     * {
+     *    rule: ValidateRule.like,
+     *    args: [ "word" ],
+     * }
+     * ```
      */
     ValidateRule["like"] = "like";
     /**
      * ***characterExists*** : If the value contains characters that do not exist in the specified string, an error occurs..
-     */
+     * ```typescript
+     * {
+     *    rule: ValidateRule.characterExists,
+     *    args: [ "0123456789" ],
+     * }
+     * ```
+    */
     ValidateRule["characterExists"] = "characterExists";
     /**
      * ***alphaNumeric*** : If the value contains any characters other than half-width alphanumeric characters and specified special characters, an error is detected.
-     */
+     * ```typescript
+     * {
+     *    rule: ValidateRule.alphaNumeric,
+     * }
+     * ```
+     * Special characters can be allowed in args
+     * ```typescript
+     * {
+     *    rule: ValidateRule.alphaNumeric,
+     *    args: [ "-_=+/.," ],
+     * }
+     * ```
+    */
     ValidateRule["alphaNumeric"] = "alphaNumeric";
     /**
      * ***alphaNumericLower*** : If the value contains any characters other than half-width alphanumeric characters and specified special characters, an error is detected.
+     * Lowercase letters are allowed, but uppercase letters are not allowed.
+     * ```typescript
+     * {
+     *    rule: ValidateRule.alphaNumericLower,
+     * }
+     * ```
+     * Special characters can be allowed in args
+     * ```typescript
+     * {
+     *    rule: ValidateRule.alphaNumericLower,
+     *    args: [ "-_=+/.," ],
+     * }
+     * ```
      */
     ValidateRule["alphaNumericLower"] = "alphaNumericLower";
     /**
      * ***alphaNumericUpper*** : If the value contains any characters other than half-width alphanumeric characters and specified special characters, an error is detected.
+     * Uppercase letters are allowed, but lowercase letters are not allowed.
+     * ```typescript
+     * {
+     *    rule: ValidateRule.alphaNumericUpper,
+     * }
+     * ```
+     * Special characters can be allowed in args
+     * ```typescript
+     * {
+     *    rule: ValidateRule.alphaNumericUpper,
+     *    args: [ "-_=+/.," ],
+     * }
+     * ```
      */
     ValidateRule["alphaNumericUpper"] = "alphaNumericUpper";
     /**
      * ***alpha*** : An error is detected if the value contains any characters other than half-width English characters and the specified special characters.
+     * ```typescript
+     * {
+     *    rule: ValidateRule.alpha,
+     * }
+     * ```
+     * Special characters can be allowed in args
+     * ```typescript
+     * {
+     *    rule: ValidateRule.alpha,
+     *    args: [ "-_=+/.," ],
+     * }
+     * ```
      */
     ValidateRule["alpha"] = "alpha";
     /**
      * ***alphaLower*** : An error is detected if the value contains any characters other than half-width English characters and the specified special characters.
+     * Lowercase letters are allowed, but uppercase letters are not allowed.
+     * ```typescript
+     * {
+     *    rule: ValidateRule.alphaLower,
+     * }
+     * ```
+     * Special characters can be allowed in args
+     * ```typescript
+     * {
+     *    rule: ValidateRule.alphaLower,
+     *    args: [ "-_=+/.," ],
+     * }
+     * ```
      */
     ValidateRule["alphaLower"] = "alphaLower";
     /**
      * ***alphaUpper*** : An error is detected if the value contains any characters other than half-width English characters and the specified special characters.
+     * Uppercase letters are allowed, but lowercase letters are not allowed.
+     * ```typescript
+     * {
+     *    rule: ValidateRule.alphaUpper,
+     * }
+     * ```
+     * Special characters can be allowed in args
+     * ```typescript
+     * {
+     *    rule: ValidateRule.alphaUpper,
+     *    args: [ "-_=+/.," ],
+     * }
+     * ```
      */
     ValidateRule["alphaUpper"] = "alphaUpper";
     /**
-     * ***alphaNumeric*** : If the value contains any characters other than alphanumeric characters and the specified special characters, an error is detected.
+     * ***numeric*** : If the value contains any characters other than numeric characters and the specified special characters, an error is detected.
+     * ```typescript
+     * {
+     *    rule: ValidateRule.numeric,
+     * }
+     * ```
+     * Special characters can be allowed in args
+     * ```typescript
+     * {
+     *    rule: ValidateRule.numeric,
+     *    args: [ "-_=+/.," ],
+     * }
+     * ```
      */
     ValidateRule["numeric"] = "numeric";
     /**
      * ***isHiranaga*** : If the value contains hiragana and any other characters than the specified special characters, an error is detected.
+     * ```typescript
+     * {
+     *    rule: ValidateRule.isHiranaga,
+     * }
+     * ```
+     * Special characters can be allowed in args
+     * ```typescript
+     * {
+     *    rule: ValidateRule.isHiranaga,
+     *    args: [ "-_=+/.," ],
+     * }
+     * ```
      */
     ValidateRule["isHiranaga"] = "isHiranaga";
     /**
      * ***isKatakana*** : If the value contains katakana and any characters other than the specified special characters, an error is detected.
+     * ```typescript
+     * {
+     *    rule: ValidateRule.isKatakana,
+     * }
+     * ```
+     * Special characters can be allowed in args
+     * ```typescript
+     * {
+     *    rule: ValidateRule.isKatakana,
+     *    args: [ "-_=+/.," ],
+     * }
+     * ```
      */
     ValidateRule["isKatakana"] = "isKatakana";
     /**
@@ -251,6 +414,10 @@ var ValidateRule;
 })(ValidateRule || (exports.ValidateRule = ValidateRule = {}));
 var ValidateErrorResult = /** @class */ (function () {
     function ValidateErrorResult() {
+        /**
+         * ***status*** : Verification check result flag.
+         * ``false`` means there is an error,  ``true`` means there is no error
+         */
         this.status = true;
         this.fields = [];
         this.fieldIndexs = {};
@@ -349,6 +516,12 @@ var ValidateErrorResult = /** @class */ (function () {
     return ValidateErrorResult;
 }());
 exports.ValidateErrorResult = ValidateErrorResult;
+/**
+ * ***Validation*** : Class used for input data validation checks.
+ * There are two ways to set validation check rules:
+ * Create a Validation derived class in the ``app/validation`` directory and place it there, or
+ * Specify validation check rules directly using the ``verify`` method, etc.
+ */
 var Validation = /** @class */ (function () {
     function Validation() {
     }
@@ -358,6 +531,11 @@ var Validation = /** @class */ (function () {
             my.rules = rules;
         return my.verify(data);
     };
+    /**
+     * ***verify*** : Runs validation checks on given input data.
+     * @param {any} data Input data
+     * @returns {ValidateErrorResult}
+     */
     Validation.prototype.verify = function (data) {
         var vm = new ValidateMethod(data, this);
         var c = Object.keys(this.rules);
@@ -414,6 +592,12 @@ var Validation = /** @class */ (function () {
             my.rules = rules;
         return my.verifyBind(mjs, data);
     };
+    /**
+     * ***verifyBind*** : After checking the input data for validity, the error content is automatically bound using the virtual DOM.
+     * @param {ModernJSList} mjs Virtual DOM Class List
+     * @param {any} data input data
+     * @returns {ValidateErrorResult}
+     */
     Validation.prototype.verifyBind = function (mjs, data) {
         var result = this.verify(data);
         result.bind(mjs);
@@ -422,6 +606,9 @@ var Validation = /** @class */ (function () {
     return Validation;
 }());
 exports.Validation = Validation;
+/**
+ * ***ValidateMethod*** : Preset functions for validation checks.
+ */
 var ValidateMethod = /** @class */ (function () {
     function ValidateMethod(input, context) {
         this.input = input;

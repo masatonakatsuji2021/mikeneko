@@ -2,6 +2,10 @@ import { Routes } from "Routes";
 import { Response } from "Response";
 import { ModernJS, ModernJSList } from "ModernJS";
 
+/**
+ * ***Controller*** : Main class for each screen.  
+ * Event handlers for multiple screens can be managed collectively using public methods.
+ */
 export class Controller {
 
     /**

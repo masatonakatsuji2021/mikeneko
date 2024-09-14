@@ -1,14 +1,31 @@
 import { ModernJS, ModernJSList } from "ModernJS";
 
+/**
+ * ***DialogOption*** : Option settings when the dialog is displayed
+ */
 export interface DialogOption {
 
+    /**
+     * ***handle*** : Dialog opening event handler
+     * @param {Dialog} dialog Dialog Class
+     * @returns {void}
+     */
     handle? : (dialog : Dialog) => void,
 
+    /**
+     * ***class*** : The class attribute name to add to the dialog tag.
+     */
     class? : Array<string> | string,
 
+    /**
+     * ***sendData*** : Transmission data contents.
+     */
     sendData?: any,
 }
 
+/**
+ * ***Dialog*** : A class for displaying or manipulating a dialog screen.
+ */
 export class Dialog {
 
     /**
@@ -24,6 +41,7 @@ export class Dialog {
     /**
      * ***handle*** : An event handler that runs when the dialog is opened.
      * @param {any} sendData 
+     * @returns {void}
      */
     public handle(sendData?: any) : void {}
 

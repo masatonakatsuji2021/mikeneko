@@ -56,6 +56,13 @@ var Response = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
+    /**
+     * ***back*** : Return to the previous screen.
+     * However, this cannot be used if there is no history of the previous screen
+     * or if screen transitions are disabled using lock.
+     * The return value indicates whether the return to the previous screen was successful.
+     * @returns {boolean}
+     */
     Response.back = function () {
         var _this = this;
         if (Response.lock)
@@ -90,15 +97,29 @@ var Response = /** @class */ (function () {
         if (this.routeType == App_1.AppRouteType.web)
             location.href = "#" + url;
     };
+    /**
+     * ***addhistory*** : Add root path to screen transition history.
+     * It will only be added to the history and will not change the screen.
+     * @param {string} url route path
+     * @returns {void}
+     */
     Response.addHistory = function (url) {
         if (Response.lock)
             return;
         this.isBack = false;
         Data_1.Data.push("history", url);
     };
+    /**
+     * ***historyClear*** : Clear screen transition history
+     * @returns {void}
+     */
     Response.historyClear = function () {
         Data_1.Data.set("history", []);
     };
+    /**
+     * ***pop*** : Go back to the previous screen transition.
+     * @returns {void}
+     */
     Response.pop = function () {
         Data_1.Data.pop("history");
     };
@@ -106,10 +127,17 @@ var Response = /** @class */ (function () {
         this.pop();
         this.next(url, send);
     };
+    /**
+     * ***now*** : Get current route path.
+     * @returns {string}
+     */
     Response.now = function () {
         return Routes_1.Routes.getRoute().url;
     };
     Object.defineProperty(Response, "isNext", {
+        /**
+         * ***isNext*** : A flag that determines if you have proceeded from the next screen.
+         */
         get: function () {
             return !this.isBack;
         },
@@ -117,6 +145,9 @@ var Response = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(Response, "nowView", {
+        /**
+         * ***nowView*** : Get the current View class object if there is one.
+         */
         get: function () {
             if (Data_1.Data.get("beforeView"))
                 return Data_1.Data.get("beforeView");
@@ -125,6 +156,9 @@ var Response = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(Response, "nowController", {
+        /**
+         * ***nowController*** : Get the current Controller class object if there is one.
+         */
         get: function () {
             if (Data_1.Data.get("beforeController"))
                 return Data_1.Data.get("beforeController");
@@ -132,6 +166,7 @@ var Response = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
+    // rendering....
     Response.rendering = function (route, send) {
         return __awaiter(this, void 0, void 0, function () {
             var MyApp, befCont, res, befView, res, error_1;
@@ -462,74 +497,44 @@ var Response = /** @class */ (function () {
         return content;
     };
     /**
-     * *** view *** : Get View's content information.
+     * ***view *** : Get View's content information.
      * @param {string} viewName View Name
      * @returns {string} view contents
      */
     Response.view = function (viewName) {
         return this.renderHtml("view/" + viewName);
     };
-    /**
-     * ***bindView***
-     * @param mjs
-     * @param viewName
-     * @param sendData
-     * @returns
-     */
     Response.bindView = function (mjs, viewName, sendData) {
         mjs.html = this.view(viewName);
         mjs.reload();
         return this.loadClass("View", viewName, mjs, sendData);
     };
     /**
-     * ***template*** :
-     * Get template content information.
+     * ***template*** : Get template content information.
      * @param {string} templateName Template Name
      * @returns {string} template contents
      */
     Response.template = function (templateName) {
         return this.renderHtml("template/" + templateName);
     };
-    /**
-     * ***bindTemplate***
-     * @param mjs
-     * @param templateName
-     * @param sendData
-    * @returns
-     */
     Response.bindTemplate = function (mjs, templateName, sendData) {
         mjs.html = this.template(templateName);
         mjs.reload();
         return this.loadClass("Template", templateName, mjs, sendData);
     };
     /**
-     * ***UI*** :
-     * Get UI content information.
+     * ***UI*** : Get UI content information.
      * @param {string} uiName UI Name
      * @returns {string} UI contents
      */
     Response.UI = function (uiName) {
         return this.renderHtml("ui/" + uiName);
     };
-    /**
-     * ***bindUI***
-     * @param mjs
-     * @param UIName
-     * @param sendData
-     * @returns
-     */
     Response.bindUI = function (mjs, UIName, sendData) {
         mjs.html = this.UI(UIName);
         mjs.reload();
         return this.loadClass("UI", UIName, mjs, sendData);
     };
-    /**
-     * ***appendUI***
-     * @param mjs
-     * @param UIName
-     * @param sendData
-     * @returns
-     */
     Response.appendUI = function (mjs, UIName, sendData) {
         mjs.append(this.UI(UIName), true);
         var myMjs = new ModernJS_1.ModernJS();
@@ -537,19 +542,13 @@ var Response = /** @class */ (function () {
         return this.loadClass("UI", UIName, myMjs, sendData);
     };
     /**
-     * ***dialog***
-     * @param dialogName
-     * @returns
+     * ***dialog*** : Get Dialog content information.
+     * @param {string} dialogName dialog name
+     * @returns {string}
      */
     Response.dialog = function (dialogName) {
         return this.renderHtml("dialog/" + dialogName);
     };
-    /**
-     * ***openDialog***
-     * @param dialogName
-     * @param option
-     * @returns
-     */
     Response.openDialog = function (dialogName, option) {
         if (!option)
             option = {};
@@ -662,7 +661,15 @@ var Response = /** @class */ (function () {
         el0.innerHTML = Shortcode_1.Shortcode.analysis(el0.innerHTML);
         return el0.innerHTML;
     };
+    /**
+     * ***isBack*** : A flag that determines if you are back from the previous screen.
+     * True if you return from the previous screen, false if you proceed from the previous screen
+     */
     Response.isBack = false;
+    /**
+     * ***lock*** : Flag to lock screen transition operations.
+     * If set to true, back operations such as Response.back will be temporarily disabled.
+     */
     Response.lock = false;
     return Response;
 }());

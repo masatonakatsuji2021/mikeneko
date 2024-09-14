@@ -10,6 +10,18 @@ export interface ModernJSSelectOption {
     [value : string | number] : string | ModernJSSelectOption,
 }
 
+/**
+ * ***ModernJS*** : Virtual DOM Classes.  
+ * When you specify the v attribute or v-child attribute in an HTML tag, it is recognized as a virtual DOM.  
+ * The v attribute is considered a globally available virtual DOM.
+ * ```html
+ * <div v="test"></div>
+ * ```
+ * The v-child attribute is recognized as a separate virtual DOM in UI, Dialog, etc.
+ * ```html
+ * <div v-child="name"></div>
+ * ```
+ */
 export class ModernJS {
 
     public static buffers : ModernJSList = {};

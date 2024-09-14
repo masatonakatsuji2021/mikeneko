@@ -1,10 +1,31 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mjs = exports.dom = exports.ModernJS = void 0;
+/**
+ * ***ModernJS*** : Virtual DOM Classes.
+ * When you specify the v attribute or v-child attribute in an HTML tag, it is recognized as a virtual DOM.
+ * The v attribute is considered a globally available virtual DOM.
+ * ```html
+ * <div v="test"></div>
+ * ```
+ * The v-child attribute is recognized as a separate virtual DOM in UI, Dialog, etc.
+ * ```html
+ * <div v-child="name"></div>
+ * ```
+ */
 var ModernJS = /** @class */ (function () {
     function ModernJS() {
+        /**
+         * ***els*** : List of target Element classes in the virtual DOM class.
+         */
         this.els = [];
+        /**
+         * ***childs*** : The child ModernJS class for this virtual DOM.
+         */
         this.childs = {};
+        /**
+         * ***datas*** : Virtual Data Objects.
+         */
         this.datas = {};
         this.fileBuffers = [];
     }
@@ -81,6 +102,11 @@ var ModernJS = /** @class */ (function () {
             mjs.html = text;
         return mjs;
     };
+    /**
+     * ***dom*** : Finds an element for the specified query path and returns the virtual DOM class that contains the element.
+     * @param {string} queryString QueryString
+     * @returns {ModernJS}
+     */
     ModernJS.dom = function (queryString) {
         var mjs = new ModernJS();
         var qss = document.querySelectorAll(queryString);
@@ -89,6 +115,11 @@ var ModernJS = /** @class */ (function () {
         });
         return mjs;
     };
+    /**
+     * ***addEl*** : Manually adding elements to the Virtual DOM.
+     * @param {HTMLElement} el HTMLElement
+     * @returns {MOdernJS}
+     */
     ModernJS.prototype.addEl = function (el) {
         var _this = this;
         this.els.push(el);
@@ -117,7 +148,13 @@ var ModernJS = /** @class */ (function () {
                 _loop_2(n);
             }
         });
+        return this;
     };
+    /**
+     * ***reload*** : Get the virtual DOM of the v-child attribute from the virtual DOM element.
+     * The results can be obtained in children.
+     * @param {ModernJS?} context
+     */
     ModernJS.prototype.reload = function (context) {
         var _this = this;
         ModernJS.reload();
@@ -142,6 +179,9 @@ var ModernJS = /** @class */ (function () {
         });
     };
     Object.defineProperty(ModernJS.prototype, "length", {
+        /**
+         * ***length*** : Get the number of elements
+         */
         get: function () {
             return this.els.length;
         },
@@ -149,6 +189,9 @@ var ModernJS = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(ModernJS.prototype, "first", {
+        /**
+         * ***first*** : Get the virtual DOM class that contains the first element
+         */
         get: function () {
             var mjs = new ModernJS();
             mjs.addEl(this.els[0]);
@@ -158,6 +201,9 @@ var ModernJS = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(ModernJS.prototype, "last", {
+        /**
+         * ***last*** : Get the virtual DOM class that contains the last element.
+         */
         get: function () {
             var mjs = new ModernJS();
             mjs.addEl(this.els[this.els.length - 1]);
@@ -166,6 +212,11 @@ var ModernJS = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
+    /**
+     * ***index*** : Gets the virtual DOM class that contains the element at the specified index.
+     * @param {number} index Element Index Number
+     * @returns {ModernJS}
+     */
     ModernJS.prototype.index = function (index) {
         var mjs = new ModernJS();
         if (!this.els[index])
@@ -174,6 +225,9 @@ var ModernJS = /** @class */ (function () {
         return mjs;
     };
     Object.defineProperty(ModernJS.prototype, "prev", {
+        /**
+         * ***prev*** : Get the prev element in the virtual DOM by its virtual DOM class.
+         */
         get: function () {
             // @ts-ignore
             var prevEl = this.els[0].previousElementSibling;
@@ -185,6 +239,9 @@ var ModernJS = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(ModernJS.prototype, "next", {
+        /**
+         * ***next*** : Get the next element in the virtual DOM by its virtual DOM class.
+         */
         get: function () {
             // @ts-ignore
             var prevEl = this.els[0].nextElementSibling;
@@ -196,12 +253,20 @@ var ModernJS = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(ModernJS.prototype, "tagName", {
+        /**
+         * ***tagName*** : Get tag name.
+         */
         get: function () {
             return this.els[0].tagName;
         },
         enumerable: false,
         configurable: true
     });
+    /**
+     * ***querySelector*** : Searches for an element in the virtual DOM for the specified query path and returns the Virtual DOM Class that contains that element.
+     * @param {string} queryString QueryString
+     * @returns {ModernJS}
+     */
     ModernJS.prototype.querySelector = function (queryString) {
         var mjs = new ModernJS();
         this.els.forEach(function (el) {
@@ -213,9 +278,15 @@ var ModernJS = /** @class */ (function () {
         return mjs;
     };
     Object.defineProperty(ModernJS.prototype, "text", {
+        /**
+         * ***text*** : Gets or sets the specified text.
+         */
         get: function () {
             return this.els[0].innerText;
         },
+        /**
+         * ***text*** : Gets or sets the specified text.
+         */
         set: function (value) {
             this.setText(value);
         },
@@ -235,6 +306,10 @@ var ModernJS = /** @class */ (function () {
         return this;
     };
     Object.defineProperty(ModernJS.prototype, "brText", {
+        /**
+         * ***brText*** : Set the text content.
+         * Line breaks will be converted to line break tags.
+         */
         set: function (value) {
             value = value.toString().split("\n").join("<br>");
             this.text = value;
@@ -243,15 +318,27 @@ var ModernJS = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(ModernJS.prototype, "html", {
+        /**
+         * ***html*** : Gets or sets an HTML tag.
+         */
         get: function () {
             return this.els[0].innerHTML;
         },
+        /**
+         * ***html*** : Gets or sets an HTML tag.
+         */
         set: function (value) {
             this.setHtml(value);
         },
         enumerable: false,
         configurable: true
     });
+    /**
+     * ***setHtml*** : Gets or sets an HTML tag.
+     * @param {string | HTMLElement | ModernJS} value HTML tag content or HTMLElement, ModernJS class
+     * @param {boolean?} noReload Whether or not reload can be executed
+     * @returns {ModernJS}
+     */
     ModernJS.prototype.setHtml = function (value, noReload) {
         var _this = this;
         this.els.forEach(function (el) {
@@ -280,9 +367,15 @@ var ModernJS = /** @class */ (function () {
         return this;
     };
     Object.defineProperty(ModernJS.prototype, "outerHtml", {
+        /**
+         * ***outerHTML*** : Get or set the outerHTML.
+         */
         get: function () {
             return this.els[0].outerHTML;
         },
+        /**
+         * ***outerHTML*** : Get or set the outerHTML.
+         */
         set: function (value) {
             this.els.forEach(function (el) {
                 el.childNodes.forEach(function (c) {
@@ -343,12 +436,21 @@ var ModernJS = /** @class */ (function () {
         }
         return this;
     };
+    /**
+     * ***remove*** : Delete the target element.
+     * @returns {ModernJS}
+     */
     ModernJS.prototype.remove = function () {
         this.els.forEach(function (el) {
             el.remove();
         });
         return this;
     };
+    /**
+     * ***style*** : Setting style(stylesheets) attributes for an element
+     * @param {[name : string] : string | number} stylesheets Style attribute information
+     * @returns {ModernJS}
+     */
     ModernJS.prototype.style = function (stylesheets) {
         var c = Object.keys(stylesheets);
         var _loop_3 = function (n) {
@@ -364,6 +466,11 @@ var ModernJS = /** @class */ (function () {
         }
         return this;
     };
+    /**
+     * ***getStyle*** : Get style information for the specified selector.
+     * @param {string} name selector
+     * @returns {string | number}
+     */
     ModernJS.prototype.getStyle = function (name) {
         return this.els[0].style[name];
     };
@@ -378,6 +485,11 @@ var ModernJS = /** @class */ (function () {
             return this.els[0].attributes[name].value;
         }
     };
+    /**
+     * ***isAttr*** : Whether the specified attribute name exists for the element.
+     * @param {string} name attribute name
+     * @returns {boolean}
+     */
     ModernJS.prototype.isAttr = function (name) {
         if (!this.els[0])
             return false;
@@ -385,6 +497,11 @@ var ModernJS = /** @class */ (function () {
             return true;
         return false;
     };
+    /**
+     * ***removeAttr*** : Remove attribute information from an element
+     * @param {string} name The name of the attribute to be deleted.
+     * @returns {ModernJS}
+     */
     ModernJS.prototype.removeAttr = function (name) {
         this.els.forEach(function (el) {
             el.removeAttribute(name);
@@ -392,9 +509,15 @@ var ModernJS = /** @class */ (function () {
         return this;
     };
     Object.defineProperty(ModernJS.prototype, "src", {
+        /**
+         * ***src*** : Get or set the src attribute value.
+         */
         get: function () {
             return this.attr("src");
         },
+        /**
+         * ***src*** : Get or set the src attribute value.
+         */
         set: function (value) {
             this.attr("src", value);
         },
@@ -402,9 +525,15 @@ var ModernJS = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(ModernJS.prototype, "placeHolder", {
+        /**
+         * ***placeHolder*** : Get or set the placeholder attribute value.
+         */
         get: function () {
             return this.attr("placeholder");
         },
+        /**
+         * ***placeHolder*** : Get or set the placeholder attribute value.
+         */
         set: function (value) {
             this.attr("placeholder", value);
         },
@@ -412,9 +541,15 @@ var ModernJS = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(ModernJS.prototype, "href", {
+        /**
+         * ***href*** : Get or set the href attribute value.
+         */
         get: function () {
             return this.attr("href");
         },
+        /**
+         * ***href*** : Get or set the href attribute value.
+         */
         set: function (value) {
             this.attr("href", value);
         },
@@ -422,6 +557,9 @@ var ModernJS = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(ModernJS.prototype, "display", {
+        /**
+         * ***display*** : Set whether elements are visible or hidden.
+         */
         set: function (status) {
             if (status) {
                 this.style({ display: null });
@@ -434,9 +572,15 @@ var ModernJS = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(ModernJS.prototype, "id", {
+        /**
+         * ***id*** : Gets or sets the ID attribute value of an element.
+         */
         get: function () {
             return this.attr("id");
         },
+        /**
+         * ***id*** : Gets or sets the ID attribute value of an element.
+         */
         set: function (value) {
             this.attr("id", value);
         },
@@ -444,24 +588,45 @@ var ModernJS = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(ModernJS.prototype, "name", {
+        /**
+         * ***name*** : Gets or sets the name attribute value of an element.
+         */
         get: function () {
             return this.attr("name");
         },
+        /**
+         * ***name*** : Gets or sets the name attribute value of an element.
+         */
         set: function (value) {
             this.attr("name", value);
         },
         enumerable: false,
         configurable: true
     });
+    /**
+     * ***isClass*** : Gets whether the class attribute of an element exists.
+     * @param {string} className Target class attribute
+     * @returns {boolean}
+     */
     ModernJS.prototype.isClass = function (className) {
         return this.els[0].classList.contains(className);
     };
+    /**
+     * ***addClass*** : Adds the specified class attribute to an element.
+     * @param {string} className add class attribute
+     * @returns {ModernJS}
+     */
     ModernJS.prototype.addClass = function (className) {
         this.els.forEach(function (el) {
             el.classList.add(className);
         });
         return this;
     };
+    /**
+     * ***removeClass*** : Remove a class attribute from an element.
+     * @param {string} className delete class attribute
+     * @returns {ModernJS}
+     */
     ModernJS.prototype.removeClass = function (className) {
         this.els.forEach(function (el) {
             el.classList.remove(className);
@@ -477,6 +642,11 @@ var ModernJS = /** @class */ (function () {
             return this.datas[name];
         }
     };
+    /**
+     * ***removeData*** : Deletes data stored in the virtual DOM.
+     * @param {string} name delete data name
+     * @returns {ModernJS}
+     */
     ModernJS.prototype.removeData = function (name) {
         delete this.datas[name];
         return this;
@@ -495,6 +665,9 @@ var ModernJS = /** @class */ (function () {
         return this;
     };
     Object.defineProperty(ModernJS.prototype, "onClick", {
+        /**
+         * ***onClick*** : Set an event listener for when an element is clicked.
+         */
         set: function (listener) {
             this.on("click", listener);
         },
@@ -502,6 +675,9 @@ var ModernJS = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(ModernJS.prototype, "onDblClick", {
+        /**
+         * ***onDblClick*** : Sets an event listener for when an element is double-clicked
+         */
         set: function (listener) {
             this.on("dblclick", listener);
         },
@@ -509,6 +685,9 @@ var ModernJS = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(ModernJS.prototype, "onFocus", {
+        /**
+         * ***onFocus*** : Sets an event listener for when an element is focused.
+         */
         set: function (listener) {
             this.on("focus", listener);
         },
@@ -516,6 +695,9 @@ var ModernJS = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(ModernJS.prototype, "onChange", {
+        /**
+         * ***onChange*** : Sets an event listener for when an element's input value is changed.
+         */
         set: function (listener) {
             this.on("change", listener);
         },
@@ -523,6 +705,9 @@ var ModernJS = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(ModernJS.prototype, "onMouseDown", {
+        /**
+         * ***onMouseDown*** : Sets an event listener for when the mouse button is pressed on an element.
+         */
         set: function (listener) {
             this.on("mousedown", listener);
         },
@@ -530,6 +715,9 @@ var ModernJS = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(ModernJS.prototype, "onMouseUp", {
+        /**
+         * ***onMouseUp*** : Sets an event listener for when a mouse button is released on an element.
+         */
         set: function (listener) {
             this.on("mouseup", listener);
         },
@@ -537,12 +725,20 @@ var ModernJS = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(ModernJS.prototype, "onMouseMove", {
+        /**
+         * ***onMouseMove*** : Sets an event listener for when the mouse cursor moves within an element.
+         */
         set: function (listener) {
             this.on("mousemove", listener);
         },
         enumerable: false,
         configurable: true
     });
+    /**
+     * ***dispatch*** : Executes a specified event on an element.
+     * @param {HTMLElementEventMap} eventName dispatch event name
+     * @returns {ModernJS}
+     */
     ModernJS.prototype.dispatch = function (eventName) {
         this.els.forEach(function (el) {
             var event = new Event(eventName);
@@ -551,6 +747,9 @@ var ModernJS = /** @class */ (function () {
         return this;
     };
     Object.defineProperty(ModernJS.prototype, "value", {
+        /**
+         * ***value*** : If the element is an input field, gets the entered or selected value.
+         */
         get: function () {
             if (!(this.tagName == "INPUT" ||
                 this.tagName == "SELECT" ||
@@ -607,6 +806,9 @@ var ModernJS = /** @class */ (function () {
             }
             return value;
         },
+        /**
+         * ***value*** : If the element is an input field, set the input value or selected value.
+         */
         set: function (value) {
             if (!(this.tagName == "INPUT" ||
                 this.tagName == "SELECT" ||
@@ -678,11 +880,17 @@ var ModernJS = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(ModernJS.prototype, "checked", {
+        /**
+         * ***checked*** : If the element is a checkbox, gets the selection status.
+         */
         get: function () {
             // @ts-ignore
             var el = this.els[0];
             return el.checked;
         },
+        /**
+         * ***checked*** : If the element is a checkbox, sets whether it can be selected.
+         */
         set: function (status) {
             // @ts-ignore
             var el = this.els[0];
@@ -691,6 +899,10 @@ var ModernJS = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
+    /**
+     * ***reset*** : If the element is an input field, resets the input or selected value.
+     * @returns {ModernJS}
+     */
     ModernJS.prototype.reset = function () {
         var _this = this;
         if (this.tagName == "INPUT") {
@@ -751,6 +963,11 @@ var ModernJS = /** @class */ (function () {
         }
         return this;
     };
+    /**
+     * ***selectEmpty*** : If the element is a select tag, set the empty selection.
+     * @param {string} text Selection Text Name
+     * @returns {ModernJS}
+     */
     ModernJS.prototype.selectEmpty = function (text) {
         var optionEl = document.createElement("option");
         optionEl.value = "";
@@ -760,11 +977,18 @@ var ModernJS = /** @class */ (function () {
         });
         return this;
     };
+    /**
+     * ***selectResetParam*** : If the element is a Select tag, reset the options.
+     * @returns {ModernJS}
+     */
     ModernJS.prototype.selectResetParam = function () {
         this.text = "";
         return this;
     };
     Object.defineProperty(ModernJS.prototype, "selectedText", {
+        /**
+         * ***selectedText*** : If the element is a checkbox, gets the display text of the selected item.
+         */
         get: function () {
             var values = [];
             this.els.forEach(function (el) {
@@ -782,6 +1006,9 @@ var ModernJS = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(ModernJS.prototype, "childValues", {
+        /**
+         * ***childValues*** : Get all input values ​​of virtual DOM of childs.
+         */
         get: function () {
             var c = Object.keys(this.childs);
             var values = {};
@@ -799,5 +1026,10 @@ var ModernJS = /** @class */ (function () {
     return ModernJS;
 }());
 exports.ModernJS = ModernJS;
+/**
+ * ***dom*** : Finds an element for the specified query path and returns the virtual DOM class that contains the element.
+ * @param {string} queryString QueryString
+ * @returns {ModernJS}
+ */
 exports.dom = ModernJS.dom;
 exports.mjs = ModernJS.reload;

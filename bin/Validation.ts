@@ -1,5 +1,8 @@
 import { ModernJS, ModernJSList } from "ModernJS";
 
+/**
+ * ***ValidateRule*** : Validation check rule enumeration.
+ */
 export enum ValidateRule {
     /**
      * ***required*** : If no value is entered, an error is detected.
@@ -156,72 +159,232 @@ export enum ValidateRule {
      */
     valueBetween = "valueBetween",
     /**
-     * ***selected*** : If the value is not one of the options, an error occurs.
+     * ***selected*** : If the value is not one of the options, an error occurs.  
+     * ```typescript
+     * {
+     *    rule: ValidateRule.selected,
+     *    args: [ "apple", "orange", "kiwi", "banana" ],
+     * }
+     * ```
      */
     selected = "selected",
     /**
-     * ***selectedLength*** : If the value (array value) is not the specified number, an error is detected.
+     * ***selectedLength*** : If the value (array value) does not select the specified number of items, an error will be detected.
+     * ```typescript
+     * {
+     *    rule: ValidateRule.selectedLength,
+     *    args: [ 3 ],
+     * }
+     * ```
      */
     selectedLength = "selectedLength",
     /**
-     * ***selectedLengthMin*** : If the value (array value) is less than the specified number, an error is detected.
+     * ***selectedLengthMin*** : If the number of values ​​(array values) selected is less than the specified number, an error will be detected.
+     * ```typescript
+     * {
+     *    rule: ValidateRule.selectedLengthMin,
+     *    args: [ 4 ],
+     * }
+     * ```
      */
     selectedLengthMin = "selectedLengthMin",
     /**
-     * ***selectedLengthMax*** : If the value (array value) is greater than or equal to the specified number, an error occurs.
-     */
+     * ***selectedLengthMax*** : If the number of selected values ​​(array values) is greater than the specified number, an error will occur.
+     * ```typescript
+     * {
+     *    rule: ValidateRule.selectedLengthMax,
+     *    args: [ 10 ],
+     * }
+     * ```
+    */
     selectedLengthMax = "selectedLengthMax",
     /**
-     * ***selectedLengthBetween*** : If the value (array value) is outside the specified range, an error is detected.
-     */
+     * ***selectedLengthBetween*** : If you select a number of values ​​(array values) outside the specified range, an error will be detected.
+     * ```typescript
+     * {
+     *    rule: ValidateRule.selectedLengthBetween,
+     *    args: [ 5, 10 ],
+     * }
+     * ```
+    */
     selectedLengthBetween = "selectedLengthBetween",
     /**
      * ***confirmed*** : If the value is not the same as the specified value, an error occurs.
+     * ```typescript
+     * {
+     *    rule: ValidateRule.confirmed,
+     *    args: [ "password" ],
+     * }
+     * ```
      */
     confirmed = "confirmed",
     /**
      * ***like*** : If the value does not contain the specified string, an error occurs.
+     * ```typescript
+     * {
+     *    rule: ValidateRule.like,
+     *    args: [ "word" ],
+     * }
+     * ```
      */
     like = "like",
 
     /**
      * ***characterExists*** : If the value contains characters that do not exist in the specified string, an error occurs..
-     */
+     * ```typescript
+     * {
+     *    rule: ValidateRule.characterExists,
+     *    args: [ "0123456789" ],
+     * }
+     * ```
+    */
     characterExists = "characterExists",
     /**
      * ***alphaNumeric*** : If the value contains any characters other than half-width alphanumeric characters and specified special characters, an error is detected.
-     */
+     * ```typescript
+     * {
+     *    rule: ValidateRule.alphaNumeric,
+     * }
+     * ```
+     * Special characters can be allowed in args
+     * ```typescript
+     * {
+     *    rule: ValidateRule.alphaNumeric,
+     *    args: [ "-_=+/.," ],
+     * }
+     * ```
+    */
     alphaNumeric = "alphaNumeric",
     /**
-     * ***alphaNumericLower*** : If the value contains any characters other than half-width alphanumeric characters and specified special characters, an error is detected.
+     * ***alphaNumericLower*** : If the value contains any characters other than half-width alphanumeric characters and specified special characters, an error is detected.  
+     * Lowercase letters are allowed, but uppercase letters are not allowed.
+     * ```typescript
+     * {
+     *    rule: ValidateRule.alphaNumericLower,
+     * }
+     * ```
+     * Special characters can be allowed in args
+     * ```typescript
+     * {
+     *    rule: ValidateRule.alphaNumericLower,
+     *    args: [ "-_=+/.," ],
+     * }
+     * ```
      */
     alphaNumericLower = "alphaNumericLower",
     /**
-     * ***alphaNumericUpper*** : If the value contains any characters other than half-width alphanumeric characters and specified special characters, an error is detected.
+     * ***alphaNumericUpper*** : If the value contains any characters other than half-width alphanumeric characters and specified special characters, an error is detected.  
+     * Uppercase letters are allowed, but lowercase letters are not allowed.
+     * ```typescript
+     * {
+     *    rule: ValidateRule.alphaNumericUpper,
+     * }
+     * ```
+     * Special characters can be allowed in args
+     * ```typescript
+     * {
+     *    rule: ValidateRule.alphaNumericUpper,
+     *    args: [ "-_=+/.," ],
+     * }
+     * ```
      */
     alphaNumericUpper = "alphaNumericUpper",
     /**
      * ***alpha*** : An error is detected if the value contains any characters other than half-width English characters and the specified special characters.
+     * ```typescript
+     * {
+     *    rule: ValidateRule.alpha,
+     * }
+     * ```
+     * Special characters can be allowed in args
+     * ```typescript
+     * {
+     *    rule: ValidateRule.alpha,
+     *    args: [ "-_=+/.," ],
+     * }
+     * ``` 
      */
     alpha = "alpha",
     /**
-     * ***alphaLower*** : An error is detected if the value contains any characters other than half-width English characters and the specified special characters.
+     * ***alphaLower*** : An error is detected if the value contains any characters other than half-width English characters and the specified special characters.  
+     * Lowercase letters are allowed, but uppercase letters are not allowed.
+     * ```typescript
+     * {
+     *    rule: ValidateRule.alphaLower,
+     * }
+     * ```
+     * Special characters can be allowed in args
+     * ```typescript
+     * {
+     *    rule: ValidateRule.alphaLower,
+     *    args: [ "-_=+/.," ],
+     * }
+     * ``` 
      */
     alphaLower = "alphaLower",
     /**
-     * ***alphaUpper*** : An error is detected if the value contains any characters other than half-width English characters and the specified special characters.
+     * ***alphaUpper*** : An error is detected if the value contains any characters other than half-width English characters and the specified special characters.  
+     * Uppercase letters are allowed, but lowercase letters are not allowed.
+     * ```typescript
+     * {
+     *    rule: ValidateRule.alphaUpper,
+     * }
+     * ```
+     * Special characters can be allowed in args
+     * ```typescript
+     * {
+     *    rule: ValidateRule.alphaUpper,
+     *    args: [ "-_=+/.," ],
+     * }
+     * ``` 
      */
     alphaUpper = "alphaUpper",
     /**
-     * ***alphaNumeric*** : If the value contains any characters other than alphanumeric characters and the specified special characters, an error is detected.
+     * ***numeric*** : If the value contains any characters other than numeric characters and the specified special characters, an error is detected.
+     * ```typescript
+     * {
+     *    rule: ValidateRule.numeric,
+     * }
+     * ```
+     * Special characters can be allowed in args
+     * ```typescript
+     * {
+     *    rule: ValidateRule.numeric,
+     *    args: [ "-_=+/.," ],
+     * }
+     * ```
      */
     numeric = "numeric",
     /**
      * ***isHiranaga*** : If the value contains hiragana and any other characters than the specified special characters, an error is detected.
+     * ```typescript
+     * {
+     *    rule: ValidateRule.isHiranaga,
+     * }
+     * ```
+     * Special characters can be allowed in args
+     * ```typescript
+     * {
+     *    rule: ValidateRule.isHiranaga,
+     *    args: [ "-_=+/.," ],
+     * }
+     * ```
      */
     isHiranaga = "isHiranaga",
     /**
      * ***isKatakana*** : If the value contains katakana and any characters other than the specified special characters, an error is detected.
+     * ```typescript
+     * {
+     *    rule: ValidateRule.isKatakana,
+     * }
+     * ```
+     * Special characters can be allowed in args
+     * ```typescript
+     * {
+     *    rule: ValidateRule.isKatakana,
+     *    args: [ "-_=+/.," ],
+     * }
+     * ```
      */
     isKatakana = "isKatakana",
     /**
@@ -254,17 +417,51 @@ export interface ValidateRuleMaps {
 }
 
 export interface ValidateRuleMap {
+    /**
+     * ***rule*** : Specify the conditions to be checked for validation (required).
+     * The value can be a string or a value from the ValidateRule enumeration.  
+     * ```typescript
+     * {
+     *    rule: ValidateRule.required,
+     * }
+     * ```
+     */
     rule : ValidateRule,
 
+    /**
+     * ***index*** : This allows you to perform a validation check on a specific index number when there are multiple identical items.
+     */
     index?: number,
 
+    /**
+     * ***args*** : Specify the options for the validation check rules here.
+     * ```typescript
+     * {
+     *    rule: ValidateRule.lengthBetween,
+     *    args: [ 5, 30 ],      // <= Only strings between 5 and 30 characters are allowed.
+     * }
+     * ```
+     */
     args? : Array<string | number>,
 
+    /**
+     * ***message*** : Output message when validation check error is detected.
+     * ```typescript
+     * {
+     *    rule: ValidateRule.required,
+     *    message: "No value entered!",
+     * }
+     * ```
+     */
     message? : string,
 }
 
 export class ValidateErrorResult {
 
+    /**
+     * ***status*** : Verification check result flag.  
+     * ``false`` means there is an error,  ``true`` means there is no error
+     */
     public status : boolean = true;
 
     public fields : Array<string> = [];
@@ -273,10 +470,25 @@ export class ValidateErrorResult {
 
     public errors : ValidateRuleMaps = {};
 
+    /**
+     * ***get*** : Gets the results of validation checks for all items.
+     * @returns {{[name : string] : Array<string>}}
+     */
     public get() : {[name : string] : Array<string>};
 
+    /**
+     * ***get*** : Get the verification check results.
+     * @param {string} name field Name
+     * @returns {Array<string>}
+     */
     public get(name : string) : Array<string>;
 
+    /**
+     * ***get*** : Get the verification check results.
+     * @param {string} name field Name
+     * @param {number} index Target index number
+     * @returns {Array<string>}
+     */
     public get(name : string, index : number) : Array<string>;
 
     public get(name? : string, index? : number) : Array<string> | {[name : string] : Array<string>} {
@@ -320,10 +532,40 @@ export class ValidateErrorResult {
         return res;
     }
 
+    /**
+     * ***bind*** : Based on the result of the validation check, an error message is bound to the error virtual DOM from the specified virtual DOM list.  
+     * The virtual DOM must be created by specifying error.{fieldName} in the v attribute of HTML tags such as View.  
+     * ```html
+     * <div v="error.name"></div>
+     * ```
+     * @param {ModernJSList} mjs Virtual DOM List
+     * @returns {void}
+     */
     public bind(mjs : ModernJSList) : void;
 
+    /**
+     * ***bind*** : Based on the result of the validation check, an error message is bound to the error virtual DOM from the specified virtual DOM list.  
+     * The virtual DOM must be created by specifying error.{fieldName} in the v attribute of HTML tags such as View.  
+     * ```html
+     * <div v="error.name"></div>
+     * ```
+     * @param {ModernJSList} mjs Virtual DOM List
+     * @param {string} name field name
+     * @returns {void}
+     */
     public bind(mjs : ModernJSList, name : string) : void;
 
+    /**
+     * ***bind*** : Based on the result of the validation check, an error message is bound to the error virtual DOM from the specified virtual DOM list.  
+     * The virtual DOM must be created by specifying error.{fieldName} in the v attribute of HTML tags such as View.  
+     * ```html
+     * <div v="error.name"></div>
+     * ```
+     * @param {ModernJSList} mjs Virtual DOM List
+     * @param {string} name field name
+     * @param {number} index Index Number
+     * @returns {void}
+     */
     public bind(mjs : ModernJSList, name : string, index : number) : void;
 
     public bind(mjs : ModernJSList, name? : string, index? : number) : void {
@@ -370,12 +612,48 @@ export class ValidateErrorResult {
     }
 }
 
+/**
+ * ***Validation*** : Class used for input data validation checks.  
+ * There are two ways to set validation check rules:  
+ * Create a Validation derived class in the ``app/validation`` directory and place it there, or  
+ * Specify validation check rules directly using the ``verify`` method, etc.  
+ */
 export class Validation {
 
+    /**
+     * ***rules*** : Specify the validation check rules here.  
+     * Exsample:
+     * ```typescript
+     * public rules : ValidateRuleMaps = {
+     *    name: [
+     *       {
+     *          rule: ValidateRule.required,
+     *          message: "name is empty.",
+     *       },
+     *       {
+     *          rule: ValidateRule.lengthMax,
+     *          args: [ 100 ],
+     *          message: "Please enter within 100 characters.!",
+     *       },
+     *    ],
+     * };
+     * ```
+     */
     public rules : ValidateRuleMaps;
 
+    /**
+     * ***verify*** : Runs validation checks on given input data.
+     * @param {any} data Input data 
+     * @returns {ValidateErrorResult}
+     */
     public static verify(data: any) : ValidateErrorResult;
 
+    /**
+     * ***verify*** : Runs validation checks on given input data.
+     * @param {any} data Input data 
+     * @param {ValidateRuleMaps} rules Validation Check Rules
+     * @returns {ValidateErrorResult}
+     */
     public static verify(data: any, rules : ValidateRuleMaps) : ValidateErrorResult;
 
     public static verify(data: any, rules? : ValidateRuleMaps) : ValidateErrorResult {
@@ -384,6 +662,11 @@ export class Validation {
         return my.verify(data);
     }
 
+    /**
+     * ***verify*** : Runs validation checks on given input data.
+     * @param {any} data Input data 
+     * @returns {ValidateErrorResult}
+     */
     public verify(data : any) : ValidateErrorResult {
         const vm = new ValidateMethod(data, this);
         const c = Object.keys(this.rules);
@@ -436,21 +719,45 @@ export class Validation {
         return result;
     }
 
+    /**
+     * ***verifyBind*** : After checking the input data for validity, the error content is automatically bound using the virtual DOM.
+     * @param {ModernJSList} mjs Virtual DOM Class List
+     * @param {any} data input data
+     * @returns {ValidateErrorResult} 
+     */
+    public static verifyBind(mjs: ModernJSList, data: any) : ValidateErrorResult;
+
+    /**
+     * ***verifyBind*** : After checking the input data for validity, the error content is automatically bound using the virtual DOM.
+     * @param {ModernJSList} mjs Virtual DOM Class List
+     * @param {any} data input data
+     * @param {ValidateRuleMaps} rules Validation Check Rules
+     * @returns {ValidateErrorResult} 
+     */
+    public static verifyBind(mjs: ModernJSList, data: any, rules : ValidateRuleMaps) : ValidateErrorResult;
+    
     public static verifyBind(mjs: ModernJSList, data: any, rules? : ValidateRuleMaps) : ValidateErrorResult {
         const my = new this();
         if (rules) my.rules = rules;
         return my.verifyBind(mjs, data);
     }
 
+    /**
+     * ***verifyBind*** : After checking the input data for validity, the error content is automatically bound using the virtual DOM.
+     * @param {ModernJSList} mjs Virtual DOM Class List
+     * @param {any} data input data
+     * @returns {ValidateErrorResult} 
+     */
     public verifyBind(mjs: ModernJSList, data : any) : ValidateErrorResult {
         const result = this.verify(data);
         result.bind(mjs);
         return result;
     }
-
-
 }
 
+/**
+ * ***ValidateMethod*** : Preset functions for validation checks.
+ */
 export class ValidateMethod {
 
     private input : any;

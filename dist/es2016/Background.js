@@ -11,6 +11,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Background = void 0;
 const Util_1 = require("Util");
+/**
+ * ***Background*** : Classes that execute and manipulate business logic in the background.
+ * This class starts executing immediately after the app is launched, regardless of each screen transition.
+ * To use it in advance, you need to list it in backgrounds in ``app/config/App.ts``
+ *
+ * ```typescript
+ * public backgrounds : Array<string> = [
+ *    "Sample1",
+ *    "Sample2",
+ *    ...
+ * ];
+ * ```
+ */
 class Background {
     static load() {
         return __awaiter(this, void 0, void 0, function* () {

@@ -3,8 +3,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Controller = void 0;
 const Routes_1 = require("Routes");
 const Response_1 = require("Response");
+/**
+ * ***Controller*** : Main class for each screen.
+ * Event handlers for multiple screens can be managed collectively using public methods.
+ */
 class Controller {
     constructor() {
+        /**
+         * ***beginStatus*** :
+         */
         this.beginStatus = false;
         /**
          * ***view*** : Change the view name to be displayed.
@@ -40,7 +47,7 @@ class Controller {
         Response_1.Response.__rendering(routes, this);
     }
     /**
-     * ***setHead*** :
+     * ***setHead*** : If there is a UI to set in the head tag, you can specify it.
      * @param headName
      */
     setHead(headName) {
@@ -49,7 +56,7 @@ class Controller {
         Response_1.Response.__rendering(routes, this);
     }
     /**
-     * ***setHeader*** :
+     * ***setHeader*** : If there is a UI to set in the header tag, you can specify it.
      * @param headerName
      */
     setHeader(headerName) {
@@ -58,7 +65,7 @@ class Controller {
         Response_1.Response.__rendering(routes, this);
     }
     /**
-     * ***setFooter*** :
+     * ***setFooter*** : If there is a UI to set in the footer tag, you can specify it.
      * @param footerName
      */
     setFooter(footerName) {
@@ -88,9 +95,21 @@ class Controller {
      * @param {string} action before access controller action name
      */
     handleLeave(action) { }
+    /**
+     * ***handleTemplateChanged*** : An event handler that runs when the template specified in the member variable template changes.
+     */
     handleTemplateChanged() { }
+    /**
+     * ***handleHeadChanged*** : An event handler that runs when the template specified in the member variable head tag changes.
+     */
     handleHeadChanged() { }
+    /**
+     * ***handleHeaderChanged*** : An event handler that runs when the template specified in the member variable header tag changes.
+     */
     handleHeaderChanged() { }
+    /**
+     * ***handleFooterChanged*** : An event handler that runs when the template specified in the member variable footer tag changes.
+     */
     handleFooterChanged() { }
 }
 exports.Controller = Controller;

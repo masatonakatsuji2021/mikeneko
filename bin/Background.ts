@@ -1,6 +1,19 @@
 import { Util } from "Util";
 import { App } from "App";
 
+/**
+ * ***Background*** : Classes that execute and manipulate business logic in the background.  
+ * This class starts executing immediately after the app is launched, regardless of each screen transition.   
+ * To use it in advance, you need to list it in backgrounds in ``app/config/App.ts``
+ * 
+ * ```typescript
+ * public backgrounds : Array<string> = [
+ *    "Sample1",
+ *    "Sample2",
+ *    ...
+ * ];
+ * ```
+ */
 export class Background {
 
     public static async load(){

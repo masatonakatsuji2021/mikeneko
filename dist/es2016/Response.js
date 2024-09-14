@@ -23,6 +23,13 @@ class Response {
         const MyApp = require("app/config/App").MyApp;
         return MyApp.routeType;
     }
+    /**
+     * ***back*** : Return to the previous screen.
+     * However, this cannot be used if there is no history of the previous screen
+     * or if screen transitions are disabled using lock.
+     * The return value indicates whether the return to the previous screen was successful.
+     * @returns {boolean}
+     */
     static back() {
         if (Response.lock)
             return false;
@@ -56,15 +63,29 @@ class Response {
         if (this.routeType == App_1.AppRouteType.web)
             location.href = "#" + url;
     }
+    /**
+     * ***addhistory*** : Add root path to screen transition history.
+     * It will only be added to the history and will not change the screen.
+     * @param {string} url route path
+     * @returns {void}
+     */
     static addHistory(url) {
         if (Response.lock)
             return;
         this.isBack = false;
         Data_1.Data.push("history", url);
     }
+    /**
+     * ***historyClear*** : Clear screen transition history
+     * @returns {void}
+     */
     static historyClear() {
         Data_1.Data.set("history", []);
     }
+    /**
+     * ***pop*** : Go back to the previous screen transition.
+     * @returns {void}
+     */
     static pop() {
         Data_1.Data.pop("history");
     }
@@ -72,20 +93,34 @@ class Response {
         this.pop();
         this.next(url, send);
     }
+    /**
+     * ***now*** : Get current route path.
+     * @returns {string}
+     */
     static now() {
         return Routes_1.Routes.getRoute().url;
     }
+    /**
+     * ***isNext*** : A flag that determines if you have proceeded from the next screen.
+     */
     static get isNext() {
         return !this.isBack;
     }
+    /**
+     * ***nowView*** : Get the current View class object if there is one.
+     */
     static get nowView() {
         if (Data_1.Data.get("beforeView"))
             return Data_1.Data.get("beforeView");
     }
+    /**
+     * ***nowController*** : Get the current Controller class object if there is one.
+     */
     static get nowController() {
         if (Data_1.Data.get("beforeController"))
             return Data_1.Data.get("beforeController");
     }
+    // rendering....
     static rendering(route, send) {
         return __awaiter(this, void 0, void 0, function* () {
             const MyApp = require("app/config/App").MyApp;
@@ -317,74 +352,44 @@ class Response {
         return content;
     }
     /**
-     * *** view *** : Get View's content information.
+     * ***view *** : Get View's content information.
      * @param {string} viewName View Name
      * @returns {string} view contents
      */
     static view(viewName) {
         return this.renderHtml("view/" + viewName);
     }
-    /**
-     * ***bindView***
-     * @param mjs
-     * @param viewName
-     * @param sendData
-     * @returns
-     */
     static bindView(mjs, viewName, sendData) {
         mjs.html = this.view(viewName);
         mjs.reload();
         return this.loadClass("View", viewName, mjs, sendData);
     }
     /**
-     * ***template*** :
-     * Get template content information.
+     * ***template*** : Get template content information.
      * @param {string} templateName Template Name
      * @returns {string} template contents
      */
     static template(templateName) {
         return this.renderHtml("template/" + templateName);
     }
-    /**
-     * ***bindTemplate***
-     * @param mjs
-     * @param templateName
-     * @param sendData
-    * @returns
-     */
     static bindTemplate(mjs, templateName, sendData) {
         mjs.html = this.template(templateName);
         mjs.reload();
         return this.loadClass("Template", templateName, mjs, sendData);
     }
     /**
-     * ***UI*** :
-     * Get UI content information.
+     * ***UI*** : Get UI content information.
      * @param {string} uiName UI Name
      * @returns {string} UI contents
      */
     static UI(uiName) {
         return this.renderHtml("ui/" + uiName);
     }
-    /**
-     * ***bindUI***
-     * @param mjs
-     * @param UIName
-     * @param sendData
-     * @returns
-     */
     static bindUI(mjs, UIName, sendData) {
         mjs.html = this.UI(UIName);
         mjs.reload();
         return this.loadClass("UI", UIName, mjs, sendData);
     }
-    /**
-     * ***appendUI***
-     * @param mjs
-     * @param UIName
-     * @param sendData
-     * @returns
-     */
     static appendUI(mjs, UIName, sendData) {
         mjs.append(this.UI(UIName), true);
         const myMjs = new ModernJS_1.ModernJS();
@@ -392,19 +397,13 @@ class Response {
         return this.loadClass("UI", UIName, myMjs, sendData);
     }
     /**
-     * ***dialog***
-     * @param dialogName
-     * @returns
+     * ***dialog*** : Get Dialog content information.
+     * @param {string} dialogName dialog name
+     * @returns {string}
      */
     static dialog(dialogName) {
         return this.renderHtml("dialog/" + dialogName);
     }
-    /**
-     * ***openDialog***
-     * @param dialogName
-     * @param option
-     * @returns
-     */
     static openDialog(dialogName, option) {
         if (!option)
             option = {};
@@ -519,5 +518,13 @@ class Response {
     }
 }
 exports.Response = Response;
+/**
+ * ***isBack*** : A flag that determines if you are back from the previous screen.
+ * True if you return from the previous screen, false if you proceed from the previous screen
+ */
 Response.isBack = false;
+/**
+ * ***lock*** : Flag to lock screen transition operations.
+ * If set to true, back operations such as Response.back will be temporarily disabled.
+ */
 Response.lock = false;

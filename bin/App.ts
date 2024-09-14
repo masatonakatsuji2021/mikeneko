@@ -7,6 +7,9 @@ export enum AppRouteType {
     application = "application",
 }
 
+/**
+ * ***App*** : Class for initial settings of the application.
+ */
 export class App {
 
     /**
@@ -16,18 +19,39 @@ export class App {
 
     /**
      * ***routeType*** : Method for page transition.  
+     * application = A mode for building apps. Screen transition history is managed and operated by the app.
      * web = Change the browser URL and move to the page. You can go back by pressing the back button on the browser.  
-     * application = 
      */
     public static routeType : AppRouteType = AppRouteType.web;
 
     /**
-     * ***routes*** : Routing Settings
+     * ***routes*** : Routing Settings.  
+     * Enter the View or Controller name to be applied to the route path (URL) as shown below.  
+     * (If there is no ``c:`` or ``a:`` description, it is the View class name.)
+     * ```typescript
+     * public static routes : Routes = {
+     *    "/" : "home",
+     *    "/page1": "page1",
+     *    "/page2": "page2",
+     *    "/page3": {
+     *       "/" : "c: page3, a: index",            // <= The index method of Page3Controller
+     *       "/edit" : "c: page3, a: edit",         // <= The edit method of Page3Controller
+     *    },
+     *    ....
+     * };
+     * ```
      */
     public static routes: Routes;
 
     /**
-     * ***backgrounds*** : Background class list to run
+     * ***backgrounds*** : Background class list to run.  
+     * Each background class is listed in the order in which it will run.
+     * ```typescript
+     * public static backgrounds : Array<string> = [
+     *    "Sample1",
+     *    "Sample2",
+     *    ...
+     * ];     * 
      */
     public static backgrounds: Array<string>;
 
@@ -42,7 +66,9 @@ export class App {
     public static localStorage : string;
 
     /**
-     * +++delay*** : Specify the delay time for screen transitions.
+     * ***delay*** : Specify the delay time for screen transitions.  
+     * Default is 100 (ms).  
+     * If you specify 0, the button will transition immediately without executing the animation when pressed.
      */
     public static delay : number = 100;
 }
