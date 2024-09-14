@@ -1,5 +1,8 @@
 type ShortcodeHandle = (args : {[name : string] : any} ) => string;
 
+/**
+ * ***Shortcode*** : Classes for creating shortcodes
+ */
 export class Shortcode {
 
     public static shortCodes : {[name : string] : ShortcodeHandle} = {};

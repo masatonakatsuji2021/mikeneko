@@ -6,7 +6,7 @@ var UI = /** @class */ (function () {
     }
     /**
      * ***handle*** : Event handler for when the UI is displayed.
-     * @param {any} sendData Transmission data contents
+     * @param {any} sendData? Transmission data contents
      * @returns {void}
      */
     UI.prototype.handle = function (sendData) { };

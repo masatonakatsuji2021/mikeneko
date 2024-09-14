@@ -1,6 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Shortcode = void 0;
+/**
+ * ***Shortcode*** : Classes for creating shortcodes
+ */
 var Shortcode = /** @class */ (function () {
     function Shortcode() {
     }
