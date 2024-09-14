@@ -21,6 +21,14 @@ var ModernJS = /** @class */ (function () {
         this.els = [];
         /**
          * ***childs*** : The child ModernJS class for this virtual DOM.
+         * The ModernJS class of the child can be set by specifying it in the v attribute of the HTML tag, separated by .
+         * ```html
+         * <div v="main.sub"></div>
+         * ```
+         * In the above case, the following code can be used to manipulate the DOM as a child ModernJS
+         * ```typescript
+         * mjs.main.childs.sub.text = "Sub Text....";
+         * ```
          */
         this.childs = {};
         /**
@@ -104,6 +112,14 @@ var ModernJS = /** @class */ (function () {
     };
     /**
      * ***dom*** : Finds an element for the specified query path and returns the virtual DOM class that contains the element.
+     * For example, prepare the following HTML:
+     * ```html
+     * <div class="item"></div>
+     * ```
+     * To get the tag with the class attribute item as a virtual DOM, write the following code in TypeScript:
+     * ```typescript
+     * const subQuery : ModernJS = ModernJS.dom(".item");
+     * ```
      * @param {string} queryString QueryString
      * @returns {ModernJS}
      */
@@ -117,6 +133,13 @@ var ModernJS = /** @class */ (function () {
     };
     /**
      * ***addEl*** : Manually adding elements to the Virtual DOM.
+     * For example, after getting the p tag as an element,
+     * write the following code in TypeScript to create an empty ModernJS class and add the p tag element to it.
+     * ```typescript
+     * const el = document.querySelector("p");
+     * const mjs = ModernJS.create();
+     * mjs.addEl(el);
+     * ```
      * @param {HTMLElement} el HTMLElement
      * @returns {MOdernJS}
      */
@@ -180,7 +203,7 @@ var ModernJS = /** @class */ (function () {
     };
     Object.defineProperty(ModernJS.prototype, "length", {
         /**
-         * ***length*** : Get the number of elements
+         * ***length*** : Get the number of elements.
          */
         get: function () {
             return this.els.length;
@@ -191,6 +214,10 @@ var ModernJS = /** @class */ (function () {
     Object.defineProperty(ModernJS.prototype, "first", {
         /**
          * ***first*** : Get the virtual DOM class that contains the first element
+         * A code sample of TypeScript is shown below.
+         * ```typescript
+         * const first : ModernJS = mjs.first;
+         * ```
          */
         get: function () {
             var mjs = new ModernJS();
@@ -203,6 +230,10 @@ var ModernJS = /** @class */ (function () {
     Object.defineProperty(ModernJS.prototype, "last", {
         /**
          * ***last*** : Get the virtual DOM class that contains the last element.
+         * A code sample of TypeScript is shown below.
+         * ```typescript
+         * const last : ModernJS = mjs.last;
+         * ```
          */
         get: function () {
             var mjs = new ModernJS();
@@ -214,6 +245,10 @@ var ModernJS = /** @class */ (function () {
     });
     /**
      * ***index*** : Gets the virtual DOM class that contains the element at the specified index.
+     * A code sample of TypeScript is shown below.
+     * ```typescript
+     * const three : ModernJS = mjs.index(2);
+     * ```
      * @param {number} index Element Index Number
      * @returns {ModernJS}
      */
@@ -264,6 +299,17 @@ var ModernJS = /** @class */ (function () {
     });
     /**
      * ***querySelector*** : Searches for an element in the virtual DOM for the specified query path and returns the Virtual DOM Class that contains that element.
+     * For example, prepare the following HTML:
+     * ```html
+     * <div v="main">
+     *      <div class="item"></div>
+     * </div>
+     * ```
+     * To get the tag with the class attribute item as a virtual DOM, write the following code in TypeScript:
+     * (The variable main is the ModernJS class v="main" above.)
+     * ```typescript
+     * const item : ModernJS = main.querySelector(".item");
+     * ```
      * @param {string} queryString QueryString
      * @returns {ModernJS}
      */
@@ -278,14 +324,19 @@ var ModernJS = /** @class */ (function () {
         return mjs;
     };
     Object.defineProperty(ModernJS.prototype, "text", {
-        /**
-         * ***text*** : Gets or sets the specified text.
-         */
         get: function () {
             return this.els[0].innerText;
         },
         /**
          * ***text*** : Gets or sets the specified text.
+         * The following is an example of how to set text:
+         * ```typescript
+         * mjs.text = "Text Area Sample Text.....";
+         * ```
+         * The following is an example of how to get text:
+         * ```typescript
+         * const text : string = mjs.text;
+         * ```
          */
         set: function (value) {
             this.setText(value);
@@ -309,6 +360,11 @@ var ModernJS = /** @class */ (function () {
         /**
          * ***brText*** : Set the text content.
          * Line breaks will be converted to line break tags.
+         * A code sample of TypeScript is shown below.
+         * (The \n part is converted to a line break tag.)
+         * ```typescript
+         * mjs.brText = "Text Area \n Sample Text .....";
+         * ```
          */
         set: function (value) {
             value = value.toString().split("\n").join("<br>");
@@ -318,14 +374,19 @@ var ModernJS = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(ModernJS.prototype, "html", {
-        /**
-         * ***html*** : Gets or sets an HTML tag.
-         */
         get: function () {
             return this.els[0].innerHTML;
         },
         /**
          * ***html*** : Gets or sets an HTML tag.
+         * The following is an example of how to set text:
+         * ```typescript
+         * mjs.html = "<h1>HTML Tag Test Sample ....</h1>";
+         * ```
+         * The following is an example of how to get text:
+         * ```typescript
+         * const html : string = mjs.html;
+         * ```
          */
         set: function (value) {
             this.setHtml(value);
@@ -333,12 +394,6 @@ var ModernJS = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
-    /**
-     * ***setHtml*** : Gets or sets an HTML tag.
-     * @param {string | HTMLElement | ModernJS} value HTML tag content or HTMLElement, ModernJS class
-     * @param {boolean?} noReload Whether or not reload can be executed
-     * @returns {ModernJS}
-     */
     ModernJS.prototype.setHtml = function (value, noReload) {
         var _this = this;
         this.els.forEach(function (el) {
@@ -367,14 +422,19 @@ var ModernJS = /** @class */ (function () {
         return this;
     };
     Object.defineProperty(ModernJS.prototype, "outerHtml", {
-        /**
-         * ***outerHTML*** : Get or set the outerHTML.
-         */
         get: function () {
             return this.els[0].outerHTML;
         },
         /**
          * ***outerHTML*** : Get or set the outerHTML.
+         * The following is an example of how to set text:
+         * ```typescript
+         * mjs.outerHTML = "<h1>Outer HTML Tag Test Sample ....</h1>";
+         * ```
+         * The following is an example of how to get text:
+         * ```typescript
+         * const outerHTML : string = mjs.outerHTML;
+         * ```
          */
         set: function (value) {
             this.els.forEach(function (el) {
@@ -438,6 +498,10 @@ var ModernJS = /** @class */ (function () {
     };
     /**
      * ***remove*** : Delete the target element.
+     * A code sample of TypeScript is shown below.
+     * ```typescript
+     * mjs.remove();
+     * ```
      * @returns {ModernJS}
      */
     ModernJS.prototype.remove = function () {
@@ -447,7 +511,11 @@ var ModernJS = /** @class */ (function () {
         return this;
     };
     /**
-     * ***style*** : Setting style(stylesheets) attributes for an element
+     * ***style*** : Setting style(stylesheets) attributes for an element.
+     * A code sample of TypeScript is shown below.
+     * ```typescript
+     * mjs.style({ background: "rgb(255,100,0" });
+     * ```
      * @param {[name : string] : string | number} stylesheets Style attribute information
      * @returns {ModernJS}
      */
@@ -468,6 +536,10 @@ var ModernJS = /** @class */ (function () {
     };
     /**
      * ***getStyle*** : Get style information for the specified selector.
+     * A code sample of TypeScript is shown below.
+     * ```typescript
+     * const background : string = mjs.getStyle("background");
+     * ```
      * @param {string} name selector
      * @returns {string | number}
      */
@@ -487,6 +559,10 @@ var ModernJS = /** @class */ (function () {
     };
     /**
      * ***isAttr*** : Whether the specified attribute name exists for the element.
+     * A code sample of TypeScript is shown below.
+     * ```typescript
+     * const exists : boolean = mjs.isAttr("min");
+     * ```
      * @param {string} name attribute name
      * @returns {boolean}
      */
@@ -498,7 +574,11 @@ var ModernJS = /** @class */ (function () {
         return false;
     };
     /**
-     * ***removeAttr*** : Remove attribute information from an element
+     * ***removeAttr*** : Remove attribute information from an element.
+     * A code sample of TypeScript is shown below.
+     * ```typescript
+     * mjs.removeAttr("min");
+     * ```
      * @param {string} name The name of the attribute to be deleted.
      * @returns {ModernJS}
      */
@@ -509,14 +589,20 @@ var ModernJS = /** @class */ (function () {
         return this;
     };
     Object.defineProperty(ModernJS.prototype, "src", {
-        /**
-         * ***src*** : Get or set the src attribute value.
-         */
         get: function () {
             return this.attr("src");
         },
         /**
          * ***src*** : Get or set the src attribute value.
+         * A code sample of TypeScript is shown below.
+         * An example of setting the src attribute is as follows:
+         * ```typescript
+         * mjs.src = "img/sample.png";
+         * ```
+         * An example of getting the src attribute is below.
+         * ```typescript
+         * const src : string = mjs.src;
+         * ```
          */
         set: function (value) {
             this.attr("src", value);
@@ -525,14 +611,20 @@ var ModernJS = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(ModernJS.prototype, "placeHolder", {
-        /**
-         * ***placeHolder*** : Get or set the placeholder attribute value.
-         */
         get: function () {
             return this.attr("placeholder");
         },
         /**
          * ***placeHolder*** : Get or set the placeholder attribute value.
+         * A code sample of TypeScript is shown below.
+         * An example of setting the src attribute is as follows:
+         * ```typescript
+         * mjs.placeHolder = "Placeholder text.....";
+         * ```
+         * An example of getting the src attribute is below.
+         * ```typescript
+         * const placeHolder : string = mjs.placeHolder;
+         * ```
          */
         set: function (value) {
             this.attr("placeholder", value);
@@ -541,14 +633,20 @@ var ModernJS = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(ModernJS.prototype, "href", {
-        /**
-         * ***href*** : Get or set the href attribute value.
-         */
         get: function () {
             return this.attr("href");
         },
         /**
          * ***href*** : Get or set the href attribute value.
+         * A code sample of TypeScript is shown below.
+         * An example of setting the src attribute is as follows:
+         * ```typescript
+         * mjs.href = "css/style.css";
+         * ```
+         * An example of getting the src attribute is below.
+         * ```typescript
+         * const href : string = mjs.href;
+         * ```
          */
         set: function (value) {
             this.attr("href", value);
@@ -559,6 +657,10 @@ var ModernJS = /** @class */ (function () {
     Object.defineProperty(ModernJS.prototype, "display", {
         /**
          * ***display*** : Set whether elements are visible or hidden.
+         * A code sample of TypeScript is shown below.
+         * ```typescript
+         * mjs.display = true;
+         * ```
          */
         set: function (status) {
             if (status) {
@@ -572,14 +674,20 @@ var ModernJS = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(ModernJS.prototype, "id", {
-        /**
-         * ***id*** : Gets or sets the ID attribute value of an element.
-         */
         get: function () {
             return this.attr("id");
         },
         /**
          * ***id*** : Gets or sets the ID attribute value of an element.
+         * A code sample of TypeScript is shown below.
+         * An example of setting the src attribute is as follows:
+         * ```typescript
+         * mjs.id = "ancher1";
+         * ```
+         * An example of getting the src attribute is below.
+         * ```typescript
+         * const id : string = mjs.id;
+         * ```
          */
         set: function (value) {
             this.attr("id", value);
@@ -588,14 +696,20 @@ var ModernJS = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(ModernJS.prototype, "name", {
-        /**
-         * ***name*** : Gets or sets the name attribute value of an element.
-         */
         get: function () {
             return this.attr("name");
         },
         /**
          * ***name*** : Gets or sets the name attribute value of an element.
+         * A code sample of TypeScript is shown below.
+         * An example of setting the src attribute is as follows:
+         * ```typescript
+         * mjs.name = "tagname1";
+         * ```
+         * An example of getting the src attribute is below.
+         * ```typescript
+         * const name : string = mjs.name;
+         * ```
          */
         set: function (value) {
             this.attr("name", value);
@@ -605,6 +719,10 @@ var ModernJS = /** @class */ (function () {
     });
     /**
      * ***isClass*** : Gets whether the class attribute of an element exists.
+     * A code sample of TypeScript is shown below.
+     * ```typescript
+     * const exists : boolean = mjs.isClass("class1");
+     * ```
      * @param {string} className Target class attribute
      * @returns {boolean}
      */
@@ -613,6 +731,10 @@ var ModernJS = /** @class */ (function () {
     };
     /**
      * ***addClass*** : Adds the specified class attribute to an element.
+     * A code sample of TypeScript is shown below.
+     * ```typescript
+     * mjs.addClass("class2");
+     * ```
      * @param {string} className add class attribute
      * @returns {ModernJS}
      */
@@ -624,6 +746,10 @@ var ModernJS = /** @class */ (function () {
     };
     /**
      * ***removeClass*** : Remove a class attribute from an element.
+     * A code sample of TypeScript is shown below.
+     * ```typescript
+     * mjs.removeClass("class2");
+     * ```
      * @param {string} className delete class attribute
      * @returns {ModernJS}
      */
@@ -644,6 +770,10 @@ var ModernJS = /** @class */ (function () {
     };
     /**
      * ***removeData*** : Deletes data stored in the virtual DOM.
+     * A code sample of TypeScript is shown below.
+     * ```typescript
+     * mjs.removeData("data01");
+     * ```
      * @param {string} name delete data name
      * @returns {ModernJS}
      */
@@ -667,6 +797,13 @@ var ModernJS = /** @class */ (function () {
     Object.defineProperty(ModernJS.prototype, "onClick", {
         /**
          * ***onClick*** : Set an event listener for when an element is clicked.
+         * A code sample of TypeScript is shown below.
+         * ```typescript
+         * mjs.onClick = (e: Event, context: ModernJS) => {
+         *      console.log("click event...");
+         *      context.style({ color: "red" });
+         * };
+         * ```
          */
         set: function (listener) {
             this.on("click", listener);
@@ -676,7 +813,14 @@ var ModernJS = /** @class */ (function () {
     });
     Object.defineProperty(ModernJS.prototype, "onDblClick", {
         /**
-         * ***onDblClick*** : Sets an event listener for when an element is double-clicked
+         * ***onDblClick*** : Sets an event listener for when an element is double-clicked.
+         * A code sample of TypeScript is shown below.
+         * ```typescript
+         * mjs.onDblClick = (e: Event, context: ModernJS) => {
+         *      console.log("double click event...");
+         *      context.style({ color: "red" });
+         * };
+         * ```
          */
         set: function (listener) {
             this.on("dblclick", listener);
@@ -687,6 +831,13 @@ var ModernJS = /** @class */ (function () {
     Object.defineProperty(ModernJS.prototype, "onFocus", {
         /**
          * ***onFocus*** : Sets an event listener for when an element is focused.
+         * A code sample of TypeScript is shown below.
+         * ```typescript
+         * mjs.onFocus = (e: Event, context: ModernJS) => {
+         *      console.log("focus event...");
+         *      context.style({ color: "red" });
+         * };
+         * ```
          */
         set: function (listener) {
             this.on("focus", listener);
@@ -697,6 +848,13 @@ var ModernJS = /** @class */ (function () {
     Object.defineProperty(ModernJS.prototype, "onChange", {
         /**
          * ***onChange*** : Sets an event listener for when an element's input value is changed.
+         * A code sample of TypeScript is shown below.
+         * ```typescript
+         * mjs.onChange = (e: Event, context: ModernJS) => {
+         *      console.log("change event...");
+         *      context.style({ color: "red" });
+         * };
+         * ```
          */
         set: function (listener) {
             this.on("change", listener);
@@ -707,6 +865,13 @@ var ModernJS = /** @class */ (function () {
     Object.defineProperty(ModernJS.prototype, "onMouseDown", {
         /**
          * ***onMouseDown*** : Sets an event listener for when the mouse button is pressed on an element.
+         * A code sample of TypeScript is shown below.
+         * ```typescript
+         * mjs.onMouseDown = (e: Event, context: ModernJS) => {
+         *      console.log("mouse down event...");
+         *      context.style({ color: "red" });
+         * };
+         * ```
          */
         set: function (listener) {
             this.on("mousedown", listener);
@@ -717,6 +882,13 @@ var ModernJS = /** @class */ (function () {
     Object.defineProperty(ModernJS.prototype, "onMouseUp", {
         /**
          * ***onMouseUp*** : Sets an event listener for when a mouse button is released on an element.
+         * A code sample of TypeScript is shown below.
+         * ```typescript
+         * mjs.onMouseUp = (e: Event, context: ModernJS) => {
+         *      console.log("mouse up event...");
+         *      context.style({ color: "red" });
+         * };
+         * ```
          */
         set: function (listener) {
             this.on("mouseup", listener);
@@ -727,6 +899,13 @@ var ModernJS = /** @class */ (function () {
     Object.defineProperty(ModernJS.prototype, "onMouseMove", {
         /**
          * ***onMouseMove*** : Sets an event listener for when the mouse cursor moves within an element.
+         * A code sample of TypeScript is shown below.
+         * ```typescript
+         * mjs.onMouseMove = (e: Event, context: ModernJS) => {
+         *      console.log("mouse move event...");
+         *      context.style({ color: "red" });
+         * };
+         * ```
          */
         set: function (listener) {
             this.on("mousemove", listener);
@@ -736,6 +915,10 @@ var ModernJS = /** @class */ (function () {
     });
     /**
      * ***dispatch*** : Executes a specified event on an element.
+     * A code sample of TypeScript is shown below.
+     * ```typescript
+     * mjs.dispatch("click");
+     * ```
      * @param {HTMLElementEventMap} eventName dispatch event name
      * @returns {ModernJS}
      */
@@ -749,6 +932,10 @@ var ModernJS = /** @class */ (function () {
     Object.defineProperty(ModernJS.prototype, "value", {
         /**
          * ***value*** : If the element is an input field, gets the entered or selected value.
+         * A code sample of TypeScript is shown below.
+         * ```typescript
+         * const value = mjs.value;
+         * ```
          */
         get: function () {
             if (!(this.tagName == "INPUT" ||
@@ -808,6 +995,15 @@ var ModernJS = /** @class */ (function () {
         },
         /**
          * ***value*** : If the element is an input field, set the input value or selected value.
+         * A code sample of TypeScript is shown below.
+         * An example of setting the src attribute is as follows:
+         * ```typescript
+         * mjs.value("value text ....");
+         * ```
+         * An example of getting the src attribute is below.
+         * ```typescript
+         * const value = mjs.value;
+         * ```
          */
         set: function (value) {
             if (!(this.tagName == "INPUT" ||
@@ -880,9 +1076,6 @@ var ModernJS = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(ModernJS.prototype, "checked", {
-        /**
-         * ***checked*** : If the element is a checkbox, gets the selection status.
-         */
         get: function () {
             // @ts-ignore
             var el = this.els[0];
@@ -890,6 +1083,15 @@ var ModernJS = /** @class */ (function () {
         },
         /**
          * ***checked*** : If the element is a checkbox, sets whether it can be selected.
+         * A code sample of TypeScript is shown below.
+         * An example of setting the src attribute is as follows:
+         * ```typescript
+         * mjs.checked = true;
+         * ```
+         * An example of getting the src attribute is below.
+         * ```typescript
+         * const checked : boolean = mjs.checked;
+         * ```
          */
         set: function (status) {
             // @ts-ignore
@@ -901,6 +1103,10 @@ var ModernJS = /** @class */ (function () {
     });
     /**
      * ***reset*** : If the element is an input field, resets the input or selected value.
+     * A code sample of TypeScript is shown below.
+     * ```typescript
+     * mjs.reset();
+     * ```
      * @returns {ModernJS}
      */
     ModernJS.prototype.reset = function () {
@@ -965,6 +1171,10 @@ var ModernJS = /** @class */ (function () {
     };
     /**
      * ***selectEmpty*** : If the element is a select tag, set the empty selection.
+     * A code sample of TypeScript is shown below.
+     * ```typescript
+     * mjs.selectEmpty("--- Select ----");
+     * ```
      * @param {string} text Selection Text Name
      * @returns {ModernJS}
      */
@@ -979,6 +1189,10 @@ var ModernJS = /** @class */ (function () {
     };
     /**
      * ***selectResetParam*** : If the element is a Select tag, reset the options.
+     * A code sample of TypeScript is shown below.
+     * ```typescript
+     * mjs.selectResetParam();
+     * ```
      * @returns {ModernJS}
      */
     ModernJS.prototype.selectResetParam = function () {
@@ -988,6 +1202,10 @@ var ModernJS = /** @class */ (function () {
     Object.defineProperty(ModernJS.prototype, "selectedText", {
         /**
          * ***selectedText*** : If the element is a checkbox, gets the display text of the selected item.
+         * A code sample of TypeScript is shown below.
+         * ```typescript
+         * const selected : string = mjs.selectedText;
+         * ```
          */
         get: function () {
             var values = [];
@@ -1028,6 +1246,14 @@ var ModernJS = /** @class */ (function () {
 exports.ModernJS = ModernJS;
 /**
  * ***dom*** : Finds an element for the specified query path and returns the virtual DOM class that contains the element.
+ * For example, prepare the following HTML:
+ * ```html
+ * <div class="item"></div>
+ * ```
+ * To get the tag with the class attribute item as a virtual DOM, write the following code in TypeScript:
+ * ```typescript
+ * const subQuery : ModernJS = dom(".item");
+ * ```
  * @param {string} queryString QueryString
  * @returns {ModernJS}
  */
