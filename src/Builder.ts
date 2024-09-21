@@ -156,7 +156,7 @@ export class Builder {
                 "Storage", 
                 "Shortcode",
                 "Template", 
-                "Util", 
+                "Lib", 
                 "Validation",
                 "View", 
                 "UI", 

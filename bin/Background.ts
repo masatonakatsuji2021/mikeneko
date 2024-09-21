@@ -1,4 +1,4 @@
-import { Util } from "Util";
+import { Lib } from "Lib";
 import { App } from "App";
 
 /**
@@ -23,7 +23,7 @@ export class Background {
         // background class method load.
        if(MyApp.backgrounds){
            for(let n = 0 ; n < MyApp.backgrounds.length ; n++){
-                const backgroundName = Util.getModulePath(MyApp.backgrounds[n]);
+                const backgroundName = Lib.getModulePath(MyApp.backgrounds[n]);
                 const backgroundPath : string = "app/background/" + backgroundName;
                 if(!useExists(backgroundPath)) continue;
                 const background : typeof Background = use(backgroundPath);

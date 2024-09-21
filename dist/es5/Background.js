@@ -37,7 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Background = void 0;
-var Util_1 = require("Util");
+var Lib_1 = require("Lib");
 /**
  * ***Background*** : Classes that execute and manipulate business logic in the background.
  * This class starts executing immediately after the app is launched, regardless of each screen transition.
@@ -66,7 +66,7 @@ var Background = /** @class */ (function () {
                         _a.label = 1;
                     case 1:
                         if (!(n < MyApp.backgrounds.length)) return [3 /*break*/, 4];
-                        backgroundName = Util_1.Util.getModulePath(MyApp.backgrounds[n]);
+                        backgroundName = Lib_1.Lib.getModulePath(MyApp.backgrounds[n]);
                         backgroundPath = "app/background/" + backgroundName;
                         if (!useExists(backgroundPath))
                             return [3 /*break*/, 3];

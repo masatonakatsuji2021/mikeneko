@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Response = void 0;
 const App_1 = require("App");
 const Routes_1 = require("Routes");
-const Util_1 = require("Util");
+const Lib_1 = require("Lib");
 const Data_1 = require("Data");
 const UI_1 = require("UI");
 const ModernJS_1 = require("ModernJS");
@@ -114,8 +114,6 @@ class Response {
     // rendering....
     static async rendering(route, send) {
         const MyApp = require("app/config/App").MyApp;
-        if (MyApp.delay)
-            await Util_1.Util.sleep(MyApp.delay);
         try {
             // Controller & View Leave 
             const befCont = Data_1.Data.get("beforeController");
@@ -130,6 +128,12 @@ class Response {
                 if (typeof res == "boolean" && res === false)
                     return;
             }
+            if (MyApp.animationCloseClassName)
+                (0, ModernJS_1.dom)("main").addClass(MyApp.animationCloseClassName);
+            if (MyApp.animationOpenClassName)
+                (0, ModernJS_1.dom)("main").removeClass(MyApp.animationOpenClassName);
+            if (MyApp.delay)
+                await Lib_1.Lib.sleep(MyApp.delay);
             if (route.mode == Routes_1.DecisionRouteMode.Notfound)
                 throw ("Page Not found");
             if (route.controller) {
@@ -144,8 +148,8 @@ class Response {
         }
     }
     static async renderingOnController(route, send) {
-        const controllerName = Util_1.Util.getModuleName(route.controller + "Controller");
-        const controllerPath = "app/controller/" + Util_1.Util.getModulePath(route.controller + "Controller");
+        const controllerName = Lib_1.Lib.getModuleName(route.controller + "Controller");
+        const controllerPath = "app/controller/" + Lib_1.Lib.getModulePath(route.controller + "Controller");
         if (!useExists(controllerPath)) {
             throw ("\"" + controllerPath + "\" Class is not found.");
         }
@@ -153,15 +157,15 @@ class Response {
         const cont = new controllerClass[controllerName]();
         cont.sendData = send;
         const viewName = route.action + "View";
-        const viewPath = "app/view/" + route.controller + "/" + Util_1.Util.getModulePath(viewName);
+        const viewPath = "app/view/" + route.controller + "/" + Lib_1.Lib.getModulePath(viewName);
         let vw;
         if (useExists(viewPath)) {
             const View_ = use(viewPath);
-            if (!View_[Util_1.Util.getModuleName(viewName)]) {
-                console.error("[WARM] \"" + Util_1.Util.getModuleName(viewName) + "\"View Class not exists.");
+            if (!View_[Lib_1.Lib.getModuleName(viewName)]) {
+                console.error("[WARM] \"" + Lib_1.Lib.getModuleName(viewName) + "\"View Class not exists.");
             }
             else {
-                vw = new View_[Util_1.Util.getModuleName(viewName)]();
+                vw = new View_[Lib_1.Lib.getModuleName(viewName)]();
                 vw.sendData = send;
             }
         }
@@ -215,8 +219,8 @@ class Response {
             await vw.handleRenderAfter();
     }
     static async renderingOnView(route, send) {
-        const viewName = Util_1.Util.getModuleName(route.view + "View");
-        const viewPath = "app/view/" + Util_1.Util.getModulePath(route.view + "View");
+        const viewName = Lib_1.Lib.getModuleName(route.view + "View");
+        const viewPath = "app/view/" + Lib_1.Lib.getModulePath(route.view + "View");
         if (!useExists(viewPath)) {
             throw ("\"" + viewName + "\" Class is not found.");
         }
@@ -236,6 +240,11 @@ class Response {
         await vm.handleBefore();
         await vm.handleAfter();
         await Response.__rendering(route, vm);
+        const MyApp = require("app/config/App").MyApp;
+        if (MyApp.animationCloseClassName)
+            (0, ModernJS_1.dom)("main").removeClass(MyApp.animationCloseClassName);
+        if (MyApp.animationOpenClassName)
+            (0, ModernJS_1.dom)("main").addClass(MyApp.animationOpenClassName);
         await vm.handleRenderBefore();
         if (route.args) {
             await vm.handle(...route.args);
@@ -329,7 +338,7 @@ class Response {
             return;
         }
         let content = use(renderPath);
-        content = Util_1.Util.base64Decode(content);
+        content = Lib_1.Lib.base64Decode(content);
         content = this.renderConvert(content);
         ;
         return content;
@@ -445,8 +454,8 @@ class Response {
         (0, ModernJS_1.dom)("head").afterBegin("<link rel=\"stylesheet\" m=\"dl\" href=\"data:text/css;base64," + style + "\">");
     }
     static loadClass(classType, loadClassName, mjs, sendData) {
-        const className = Util_1.Util.getModuleName(loadClassName + classType);
-        const classPath = Util_1.Util.getModulePath("app/" + classType.toLowerCase() + "/" + loadClassName + classType);
+        const className = Lib_1.Lib.getModuleName(loadClassName + classType);
+        const classPath = Lib_1.Lib.getModulePath("app/" + classType.toLowerCase() + "/" + loadClassName + classType);
         let classObj;
         try {
             const classObj_ = require(classPath);
@@ -481,18 +490,18 @@ class Response {
         const links = el0.querySelectorAll("link");
         links.forEach((el) => {
             const href = el.attributes["href"].value;
-            if (!Util_1.Util.existResource(href))
+            if (!Lib_1.Lib.existResource(href))
                 return;
-            const resource = Util_1.Util.getResourceDataUrl(href);
+            const resource = Lib_1.Lib.getResourceDataUrl(href);
             el.setAttribute("href", resource);
         });
         // image tag check...
         const imgs = el0.querySelectorAll("img");
         imgs.forEach((el) => {
             const src = el.attributes["src"].value;
-            if (!Util_1.Util.existResource(src))
+            if (!Lib_1.Lib.existResource(src))
                 return;
-            const resource = Util_1.Util.getResourceDataUrl(src);
+            const resource = Lib_1.Lib.getResourceDataUrl(src);
             el.setAttribute("src", resource);
         });
         // shortcode analysis

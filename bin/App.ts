@@ -19,8 +19,8 @@ export class App {
 
     /**
      * ***routeType*** : Method for page transition.  
-     * application = A mode for building apps. Screen transition history is managed and operated by the app.
-     * web = Change the browser URL and move to the page. You can go back by pressing the back button on the browser.  
+     * - **application** : A mode for building apps. Screen transition history is managed and operated by the app.
+     * - **web** : Change the browser URL and move to the page. You can go back by pressing the back button on the browser.  
      */
     public static routeType : AppRouteType = AppRouteType.web;
 
@@ -71,4 +71,15 @@ export class App {
      * If you specify 0, the button will transition immediately without executing the animation when pressed.
      */
     public static delay : number = 100;
+
+
+    /**
+     * ***animationOpenClassName*** : Class attribute name when opening a page with animation.
+     */
+    public static animationOpenClassName : string;
+
+    /**
+     * ***animationCloseClassName*** : Class attribute name when closing a page with animation.
+     */
+    public static animationCloseClassName : string;
 }

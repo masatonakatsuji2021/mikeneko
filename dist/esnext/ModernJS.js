@@ -321,19 +321,6 @@ class ModernJS {
         return this;
     }
     /**
-     * ***brText*** : Set the text content.
-     * Line breaks will be converted to line break tags.
-     * A code sample of TypeScript is shown below.
-     * (The \n part is converted to a line break tag.)
-     * ```typescript
-     * mjs.brText = "Text Area \n Sample Text .....";
-     * ```
-     */
-    set brText(value) {
-        value = value.toString().split("\n").join("<br>");
-        this.text = value;
-    }
-    /**
      * ***html*** : Gets or sets an HTML tag.
      * The following is an example of how to set text:
      * ```typescript

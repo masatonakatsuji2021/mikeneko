@@ -1,6 +1,6 @@
 import { App, AppRouteType } from "App";
-import { Routes, Route, DecisionRoute  } from "Routes";
-import { Util } from "Util";
+import { Routes, DecisionRoute  } from "Routes";
+import { Lib } from "Lib";
 import { Data } from "Data";
 import { Background } from "Background";
 import { Response } from "Response";
@@ -113,22 +113,22 @@ export class Startor {
 
         Shortcode.add("resource", (args : {[name : string] : string}) : string => {
             if(!args.url) return;
-            return Util.getResource(args.url);
+            return Lib.getResource(args.url);
         });
 
         Shortcode.add("resource_dataurl", (args : {[name : string] : string}) : string => {
             if(!args.url) return;
-            return Util.getResourceDataUrl(args.url);
+            return Lib.getResourceDataUrl(args.url);
         });
 
         Shortcode.add("resource_mimtype", (args : {[name : string] : string}) : string => {
             if(!args.url) return;
-            return Util.getResourceMimeType(args.url);
+            return Lib.getResourceMimeType(args.url);
         });
 
         Shortcode.add("uniqId", (args : {[name : string] : string}) : string => {
             if (!args.length) args.length = "";
-            return Util.uniqId(parseInt(args.length));
+            return Lib.uniqId(parseInt(args.length));
         });
     }
 }

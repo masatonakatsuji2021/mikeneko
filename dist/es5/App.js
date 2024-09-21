@@ -14,8 +14,8 @@ var App = /** @class */ (function () {
     }
     /**
      * ***routeType*** : Method for page transition.
-     * application = A mode for building apps. Screen transition history is managed and operated by the app.
-     * web = Change the browser URL and move to the page. You can go back by pressing the back button on the browser.
+     * - **application** : A mode for building apps. Screen transition history is managed and operated by the app.
+     * - **web** : Change the browser URL and move to the page. You can go back by pressing the back button on the browser.
      */
     App.routeType = AppRouteType.web;
     /**

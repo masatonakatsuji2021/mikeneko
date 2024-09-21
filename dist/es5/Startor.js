@@ -39,7 +39,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.string = exports.Startor = void 0;
 var App_1 = require("App");
 var Routes_1 = require("Routes");
-var Util_1 = require("Util");
+var Lib_1 = require("Lib");
 var Data_1 = require("Data");
 var Background_1 = require("Background");
 var Response_1 = require("Response");
@@ -172,22 +172,22 @@ var Startor = /** @class */ (function () {
         Shortcode_1.Shortcode.add("resource", function (args) {
             if (!args.url)
                 return;
-            return Util_1.Util.getResource(args.url);
+            return Lib_1.Lib.getResource(args.url);
         });
         Shortcode_1.Shortcode.add("resource_dataurl", function (args) {
             if (!args.url)
                 return;
-            return Util_1.Util.getResourceDataUrl(args.url);
+            return Lib_1.Lib.getResourceDataUrl(args.url);
         });
         Shortcode_1.Shortcode.add("resource_mimtype", function (args) {
             if (!args.url)
                 return;
-            return Util_1.Util.getResourceMimeType(args.url);
+            return Lib_1.Lib.getResourceMimeType(args.url);
         });
         Shortcode_1.Shortcode.add("uniqId", function (args) {
             if (!args.length)
                 args.length = "";
-            return Util_1.Util.uniqId(parseInt(args.length));
+            return Lib_1.Lib.uniqId(parseInt(args.length));
         });
     };
     return Startor;

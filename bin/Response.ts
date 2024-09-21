@@ -1,6 +1,6 @@
 import { App, AppRouteType } from "App";
-import { Routes, Route, DecisionRoute, DecisionRouteMode } from "Routes";
-import { Util } from "Util";
+import { Routes, DecisionRoute, DecisionRouteMode } from "Routes";
+import { Lib } from "Lib";
 import { Data } from "Data";
 import { Controller } from "Controller";
 import { View } from "View";
@@ -171,7 +171,6 @@ export class Response {
     public static async rendering (route: DecisionRoute, send? : any) {
 
         const MyApp : typeof App = require("app/config/App").MyApp;
-        if (MyApp.delay) await Util.sleep(MyApp.delay);
 
         try{
 
@@ -187,6 +186,11 @@ export class Response {
                 const res = await befView.handleLeave();
                 if (typeof res == "boolean" && res === false) return;
             }
+
+            if (MyApp.animationCloseClassName) dom("main").addClass(MyApp.animationCloseClassName);
+            if (MyApp.animationOpenClassName) dom("main").removeClass(MyApp.animationOpenClassName);
+
+            if (MyApp.delay) await Lib.sleep(MyApp.delay);
 
             if(route.mode == DecisionRouteMode.Notfound) throw("Page Not found");
 
@@ -204,8 +208,8 @@ export class Response {
     }
 
     private static async renderingOnController(route : DecisionRoute, send?: any) {
-        const controllerName : string = Util.getModuleName(route.controller + "Controller");
-        const controllerPath : string = "app/controller/" + Util.getModulePath(route.controller + "Controller");
+        const controllerName : string = Lib.getModuleName(route.controller + "Controller");
+        const controllerPath : string = "app/controller/" + Lib.getModulePath(route.controller + "Controller");
         if(!useExists(controllerPath)){
             throw("\"" + controllerPath + "\" Class is not found.");
         }
@@ -215,16 +219,16 @@ export class Response {
         cont.sendData = send;
 
         const viewName = route.action + "View";
-        const viewPath : string = "app/view/" + route.controller + "/" + Util.getModulePath(viewName);
+        const viewPath : string = "app/view/" + route.controller + "/" + Lib.getModulePath(viewName);
 
         let vw : View; 
         if(useExists(viewPath)){
             const View_ = use(viewPath);
-            if (!View_[Util.getModuleName(viewName)]) {
-                console.error("[WARM] \"" + Util.getModuleName(viewName) + "\"View Class not exists.");
+            if (!View_[Lib.getModuleName(viewName)]) {
+                console.error("[WARM] \"" + Lib.getModuleName(viewName) + "\"View Class not exists.");
             }
             else {
-                vw = new View_[Util.getModuleName(viewName)]();
+                vw = new View_[Lib.getModuleName(viewName)]();
                 vw.sendData = send;
             }
         }
@@ -285,8 +289,8 @@ export class Response {
 
 
     private static async renderingOnView(route : DecisionRoute, send?: any) {
-        const viewName : string = Util.getModuleName(route.view + "View");
-        const viewPath : string = "app/view/" + Util.getModulePath(route.view + "View");
+        const viewName : string = Lib.getModuleName(route.view + "View");
+        const viewPath : string = "app/view/" + Lib.getModulePath(route.view + "View");
 
         if(!useExists(viewPath)){
             throw("\"" + viewName + "\" Class is not found.");
@@ -312,6 +316,11 @@ export class Response {
         await vm.handleAfter();
 
         await Response.__rendering(route, vm);
+
+        const MyApp : typeof App = require("app/config/App").MyApp;
+
+        if (MyApp.animationCloseClassName) dom("main").removeClass(MyApp.animationCloseClassName);
+        if (MyApp.animationOpenClassName) dom("main").addClass(MyApp.animationOpenClassName);
 
         await vm.handleRenderBefore();
 
@@ -414,7 +423,7 @@ export class Response {
         }
         
         let content : string = use(renderPath);
-        content = Util.base64Decode(content);
+        content = Lib.base64Decode(content);
         content = this.renderConvert(content);;
 
         return content;
@@ -637,8 +646,8 @@ export class Response {
     }
 
     private static loadClass(classType : string, loadClassName : string, mjs : ModernJS, sendData? : any) {
-        const className = Util.getModuleName(loadClassName + classType);
-        const classPath = Util.getModulePath("app/" + classType.toLowerCase() + "/" + loadClassName + classType);
+        const className = Lib.getModuleName(loadClassName + classType);
+        const classPath = Lib.getModulePath("app/" + classType.toLowerCase() + "/" + loadClassName + classType);
         let classObj;
         try {
             const classObj_ = require(classPath);
@@ -674,8 +683,8 @@ export class Response {
         const links =el0.querySelectorAll("link");
         links.forEach((el) => {
             const href = el.attributes["href"].value;
-            if (!Util.existResource(href)) return;
-            const resource = Util.getResourceDataUrl(href);
+            if (!Lib.existResource(href)) return;
+            const resource = Lib.getResourceDataUrl(href);
             el.setAttribute("href", resource);
         });
 
@@ -683,8 +692,8 @@ export class Response {
         const imgs =el0.querySelectorAll("img");
         imgs.forEach((el) => {
             const src = el.attributes["src"].value;
-            if (!Util.existResource(src)) return;
-            const resource = Util.getResourceDataUrl(src);
+            if (!Lib.existResource(src)) return;
+            const resource = Lib.getResourceDataUrl(src);
             el.setAttribute("src", resource);
         });
 

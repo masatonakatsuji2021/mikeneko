@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Background = void 0;
-const Util_1 = require("Util");
+const Lib_1 = require("Lib");
 /**
  * ***Background*** : Classes that execute and manipulate business logic in the background.
  * This class starts executing immediately after the app is launched, regardless of each screen transition.
@@ -21,7 +21,7 @@ class Background {
         // background class method load.
         if (MyApp.backgrounds) {
             for (let n = 0; n < MyApp.backgrounds.length; n++) {
-                const backgroundName = Util_1.Util.getModulePath(MyApp.backgrounds[n]);
+                const backgroundName = Lib_1.Lib.getModulePath(MyApp.backgrounds[n]);
                 const backgroundPath = "app/background/" + backgroundName;
                 if (!useExists(backgroundPath))
                     continue;

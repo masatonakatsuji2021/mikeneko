@@ -1,6 +1,6 @@
 import { Shortcode } from "Shortcode";
 
-export class Util {
+export class Lib {
 
     /**
      * ***existResource** :Determine whether resource data exists in the specified path.

@@ -149,7 +149,7 @@ export class View {
     /**
      * ***handleLeave*** : Event handler executed when leaving the page.
      */
-    public handleLeave() : void | Promise<void> {}
+    public handleLeave() : void | boolean | Promise<void> | Promise<boolean> {}
 
     /**
      * ***handleTemplateChanged*** : An event handler that runs when the template specified in the member variable template changes.

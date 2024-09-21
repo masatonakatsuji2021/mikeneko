@@ -246,7 +246,7 @@ The available core library classes are:
 |Shortcode|Class for managing shortcodes.<br>[Click here for details](#shortcode)|
 |Storage|Storage operation classes.<br>[Click here for details](#storage)|
 |Template|Template class.<br>[](#template)|
-|Util|A class that provides methods for basic operations.<br>[Click here for details](#util)|
+|Lib|A class that provides methods for basic operations.<br>[Click here for details](#lib)|
 |View|View Class<br>[Click here for details](#view)|
 |UI|UI Class<br>[Click here for details](#ui)|
 

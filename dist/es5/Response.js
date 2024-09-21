@@ -39,7 +39,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Response = void 0;
 var App_1 = require("App");
 var Routes_1 = require("Routes");
-var Util_1 = require("Util");
+var Lib_1 = require("Lib");
 var Data_1 = require("Data");
 var UI_1 = require("UI");
 var ModernJS_1 = require("ModernJS");
@@ -174,50 +174,56 @@ var Response = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         MyApp = require("app/config/App").MyApp;
-                        if (!MyApp.delay) return [3 /*break*/, 2];
-                        return [4 /*yield*/, Util_1.Util.sleep(MyApp.delay)];
+                        _a.label = 1;
                     case 1:
-                        _a.sent();
-                        _a.label = 2;
-                    case 2:
-                        _a.trys.push([2, 11, , 12]);
+                        _a.trys.push([1, 12, , 13]);
                         befCont = Data_1.Data.get("beforeController");
-                        if (!befCont) return [3 /*break*/, 4];
+                        if (!befCont) return [3 /*break*/, 3];
                         return [4 /*yield*/, befCont.handleLeave(Data_1.Data.get("beforeControllerAction"))];
+                    case 2:
+                        res = _a.sent();
+                        if (typeof res == "boolean" && res === false)
+                            return [2 /*return*/];
+                        _a.label = 3;
                     case 3:
-                        res = _a.sent();
-                        if (typeof res == "boolean" && res === false)
-                            return [2 /*return*/];
-                        _a.label = 4;
-                    case 4:
                         befView = Data_1.Data.get("beforeView");
-                        if (!befView) return [3 /*break*/, 6];
+                        if (!befView) return [3 /*break*/, 5];
                         return [4 /*yield*/, befView.handleLeave()];
-                    case 5:
+                    case 4:
                         res = _a.sent();
                         if (typeof res == "boolean" && res === false)
                             return [2 /*return*/];
-                        _a.label = 6;
+                        _a.label = 5;
+                    case 5:
+                        if (MyApp.animationCloseClassName)
+                            (0, ModernJS_1.dom)("main").addClass(MyApp.animationCloseClassName);
+                        if (MyApp.animationOpenClassName)
+                            (0, ModernJS_1.dom)("main").removeClass(MyApp.animationOpenClassName);
+                        if (!MyApp.delay) return [3 /*break*/, 7];
+                        return [4 /*yield*/, Lib_1.Lib.sleep(MyApp.delay)];
                     case 6:
+                        _a.sent();
+                        _a.label = 7;
+                    case 7:
                         if (route.mode == Routes_1.DecisionRouteMode.Notfound)
                             throw ("Page Not found");
-                        if (!route.controller) return [3 /*break*/, 8];
+                        if (!route.controller) return [3 /*break*/, 9];
                         return [4 /*yield*/, Response.renderingOnController(route, send)];
-                    case 7:
-                        _a.sent();
-                        return [3 /*break*/, 10];
                     case 8:
-                        if (!route.view) return [3 /*break*/, 10];
-                        return [4 /*yield*/, Response.renderingOnView(route, send)];
-                    case 9:
                         _a.sent();
-                        _a.label = 10;
-                    case 10: return [3 /*break*/, 12];
-                    case 11:
+                        return [3 /*break*/, 11];
+                    case 9:
+                        if (!route.view) return [3 /*break*/, 11];
+                        return [4 /*yield*/, Response.renderingOnView(route, send)];
+                    case 10:
+                        _a.sent();
+                        _a.label = 11;
+                    case 11: return [3 /*break*/, 13];
+                    case 12:
                         error_1 = _a.sent();
                         console.error(error_1);
-                        return [3 /*break*/, 12];
-                    case 12: return [2 /*return*/];
+                        return [3 /*break*/, 13];
+                    case 13: return [2 /*return*/];
                 }
             });
         });
@@ -228,8 +234,8 @@ var Response = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        controllerName = Util_1.Util.getModuleName(route.controller + "Controller");
-                        controllerPath = "app/controller/" + Util_1.Util.getModulePath(route.controller + "Controller");
+                        controllerName = Lib_1.Lib.getModuleName(route.controller + "Controller");
+                        controllerPath = "app/controller/" + Lib_1.Lib.getModulePath(route.controller + "Controller");
                         if (!useExists(controllerPath)) {
                             throw ("\"" + controllerPath + "\" Class is not found.");
                         }
@@ -237,14 +243,14 @@ var Response = /** @class */ (function () {
                         cont = new controllerClass[controllerName]();
                         cont.sendData = send;
                         viewName = route.action + "View";
-                        viewPath = "app/view/" + route.controller + "/" + Util_1.Util.getModulePath(viewName);
+                        viewPath = "app/view/" + route.controller + "/" + Lib_1.Lib.getModulePath(viewName);
                         if (useExists(viewPath)) {
                             View_ = use(viewPath);
-                            if (!View_[Util_1.Util.getModuleName(viewName)]) {
-                                console.error("[WARM] \"" + Util_1.Util.getModuleName(viewName) + "\"View Class not exists.");
+                            if (!View_[Lib_1.Lib.getModuleName(viewName)]) {
+                                console.error("[WARM] \"" + Lib_1.Lib.getModuleName(viewName) + "\"View Class not exists.");
                             }
                             else {
-                                vw = new View_[Util_1.Util.getModuleName(viewName)]();
+                                vw = new View_[Lib_1.Lib.getModuleName(viewName)]();
                                 vw.sendData = send;
                             }
                         }
@@ -334,12 +340,12 @@ var Response = /** @class */ (function () {
     };
     Response.renderingOnView = function (route, send) {
         return __awaiter(this, void 0, void 0, function () {
-            var viewName, viewPath, View_, vm;
+            var viewName, viewPath, View_, vm, MyApp;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        viewName = Util_1.Util.getModuleName(route.view + "View");
-                        viewPath = "app/view/" + Util_1.Util.getModulePath(route.view + "View");
+                        viewName = Lib_1.Lib.getModuleName(route.view + "View");
+                        viewPath = "app/view/" + Lib_1.Lib.getModulePath(route.view + "View");
                         if (!useExists(viewPath)) {
                             throw ("\"" + viewName + "\" Class is not found.");
                         }
@@ -368,6 +374,11 @@ var Response = /** @class */ (function () {
                         return [4 /*yield*/, Response.__rendering(route, vm)];
                     case 5:
                         _a.sent();
+                        MyApp = require("app/config/App").MyApp;
+                        if (MyApp.animationCloseClassName)
+                            (0, ModernJS_1.dom)("main").removeClass(MyApp.animationCloseClassName);
+                        if (MyApp.animationOpenClassName)
+                            (0, ModernJS_1.dom)("main").addClass(MyApp.animationOpenClassName);
                         return [4 /*yield*/, vm.handleRenderBefore()];
                     case 6:
                         _a.sent();
@@ -491,7 +502,7 @@ var Response = /** @class */ (function () {
             return;
         }
         var content = use(renderPath);
-        content = Util_1.Util.base64Decode(content);
+        content = Lib_1.Lib.base64Decode(content);
         content = this.renderConvert(content);
         ;
         return content;
@@ -607,8 +618,8 @@ var Response = /** @class */ (function () {
         (0, ModernJS_1.dom)("head").afterBegin("<link rel=\"stylesheet\" m=\"dl\" href=\"data:text/css;base64," + style + "\">");
     };
     Response.loadClass = function (classType, loadClassName, mjs, sendData) {
-        var className = Util_1.Util.getModuleName(loadClassName + classType);
-        var classPath = Util_1.Util.getModulePath("app/" + classType.toLowerCase() + "/" + loadClassName + classType);
+        var className = Lib_1.Lib.getModuleName(loadClassName + classType);
+        var classPath = Lib_1.Lib.getModulePath("app/" + classType.toLowerCase() + "/" + loadClassName + classType);
         var classObj;
         try {
             var classObj_ = require(classPath);
@@ -643,18 +654,18 @@ var Response = /** @class */ (function () {
         var links = el0.querySelectorAll("link");
         links.forEach(function (el) {
             var href = el.attributes["href"].value;
-            if (!Util_1.Util.existResource(href))
+            if (!Lib_1.Lib.existResource(href))
                 return;
-            var resource = Util_1.Util.getResourceDataUrl(href);
+            var resource = Lib_1.Lib.getResourceDataUrl(href);
             el.setAttribute("href", resource);
         });
         // image tag check...
         var imgs = el0.querySelectorAll("img");
         imgs.forEach(function (el) {
             var src = el.attributes["src"].value;
-            if (!Util_1.Util.existResource(src))
+            if (!Lib_1.Lib.existResource(src))
                 return;
-            var resource = Util_1.Util.getResourceDataUrl(src);
+            var resource = Lib_1.Lib.getResourceDataUrl(src);
             el.setAttribute("src", resource);
         });
         // shortcode analysis

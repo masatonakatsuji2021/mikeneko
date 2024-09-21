@@ -356,23 +356,6 @@ var ModernJS = /** @class */ (function () {
         }
         return this;
     };
-    Object.defineProperty(ModernJS.prototype, "brText", {
-        /**
-         * ***brText*** : Set the text content.
-         * Line breaks will be converted to line break tags.
-         * A code sample of TypeScript is shown below.
-         * (The \n part is converted to a line break tag.)
-         * ```typescript
-         * mjs.brText = "Text Area \n Sample Text .....";
-         * ```
-         */
-        set: function (value) {
-            value = value.toString().split("\n").join("<br>");
-            this.text = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
     Object.defineProperty(ModernJS.prototype, "html", {
         get: function () {
             return this.els[0].innerHTML;
