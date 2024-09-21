@@ -4,10 +4,12 @@ MikenekoはWeb、Android、iOS にインストールできる SPA (Single-Page-A
 
 ## # 目次
 
+- [チュートリアル](tutorial.md)
 - [インストール方法](installation.md)
 - [プロジェクトの作成](create.md)
 - [プロジェクトのビルド](build.md)
 - [プロジェクトディレクトリの構成](structure.md)
+    - [tsファイルの管理](app.md)
     - [HTMLレンダリング](html.md)
     - [リソースの管理について](resource.md)
     - [package.jsonの設定](packagejson.md)
