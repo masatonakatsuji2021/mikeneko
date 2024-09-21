@@ -35,7 +35,7 @@ The available core library classes are:
 |Shortcode|Class for managing shortcodes.<br>[Click here for details](shortcode.md)|
 |Storage|Storage operation classes.<br>[Click here for details](storage.md)|
 |Template|Template class.<br>[](template.md)|
-|Util|A class that provides methods for basic operations.<br>[Click here for details](util.md)|
+|Lib|A class that provides methods for basic operations.<br>[Click here for details](lib.md)|
 |View|View Class<br>[Click here for details](view.md)|
 |UI|UI Class<br>[Click here for details](ui.md)|
 |Validation|Validation Class<br>[Click here for details](validation.md)|
