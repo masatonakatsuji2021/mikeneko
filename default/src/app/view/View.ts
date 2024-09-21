@@ -1,4 +1,5 @@
 import { View as BaseView } from "View";
+import { HeaderUI } from "app/ui/HeaderUI";
 
 export class View extends BaseView {
 
@@ -10,5 +11,9 @@ export class View extends BaseView {
 
     public handleBefore() {
         console.log("handle before ... ok");
+    }
+
+    public set title(title: string) {
+        HeaderUI.title(title);
     }
 }

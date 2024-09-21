@@ -22,7 +22,7 @@ body {
     color:#444;
 }
 a {
-    color:#666;
+    color:darkcyan;
     text-decoration:none;
     cursor:pointer;
 }
@@ -417,4 +417,15 @@ dialog.open {
 dialog.open dwindow{
     opacity:1;
     z-index:10;
+}
+header ~ main article {
+    top:50px;
+}
+main article {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
 }

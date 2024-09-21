@@ -1,9 +1,11 @@
 {
     "mikenekoBuild": {
-        "debug": true,
-        "codeCompress": false,
         "platforms": [
-            { "type": "web" }
+            { 
+                "name": "web",
+                "debug": true,
+                "codeCompress": false
+            }
         ]
     }
 }
