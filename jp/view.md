@@ -305,15 +305,15 @@ export class Page1View extends View {
     
 ## # sendData: any;
  
+...
+
 ## # beginStatus : boolean = false;
-    
+
+...
+
 ## # view : string = null;
 
-     setView(value : string)  : void{
-        this.view = value;
-        const routes = Routes.getRoute();
-        Response.__rendering(routes, this);
-    }
+...
 
 <div id="template"></div>
 
@@ -438,7 +438,6 @@ export class Page1View extends View {
 }
 ```
 
-
 headerタグに何もUIを使用しない場合は``null``を記述してください。
 
 ```typescript
@@ -456,8 +455,36 @@ export class Page1View extends View {
 
 ## # footer : string;
 
-    public setFooter(footerName : string) {
-        this.header = footerName;
-        const routes = Routes.getRoute();
-        Response.__rendering(routes, this);
+
+Viewではfooterタグ内に挿入するUIを指定することができます。  
+UIについては[こちらで解説。](ui.md)
+
+public変数``footer``にてfooterタグに挿入するUIを指定します。  
+
+```typescript
+import { View } from "View";
+
+export class Page1View extends View {
+
+    public footer : string = "footer";
+
+    public handle() {
+        console.log("handle .... OK");
     }
+}
+```
+
+footerタグに何もUIを使用しない場合は``null``を記述してください。
+
+```typescript
+import { View } from "View";
+
+export class Page1View extends View {
+
+    public footer : string = null;
+
+    public handle() {
+        console.log("handle .... OK");
+    }
+}
+```
