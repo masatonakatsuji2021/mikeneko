@@ -401,7 +401,7 @@ var Response = /** @class */ (function () {
     };
     Response.__rendering = function (route, context) {
         return __awaiter(this, void 0, void 0, function () {
-            var beforeTemplate, viewHtml, beforeHead, beforeHeader, beforeFooter;
+            var beforeTemplate, template, viewHtml, beforeHead, head, beforeHeader, header, beforeFooter, footer;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -418,10 +418,10 @@ var Response = /** @class */ (function () {
                         if (!(beforeTemplate != context.template)) return [3 /*break*/, 2];
                         // Template Rendering...
                         Data_1.Data.set("beforeTemplate", context.template);
-                        this.bindTemplate((0, ModernJS_1.dom)("body"), context.template);
+                        template = this.bindTemplate((0, ModernJS_1.dom)("body"), context.template);
                         context.mjs = ModernJS_1.ModernJS.reload();
                         if (!context.handleTemplateChanged) return [3 /*break*/, 2];
-                        return [4 /*yield*/, context.handleTemplateChanged()];
+                        return [4 /*yield*/, context.handleTemplateChanged(template)];
                     case 1:
                         _a.sent();
                         _a.label = 2;
@@ -439,10 +439,10 @@ var Response = /** @class */ (function () {
                         if (!(beforeHead != context.head)) return [3 /*break*/, 8];
                         Data_1.Data.set("beforeHead", context.head);
                         if (!context.head) return [3 /*break*/, 7];
-                        this.bindUI((0, ModernJS_1.dom)("head"), context.head);
+                        head = this.bindUI((0, ModernJS_1.dom)("head"), context.head);
                         context.mjs = ModernJS_1.ModernJS.reload();
                         if (!context.handleHeadChanged) return [3 /*break*/, 6];
-                        return [4 /*yield*/, context.handleHeadChanged()];
+                        return [4 /*yield*/, context.handleHeadChanged(head)];
                     case 5:
                         _a.sent();
                         _a.label = 6;
@@ -456,10 +456,10 @@ var Response = /** @class */ (function () {
                         if (!(beforeHeader != context.header)) return [3 /*break*/, 12];
                         Data_1.Data.set("beforeHeader", context.header);
                         if (!context.header) return [3 /*break*/, 11];
-                        this.bindUI((0, ModernJS_1.dom)("header"), context.header);
+                        header = this.bindUI((0, ModernJS_1.dom)("header"), context.header);
                         context.mjs = ModernJS_1.ModernJS.reload();
                         if (!context.handleHeaderChanged) return [3 /*break*/, 10];
-                        return [4 /*yield*/, context.handleHeaderChanged()];
+                        return [4 /*yield*/, context.handleHeaderChanged(header)];
                     case 9:
                         _a.sent();
                         _a.label = 10;
@@ -473,10 +473,10 @@ var Response = /** @class */ (function () {
                         if (!(beforeFooter != context.footer)) return [3 /*break*/, 16];
                         Data_1.Data.set("beforeFooter", context.footer);
                         if (!context.footer) return [3 /*break*/, 15];
-                        this.bindUI((0, ModernJS_1.dom)("footer"), context.footer);
+                        footer = this.bindUI((0, ModernJS_1.dom)("footer"), context.footer);
                         context.mjs = ModernJS_1.ModernJS.reload();
                         if (!context.handleFooterChanged) return [3 /*break*/, 14];
-                        return [4 /*yield*/, context.handleFooterChanged()];
+                        return [4 /*yield*/, context.handleFooterChanged(footer)];
                     case 13:
                         _a.sent();
                         _a.label = 14;

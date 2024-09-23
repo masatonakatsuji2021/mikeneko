@@ -115,19 +115,19 @@ var View = /** @class */ (function () {
     /**
      * ***handleTemplateChanged*** : An event handler that runs when the template specified in the member variable template changes.
      */
-    View.prototype.handleTemplateChanged = function () { };
+    View.prototype.handleTemplateChanged = function (template) { };
     /**
      * ***handleHeadChanged*** : An event handler that runs when the template specified in the member variable head tag changes.
      */
-    View.prototype.handleHeadChanged = function () { };
+    View.prototype.handleHeadChanged = function (head) { };
     /**
      * ***handleHeaderChanged*** : An event handler that runs when the template specified in the member variable header tag changes.
      */
-    View.prototype.handleHeaderChanged = function () { };
+    View.prototype.handleHeaderChanged = function (header) { };
     /**
      * ***handleFooterChanged*** : An event handler that runs when the template specified in the member variable footer tag changes.
      */
-    View.prototype.handleFooterChanged = function () { };
+    View.prototype.handleFooterChanged = function (footer) { };
     return View;
 }());
 exports.View = View;

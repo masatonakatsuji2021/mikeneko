@@ -1,5 +1,7 @@
 import { Routes } from "Routes";
 import { Response } from "Response";
+import { Template } from "Template";
+import { UI } from "UI";
 import { ModernJS, ModernJSList } from "ModernJS";
 
 /**
@@ -154,20 +156,20 @@ export class View {
     /**
      * ***handleTemplateChanged*** : An event handler that runs when the template specified in the member variable template changes.
      */
-    public handleTemplateChanged() : void | Promise<void> {}
+    public handleTemplateChanged(template? : Template) : void | Promise<void> {}
 
     /**
      * ***handleHeadChanged*** : An event handler that runs when the template specified in the member variable head tag changes.
      */
-    public handleHeadChanged() : void | Promise<void> {}
+    public handleHeadChanged(head? : UI) : void | Promise<void> {}
 
     /**
      * ***handleHeaderChanged*** : An event handler that runs when the template specified in the member variable header tag changes.
      */
-    public handleHeaderChanged() : void | Promise<void> {}
+    public handleHeaderChanged(header? : UI) : void | Promise<void> {}
     
     /**
      * ***handleFooterChanged*** : An event handler that runs when the template specified in the member variable footer tag changes.
      */
-    public handleFooterChanged() : void | Promise<void> {}
+    public handleFooterChanged(footer? : UI) : void | Promise<void> {}
 }

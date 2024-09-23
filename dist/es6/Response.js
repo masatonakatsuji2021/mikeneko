@@ -284,10 +284,10 @@ class Response {
                 if (beforeTemplate != context.template) {
                     // Template Rendering...
                     Data_1.Data.set("beforeTemplate", context.template);
-                    this.bindTemplate((0, ModernJS_1.dom)("body"), context.template);
+                    const template = this.bindTemplate((0, ModernJS_1.dom)("body"), context.template);
                     context.mjs = ModernJS_1.ModernJS.reload();
                     if (context.handleTemplateChanged)
-                        yield context.handleTemplateChanged();
+                        yield context.handleTemplateChanged(template);
                 }
             }
             else {
@@ -303,10 +303,10 @@ class Response {
             if (beforeHead != context.head) {
                 Data_1.Data.set("beforeHead", context.head);
                 if (context.head) {
-                    this.bindUI((0, ModernJS_1.dom)("head"), context.head);
+                    const head = this.bindUI((0, ModernJS_1.dom)("head"), context.head);
                     context.mjs = ModernJS_1.ModernJS.reload();
                     if (context.handleHeadChanged)
-                        yield context.handleHeadChanged();
+                        yield context.handleHeadChanged(head);
                 }
                 else {
                     (0, ModernJS_1.dom)("head").html = "";
@@ -317,10 +317,10 @@ class Response {
             if (beforeHeader != context.header) {
                 Data_1.Data.set("beforeHeader", context.header);
                 if (context.header) {
-                    this.bindUI((0, ModernJS_1.dom)("header"), context.header);
+                    const header = this.bindUI((0, ModernJS_1.dom)("header"), context.header);
                     context.mjs = ModernJS_1.ModernJS.reload();
                     if (context.handleHeaderChanged)
-                        yield context.handleHeaderChanged();
+                        yield context.handleHeaderChanged(header);
                 }
                 else {
                     (0, ModernJS_1.dom)("header").html = "";
@@ -331,10 +331,10 @@ class Response {
             if (beforeFooter != context.footer) {
                 Data_1.Data.set("beforeFooter", context.footer);
                 if (context.footer) {
-                    this.bindUI((0, ModernJS_1.dom)("footer"), context.footer);
+                    const footer = this.bindUI((0, ModernJS_1.dom)("footer"), context.footer);
                     context.mjs = ModernJS_1.ModernJS.reload();
                     if (context.handleFooterChanged)
-                        yield context.handleFooterChanged();
+                        yield context.handleFooterChanged(footer);
                 }
                 else {
                     (0, ModernJS_1.dom)("footer").html = "";

@@ -336,7 +336,6 @@ export class Response {
 
     public static async __rendering(route : DecisionRoute, context : Controller | View){
 
-
         if(!context.view){
             if(route.controller){
                 context.view = route.controller + "/" + route.action;
@@ -352,9 +351,9 @@ export class Response {
             if(beforeTemplate != context.template){
                 // Template Rendering...
                 Data.set("beforeTemplate", context.template);
-                this.bindTemplate(dom("body"), context.template);
+                const template = this.bindTemplate(dom("body"), context.template);
                 context.mjs = ModernJS.reload();
-                if (context.handleTemplateChanged) await context.handleTemplateChanged();
+                if (context.handleTemplateChanged) await context.handleTemplateChanged(template);
             }
         }
         else{
@@ -371,9 +370,9 @@ export class Response {
         if (beforeHead != context.head) {
             Data.set("beforeHead", context.head);
             if (context.head){
-                this.bindUI(dom("head"), context.head);
+                const head = this.bindUI(dom("head"), context.head);
                 context.mjs = ModernJS.reload();
-                if (context.handleHeadChanged) await context.handleHeadChanged();
+                if (context.handleHeadChanged) await context.handleHeadChanged(head);
             }
             else {
                 dom("head").html = "";
@@ -385,9 +384,9 @@ export class Response {
         if (beforeHeader != context.header) {
             Data.set("beforeHeader", context.header);
             if (context.header){
-                this.bindUI(dom("header"), context.header);
+                const header = this.bindUI(dom("header"), context.header);
                 context.mjs = ModernJS.reload();
-                if (context.handleHeaderChanged) await context.handleHeaderChanged();
+                if (context.handleHeaderChanged) await context.handleHeaderChanged(header);
             }
             else {
                 dom("header").html = "";
@@ -399,9 +398,9 @@ export class Response {
         if (beforeFooter != context.footer) {
             Data.set("beforeFooter", context.footer);
             if (context.footer){
-                this.bindUI(dom("footer"), context.footer);
+                const footer = this.bindUI(dom("footer"), context.footer);
                 context.mjs = ModernJS.reload();
-                if (context.handleFooterChanged) await context.handleFooterChanged();
+                if (context.handleFooterChanged) await context.handleFooterChanged(footer);
             }
             else {
                 dom("footer").html = "";

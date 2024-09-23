@@ -98,19 +98,19 @@ var Controller = /** @class */ (function () {
     /**
      * ***handleTemplateChanged*** : An event handler that runs when the template specified in the member variable template changes.
      */
-    Controller.prototype.handleTemplateChanged = function () { };
+    Controller.prototype.handleTemplateChanged = function (template) { };
     /**
      * ***handleHeadChanged*** : An event handler that runs when the template specified in the member variable head tag changes.
      */
-    Controller.prototype.handleHeadChanged = function () { };
+    Controller.prototype.handleHeadChanged = function (head) { };
     /**
      * ***handleHeaderChanged*** : An event handler that runs when the template specified in the member variable header tag changes.
      */
-    Controller.prototype.handleHeaderChanged = function () { };
+    Controller.prototype.handleHeaderChanged = function (header) { };
     /**
      * ***handleFooterChanged*** : An event handler that runs when the template specified in the member variable footer tag changes.
      */
-    Controller.prototype.handleFooterChanged = function () { };
+    Controller.prototype.handleFooterChanged = function (footer) { };
     return Controller;
 }());
 exports.Controller = Controller;

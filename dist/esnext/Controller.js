@@ -120,18 +120,18 @@ class Controller {
     /**
      * ***handleTemplateChanged*** : An event handler that runs when the template specified in the member variable template changes.
      */
-    handleTemplateChanged() { }
+    handleTemplateChanged(template) { }
     /**
      * ***handleHeadChanged*** : An event handler that runs when the template specified in the member variable head tag changes.
      */
-    handleHeadChanged() { }
+    handleHeadChanged(head) { }
     /**
      * ***handleHeaderChanged*** : An event handler that runs when the template specified in the member variable header tag changes.
      */
-    handleHeaderChanged() { }
+    handleHeaderChanged(header) { }
     /**
      * ***handleFooterChanged*** : An event handler that runs when the template specified in the member variable footer tag changes.
      */
-    handleFooterChanged() { }
+    handleFooterChanged(footer) { }
 }
 exports.Controller = Controller;
