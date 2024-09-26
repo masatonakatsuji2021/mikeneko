@@ -20,6 +20,20 @@ export class View {
     public mjs : ModernJSList;
     
     /**
+     * ***vdo*** : Virtual Dom for content.
+     */
+    public get vdo() : ModernJS {
+        return this.myMjs;
+    }
+
+    /**
+     * ***vdos*** : Virtual DOM List of ModernJS Classes.
+     */
+    public get vdos() : ModernJSList {
+        return this.mjs;
+    }
+
+    /**
      * ***sendData*** : 
      */
     public sendData: any;
@@ -111,65 +125,75 @@ export class View {
 
     /**
      * ***handle*** : 
-     * An event handler that runs automatically when the view is drawn on the screen.  
+     * A handler that runs automatically when the view is drawn on the screen.  
      * This event is executed only when rendered.
      */
     public handle(...aregment : Array<string | number>) : void{}
 
     /**
-     * ***handleAlways*** : An event handler that runs automatically when the View is displayed on screen.  
+     * ***handleAlways*** : A handler that runs automatically when the View is displayed on screen.  
      * This event is always executed even if the same View has already been rendered..
      */
     public handleAlways() : void | Promise<void> {}
 
     /**
-     * ***handleBegin*** : Event handler executed just before transitioning to the page.
+     * ***handleBegin*** : A handler executed just before transitioning to the page.
      */
     public handleBegin() : void | Promise<void> {}
 
     /**
-     * ***handleBefore*** : Event handler executed just before transitioning to the page.
+     * ***handleBefore*** : A handler executed just before transitioning to the page.
      */
     public handleBefore(beginStatus? : boolean) : void | Promise<void> {}
     
     /**
-     * ***handleAfter*** : Event handler executed immediately after transitioning to the page
+     * ***handleAfter*** : A handler executed immediately after transitioning to the page
      */
     public handleAfter(beginStatus? : boolean) : void | Promise<void> {}
 
     /**
-     * ***handleRenderBefore*** : Event handler executed immediately after page transition and rendering process to the screen is completed
+     * ***handleRenderBefore*** : A handler executed immediately after page transition and rendering process to the screen is completed
      */
     public handleRenderBefore(beginStatus? : boolean) : void | Promise<void> {}
 
     /**
-     * ***handleRenderAfter*** : Event handler that is executed after page transition, after rendering process to the screen is completed, 
+     * ***handleRenderAfter*** : A handler that is executed after page transition, after rendering process to the screen is completed, 
      * and after the event for each action is completed.
      */
     public handleRenderAfter(beginStatus? : boolean) :void | Promise<void> {}
 
     /**
-     * ***handleLeave*** : Event handler executed when leaving the page.
+     * ***handleLeave*** : A handler executed when leaving the page.
      */
     public handleLeave() : void | boolean | Promise<void> | Promise<boolean> {}
 
     /**
-     * ***handleTemplateChanged*** : An event handler that runs when the template specified in the member variable template changes.
+     * ***handleLeaveBack*** : Handler that is executed when returning to the previous screen.
+     */
+    public handleLeaveBack() : void | boolean | Promise<void> | Promise<boolean> {}
+
+    /**
+     * ***handleLeaveNext*** : Handler that runs when proceeding to the next screen
+     */
+    public handleLeaveNext() : void | boolean | Promise<void> | Promise<boolean> {}
+
+    /**
+     * ***handleTemplateChanged*** : A handler that runs when the template specified in the member variable template changes.
      */
     public handleTemplateChanged(template? : Template) : void | Promise<void> {}
 
     /**
-     * ***handleHeadChanged*** : An event handler that runs when the template specified in the member variable head tag changes.
+     * ***handleHeadChanged*** : A handler that runs when the template specified in the member variable head tag changes.
      */
     public handleHeadChanged(head? : UI) : void | Promise<void> {}
 
     /**
-     * ***handleHeaderChanged*** : An event handler that runs when the template specified in the member variable header tag changes.
+     * ***handleHeaderChanged*** : A handler that runs when the template specified in the member variable header tag changes.
      */
     public handleHeaderChanged(header? : UI) : void | Promise<void> {}
     
     /**
-     * ***handleFooterChanged*** : An event handler that runs when the template specified in the member variable footer tag changes.
+     * ***handleFooterChanged*** : A handler that runs when the template specified in the member variable footer tag changes.
      */
     public handleFooterChanged(footer? : UI) : void | Promise<void> {}
 }

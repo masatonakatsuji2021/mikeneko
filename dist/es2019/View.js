@@ -24,6 +24,18 @@ class View {
         this.template = null;
     }
     /**
+     * ***vdo*** : Virtual Dom for content.
+     */
+    get vdo() {
+        return this.myMjs;
+    }
+    /**
+     * ***vdos*** : Virtual DOM List of ModernJS Classes.
+     */
+    get vdos() {
+        return this.mjs;
+    }
+    /**
      * ***setView*** :
      * Set the page view path to display.
      * If not specified, automatically determined by "{viewName}"
@@ -73,54 +85,62 @@ class View {
     }
     /**
      * ***handle*** :
-     * An event handler that runs automatically when the view is drawn on the screen.
+     * A handler that runs automatically when the view is drawn on the screen.
      * This event is executed only when rendered.
      */
     handle(...aregment) { }
     /**
-     * ***handleAlways*** : An event handler that runs automatically when the View is displayed on screen.
+     * ***handleAlways*** : A handler that runs automatically when the View is displayed on screen.
      * This event is always executed even if the same View has already been rendered..
      */
     handleAlways() { }
     /**
-     * ***handleBegin*** : Event handler executed just before transitioning to the page.
+     * ***handleBegin*** : A handler executed just before transitioning to the page.
      */
     handleBegin() { }
     /**
-     * ***handleBefore*** : Event handler executed just before transitioning to the page.
+     * ***handleBefore*** : A handler executed just before transitioning to the page.
      */
     handleBefore(beginStatus) { }
     /**
-     * ***handleAfter*** : Event handler executed immediately after transitioning to the page
+     * ***handleAfter*** : A handler executed immediately after transitioning to the page
      */
     handleAfter(beginStatus) { }
     /**
-     * ***handleRenderBefore*** : Event handler executed immediately after page transition and rendering process to the screen is completed
+     * ***handleRenderBefore*** : A handler executed immediately after page transition and rendering process to the screen is completed
      */
     handleRenderBefore(beginStatus) { }
     /**
-     * ***handleRenderAfter*** : Event handler that is executed after page transition, after rendering process to the screen is completed,
+     * ***handleRenderAfter*** : A handler that is executed after page transition, after rendering process to the screen is completed,
      * and after the event for each action is completed.
      */
     handleRenderAfter(beginStatus) { }
     /**
-     * ***handleLeave*** : Event handler executed when leaving the page.
+     * ***handleLeave*** : A handler executed when leaving the page.
      */
     handleLeave() { }
     /**
-     * ***handleTemplateChanged*** : An event handler that runs when the template specified in the member variable template changes.
+     * ***handleLeaveBack*** : Handler that is executed when returning to the previous screen.
+     */
+    handleLeaveBack() { }
+    /**
+     * ***handleLeaveNext*** : Handler that runs when proceeding to the next screen
+     */
+    handleLeaveNext() { }
+    /**
+     * ***handleTemplateChanged*** : A handler that runs when the template specified in the member variable template changes.
      */
     handleTemplateChanged(template) { }
     /**
-     * ***handleHeadChanged*** : An event handler that runs when the template specified in the member variable head tag changes.
+     * ***handleHeadChanged*** : A handler that runs when the template specified in the member variable head tag changes.
      */
     handleHeadChanged(head) { }
     /**
-     * ***handleHeaderChanged*** : An event handler that runs when the template specified in the member variable header tag changes.
+     * ***handleHeaderChanged*** : A handler that runs when the template specified in the member variable header tag changes.
      */
     handleHeaderChanged(header) { }
     /**
-     * ***handleFooterChanged*** : An event handler that runs when the template specified in the member variable footer tag changes.
+     * ***handleFooterChanged*** : A handler that runs when the template specified in the member variable footer tag changes.
      */
     handleFooterChanged(footer) { }
 }

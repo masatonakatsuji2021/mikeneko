@@ -128,15 +128,36 @@ class Response {
                 // Controller & View Leave 
                 const befCont = Data_1.Data.get("beforeController");
                 if (befCont) {
-                    const res = yield befCont.handleLeave(Data_1.Data.get("beforeControllerAction"));
+                    const befContAction = Data_1.Data.get("beforeControllerAction");
+                    const res = yield befCont.handleLeave(befContAction);
                     if (typeof res == "boolean" && res === false)
                         return;
+                    if (this.isBack) {
+                        const resBack = yield befCont.handleLeaveBack(befContAction);
+                        if (typeof resBack == "boolean" && resBack === false)
+                            return;
+                    }
+                    if (this.isNext) {
+                        const resNext = yield befCont.handleLeaveNext(befContAction);
+                        if (typeof resNext == "boolean" && resNext === false)
+                            return;
+                    }
                 }
                 const befView = Data_1.Data.get("beforeView");
                 if (befView) {
                     const res = yield befView.handleLeave();
                     if (typeof res == "boolean" && res === false)
                         return;
+                    if (this.isBack) {
+                        const resBack = yield befView.handleLeaveBack();
+                        if (typeof resBack == "boolean" && resBack === false)
+                            return;
+                    }
+                    if (this.isNext) {
+                        const resNext = yield befView.handleLeaveNext();
+                        if (typeof resNext == "boolean" && resNext === false)
+                            return;
+                    }
                 }
                 if (MyApp.animationCloseClassName)
                     (0, ModernJS_1.dom)("main").addClass(MyApp.animationCloseClassName);
@@ -285,7 +306,7 @@ class Response {
                     // Template Rendering...
                     Data_1.Data.set("beforeTemplate", context.template);
                     const template = this.bindTemplate((0, ModernJS_1.dom)("body"), context.template);
-                    context.mjs = ModernJS_1.ModernJS.reload();
+                    //                context.mjs = ModernJS.reload();
                     if (context.handleTemplateChanged)
                         yield context.handleTemplateChanged(template);
                 }
@@ -297,20 +318,21 @@ class Response {
             const viewHtml = Response.view(context.view);
             if (!(0, ModernJS_1.dom)("main").length)
                 (0, ModernJS_1.dom)("body").append("<main></main>");
-            (0, ModernJS_1.dom)("main").html = "<article>" + viewHtml + "</article>";
-            context.mjs = ModernJS_1.ModernJS.reload();
+            const main = (0, ModernJS_1.dom)("main");
+            main.html = "<article>" + viewHtml + "</article>";
+            context.mjs = main.childs;
             const beforeHead = Data_1.Data.get("beforeHead");
             if (beforeHead != context.head) {
                 Data_1.Data.set("beforeHead", context.head);
                 if (context.head) {
                     const head = this.bindUI((0, ModernJS_1.dom)("head"), context.head);
-                    context.mjs = ModernJS_1.ModernJS.reload();
+                    //                context.mjs = ModernJS.reload();
                     if (context.handleHeadChanged)
                         yield context.handleHeadChanged(head);
                 }
                 else {
                     (0, ModernJS_1.dom)("head").html = "";
-                    context.mjs = ModernJS_1.ModernJS.reload();
+                    //              context.mjs = ModernJS.reload();
                 }
             }
             const beforeHeader = Data_1.Data.get("beforeHeader");
@@ -318,13 +340,13 @@ class Response {
                 Data_1.Data.set("beforeHeader", context.header);
                 if (context.header) {
                     const header = this.bindUI((0, ModernJS_1.dom)("header"), context.header);
-                    context.mjs = ModernJS_1.ModernJS.reload();
+                    //          context.mjs = ModernJS.reload();
                     if (context.handleHeaderChanged)
                         yield context.handleHeaderChanged(header);
                 }
                 else {
                     (0, ModernJS_1.dom)("header").html = "";
-                    context.mjs = ModernJS_1.ModernJS.reload();
+                    //            context.mjs = ModernJS.reload();
                 }
             }
             const beforeFooter = Data_1.Data.get("beforeFooter");
@@ -332,13 +354,13 @@ class Response {
                 Data_1.Data.set("beforeFooter", context.footer);
                 if (context.footer) {
                     const footer = this.bindUI((0, ModernJS_1.dom)("footer"), context.footer);
-                    context.mjs = ModernJS_1.ModernJS.reload();
+                    //        context.mjs = ModernJS.reload();
                     if (context.handleFooterChanged)
                         yield context.handleFooterChanged(footer);
                 }
                 else {
                     (0, ModernJS_1.dom)("footer").html = "";
-                    context.mjs = ModernJS_1.ModernJS.reload();
+                    //      context.mjs = ModernJS.reload();
                 }
             }
         });
@@ -370,7 +392,7 @@ class Response {
     }
     static bindView(mjs, viewName, sendData) {
         mjs.html = this.view(viewName);
-        mjs.reload();
+        //        mjs.reload();
         return this.loadClass("View", viewName, mjs, sendData);
     }
     /**
@@ -383,7 +405,7 @@ class Response {
     }
     static bindTemplate(mjs, templateName, sendData) {
         mjs.html = this.template(templateName);
-        mjs.reload();
+        //        mjs.reload();
         return this.loadClass("Template", templateName, mjs, sendData);
     }
     /**
@@ -396,7 +418,7 @@ class Response {
     }
     static bindUI(mjs, UIName, sendData) {
         mjs.html = this.UI(UIName);
-        mjs.reload();
+        //        mjs.reload();
         return this.loadClass("UI", UIName, mjs, sendData);
     }
     static appendUI(mjs, UIName, sendData) {
@@ -426,7 +448,8 @@ class Response {
                 dialogMjs.addClass(c);
             });
         }
-        (0, ModernJS_1.dom)("body").append(dialogMjs);
+        (0, ModernJS_1.dom)("body").append(dialogMjs, true);
+        dialogMjs.reload();
         setTimeout(() => {
             dialogMjs.addClass("open");
         }, 100);

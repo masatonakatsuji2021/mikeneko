@@ -8,6 +8,26 @@ exports.Template = void 0;
 var Template = /** @class */ (function () {
     function Template() {
     }
+    Object.defineProperty(Template.prototype, "vdo", {
+        /**
+         * ***vdo*** : Virtual Dom for content.
+         */
+        get: function () {
+            return this.myMjs;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Template.prototype, "vdos", {
+        /**
+         * ***vdos*** : Virtual DOM List of ModernJS Classes.
+         */
+        get: function () {
+            return this.mjs;
+        },
+        enumerable: false,
+        configurable: true
+    });
     /**
      * ***handle*** : Event handler for when the template is displayed.
      * @param {any} sendData> Transmission data contents

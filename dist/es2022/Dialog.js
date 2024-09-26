@@ -14,6 +14,18 @@ class Dialog {
      */
     mjs;
     /**
+     * ***vdo*** : Virtual Dom for content.
+     */
+    get vdo() {
+        return this.myMjs;
+    }
+    /**
+     * ***vdos*** : Virtual DOM List of ModernJS Classes.
+     */
+    get vdos() {
+        return this.mjs;
+    }
+    /**
      * ***handle*** : An event handler that runs when the dialog is opened.
      * @param {any} sendData
      * @returns {void}

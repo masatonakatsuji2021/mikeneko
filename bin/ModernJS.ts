@@ -24,7 +24,7 @@ export interface ModernJSSelectOption {
  */
 export class ModernJS {
 
-    public static buffers : ModernJSList = {};
+//    public static buffers : ModernJSList = {};
 
     /**
      * ***els*** : List of target Element classes in the virtual DOM class.
@@ -55,7 +55,7 @@ export class ModernJS {
     public parent : ModernJS;
 
     private fileBuffers : Array<any> = [];
-
+/*
     public static reload(){
 
         const c = Object.keys(this.buffers);
@@ -109,7 +109,7 @@ export class ModernJS {
             handler(parent, attrValue, el);
         });
     }
-
+*/
     /**
      * ***create*** : Create an empty virtual DOM class.
      * @returns {ModernJS}
@@ -207,7 +207,18 @@ export class ModernJS {
      * @param {ModernJS?} context 
      */
     public reload(context? : ModernJS) {
-        ModernJS.reload();
+        if (!context) context = this;
+        this.virtualAttributes("v", context, (parent: ModernJS, attrValue: string, el: HTMLElement) => {
+            if (parent) {
+                if (!parent.childs[attrValue]) parent.childs[attrValue] = new ModernJS();
+                parent.childs[attrValue].addEl(el);
+            }
+            else {
+                if (!context.childs[attrValue]) context.childs[attrValue] = new ModernJS();
+                context.childs[attrValue].addEl(el);
+            }
+        });
+/*
         this.els.forEach((el : HTMLElement) => {
             const qss = el.querySelectorAll("[v-child]");
             qss.forEach((el2 : HTMLElement) => {
@@ -226,7 +237,36 @@ export class ModernJS {
                 }
             }) ;
         });
+        */
     }
+
+    private virtualAttributes(target : string, context: ModernJS, handler : (parent: ModernJS, attrValue: string, el : HTMLElement) => void) {
+        const qss = document.querySelectorAll("[" + target + "]");
+        qss.forEach((el : HTMLElement) => {
+            let attrValue = el.attributes[target].value;
+            el.removeAttribute(target);
+            let parent : ModernJS;
+            const attrValues = attrValue.split(".");
+            if (attrValues.length > 1) {
+                attrValue = attrValues[attrValues.length -1];
+                attrValues.forEach((a_, index) => {
+                    if (index == (attrValues.length - 1)) return;
+                    if (index == 0) {
+                        if (!context.childs[a_]) context.childs[a_] = new ModernJS();
+                        parent = context.childs[a_];
+                        if (!parent.els.length) parent.addEl(el);
+                    }
+                    else {
+                        if (!parent.childs[a_]) parent.childs[a_] = new ModernJS();
+                        parent = parent.childs[a_];
+                    }
+                });
+            }
+
+            handler(parent, attrValue, el);
+        });
+    }
+
 
     /**
      * ***length*** : Get the number of elements.
@@ -382,9 +422,7 @@ export class ModernJS {
             });
             el.innerText = value.toString();
         });
-        if (!noReload) {
-            this.reload();    
-        }
+        if (!noReload) this.reload(); 
         return this;
     }
 
@@ -454,9 +492,7 @@ export class ModernJS {
                 }
             }
         });
-        if (!noReload) {
-            this.reload();    
-        }
+        if (!noReload) this.reload();
         return this;
     }
 
@@ -575,9 +611,7 @@ export class ModernJS {
                 }
             }
         });
-        if (!noReload) {
-            this.reload();    
-        }
+        if (!noReload) this.reload();
         return this;
     }
 
@@ -1415,4 +1449,4 @@ export class ModernJS {
  * @returns {ModernJS}
  */
 export const dom = ModernJS.dom;
-export const mjs = ModernJS.reload;
+// export const mjs = ModernJS.reload;

@@ -23,6 +23,26 @@ var View = /** @class */ (function () {
          */
         this.template = null;
     }
+    Object.defineProperty(View.prototype, "vdo", {
+        /**
+         * ***vdo*** : Virtual Dom for content.
+         */
+        get: function () {
+            return this.myMjs;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(View.prototype, "vdos", {
+        /**
+         * ***vdos*** : Virtual DOM List of ModernJS Classes.
+         */
+        get: function () {
+            return this.mjs;
+        },
+        enumerable: false,
+        configurable: true
+    });
     /**
      * ***setView*** :
      * Set the page view path to display.
@@ -73,7 +93,7 @@ var View = /** @class */ (function () {
     };
     /**
      * ***handle*** :
-     * An event handler that runs automatically when the view is drawn on the screen.
+     * A handler that runs automatically when the view is drawn on the screen.
      * This event is executed only when rendered.
      */
     View.prototype.handle = function () {
@@ -83,49 +103,57 @@ var View = /** @class */ (function () {
         }
     };
     /**
-     * ***handleAlways*** : An event handler that runs automatically when the View is displayed on screen.
+     * ***handleAlways*** : A handler that runs automatically when the View is displayed on screen.
      * This event is always executed even if the same View has already been rendered..
      */
     View.prototype.handleAlways = function () { };
     /**
-     * ***handleBegin*** : Event handler executed just before transitioning to the page.
+     * ***handleBegin*** : A handler executed just before transitioning to the page.
      */
     View.prototype.handleBegin = function () { };
     /**
-     * ***handleBefore*** : Event handler executed just before transitioning to the page.
+     * ***handleBefore*** : A handler executed just before transitioning to the page.
      */
     View.prototype.handleBefore = function (beginStatus) { };
     /**
-     * ***handleAfter*** : Event handler executed immediately after transitioning to the page
+     * ***handleAfter*** : A handler executed immediately after transitioning to the page
      */
     View.prototype.handleAfter = function (beginStatus) { };
     /**
-     * ***handleRenderBefore*** : Event handler executed immediately after page transition and rendering process to the screen is completed
+     * ***handleRenderBefore*** : A handler executed immediately after page transition and rendering process to the screen is completed
      */
     View.prototype.handleRenderBefore = function (beginStatus) { };
     /**
-     * ***handleRenderAfter*** : Event handler that is executed after page transition, after rendering process to the screen is completed,
+     * ***handleRenderAfter*** : A handler that is executed after page transition, after rendering process to the screen is completed,
      * and after the event for each action is completed.
      */
     View.prototype.handleRenderAfter = function (beginStatus) { };
     /**
-     * ***handleLeave*** : Event handler executed when leaving the page.
+     * ***handleLeave*** : A handler executed when leaving the page.
      */
     View.prototype.handleLeave = function () { };
     /**
-     * ***handleTemplateChanged*** : An event handler that runs when the template specified in the member variable template changes.
+     * ***handleLeaveBack*** : Handler that is executed when returning to the previous screen.
+     */
+    View.prototype.handleLeaveBack = function () { };
+    /**
+     * ***handleLeaveNext*** : Handler that runs when proceeding to the next screen
+     */
+    View.prototype.handleLeaveNext = function () { };
+    /**
+     * ***handleTemplateChanged*** : A handler that runs when the template specified in the member variable template changes.
      */
     View.prototype.handleTemplateChanged = function (template) { };
     /**
-     * ***handleHeadChanged*** : An event handler that runs when the template specified in the member variable head tag changes.
+     * ***handleHeadChanged*** : A handler that runs when the template specified in the member variable head tag changes.
      */
     View.prototype.handleHeadChanged = function (head) { };
     /**
-     * ***handleHeaderChanged*** : An event handler that runs when the template specified in the member variable header tag changes.
+     * ***handleHeaderChanged*** : A handler that runs when the template specified in the member variable header tag changes.
      */
     View.prototype.handleHeaderChanged = function (header) { };
     /**
-     * ***handleFooterChanged*** : An event handler that runs when the template specified in the member variable footer tag changes.
+     * ***handleFooterChanged*** : A handler that runs when the template specified in the member variable footer tag changes.
      */
     View.prototype.handleFooterChanged = function (footer) { };
     return View;

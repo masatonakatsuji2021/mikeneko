@@ -169,61 +169,90 @@ var Response = /** @class */ (function () {
     // rendering....
     Response.rendering = function (route, send) {
         return __awaiter(this, void 0, void 0, function () {
-            var MyApp, befCont, res, befView, res, error_1;
+            var MyApp, befCont, befContAction, res, resBack, resNext, befView, res, resBack, resNext, error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         MyApp = require("app/config/App").MyApp;
                         _a.label = 1;
                     case 1:
-                        _a.trys.push([1, 12, , 13]);
+                        _a.trys.push([1, 18, , 19]);
                         befCont = Data_1.Data.get("beforeController");
-                        if (!befCont) return [3 /*break*/, 3];
-                        return [4 /*yield*/, befCont.handleLeave(Data_1.Data.get("beforeControllerAction"))];
+                        if (!befCont) return [3 /*break*/, 6];
+                        befContAction = Data_1.Data.get("beforeControllerAction");
+                        return [4 /*yield*/, befCont.handleLeave(befContAction)];
                     case 2:
                         res = _a.sent();
                         if (typeof res == "boolean" && res === false)
                             return [2 /*return*/];
-                        _a.label = 3;
+                        if (!this.isBack) return [3 /*break*/, 4];
+                        return [4 /*yield*/, befCont.handleLeaveBack(befContAction)];
                     case 3:
-                        befView = Data_1.Data.get("beforeView");
-                        if (!befView) return [3 /*break*/, 5];
-                        return [4 /*yield*/, befView.handleLeave()];
+                        resBack = _a.sent();
+                        if (typeof resBack == "boolean" && resBack === false)
+                            return [2 /*return*/];
+                        _a.label = 4;
                     case 4:
+                        if (!this.isNext) return [3 /*break*/, 6];
+                        return [4 /*yield*/, befCont.handleLeaveNext(befContAction)];
+                    case 5:
+                        resNext = _a.sent();
+                        if (typeof resNext == "boolean" && resNext === false)
+                            return [2 /*return*/];
+                        _a.label = 6;
+                    case 6:
+                        befView = Data_1.Data.get("beforeView");
+                        if (!befView) return [3 /*break*/, 11];
+                        return [4 /*yield*/, befView.handleLeave()];
+                    case 7:
                         res = _a.sent();
                         if (typeof res == "boolean" && res === false)
                             return [2 /*return*/];
-                        _a.label = 5;
-                    case 5:
+                        if (!this.isBack) return [3 /*break*/, 9];
+                        return [4 /*yield*/, befView.handleLeaveBack()];
+                    case 8:
+                        resBack = _a.sent();
+                        if (typeof resBack == "boolean" && resBack === false)
+                            return [2 /*return*/];
+                        _a.label = 9;
+                    case 9:
+                        if (!this.isNext) return [3 /*break*/, 11];
+                        return [4 /*yield*/, befView.handleLeaveNext()];
+                    case 10:
+                        resNext = _a.sent();
+                        if (typeof resNext == "boolean" && resNext === false)
+                            return [2 /*return*/];
+                        _a.label = 11;
+                    case 11:
                         if (MyApp.animationCloseClassName)
                             (0, ModernJS_1.dom)("main").addClass(MyApp.animationCloseClassName);
                         if (MyApp.animationOpenClassName)
                             (0, ModernJS_1.dom)("main").removeClass(MyApp.animationOpenClassName);
-                        if (!MyApp.delay) return [3 /*break*/, 7];
+                        if (!MyApp.delay) return [3 /*break*/, 13];
                         return [4 /*yield*/, Lib_1.Lib.sleep(MyApp.delay)];
-                    case 6:
+                    case 12:
                         _a.sent();
-                        _a.label = 7;
-                    case 7:
+                        _a.label = 13;
+                    case 13:
                         if (route.mode == Routes_1.DecisionRouteMode.Notfound)
                             throw ("Page Not found");
-                        if (!route.controller) return [3 /*break*/, 9];
+                        if (!route.controller) return [3 /*break*/, 15];
                         return [4 /*yield*/, Response.renderingOnController(route, send)];
-                    case 8:
+                    case 14:
                         _a.sent();
-                        return [3 /*break*/, 11];
-                    case 9:
-                        if (!route.view) return [3 /*break*/, 11];
+                        return [3 /*break*/, 17];
+                    case 15:
+                        if (!route.view) return [3 /*break*/, 17];
                         return [4 /*yield*/, Response.renderingOnView(route, send)];
-                    case 10:
+                    case 16:
                         _a.sent();
-                        _a.label = 11;
-                    case 11: return [3 /*break*/, 13];
-                    case 12:
+                        _a.label = 17;
+                    case 17: return [3 /*break*/, 19];
+                    case 18:
                         error_1 = _a.sent();
                         console.error(error_1);
-                        return [3 /*break*/, 13];
-                    case 13: return [2 /*return*/];
+                        return [3 /*break*/, 19];
+                    case 19: return [2 /*return*/];
                 }
             });
         });
@@ -401,7 +430,7 @@ var Response = /** @class */ (function () {
     };
     Response.__rendering = function (route, context) {
         return __awaiter(this, void 0, void 0, function () {
-            var beforeTemplate, template, viewHtml, beforeHead, head, beforeHeader, header, beforeFooter, footer;
+            var beforeTemplate, template, viewHtml, main, beforeHead, head, beforeHeader, header, beforeFooter, footer;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -419,7 +448,6 @@ var Response = /** @class */ (function () {
                         // Template Rendering...
                         Data_1.Data.set("beforeTemplate", context.template);
                         template = this.bindTemplate((0, ModernJS_1.dom)("body"), context.template);
-                        context.mjs = ModernJS_1.ModernJS.reload();
                         if (!context.handleTemplateChanged) return [3 /*break*/, 2];
                         return [4 /*yield*/, context.handleTemplateChanged(template)];
                     case 1:
@@ -433,14 +461,14 @@ var Response = /** @class */ (function () {
                         viewHtml = Response.view(context.view);
                         if (!(0, ModernJS_1.dom)("main").length)
                             (0, ModernJS_1.dom)("body").append("<main></main>");
-                        (0, ModernJS_1.dom)("main").html = "<article>" + viewHtml + "</article>";
-                        context.mjs = ModernJS_1.ModernJS.reload();
+                        main = (0, ModernJS_1.dom)("main");
+                        main.html = "<article>" + viewHtml + "</article>";
+                        context.mjs = main.childs;
                         beforeHead = Data_1.Data.get("beforeHead");
                         if (!(beforeHead != context.head)) return [3 /*break*/, 8];
                         Data_1.Data.set("beforeHead", context.head);
                         if (!context.head) return [3 /*break*/, 7];
                         head = this.bindUI((0, ModernJS_1.dom)("head"), context.head);
-                        context.mjs = ModernJS_1.ModernJS.reload();
                         if (!context.handleHeadChanged) return [3 /*break*/, 6];
                         return [4 /*yield*/, context.handleHeadChanged(head)];
                     case 5:
@@ -449,7 +477,6 @@ var Response = /** @class */ (function () {
                     case 6: return [3 /*break*/, 8];
                     case 7:
                         (0, ModernJS_1.dom)("head").html = "";
-                        context.mjs = ModernJS_1.ModernJS.reload();
                         _a.label = 8;
                     case 8:
                         beforeHeader = Data_1.Data.get("beforeHeader");
@@ -457,7 +484,6 @@ var Response = /** @class */ (function () {
                         Data_1.Data.set("beforeHeader", context.header);
                         if (!context.header) return [3 /*break*/, 11];
                         header = this.bindUI((0, ModernJS_1.dom)("header"), context.header);
-                        context.mjs = ModernJS_1.ModernJS.reload();
                         if (!context.handleHeaderChanged) return [3 /*break*/, 10];
                         return [4 /*yield*/, context.handleHeaderChanged(header)];
                     case 9:
@@ -466,7 +492,6 @@ var Response = /** @class */ (function () {
                     case 10: return [3 /*break*/, 12];
                     case 11:
                         (0, ModernJS_1.dom)("header").html = "";
-                        context.mjs = ModernJS_1.ModernJS.reload();
                         _a.label = 12;
                     case 12:
                         beforeFooter = Data_1.Data.get("beforeFooter");
@@ -474,7 +499,6 @@ var Response = /** @class */ (function () {
                         Data_1.Data.set("beforeFooter", context.footer);
                         if (!context.footer) return [3 /*break*/, 15];
                         footer = this.bindUI((0, ModernJS_1.dom)("footer"), context.footer);
-                        context.mjs = ModernJS_1.ModernJS.reload();
                         if (!context.handleFooterChanged) return [3 /*break*/, 14];
                         return [4 /*yield*/, context.handleFooterChanged(footer)];
                     case 13:
@@ -483,7 +507,6 @@ var Response = /** @class */ (function () {
                     case 14: return [3 /*break*/, 16];
                     case 15:
                         (0, ModernJS_1.dom)("footer").html = "";
-                        context.mjs = ModernJS_1.ModernJS.reload();
                         _a.label = 16;
                     case 16: return [2 /*return*/];
                 }
@@ -517,7 +540,7 @@ var Response = /** @class */ (function () {
     };
     Response.bindView = function (mjs, viewName, sendData) {
         mjs.html = this.view(viewName);
-        mjs.reload();
+        //        mjs.reload();
         return this.loadClass("View", viewName, mjs, sendData);
     };
     /**
@@ -530,7 +553,7 @@ var Response = /** @class */ (function () {
     };
     Response.bindTemplate = function (mjs, templateName, sendData) {
         mjs.html = this.template(templateName);
-        mjs.reload();
+        //        mjs.reload();
         return this.loadClass("Template", templateName, mjs, sendData);
     };
     /**
@@ -543,7 +566,7 @@ var Response = /** @class */ (function () {
     };
     Response.bindUI = function (mjs, UIName, sendData) {
         mjs.html = this.UI(UIName);
-        mjs.reload();
+        //        mjs.reload();
         return this.loadClass("UI", UIName, mjs, sendData);
     };
     Response.appendUI = function (mjs, UIName, sendData) {
@@ -573,7 +596,8 @@ var Response = /** @class */ (function () {
                 dialogMjs.addClass(c);
             });
         }
-        (0, ModernJS_1.dom)("body").append(dialogMjs);
+        (0, ModernJS_1.dom)("body").append(dialogMjs, true);
+        dialogMjs.reload();
         setTimeout(function () {
             dialogMjs.addClass("open");
         }, 100);

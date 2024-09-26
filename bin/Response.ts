@@ -177,14 +177,35 @@ export class Response {
             // Controller & View Leave 
             const befCont : Controller = Data.get("beforeController");
             if(befCont){
-                const res = await befCont.handleLeave(Data.get("beforeControllerAction"));
+                const befContAction = Data.get("beforeControllerAction");
+                const res = await befCont.handleLeave(befContAction);
                 if (typeof res == "boolean" && res === false) return;
+
+                if (this.isBack) {
+                    const resBack = await befCont.handleLeaveBack(befContAction);
+                    if (typeof resBack == "boolean" && resBack === false) return;
+                }
+
+                if (this.isNext) {
+                    const resNext = await befCont.handleLeaveNext(befContAction);
+                    if (typeof resNext == "boolean" && resNext === false) return;
+                }
             }
 
             const befView = Data.get("beforeView");
             if(befView) {
                 const res = await befView.handleLeave();
                 if (typeof res == "boolean" && res === false) return;
+
+                if (this.isBack) {
+                    const resBack = await befView.handleLeaveBack();
+                    if (typeof resBack == "boolean" && resBack === false) return;
+                }
+
+                if (this.isNext) {
+                    const resNext = await befView.handleLeaveNext();
+                    if (typeof resNext == "boolean" && resNext === false) return;
+                }
             }
 
             if (MyApp.animationCloseClassName) dom("main").addClass(MyApp.animationCloseClassName);
@@ -203,7 +224,6 @@ export class Response {
 
         }catch(error) {
             console.error(error);
-
         }
     }
 
@@ -352,7 +372,7 @@ export class Response {
                 // Template Rendering...
                 Data.set("beforeTemplate", context.template);
                 const template = this.bindTemplate(dom("body"), context.template);
-                context.mjs = ModernJS.reload();
+//                context.mjs = ModernJS.reload();
                 if (context.handleTemplateChanged) await context.handleTemplateChanged(template);
             }
         }
@@ -363,20 +383,21 @@ export class Response {
         // View Rendering...
         const viewHtml = Response.view(context.view);
         if (!dom("main").length) dom("body").append("<main></main>");
-        dom("main").html = "<article>" + viewHtml + "</article>";
-        context.mjs = ModernJS.reload();
+        const main = dom("main");
+        main.html = "<article>" + viewHtml + "</article>";
+        context.mjs = main.childs;
 
         const beforeHead = Data.get("beforeHead");
         if (beforeHead != context.head) {
             Data.set("beforeHead", context.head);
             if (context.head){
                 const head = this.bindUI(dom("head"), context.head);
-                context.mjs = ModernJS.reload();
+//                context.mjs = ModernJS.reload();
                 if (context.handleHeadChanged) await context.handleHeadChanged(head);
             }
             else {
                 dom("head").html = "";
-                context.mjs = ModernJS.reload();
+  //              context.mjs = ModernJS.reload();
             }
         }
 
@@ -385,12 +406,12 @@ export class Response {
             Data.set("beforeHeader", context.header);
             if (context.header){
                 const header = this.bindUI(dom("header"), context.header);
-                context.mjs = ModernJS.reload();
+      //          context.mjs = ModernJS.reload();
                 if (context.handleHeaderChanged) await context.handleHeaderChanged(header);
             }
             else {
                 dom("header").html = "";
-                context.mjs = ModernJS.reload();
+    //            context.mjs = ModernJS.reload();
             }
         }
 
@@ -399,12 +420,12 @@ export class Response {
             Data.set("beforeFooter", context.footer);
             if (context.footer){
                 const footer = this.bindUI(dom("footer"), context.footer);
-                context.mjs = ModernJS.reload();
+        //        context.mjs = ModernJS.reload();
                 if (context.handleFooterChanged) await context.handleFooterChanged(footer);
             }
             else {
                 dom("footer").html = "";
-                context.mjs = ModernJS.reload();
+          //      context.mjs = ModernJS.reload();
             }
         }
     }
@@ -456,7 +477,7 @@ export class Response {
     
     public static bindView(mjs: ModernJS, viewName : string, sendData? : any) : View {
         mjs.html = this.view(viewName);
-        mjs.reload();
+//        mjs.reload();
         return this.loadClass("View", viewName, mjs, sendData);
     }
 
@@ -488,7 +509,7 @@ export class Response {
 
     public static bindTemplate(mjs: ModernJS, templateName : string, sendData? : any) : Template {
         mjs.html = this.template(templateName);
-        mjs.reload();
+//        mjs.reload();
         return this.loadClass("Template", templateName, mjs, sendData);
     }
 
@@ -520,7 +541,7 @@ export class Response {
 
     public static bindUI(mjs: ModernJS, UIName : string, sendData? : any) : UI {
         mjs.html = this.UI(UIName);
-        mjs.reload();
+//        mjs.reload();
         return this.loadClass("UI", UIName, mjs, sendData);
     }
 
@@ -585,7 +606,8 @@ export class Response {
             });
         }
 
-        dom("body").append(dialogMjs);
+        dom("body").append(dialogMjs, true);
+        dialogMjs.reload();
         setTimeout(()=>{
             dialogMjs.addClass("open");
         }, 100);

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mjs = exports.dom = exports.ModernJS = void 0;
+exports.dom = exports.ModernJS = void 0;
 /**
  * ***ModernJS*** : Virtual DOM Classes.
  * When you specify the v attribute or v-child attribute in an HTML tag, it is recognized as a virtual DOM.
@@ -15,6 +15,7 @@ exports.mjs = exports.dom = exports.ModernJS = void 0;
  */
 var ModernJS = /** @class */ (function () {
     function ModernJS() {
+        //    public static buffers : ModernJSList = {};
         /**
          * ***els*** : List of target Element classes in the virtual DOM class.
          */
@@ -37,67 +38,6 @@ var ModernJS = /** @class */ (function () {
         this.datas = {};
         this.fileBuffers = [];
     }
-    ModernJS.reload = function () {
-        var _this = this;
-        var c = Object.keys(this.buffers);
-        var _loop_1 = function (n) {
-            var name_1 = c[n];
-            var buffer = this_1.buffers[name_1];
-            buffer.els.forEach(function (el, index) {
-                if (!document.body.contains(el))
-                    buffer.els.splice(index);
-            });
-            if (!buffer.els.length)
-                delete this_1.buffers[name_1];
-        };
-        var this_1 = this;
-        for (var n = 0; n < c.length; n++) {
-            _loop_1(n);
-        }
-        this.virtualAttributes("v", function (parent, attrValue, el) {
-            if (parent) {
-                if (!parent.childs[attrValue])
-                    parent.childs[attrValue] = new ModernJS();
-                parent.childs[attrValue].addEl(el);
-            }
-            else {
-                if (!_this.buffers[attrValue])
-                    _this.buffers[attrValue] = new ModernJS();
-                _this.buffers[attrValue].addEl(el);
-            }
-        });
-        return this.buffers;
-    };
-    ModernJS.virtualAttributes = function (target, handler) {
-        var _this = this;
-        var qss = document.querySelectorAll("[" + target + "]");
-        qss.forEach(function (el) {
-            var attrValue = el.attributes[target].value;
-            el.removeAttribute(target);
-            var parent;
-            var attrValues = attrValue.split(".");
-            if (attrValues.length > 1) {
-                attrValue = attrValues[attrValues.length - 1];
-                attrValues.forEach(function (a_, index) {
-                    if (index == (attrValues.length - 1))
-                        return;
-                    if (index == 0) {
-                        if (!_this.buffers[a_])
-                            _this.buffers[a_] = new ModernJS();
-                        parent = _this.buffers[a_];
-                        if (!parent.els.length)
-                            parent.addEl(el);
-                    }
-                    else {
-                        if (!parent.childs[a_])
-                            parent.childs[a_] = new ModernJS();
-                        parent = parent.childs[a_];
-                    }
-                });
-            }
-            handler(parent, attrValue, el);
-        });
-    };
     ModernJS.create = function (text, tagName) {
         var mjs = new ModernJS();
         if (!tagName)
@@ -156,7 +96,7 @@ var ModernJS = /** @class */ (function () {
         el.addEventListener("change", function (e) {
             // @ts-ignore
             var el = e.target;
-            var _loop_2 = function (n) {
+            var _loop_1 = function (n) {
                 var file = el.files[n];
                 var reader = new FileReader();
                 reader.onload = function (e) {
@@ -168,7 +108,7 @@ var ModernJS = /** @class */ (function () {
                 reader.readAsText(file);
             };
             for (var n = 0; n < el.files.length; n++) {
-                _loop_2(n);
+                _loop_1(n);
             }
         });
         return this;
@@ -179,26 +119,68 @@ var ModernJS = /** @class */ (function () {
      * @param {ModernJS?} context
      */
     ModernJS.prototype.reload = function (context) {
-        var _this = this;
-        ModernJS.reload();
-        this.els.forEach(function (el) {
-            var qss = el.querySelectorAll("[v-child]");
-            qss.forEach(function (el2) {
-                var vname = el2.attributes["v-child"].value;
-                el2.removeAttribute("v-child");
-                if (context) {
-                    if (!context.childs[vname])
-                        context.childs[vname] = new ModernJS();
-                    context.childs[vname].parent = _this;
-                    context.childs[vname].addEl(el2);
-                }
-                else {
-                    if (!_this.childs[vname])
-                        _this.childs[vname] = new ModernJS();
-                    _this.childs[vname].parent = _this;
-                    _this.childs[vname].addEl(el2);
-                }
-            });
+        if (!context)
+            context = this;
+        this.virtualAttributes("v", context, function (parent, attrValue, el) {
+            if (parent) {
+                if (!parent.childs[attrValue])
+                    parent.childs[attrValue] = new ModernJS();
+                parent.childs[attrValue].addEl(el);
+            }
+            else {
+                if (!context.childs[attrValue])
+                    context.childs[attrValue] = new ModernJS();
+                context.childs[attrValue].addEl(el);
+            }
+        });
+        /*
+                this.els.forEach((el : HTMLElement) => {
+                    const qss = el.querySelectorAll("[v-child]");
+                    qss.forEach((el2 : HTMLElement) => {
+                        const vname = el2.attributes["v-child"].value;
+                        el2.removeAttribute("v-child");
+        
+                        if (context) {
+                            if (!context.childs[vname]) context.childs[vname] = new ModernJS();
+                            context.childs[vname].parent = this;
+                            context.childs[vname].addEl(el2);
+                        }
+                        else {
+                            if (!this.childs[vname]) this.childs[vname] = new ModernJS();
+                            this.childs[vname].parent = this;
+                            this.childs[vname].addEl(el2);
+                        }
+                    }) ;
+                });
+                */
+    };
+    ModernJS.prototype.virtualAttributes = function (target, context, handler) {
+        var qss = document.querySelectorAll("[" + target + "]");
+        qss.forEach(function (el) {
+            var attrValue = el.attributes[target].value;
+            el.removeAttribute(target);
+            var parent;
+            var attrValues = attrValue.split(".");
+            if (attrValues.length > 1) {
+                attrValue = attrValues[attrValues.length - 1];
+                attrValues.forEach(function (a_, index) {
+                    if (index == (attrValues.length - 1))
+                        return;
+                    if (index == 0) {
+                        if (!context.childs[a_])
+                            context.childs[a_] = new ModernJS();
+                        parent = context.childs[a_];
+                        if (!parent.els.length)
+                            parent.addEl(el);
+                    }
+                    else {
+                        if (!parent.childs[a_])
+                            parent.childs[a_] = new ModernJS();
+                        parent = parent.childs[a_];
+                    }
+                });
+            }
+            handler(parent, attrValue, el);
         });
     };
     Object.defineProperty(ModernJS.prototype, "length", {
@@ -351,9 +333,8 @@ var ModernJS = /** @class */ (function () {
             });
             el.innerText = value.toString();
         });
-        if (!noReload) {
+        if (!noReload)
             this.reload();
-        }
         return this;
     };
     Object.defineProperty(ModernJS.prototype, "html", {
@@ -399,9 +380,8 @@ var ModernJS = /** @class */ (function () {
                 }
             }
         });
-        if (!noReload) {
+        if (!noReload)
             this.reload();
-        }
         return this;
     };
     Object.defineProperty(ModernJS.prototype, "outerHtml", {
@@ -474,9 +454,8 @@ var ModernJS = /** @class */ (function () {
                 }
             }
         });
-        if (!noReload) {
+        if (!noReload)
             this.reload();
-        }
         return this;
     };
     /**
@@ -504,16 +483,16 @@ var ModernJS = /** @class */ (function () {
      */
     ModernJS.prototype.style = function (stylesheets) {
         var c = Object.keys(stylesheets);
-        var _loop_3 = function (n) {
-            var name_2 = c[n];
-            var value = stylesheets[name_2];
-            this_2.els.forEach(function (el) {
-                el.style[name_2] = value;
+        var _loop_2 = function (n) {
+            var name_1 = c[n];
+            var value = stylesheets[name_1];
+            this_1.els.forEach(function (el) {
+                el.style[name_1] = value;
             });
         };
-        var this_2 = this;
+        var this_1 = this;
         for (var n = 0; n < c.length; n++) {
-            _loop_3(n);
+            _loop_2(n);
         }
         return this;
     };
@@ -1214,16 +1193,15 @@ var ModernJS = /** @class */ (function () {
             var c = Object.keys(this.childs);
             var values = {};
             for (var n = 0; n < c.length; n++) {
-                var name_3 = c[n];
-                var child = this.childs[name_3];
-                values[name_3] = child.value;
+                var name_2 = c[n];
+                var child = this.childs[name_2];
+                values[name_2] = child.value;
             }
             return values;
         },
         enumerable: false,
         configurable: true
     });
-    ModernJS.buffers = {};
     return ModernJS;
 }());
 exports.ModernJS = ModernJS;
@@ -1241,4 +1219,4 @@ exports.ModernJS = ModernJS;
  * @returns {ModernJS}
  */
 exports.dom = ModernJS.dom;
-exports.mjs = ModernJS.reload;
+// export const mjs = ModernJS.reload;

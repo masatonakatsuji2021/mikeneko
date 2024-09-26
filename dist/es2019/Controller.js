@@ -5,7 +5,7 @@ const Routes_1 = require("Routes");
 const Response_1 = require("Response");
 /**
  * ***Controller*** : Main class for each screen.
- * Event handlers for multiple screens can be managed collectively using public methods.
+ * handlers for multiple screens can be managed collectively using public methods.
  */
 class Controller {
     constructor() {
@@ -22,6 +22,18 @@ class Controller {
          * ***template*** : If you have a template HTML file, specify it here.
          */
         this.template = null;
+    }
+    /**
+     * ***vdo*** : Virtual Dom for content.
+     */
+    get vdo() {
+        return this.myMjs;
+    }
+    /**
+     * ***vdos*** : Virtual DOM List of ModernJS Classes.
+     */
+    get vdos() {
+        return this.mjs;
     }
     /**
      * ***setView*** : Set the page view path to display.
@@ -74,41 +86,51 @@ class Controller {
         Response_1.Response.__rendering(routes, this);
     }
     /**
-     * ***handleBefore*** : Event handler executed just before transitioning to the page.
+     * ***handleBefore*** : A handler executed just before transitioning to the page.
      */
     handleBefore() { }
     /**
-     * ***handleAfter*** : Event handler executed immediately after transitioning to the page
+     * ***handleAfter*** : A handler executed immediately after transitioning to the page
      */
     handleAfter() { }
     /**
-     * ***handleRenderBefore*** : Event handler executed immediately after page transition and rendering process to the screen is completed
+     * ***handleRenderBefore*** : A handler executed immediately after page transition and rendering process to the screen is completed
      */
     handleRenderBefore() { }
     /**
-     * ***handleRenderAfter*** : Event handler that is executed after page transition, after rendering process to the screen is completed,
+     * ***handleRenderAfter*** : A handler that is executed after page transition, after rendering process to the screen is completed,
      * and after the event for each action is completed.
      */
     handleRenderAfter() { }
     /**
-     * ***handleLeave*** : Event handler executed when leaving the page
+     * ***handleLeave*** : A handler executed when leaving the page
      * @param {string} action before access controller action name
      */
     handleLeave(action) { }
     /**
-     * ***handleTemplateChanged*** : An event handler that runs when the template specified in the member variable template changes.
+     * ***handleLeaveBack*** : Handler that is executed when returning to the previous screen.
+     * @param {string} action before access controller action name
+     */
+    handleLeaveBack(action) { }
+    /**
+     * ***handleLeaveNext*** : Handler that runs when proceeding to the next screen
+     * @param {string} action before access controller action name
+     */
+    handleLeaveNext(action) { }
+    /**
+     * ***handleTemplateChanged*** : A handler that runs when the template specified in the member variable template changes.
      */
     handleTemplateChanged(template) { }
     /**
-     * ***handleHeadChanged*** : An event handler that runs when the template specified in the member variable head tag changes.
+     * ***handleHeadChanged*** : A handler that runs when the template specified in the member variable head tag changes.
      */
     handleHeadChanged(head) { }
     /**
-     * ***handleHeaderChanged*** : An event handler that runs when the template specified in the member variable header tag changes.
+     * ***handleHeaderChanged*** : A handler that runs when the template specified in the member variable header tag changes.
      */
     handleHeaderChanged(header) { }
     /**
-     * ***handleFooterChanged*** : An event handler that runs when the template specified in the member variable footer tag changes.
+     * ***handleFooterChanged*** : A handler that runs when the template specified in the member variable footer tag changes.
      */
     handleFooterChanged(footer) { }
 }

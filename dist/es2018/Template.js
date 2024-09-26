@@ -7,6 +7,18 @@ exports.Template = void 0;
  */
 class Template {
     /**
+     * ***vdo*** : Virtual Dom for content.
+     */
+    get vdo() {
+        return this.myMjs;
+    }
+    /**
+     * ***vdos*** : Virtual DOM List of ModernJS Classes.
+     */
+    get vdos() {
+        return this.mjs;
+    }
+    /**
      * ***handle*** : Event handler for when the template is displayed.
      * @param {any} sendData> Transmission data contents
      * @returns {void}

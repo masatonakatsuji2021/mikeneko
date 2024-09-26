@@ -15,6 +15,20 @@ export class Template {
      * ***mjs**** : Virtual DOM List of ModernJS Classes.
      */
     public mjs : ModernJSList;
+    
+    /**
+     * ***vdo*** : Virtual Dom for content.
+     */
+    public get vdo() : ModernJS {
+        return this.myMjs;
+    }
+
+    /**
+     * ***vdos*** : Virtual DOM List of ModernJS Classes.
+     */
+    public get vdos() : ModernJSList {
+        return this.mjs;
+    }
 
     /**
      * ***handle*** : Event handler for when the template is displayed.

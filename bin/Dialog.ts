@@ -37,6 +37,20 @@ export class Dialog {
      * ***mjs*** : Virtual DOM List in Dialog.
      */
     public mjs : ModernJSList;
+    
+    /**
+     * ***vdo*** : Virtual Dom for content.
+     */
+    public get vdo() : ModernJS {
+        return this.myMjs;
+    }
+
+    /**
+     * ***vdos*** : Virtual DOM List of ModernJS Classes.
+     */
+    public get vdos() : ModernJSList {
+        return this.mjs;
+    }
 
     /**
      * ***handle*** : An event handler that runs when the dialog is opened.

@@ -5,7 +5,7 @@ var Routes_1 = require("Routes");
 var Response_1 = require("Response");
 /**
  * ***Controller*** : Main class for each screen.
- * Event handlers for multiple screens can be managed collectively using public methods.
+ * handlers for multiple screens can be managed collectively using public methods.
  */
 var Controller = /** @class */ (function () {
     function Controller() {
@@ -23,6 +23,26 @@ var Controller = /** @class */ (function () {
          */
         this.template = null;
     }
+    Object.defineProperty(Controller.prototype, "vdo", {
+        /**
+         * ***vdo*** : Virtual Dom for content.
+         */
+        get: function () {
+            return this.myMjs;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Controller.prototype, "vdos", {
+        /**
+         * ***vdos*** : Virtual DOM List of ModernJS Classes.
+         */
+        get: function () {
+            return this.mjs;
+        },
+        enumerable: false,
+        configurable: true
+    });
     /**
      * ***setView*** : Set the page view path to display.
      * If not specified, automatically determined by "{Controller Name}/{action name}"
@@ -74,41 +94,51 @@ var Controller = /** @class */ (function () {
         Response_1.Response.__rendering(routes, this);
     };
     /**
-     * ***handleBefore*** : Event handler executed just before transitioning to the page.
+     * ***handleBefore*** : A handler executed just before transitioning to the page.
      */
     Controller.prototype.handleBefore = function () { };
     /**
-     * ***handleAfter*** : Event handler executed immediately after transitioning to the page
+     * ***handleAfter*** : A handler executed immediately after transitioning to the page
      */
     Controller.prototype.handleAfter = function () { };
     /**
-     * ***handleRenderBefore*** : Event handler executed immediately after page transition and rendering process to the screen is completed
+     * ***handleRenderBefore*** : A handler executed immediately after page transition and rendering process to the screen is completed
      */
     Controller.prototype.handleRenderBefore = function () { };
     /**
-     * ***handleRenderAfter*** : Event handler that is executed after page transition, after rendering process to the screen is completed,
+     * ***handleRenderAfter*** : A handler that is executed after page transition, after rendering process to the screen is completed,
      * and after the event for each action is completed.
      */
     Controller.prototype.handleRenderAfter = function () { };
     /**
-     * ***handleLeave*** : Event handler executed when leaving the page
+     * ***handleLeave*** : A handler executed when leaving the page
      * @param {string} action before access controller action name
      */
     Controller.prototype.handleLeave = function (action) { };
     /**
-     * ***handleTemplateChanged*** : An event handler that runs when the template specified in the member variable template changes.
+     * ***handleLeaveBack*** : Handler that is executed when returning to the previous screen.
+     * @param {string} action before access controller action name
+     */
+    Controller.prototype.handleLeaveBack = function (action) { };
+    /**
+     * ***handleLeaveNext*** : Handler that runs when proceeding to the next screen
+     * @param {string} action before access controller action name
+     */
+    Controller.prototype.handleLeaveNext = function (action) { };
+    /**
+     * ***handleTemplateChanged*** : A handler that runs when the template specified in the member variable template changes.
      */
     Controller.prototype.handleTemplateChanged = function (template) { };
     /**
-     * ***handleHeadChanged*** : An event handler that runs when the template specified in the member variable head tag changes.
+     * ***handleHeadChanged*** : A handler that runs when the template specified in the member variable head tag changes.
      */
     Controller.prototype.handleHeadChanged = function (head) { };
     /**
-     * ***handleHeaderChanged*** : An event handler that runs when the template specified in the member variable header tag changes.
+     * ***handleHeaderChanged*** : A handler that runs when the template specified in the member variable header tag changes.
      */
     Controller.prototype.handleHeaderChanged = function (header) { };
     /**
-     * ***handleFooterChanged*** : An event handler that runs when the template specified in the member variable footer tag changes.
+     * ***handleFooterChanged*** : A handler that runs when the template specified in the member variable footer tag changes.
      */
     Controller.prototype.handleFooterChanged = function (footer) { };
     return Controller;
