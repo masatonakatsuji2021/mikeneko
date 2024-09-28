@@ -3,18 +3,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.dom = exports.ModernJS = void 0;
 /**
  * ***ModernJS*** : Virtual DOM Classes.
- * When you specify the v attribute or v-child attribute in an HTML tag, it is recognized as a virtual DOM.
+ * When you specify the v attribute in an HTML tag, it is recognized as a virtual DOM.
  * The v attribute is considered a globally available virtual DOM.
  * ```html
  * <div v="test"></div>
  * ```
- * The v-child attribute is recognized as a separate virtual DOM in UI, Dialog, etc.
- * ```html
- * <div v-child="name"></div>
- * ```
  */
 class ModernJS {
-    //    public static buffers : ModernJSList = {};
     /**
      * ***els*** : List of target Element classes in the virtual DOM class.
      */
@@ -112,7 +107,7 @@ class ModernJS {
         return this;
     }
     /**
-     * ***reload*** : Get the virtual DOM of the v-child attribute from the virtual DOM element.
+     * ***reload*** : Get the virtual DOM of the v attribute from the virtual DOM element.
      * The results can be obtained in children.
      * @param {ModernJS?} context
      */
@@ -131,26 +126,6 @@ class ModernJS {
                 context.childs[attrValue].addEl(el);
             }
         });
-        /*
-                this.els.forEach((el : HTMLElement) => {
-                    const qss = el.querySelectorAll("[v-child]");
-                    qss.forEach((el2 : HTMLElement) => {
-                        const vname = el2.attributes["v-child"].value;
-                        el2.removeAttribute("v-child");
-        
-                        if (context) {
-                            if (!context.childs[vname]) context.childs[vname] = new ModernJS();
-                            context.childs[vname].parent = this;
-                            context.childs[vname].addEl(el2);
-                        }
-                        else {
-                            if (!this.childs[vname]) this.childs[vname] = new ModernJS();
-                            this.childs[vname].parent = this;
-                            this.childs[vname].addEl(el2);
-                        }
-                    }) ;
-                });
-                */
     }
     virtualAttributes(target, context, handler) {
         const qss = document.querySelectorAll("[" + target + "]");
@@ -390,9 +365,8 @@ class ModernJS {
                 }
             }
         });
-        if (!noReload) {
+        if (!noReload)
             this.reload();
-        }
         return this;
     }
     append(value, noReload) {
@@ -1103,4 +1077,3 @@ exports.ModernJS = ModernJS;
  * @returns {ModernJS}
  */
 exports.dom = ModernJS.dom;
-// export const mjs = ModernJS.reload;

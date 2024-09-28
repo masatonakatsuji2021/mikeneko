@@ -306,7 +306,6 @@ class Response {
                     // Template Rendering...
                     Data_1.Data.set("beforeTemplate", context.template);
                     const template = this.bindTemplate((0, ModernJS_1.dom)("body"), context.template);
-                    //                context.mjs = ModernJS.reload();
                     if (context.handleTemplateChanged)
                         yield context.handleTemplateChanged(template);
                 }
@@ -326,13 +325,11 @@ class Response {
                 Data_1.Data.set("beforeHead", context.head);
                 if (context.head) {
                     const head = this.bindUI((0, ModernJS_1.dom)("head"), context.head);
-                    //                context.mjs = ModernJS.reload();
                     if (context.handleHeadChanged)
                         yield context.handleHeadChanged(head);
                 }
                 else {
                     (0, ModernJS_1.dom)("head").html = "";
-                    //              context.mjs = ModernJS.reload();
                 }
             }
             const beforeHeader = Data_1.Data.get("beforeHeader");
@@ -340,13 +337,11 @@ class Response {
                 Data_1.Data.set("beforeHeader", context.header);
                 if (context.header) {
                     const header = this.bindUI((0, ModernJS_1.dom)("header"), context.header);
-                    //          context.mjs = ModernJS.reload();
                     if (context.handleHeaderChanged)
                         yield context.handleHeaderChanged(header);
                 }
                 else {
                     (0, ModernJS_1.dom)("header").html = "";
-                    //            context.mjs = ModernJS.reload();
                 }
             }
             const beforeFooter = Data_1.Data.get("beforeFooter");
@@ -354,13 +349,11 @@ class Response {
                 Data_1.Data.set("beforeFooter", context.footer);
                 if (context.footer) {
                     const footer = this.bindUI((0, ModernJS_1.dom)("footer"), context.footer);
-                    //        context.mjs = ModernJS.reload();
                     if (context.handleFooterChanged)
                         yield context.handleFooterChanged(footer);
                 }
                 else {
                     (0, ModernJS_1.dom)("footer").html = "";
-                    //      context.mjs = ModernJS.reload();
                 }
             }
         });
@@ -392,7 +385,6 @@ class Response {
     }
     static bindView(mjs, viewName, sendData) {
         mjs.html = this.view(viewName);
-        //        mjs.reload();
         return this.loadClass("View", viewName, mjs, sendData);
     }
     /**
@@ -405,7 +397,6 @@ class Response {
     }
     static bindTemplate(mjs, templateName, sendData) {
         mjs.html = this.template(templateName);
-        //        mjs.reload();
         return this.loadClass("Template", templateName, mjs, sendData);
     }
     /**
@@ -418,7 +409,6 @@ class Response {
     }
     static bindUI(mjs, UIName, sendData) {
         mjs.html = this.UI(UIName);
-        //        mjs.reload();
         return this.loadClass("UI", UIName, mjs, sendData);
     }
     static appendUI(mjs, UIName, sendData) {

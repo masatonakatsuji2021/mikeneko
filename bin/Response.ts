@@ -372,7 +372,6 @@ export class Response {
                 // Template Rendering...
                 Data.set("beforeTemplate", context.template);
                 const template = this.bindTemplate(dom("body"), context.template);
-//                context.mjs = ModernJS.reload();
                 if (context.handleTemplateChanged) await context.handleTemplateChanged(template);
             }
         }
@@ -392,12 +391,10 @@ export class Response {
             Data.set("beforeHead", context.head);
             if (context.head){
                 const head = this.bindUI(dom("head"), context.head);
-//                context.mjs = ModernJS.reload();
                 if (context.handleHeadChanged) await context.handleHeadChanged(head);
             }
             else {
                 dom("head").html = "";
-  //              context.mjs = ModernJS.reload();
             }
         }
 
@@ -406,12 +403,10 @@ export class Response {
             Data.set("beforeHeader", context.header);
             if (context.header){
                 const header = this.bindUI(dom("header"), context.header);
-      //          context.mjs = ModernJS.reload();
                 if (context.handleHeaderChanged) await context.handleHeaderChanged(header);
             }
             else {
                 dom("header").html = "";
-    //            context.mjs = ModernJS.reload();
             }
         }
 
@@ -420,12 +415,10 @@ export class Response {
             Data.set("beforeFooter", context.footer);
             if (context.footer){
                 const footer = this.bindUI(dom("footer"), context.footer);
-        //        context.mjs = ModernJS.reload();
                 if (context.handleFooterChanged) await context.handleFooterChanged(footer);
             }
             else {
                 dom("footer").html = "";
-          //      context.mjs = ModernJS.reload();
             }
         }
     }
@@ -477,7 +470,6 @@ export class Response {
     
     public static bindView(mjs: ModernJS, viewName : string, sendData? : any) : View {
         mjs.html = this.view(viewName);
-//        mjs.reload();
         return this.loadClass("View", viewName, mjs, sendData);
     }
 
@@ -509,7 +501,6 @@ export class Response {
 
     public static bindTemplate(mjs: ModernJS, templateName : string, sendData? : any) : Template {
         mjs.html = this.template(templateName);
-//        mjs.reload();
         return this.loadClass("Template", templateName, mjs, sendData);
     }
 
@@ -541,7 +532,6 @@ export class Response {
 
     public static bindUI(mjs: ModernJS, UIName : string, sendData? : any) : UI {
         mjs.html = this.UI(UIName);
-//        mjs.reload();
         return this.loadClass("UI", UIName, mjs, sendData);
     }
 

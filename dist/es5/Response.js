@@ -540,7 +540,6 @@ var Response = /** @class */ (function () {
     };
     Response.bindView = function (mjs, viewName, sendData) {
         mjs.html = this.view(viewName);
-        //        mjs.reload();
         return this.loadClass("View", viewName, mjs, sendData);
     };
     /**
@@ -553,7 +552,6 @@ var Response = /** @class */ (function () {
     };
     Response.bindTemplate = function (mjs, templateName, sendData) {
         mjs.html = this.template(templateName);
-        //        mjs.reload();
         return this.loadClass("Template", templateName, mjs, sendData);
     };
     /**
@@ -566,7 +564,6 @@ var Response = /** @class */ (function () {
     };
     Response.bindUI = function (mjs, UIName, sendData) {
         mjs.html = this.UI(UIName);
-        //        mjs.reload();
         return this.loadClass("UI", UIName, mjs, sendData);
     };
     Response.appendUI = function (mjs, UIName, sendData) {
