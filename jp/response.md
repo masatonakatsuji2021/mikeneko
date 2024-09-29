@@ -78,7 +78,7 @@ console.log(Response.nowController);
 
 ## # 指定ViewのHTML取得
 
-``src/app/view/test1.html``
+``src/rendering/view/test1.html``
 
 ```html
 <div>Test1 View...</div>
@@ -94,7 +94,7 @@ console.log(Response.view("test1"));
 <div v="bind"></div>
 ```
 
-``src/app/view/test1.html``
+``src/rendering/view/test1.html``
 
 ```html
 <div>Test1 View...</div>
@@ -106,7 +106,7 @@ Response.bindView(this.mjs.bind, "test1");
 
 ## # 指定TemplateのHTML取得
 
-``src/app/template/temp1.html``
+``src/rendering/template/temp1.html``
 
 ```html
 <div>Temp1 Text...</div>
@@ -123,7 +123,7 @@ console.log(Response.template("temp1"));
 <div v="bind"></div>
 ```
 
-``src/app/template/temp1.html``
+``src/rendering/template/temp1.html``
 
 ```html
 <div>Temp1 View...</div>
@@ -133,4 +133,81 @@ console.log(Response.template("temp1"));
 Response.bindTemplate(this.mjs.bind, "temp1");
 ```
 
+## # 指定UIのHTML取得
+
+``src/rendering/ui/ui1.html``
+
+```html
+<div>UI1 Text...</div>
+```
+
+```typescript
+console.log(Response.UI("ui1"));
+```
+
+## # 指定UIのバインド
+
+```html
+<div v="bind"></div>
+```
+
+``src/rendering/ui/ui1.html``
+
+```html
+<div>UI1 Text...</div>
+```
+
+```typescript
+Response.bindUI(this.mjs.bind, "ui1");
+```
+
+## # 指定UIの追加バインド
+
+```html
+<div v="bind"></div>
+```
+
+``src/rendering/ui/ui1.html``
+
+```html
+<div>UI1 Text...</div>
+```
+
+```typescript
+Response.appendUI(this.mjs.bind, "ui1");
+Response.appendUI(this.mjs.bind, "ui1");
+Response.appendUI(this.mjs.bind, "ui1");
+```
+
+```html
+<div v="bind">
+    <div>UI1 Text...</div>
+    <div>UI1 Text...</div>
+    <div>UI1 Text...</div>
+</div>
+```
+
+## # 指定DialogのHTML取得
+
+``src/rendering/dialog/dialog1.html``
+
+```html
+<div>Diloag Text...</div>
+```
+
+```typescript
+console.log(Response.dialog("dialog1"));
+```
+
+## # 指定Dialogの表示
+
+``src/rendering/dialog/dialog1.html``
+
+```html
+<div>Diloag Text...</div>
+```
+
+```typescript
+Response.openDialog("dialog1");
+```
 
