@@ -74,6 +74,17 @@ var Lib = /** @class */ (function () {
         });
         return paths.join("/");
     };
+    Lib.getRenderingPath = function (path, type) {
+        var paths = path.split("/");
+        paths.forEach(function (p_, index) {
+            if (index == paths.length - 1) {
+                p_ = p_.substring(0, 1).toLowerCase() + p_.substring(1);
+                p_ = p_.substring(0, p_.length - type.length);
+                paths[index] = p_;
+            }
+        });
+        return paths.join("/");
+    };
     Lib.getModuleName = function (string) {
         var strings = string.split("/");
         var string2 = strings[strings.length - 1];

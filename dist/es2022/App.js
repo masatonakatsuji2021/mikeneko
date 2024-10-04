@@ -65,10 +65,16 @@ class App {
     static delay = 100;
     /**
      * ***animationOpenClassName*** : Class attribute name when opening a page with animation.
+     * ```typescript
+     * public static animationOpenClassName : string = "open";
+     * ```
      */
     static animationOpenClassName;
     /**
      * ***animationCloseClassName*** : Class attribute name when closing a page with animation.
+     * ```typescript
+     * public static animationCloseClassName : string = "close";
+     * ```
      */
     static animationCloseClassName;
 }

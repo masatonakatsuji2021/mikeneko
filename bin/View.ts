@@ -1,43 +1,75 @@
 import { Routes } from "Routes";
 import { Response } from "Response";
 import { Template } from "Template";
+import { Render } from "Render";
+import { ModernJS } from "ModernJS";
 import { UI } from "UI";
-import { ModernJS, ModernJSList } from "ModernJS";
 
 /**
  * ***View*** : Main class for each screen.
  */
-export class View {
+export class View extends Render {
+
+    protected static type : string = "View";
+    
+    /**
+     * ***bind*** : Bind the View content to the specified virtual DOM class.
+     * @param {ModernJS} mjs Bind Virtual Dom
+     * @returns {View}
+     */
+    public static bind(mjs: ModernJS) : View;
 
     /**
-     * ***myMjs*** : Virtual Dom for content.
+     * ***bind*** : Bind the View content to the specified virtual DOM class.
+     * @param {ModernJS} mjs Bind Virtual Dom
+     * @param {string} ViewName View Name
+     * @returns {View}
      */
-    public myMjs : ModernJS;
-    
+    public static bind(mjs: ModernJS, ViewName : string) : View;
+
     /**
-     * ***mjs**** : Virtual DOM List of ModernJS Classes.
+     * ***bind*** : Bind the View content to the specified virtual DOM class.
+     * @param {ModernJS} mjs Bind Virtual Dom
+     * @param {string} ViewName View Name
+     * @param {any} sendData Transmission data contents
+     * @returns {View}
      */
-    public mjs : ModernJSList;
-    
-    /**
-     * ***vdo*** : Virtual Dom for content.
-     */
-    public get vdo() : ModernJS {
-        return this.myMjs;
+    public static bind(mjs: ModernJS, ViewName : string, sendData : any) : View;
+
+    public static bind(mjs: ModernJS, ViewName? : string, sendData? : any) : View {
+        if(ViewName) ViewName = "view/" + View;
+        return super.bind(mjs, ViewName, sendData, this) as View;
     }
 
     /**
-     * ***vdos*** : Virtual DOM List of ModernJS Classes.
+     * ***append*** : Appends the View content to the specified virtual DOM class.
+     * @param {ModernJS} mjs Append Virtual Dom
+     * @returns {Dialog}
      */
-    public get vdos() : ModernJSList {
-        return this.mjs;
-    }
+    public static append(mjs: ModernJS) : View;
 
     /**
-     * ***sendData*** : 
+     * ***append*** : Appends the View content to the specified virtual DOM class.
+     * @param {ModernJS} mjs Append Virtual Dom
+     * @param {string} ViewName View name
+     * @returns {Dialog}
      */
-    public sendData: any;
+    public static append(mjs: ModernJS, ViewName : string) : View;
     
+    /**
+     * ***append*** : Appends the View content to the specified virtual DOM class.
+     * @param {ModernJS} mjs Append Virtual Dom
+     * @param {string} ViewName View name
+     * @param {any} sendData Transmission data contents
+     * @returns {Dialog}
+     */
+    public static append(mjs: ModernJS, ViewName : string, sendData : any) : View;
+    
+    public static append(mjs: ModernJS, ViewName? : string, sendData? : any) : View {
+        if(ViewName) ViewName = "view/" + ViewName;
+        return super.append(mjs, ViewName, sendData, this) as View;
+    }
+
     /**
      * ***beginStatus*** : 
      */

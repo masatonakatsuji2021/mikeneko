@@ -13,6 +13,16 @@ var FrontControl = /** @class */ (function () {
         if (!this.__fn[name])
             throw ("No data available. Check if the file exists in the source file \"" + name + "\".");
         var buffer = this.__fn[name]();
+        if (typeof buffer == "object") {
+            var c = Object.keys(buffer);
+            for (var n = 0; n < c.length; n++) {
+                var cn = c[n];
+                try {
+                    buffer[cn].___PATH___ = name;
+                }
+                catch (error) { }
+            }
+        }
         if (this.__fn_static[name] == undefined)
             this.__fn_static[name] = buffer;
         return buffer;

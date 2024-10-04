@@ -80,6 +80,18 @@ export class Lib {
         return paths.join("/");
     }
 
+    public static getRenderingPath(path : string, type: string) : string {
+        const paths = path.split("/");
+        paths.forEach((p_, index) => {
+            if (index == paths.length - 1) {
+                p_ = p_.substring(0,1).toLowerCase() + p_.substring(1);
+                p_ = p_.substring(0, p_.length - type.length);
+                paths[index] = p_;
+            }
+        });
+        return paths.join("/");
+    }
+
     public static getModuleName(string : string) : string{
         const strings = string.split("/");
         const string2 = strings[strings.length - 1];

@@ -74,6 +74,7 @@ class Builder {
                 "KeyEvent",
                 "Response",
                 "Routes",
+                "Render",
                 "Startor",
                 "Storage",
                 "Shortcode",

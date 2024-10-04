@@ -1,32 +1,28 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UI = void 0;
-class UI {
-    /**
-     * ***myMjs*** : Virtual Dom for content.
-     */
-    myMjs;
-    /**
-     * ***mjs**** : Virtual DOM List of ModernJS Classes.
-     */
-    mjs;
-    /**
-     * ***vdo*** : Virtual Dom for content.
-     */
-    get vdo() {
-        return this.myMjs;
-    }
-    /**
-     * ***vdos*** : Virtual DOM List of ModernJS Classes.
-     */
-    get vdos() {
-        return this.mjs;
-    }
+const Render_1 = require("Render");
+/**
+ * **UI** : Used when sharing individual display areas in HTML rendering.
+ * Used to standardize buttons, list displays, and input fields.
+ */
+class UI extends Render_1.Render {
+    static type = "UI";
     /**
      * ***handle*** : Event handler for when the UI is displayed.
      * @param {any} sendData? Transmission data contents
      * @returns {void}
      */
     handle(sendData) { }
+    static bind(mjs, UIName, sendData) {
+        if (UIName)
+            UIName = "ui/" + UIName;
+        return super.bind(mjs, UIName, sendData, this);
+    }
+    static append(mjs, UIName, sendData) {
+        if (UIName)
+            UIName = "ui/" + UIName;
+        return super.append(mjs, UIName, sendData, this);
+    }
 }
 exports.UI = UI;

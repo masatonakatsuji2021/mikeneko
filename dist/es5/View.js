@@ -1,48 +1,57 @@
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.View = void 0;
 var Routes_1 = require("Routes");
 var Response_1 = require("Response");
+var Render_1 = require("Render");
 /**
  * ***View*** : Main class for each screen.
  */
-var View = /** @class */ (function () {
+var View = /** @class */ (function (_super) {
+    __extends(View, _super);
     function View() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
         /**
          * ***beginStatus*** :
          */
-        this.beginStatus = false;
+        _this.beginStatus = false;
         /**
          * ***view*** : Change the view name to be displayed.
          * If not specified, the "rendering/View/{viewName}.html" file will be displayed as the HTML source by default.
          */
-        this.view = null;
+        _this.view = null;
         /**
          * ***template*** :
          * If you have a template HTML file, specify it here.
          */
-        this.template = null;
+        _this.template = null;
+        return _this;
     }
-    Object.defineProperty(View.prototype, "vdo", {
-        /**
-         * ***vdo*** : Virtual Dom for content.
-         */
-        get: function () {
-            return this.myMjs;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(View.prototype, "vdos", {
-        /**
-         * ***vdos*** : Virtual DOM List of ModernJS Classes.
-         */
-        get: function () {
-            return this.mjs;
-        },
-        enumerable: false,
-        configurable: true
-    });
+    View.bind = function (mjs, ViewName, sendData) {
+        if (ViewName)
+            ViewName = "view/" + View;
+        return _super.bind.call(this, mjs, ViewName, sendData, this);
+    };
+    View.append = function (mjs, ViewName, sendData) {
+        if (ViewName)
+            ViewName = "view/" + ViewName;
+        return _super.append.call(this, mjs, ViewName, sendData, this);
+    };
     /**
      * ***setView*** :
      * Set the page view path to display.
@@ -156,6 +165,7 @@ var View = /** @class */ (function () {
      * ***handleFooterChanged*** : A handler that runs when the template specified in the member variable footer tag changes.
      */
     View.prototype.handleFooterChanged = function (footer) { };
+    View.type = "View";
     return View;
-}());
+}(Render_1.Render));
 exports.View = View;

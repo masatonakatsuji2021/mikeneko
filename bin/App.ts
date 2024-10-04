@@ -75,11 +75,17 @@ export class App {
 
     /**
      * ***animationOpenClassName*** : Class attribute name when opening a page with animation.
+     * ```typescript
+     * public static animationOpenClassName : string = "open";
+     * ```
      */
     public static animationOpenClassName : string;
 
     /**
      * ***animationCloseClassName*** : Class attribute name when closing a page with animation.
+     * ```typescript
+     * public static animationCloseClassName : string = "close";
+     * ```
      */
     public static animationCloseClassName : string;
 }

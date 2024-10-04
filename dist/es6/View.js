@@ -3,11 +3,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.View = void 0;
 const Routes_1 = require("Routes");
 const Response_1 = require("Response");
+const Render_1 = require("Render");
 /**
  * ***View*** : Main class for each screen.
  */
-class View {
+class View extends Render_1.Render {
     constructor() {
+        super(...arguments);
         /**
          * ***beginStatus*** :
          */
@@ -23,17 +25,15 @@ class View {
          */
         this.template = null;
     }
-    /**
-     * ***vdo*** : Virtual Dom for content.
-     */
-    get vdo() {
-        return this.myMjs;
+    static bind(mjs, ViewName, sendData) {
+        if (ViewName)
+            ViewName = "view/" + View;
+        return super.bind(mjs, ViewName, sendData, this);
     }
-    /**
-     * ***vdos*** : Virtual DOM List of ModernJS Classes.
-     */
-    get vdos() {
-        return this.mjs;
+    static append(mjs, ViewName, sendData) {
+        if (ViewName)
+            ViewName = "view/" + ViewName;
+        return super.append(mjs, ViewName, sendData, this);
     }
     /**
      * ***setView*** :
@@ -145,3 +145,4 @@ class View {
     handleFooterChanged(footer) { }
 }
 exports.View = View;
+View.type = "View";
