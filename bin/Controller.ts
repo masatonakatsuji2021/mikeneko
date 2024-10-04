@@ -1,7 +1,5 @@
-import { Routes } from "Routes";
 import { Template } from "Template";
 import { UI } from "UI";
-import { Response } from "Response";
 import { ModernJS, ModernJSList } from "ModernJS";
 
 /**
@@ -51,34 +49,9 @@ export class Controller {
     public view : string = null;
 
     /**
-     * ***setView*** : Set the page view path to display.  
-     * If not specified, automatically determined by "{Controller Name}/{action name}"  
-     * If you use it, place the HTML file in the path "rendering/View/{Controller Name}/{action Name}.html".
-     * @param {string} viewName view name
-     * @returns {void}
-     */
-    public setView(viewName : string)  : void{
-        this.view = viewName;
-        const routes = Routes.getRoute();
-        Response.__rendering(routes, this);
-    }
-
-    /**
      * ***template*** : If you have a template HTML file, specify it here.
      */
     public template : string = null;
-
-    /**
-     * ***setTemplate*** : Specifies the template name to use on the displayed page.  
-     * When using it, place the TML file for the template with the specified name in the "rendering/Template" directory.  
-     * @param {string} templateName template name
-     * @returns {void}
-    */
-    public setTemplate(templateName : string){
-        this.template = templateName;
-        const routes = Routes.getRoute();
-        Response.__rendering(routes, this);
-    }
 
     /**
      * ***head*** : If there is a UI to set in the head tag, you can specify it.  
@@ -86,44 +59,14 @@ export class Controller {
     public head : string;
 
     /**
-     * ***setHead*** : If there is a UI to set in the head tag, you can specify it.  
-     * @param headName 
-     */
-    public setHead(headName : string) {
-        this.head = headName;
-        const routes = Routes.getRoute();
-        Response.__rendering(routes, this);
-    }
-
-    /**
      * ***header*** : If there is a UI to set in the header tag, you can specify it.  
      */
     public header : string;
 
     /**
-     * ***setHeader*** : If there is a UI to set in the header tag, you can specify it.  
-     * @param headerName 
-     */
-    public setHeader(headerName : string) {
-        this.header = headerName;
-        const routes = Routes.getRoute();
-        Response.__rendering(routes, this);
-    }
-
-    /**
      * ***footer*** : If there is a UI to set in the footer tag, you can specify it.  
      */
     public footer : string;
-
-    /**
-     * ***setFooter*** : If there is a UI to set in the footer tag, you can specify it. 
-     * @param footerName 
-     */
-    public setFooter(footerName : string) {
-        this.header = footerName;
-        const routes = Routes.getRoute();
-        Response.__rendering(routes, this);
-    }
 
     /**
      * ***handleBefore*** : A handler executed just before transitioning to the page.

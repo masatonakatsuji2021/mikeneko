@@ -16,8 +16,6 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.View = void 0;
-var Routes_1 = require("Routes");
-var Response_1 = require("Response");
 var Render_1 = require("Render");
 /**
  * ***View*** : Main class for each screen.
@@ -51,54 +49,6 @@ var View = /** @class */ (function (_super) {
         if (ViewName)
             ViewName = "view/" + ViewName;
         return _super.append.call(this, mjs, ViewName, sendData, this);
-    };
-    /**
-     * ***setView*** :
-     * Set the page view path to display.
-     * If not specified, automatically determined by "{viewName}"
-     * If you use it, place the HTML file in the path "rendering/View/{viewName}.html".
-     */
-    View.prototype.setView = function (value) {
-        this.view = value;
-        var routes = Routes_1.Routes.getRoute();
-        Response_1.Response.__rendering(routes, this);
-    };
-    /**
-     * ***setTemplate*** :
-     * Specifies the template name to use on the displayed page.
-     * When using it, place the TML file for the template with the specified name in the "rendering/Template" directory.
-     */
-    View.prototype.setTemplate = function (value) {
-        this.template = value;
-        var routes = Routes_1.Routes.getRoute();
-        Response_1.Response.__rendering(routes, this);
-    };
-    /**
-     * ***setHead*** : If there is a UI to set in the head tag, you can specify it.
-     * @param headName
-     */
-    View.prototype.setHead = function (headName) {
-        this.head = headName;
-        var routes = Routes_1.Routes.getRoute();
-        Response_1.Response.__rendering(routes, this);
-    };
-    /**
-     * ***setHeader*** : If there is a UI to set in the header tag, you can specify it.
-     * @param headerName
-     */
-    View.prototype.setHeader = function (headerName) {
-        this.header = headerName;
-        var routes = Routes_1.Routes.getRoute();
-        Response_1.Response.__rendering(routes, this);
-    };
-    /**
-     * ***setFooter*** : If there is a UI to set in the footer tag, you can specify it.
-     * @param footerName
-     */
-    View.prototype.setFooter = function (footerName) {
-        this.header = footerName;
-        var routes = Routes_1.Routes.getRoute();
-        Response_1.Response.__rendering(routes, this);
     };
     /**
      * ***handle*** :

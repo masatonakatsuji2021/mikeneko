@@ -1,8 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.View = void 0;
-const Routes_1 = require("Routes");
-const Response_1 = require("Response");
 const Render_1 = require("Render");
 /**
  * ***View*** : Main class for each screen.
@@ -29,70 +27,22 @@ class View extends Render_1.Render {
      */
     view = null;
     /**
-     * ***setView*** :
-     * Set the page view path to display.
-     * If not specified, automatically determined by "{viewName}"
-     * If you use it, place the HTML file in the path "rendering/View/{viewName}.html".
-     */
-    setView(value) {
-        this.view = value;
-        const routes = Routes_1.Routes.getRoute();
-        Response_1.Response.__rendering(routes, this);
-    }
-    /**
      * ***template*** :
      * If you have a template HTML file, specify it here.
      */
     template = null;
     /**
-     * ***setTemplate*** :
-     * Specifies the template name to use on the displayed page.
-     * When using it, place the TML file for the template with the specified name in the "rendering/Template" directory.
-     */
-    setTemplate(value) {
-        this.template = value;
-        const routes = Routes_1.Routes.getRoute();
-        Response_1.Response.__rendering(routes, this);
-    }
-    /**
      * ***head*** : If there is a UI to set in the head tag, you can specify it.
      */
     head;
-    /**
-     * ***setHead*** : If there is a UI to set in the head tag, you can specify it.
-     * @param headName
-     */
-    setHead(headName) {
-        this.head = headName;
-        const routes = Routes_1.Routes.getRoute();
-        Response_1.Response.__rendering(routes, this);
-    }
     /**
      * ***header*** : If there is a UI to set in the header tag, you can specify it.
      */
     header;
     /**
-     * ***setHeader*** : If there is a UI to set in the header tag, you can specify it.
-     * @param headerName
-     */
-    setHeader(headerName) {
-        this.header = headerName;
-        const routes = Routes_1.Routes.getRoute();
-        Response_1.Response.__rendering(routes, this);
-    }
-    /**
      * ***footer*** : If there is a UI to set in the footer tag, you can specify it.
      */
     footer;
-    /**
-     * ***setFooter*** : If there is a UI to set in the footer tag, you can specify it.
-     * @param footerName
-     */
-    setFooter(footerName) {
-        this.header = footerName;
-        const routes = Routes_1.Routes.getRoute();
-        Response_1.Response.__rendering(routes, this);
-    }
     /**
      * ***handle*** :
      * A handler that runs automatically when the view is drawn on the screen.

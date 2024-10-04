@@ -1,7 +1,11 @@
 import { App, AppRouteType } from "App";
 import { Routes, DecisionRoute  } from "Routes";
+import { Render } from "Render";
 import { Lib } from "Lib";
 import { Data } from "Data";
+import { View } from "View";
+import { UI } from "UI";
+import { Template } from "Template";
 import { Background } from "Background";
 import { Response } from "Response";
 import { Shortcode } from "Shortcode";
@@ -93,22 +97,22 @@ export class Startor {
 
         Shortcode.add("rendering", (args : {[name : string] : string}) : string => {
             if(!args.path) return;
-            return Response.renderHtml(args.path);
+            return Render.getHtml(args.path);
         });
 
         Shortcode.add("view", (args : {[name : string] : string}) : string => {
             if(!args.path) return;
-            return Response.view(args.path);
+            return View.getHtml(args.path);
         });
 
         Shortcode.add("ui", (args : {[name : string] : string}) : string => {
             if(!args.path) return;
-            return Response.UI(args.path);
+            return UI.getHtml(args.path);
         });
 
         Shortcode.add("template", (args : {[name : string] : string}) : string => {
             if(!args.path) return;
-            return Response.template(args.path);
+            return Template.getHtml(args.path);
         });
 
         Shortcode.add("resource", (args : {[name : string] : string}) : string => {

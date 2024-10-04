@@ -112,7 +112,7 @@ class Render {
             path = this.___PATH___;
         }
         const className = Lib_1.Lib.getModuleName(path);
-        const classPath = Lib_1.Lib.getModulePath(path);
+        const classPath = Lib_1.Lib.getModulePath("app/" + path);
         let classObj;
         try {
             const classObj_ = require(classPath);

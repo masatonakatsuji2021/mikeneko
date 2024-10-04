@@ -108,7 +108,7 @@ var Render = /** @class */ (function () {
             path = this.___PATH___;
         }
         var className = Lib_1.Lib.getModuleName(path);
-        var classPath = Lib_1.Lib.getModulePath(path);
+        var classPath = Lib_1.Lib.getModulePath("app/" + path);
         var classObj;
         try {
             var classObj_ = require(classPath);

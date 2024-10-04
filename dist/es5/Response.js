@@ -41,10 +41,10 @@ var App_1 = require("App");
 var Routes_1 = require("Routes");
 var Lib_1 = require("Lib");
 var Data_1 = require("Data");
+var View_1 = require("View");
+var Template_1 = require("Template");
 var UI_1 = require("UI");
 var ModernJS_1 = require("ModernJS");
-var Shortcode_1 = require("Shortcode");
-var Dialog_1 = require("Dialog");
 var Response = /** @class */ (function () {
     function Response() {
     }
@@ -447,7 +447,7 @@ var Response = /** @class */ (function () {
                         if (!(beforeTemplate != context.template)) return [3 /*break*/, 2];
                         // Template Rendering...
                         Data_1.Data.set("beforeTemplate", context.template);
-                        template = this.bindTemplate((0, ModernJS_1.dom)("body"), context.template);
+                        template = Template_1.Template.bind((0, ModernJS_1.dom)("body"), context.template);
                         if (!context.handleTemplateChanged) return [3 /*break*/, 2];
                         return [4 /*yield*/, context.handleTemplateChanged(template)];
                     case 1:
@@ -458,7 +458,7 @@ var Response = /** @class */ (function () {
                         Data_1.Data.set("beforeTemplate", null);
                         _a.label = 4;
                     case 4:
-                        viewHtml = Response.view(context.view);
+                        viewHtml = View_1.View.getHtml("view/" + context.view);
                         if (!(0, ModernJS_1.dom)("main").length)
                             (0, ModernJS_1.dom)("body").append("<main></main>");
                         main = (0, ModernJS_1.dom)("main");
@@ -468,7 +468,7 @@ var Response = /** @class */ (function () {
                         if (!(beforeHead != context.head)) return [3 /*break*/, 8];
                         Data_1.Data.set("beforeHead", context.head);
                         if (!context.head) return [3 /*break*/, 7];
-                        head = this.bindUI((0, ModernJS_1.dom)("head"), context.head);
+                        head = UI_1.UI.bind((0, ModernJS_1.dom)("head"), context.head);
                         if (!context.handleHeadChanged) return [3 /*break*/, 6];
                         return [4 /*yield*/, context.handleHeadChanged(head)];
                     case 5:
@@ -483,7 +483,7 @@ var Response = /** @class */ (function () {
                         if (!(beforeHeader != context.header)) return [3 /*break*/, 12];
                         Data_1.Data.set("beforeHeader", context.header);
                         if (!context.header) return [3 /*break*/, 11];
-                        header = this.bindUI((0, ModernJS_1.dom)("header"), context.header);
+                        header = UI_1.UI.bind((0, ModernJS_1.dom)("header"), context.header);
                         if (!context.handleHeaderChanged) return [3 /*break*/, 10];
                         return [4 /*yield*/, context.handleHeaderChanged(header)];
                     case 9:
@@ -498,7 +498,7 @@ var Response = /** @class */ (function () {
                         if (!(beforeFooter != context.footer)) return [3 /*break*/, 16];
                         Data_1.Data.set("beforeFooter", context.footer);
                         if (!context.footer) return [3 /*break*/, 15];
-                        footer = this.bindUI((0, ModernJS_1.dom)("footer"), context.footer);
+                        footer = UI_1.UI.bind((0, ModernJS_1.dom)("footer"), context.footer);
                         if (!context.handleFooterChanged) return [3 /*break*/, 14];
                         return [4 /*yield*/, context.handleFooterChanged(footer)];
                     case 13:
@@ -512,186 +512,6 @@ var Response = /** @class */ (function () {
                 }
             });
         });
-    };
-    /**
-     * ***renderHtml** : Get Rendering HTML content information.
-     * @param {string} renderName rendering html Name
-     * @returns {string}
-     */
-    Response.renderHtml = function (renderName) {
-        var renderPath = "rendering/" + renderName + ".html";
-        if (!useExists(renderPath)) {
-            console.error("[Rendering ERROR] Rendering data does not exist. Check if source file \"" + renderPath + "\" exists.");
-            return;
-        }
-        var content = use(renderPath);
-        content = Lib_1.Lib.base64Decode(content);
-        content = this.renderConvert(content);
-        ;
-        return content;
-    };
-    /**
-     * ***view *** : Get View's content information.
-     * @param {string} viewName View Name
-     * @returns {string} view contents
-     */
-    Response.view = function (viewName) {
-        return this.renderHtml("view/" + viewName);
-    };
-    Response.bindView = function (mjs, viewName, sendData) {
-        mjs.html = this.view(viewName);
-        return this.loadClass("View", viewName, mjs, sendData);
-    };
-    /**
-     * ***template*** : Get template content information.
-     * @param {string} templateName Template Name
-     * @returns {string} template contents
-     */
-    Response.template = function (templateName) {
-        return this.renderHtml("template/" + templateName);
-    };
-    Response.bindTemplate = function (mjs, templateName, sendData) {
-        mjs.html = this.template(templateName);
-        return this.loadClass("Template", templateName, mjs, sendData);
-    };
-    /**
-     * ***UI*** : Get UI content information.
-     * @param {string} uiName UI Name
-     * @returns {string} UI contents
-     */
-    Response.UI = function (uiName) {
-        return this.renderHtml("ui/" + uiName);
-    };
-    Response.bindUI = function (mjs, UIName, sendData) {
-        mjs.html = this.UI(UIName);
-        return this.loadClass("UI", UIName, mjs, sendData);
-    };
-    Response.appendUI = function (mjs, UIName, sendData) {
-        mjs.append(this.UI(UIName), true);
-        var myMjs = new ModernJS_1.ModernJS();
-        mjs.reload(myMjs);
-        return this.loadClass("UI", UIName, myMjs, sendData);
-    };
-    /**
-     * ***dialog*** : Get Dialog content information.
-     * @param {string} dialogName dialog name
-     * @returns {string}
-     */
-    Response.dialog = function (dialogName) {
-        return this.renderHtml("dialog/" + dialogName);
-    };
-    Response.openDialog = function (dialogName, option) {
-        if (!option)
-            option = {};
-        this.setDialogCss();
-        var dialogStr = "<dwindow>" + this.dialog(dialogName) + "</dwindow>";
-        var dialogMjs = ModernJS_1.ModernJS.create(dialogStr, "dialog");
-        if (option.class) {
-            if (typeof option.class == "string")
-                option.class = [option.class];
-            option.class.forEach(function (c) {
-                dialogMjs.addClass(c);
-            });
-        }
-        (0, ModernJS_1.dom)("body").append(dialogMjs, true);
-        dialogMjs.reload();
-        setTimeout(function () {
-            dialogMjs.addClass("open");
-        }, 100);
-        var dialog = this.loadClass("Dialog", dialogName, dialogMjs, option.sendData);
-        if (!dialog) {
-            dialog = new Dialog_1.Dialog();
-            dialog.myMjs = dialogMjs;
-            dialog.mjs = dialogMjs.childs;
-        }
-        if (option.handle)
-            option.handle(dialog);
-        return dialog;
-    };
-    Response.openDialogOrigin = function (dialogHtml, option) {
-        if (!option)
-            option = {};
-        this.setDialogCss();
-        var dialogStr = "<dwindow>" + dialogHtml + "</dwindow>";
-        var dialogMjs = ModernJS_1.ModernJS.create(dialogStr, "dialog");
-        if (option.class) {
-            if (typeof option.class == "string")
-                option.class = [option.class];
-            option.class.forEach(function (c) {
-                dialogMjs.addClass(c);
-            });
-        }
-        (0, ModernJS_1.dom)("body").append(dialogMjs);
-        setTimeout(function () {
-            dialogMjs.addClass("open");
-        }, 100);
-        var dialog = new Dialog_1.Dialog();
-        dialog.myMjs = dialogMjs;
-        dialog.mjs = dialogMjs.childs;
-        if (option.handle)
-            option.handle(dialog);
-        return dialog;
-    };
-    Response.setDialogCss = function () {
-        if ((0, ModernJS_1.dom)("head").querySelector("link[m=dl]").length > 0)
-            return;
-        var style = require("CORERES/dialog/style.css");
-        (0, ModernJS_1.dom)("head").afterBegin("<link rel=\"stylesheet\" m=\"dl\" href=\"data:text/css;base64," + style + "\">");
-    };
-    Response.loadClass = function (classType, loadClassName, mjs, sendData) {
-        var className = Lib_1.Lib.getModuleName(loadClassName + classType);
-        var classPath = Lib_1.Lib.getModulePath("app/" + classType.toLowerCase() + "/" + loadClassName + classType);
-        var classObj;
-        try {
-            var classObj_ = require(classPath);
-            classObj = new classObj_[className]();
-            classObj.myMjs = mjs;
-            classObj.mjs = mjs.childs;
-        }
-        catch (error) {
-            if (classType == "UI") {
-                classObj = new UI_1.UI();
-                classObj.myMjs = mjs;
-                classObj.mjs = mjs.childs;
-            }
-            else if (classType == "Dialog") {
-                classObj = new Dialog_1.Dialog();
-                classObj.myMjs = mjs;
-                classObj.mjs = mjs.childs;
-            }
-            return classObj;
-        }
-        if (classObj.handle)
-            classObj.handle(sendData);
-        return classObj;
-    };
-    Response.renderConvert = function (content) {
-        var tagName = "div";
-        if (content.indexOf("<tr") === 0 || content.indexOf("<td") === 0)
-            tagName = "tbody";
-        var el0 = document.createElement(tagName);
-        el0.innerHTML = content;
-        // link tag check...
-        var links = el0.querySelectorAll("link");
-        links.forEach(function (el) {
-            var href = el.attributes["href"].value;
-            if (!Lib_1.Lib.existResource(href))
-                return;
-            var resource = Lib_1.Lib.getResourceDataUrl(href);
-            el.setAttribute("href", resource);
-        });
-        // image tag check...
-        var imgs = el0.querySelectorAll("img");
-        imgs.forEach(function (el) {
-            var src = el.attributes["src"].value;
-            if (!Lib_1.Lib.existResource(src))
-                return;
-            var resource = Lib_1.Lib.getResourceDataUrl(src);
-            el.setAttribute("src", resource);
-        });
-        // shortcode analysis
-        el0.innerHTML = Shortcode_1.Shortcode.analysis(el0.innerHTML);
-        return el0.innerHTML;
     };
     /**
      * ***isBack*** : A flag that determines if you are back from the previous screen.

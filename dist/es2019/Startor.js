@@ -3,8 +3,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.string = exports.Startor = void 0;
 const App_1 = require("App");
 const Routes_1 = require("Routes");
+const Render_1 = require("Render");
 const Lib_1 = require("Lib");
 const Data_1 = require("Data");
+const View_1 = require("View");
+const UI_1 = require("UI");
+const Template_1 = require("Template");
 const Background_1 = require("Background");
 const Response_1 = require("Response");
 const Shortcode_1 = require("Shortcode");
@@ -92,22 +96,22 @@ class Startor {
         Shortcode_1.Shortcode.add("rendering", (args) => {
             if (!args.path)
                 return;
-            return Response_1.Response.renderHtml(args.path);
+            return Render_1.Render.getHtml(args.path);
         });
         Shortcode_1.Shortcode.add("view", (args) => {
             if (!args.path)
                 return;
-            return Response_1.Response.view(args.path);
+            return View_1.View.getHtml(args.path);
         });
         Shortcode_1.Shortcode.add("ui", (args) => {
             if (!args.path)
                 return;
-            return Response_1.Response.UI(args.path);
+            return UI_1.UI.getHtml(args.path);
         });
         Shortcode_1.Shortcode.add("template", (args) => {
             if (!args.path)
                 return;
-            return Response_1.Response.template(args.path);
+            return Template_1.Template.getHtml(args.path);
         });
         Shortcode_1.Shortcode.add("resource", (args) => {
             if (!args.url)

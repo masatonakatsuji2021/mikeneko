@@ -123,7 +123,7 @@ export class Render {
             path = this.___PATH___;
         }
         const className = Lib.getModuleName(path);
-        const classPath = Lib.getModulePath(path);
+        const classPath = Lib.getModulePath("app/" + path);
         let classObj;
         try {
             const classObj_ = require(classPath);
@@ -143,6 +143,4 @@ export class Render {
         if (classObj.handle) classObj.handle(sendData);
         return classObj;
     }
-
-
 }
