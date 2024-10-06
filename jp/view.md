@@ -1,7 +1,7 @@
-# Viewクラス
+# View
 
-Viewクラスは、各画面表示にて前後の処理内容を設置するためのクラスです。  
-主に、画面表示の前後に実行されるイベントハンドラの設定、
+Viewは、各画面表示にて前後の処理内容を設置するための機能です。  
+主に、画面表示の前後に実行されるハンドラの設定、
 画面上のタグの操作(仮想DOMを使った操作)、
 使用するテンプレートの設定を行います。
 
@@ -38,7 +38,7 @@ export class Page1View extends View {
 ``Page1View``は必ず``View``の派生クラスとします。
 
 これにより「/page1」にアクセスまたはそれに該当する画面に遷移したときは、
-上記のPage1Viewクラスの``handle``がメインのイベントハンドラとして実行され、　　
+上記のPage1Viewクラスの``handle``がメインのハンドラとして実行され、　　
 コンソール上に``page1 .... ok``が表示されます。
 
 この画面にV属性が``button``のボタンを用意した場合、  
@@ -64,7 +64,7 @@ export class Page1View extends View {
 
 ## # Viewのライフサイクル
 
-基本的にViewのメインのイベントハンドラは``handle``ですが、  
+基本的にViewのメインのハンドラは``handle``ですが、  
 それ以外のViewのライフサイクルは下記のとおりです。
 
 ````
@@ -105,13 +105,21 @@ View.handleRenderAfter を実行
 { 他のViewまたはControllerに移動が確定した場合 }
         |
 View.handleLeave を実行
+        |
+        |
+        |       前画面から進んでいる場合
+        |----------------------------------- View.handleLeaveNext を実行
+        |
+        |
+        |      前画面から戻っている場合
+        |----------------------------------- View.handleLeaveBack を実行
 ````
 
-各イベントハンドラの解説を下記に示します。
+各ハンドラの解説を下記に示します。
 
 ### - handleBefore / handleAfter イベント
 
-指定Viewへのルーティングが確定した場合に一番最初に実行されるイベントハンドラです。  
+指定Viewへのルーティングが確定した場合に一番最初に実行されるハンドラです。  
 この時点では画面切替がまだ行われていないので動的なテキスト挿入などの仮想DOM操作などには注意が必要です。
 
 ```typescript
@@ -131,7 +139,7 @@ export class Page1View extends View {
 
 ### - handleTemplateChanged イベント
 
-public変数``template``にて、指定テンプレート名が変更された場合にのみ実行されるイベントハンドラです。  
+public変数``template``にて、指定テンプレート名が変更された場合にのみ実行されるハンドラです。  
 使用方法については[こちらで解説しています。](template.md#handleTemplateChanged);
 
 
@@ -157,7 +165,7 @@ export class Page1View extends View {
 
 ### - handleHeadChanged イベント
 
-public変数``head``にて、指定head名(実際はheadタグに使用するUI)が変更された場合にのみ実行されるイベントハンドラです。  
+public変数``head``にて、指定head名(実際はheadタグに使用するUI)が変更された場合にのみ実行されるハンドラです。  
 (headについては[こちらで解説](#head))
 
 引数にheadタグのUIクラスオブジェクトが渡されるため、  
@@ -182,7 +190,7 @@ export class Page1View extends View {
 
 ### - handleHeaderChanged イベント
 
-public変数``header``にて、指定header名(実際はheaderタグに使用するUI)が変更された場合にのみ実行されるイベントハンドラです。  
+public変数``header``にて、指定header名(実際はheaderタグに使用するUI)が変更された場合にのみ実行されるハンドラです。  
 (headerについては[こちらで解説](#header))
 
 引数にheaderタグのUIクラスオブジェクトが渡されるため、  
@@ -207,7 +215,7 @@ export class Page1View extends View {
 
 ### - handleFooterChanged イベント
 
-public変数``footer``にて、指定footer名(実際はfooterタグに使用するUI)が変更された場合にのみ実行されるイベントハンドラです。  
+public変数``footer``にて、指定footer名(実際はfooterタグに使用するUI)が変更された場合にのみ実行されるハンドラです。  
 (footerについては[こちらで解説](#footer))
 
 引数にfooterタグのUIクラスオブジェクトが渡されるため、  
@@ -232,7 +240,7 @@ export class Page1View extends View {
 
 ### - handleRenderBefore イベント
 
-画面切替が完了した直後に実行されるイベントハンドラです。  
+画面切替が完了した直後に実行されるハンドラです。  
 
 ``handle``とライフサイクルとしての位置は同じですが  
 こちらは複数のViewで継承元としている共通Viewにて  
@@ -240,19 +248,19 @@ export class Page1View extends View {
 
 ### - handle イベント
 
-画面切替が完了した直後に実行されるイベントハンドラです。  
-これがメインのイベントハンドラとなるため、迷いがない場合はこちらを優先的に使用します。
+画面切替が完了した直後に実行されるハンドラです。  
+これがメインのハンドラとなるため、迷いがない場合はこちらを優先的に使用します。
 
 ### - handleRenderAfter イベント
 
-画面切替が完了し、かつ``handle``イベントも終了後に実行されるイベントハンドラです。  
+画面切替が完了し、かつ``handle``イベントも終了後に実行されるハンドラです。  
 
 ### - handleLeave イベント
 
-他のViewまたはControllerに画面移動が確定した直後に実行されるイベントハンドラです。
+他のViewまたはControllerに画面移動が確定した直後に実行されるハンドラです。
 
 特定の処理を画面表示中にのみ実施して、それを破棄・または終了させる場合は  
-このイベントハンドラ上で指定してください。
+このハンドラ上で指定してください。
 
 例えば下記のように一定時間間隔でカウントアップしている処理などは、  
 このイベント上で停止させる必要があります。
@@ -282,11 +290,79 @@ export class Page1View extends View {
 }
 ```
 
+なお画面から離れる際は他画面から戻る・進むに関係なくこのハンドラは実行されます。  
+戻る・進むごとに判別して処理を実装を切り分けたい場合は  
+[Response.isBack](response.md#isback)、[Response.isNext](response.md#isnext)を使う、   
+あるいは[handleLeaveNextイベント](#handleleavenext)、[handleLeaveBackイベント](#handleleaveback)を使用する方法があります。
+
+<div id="handleleavenext"></div>
+
+### - handleLeaveNextイベント
+
+他のViewまたはControllerに画面移動が確定し、  
+かつ前画面から進んでいる場合にのみ実行されるハンドラです。  
+
+```typescript
+import { VIew } from "View";
+
+export class Page1View extends View {
+
+    private interval;
+
+    public handle() {
+
+    }
+
+    // 前画面から進んだ場合
+    public handleLeaveNext() {
+        console.log("handle leave next ....");
+    }
+}
+```
+
+<div id="handleleaveback"></div>
+
+### - handleLeaveBackイベント
+
+他のViewまたはControllerに画面移動が確定し、  
+かつ前画面から戻ってきた場合にのみ実行されるハンドラです。  
+
+```typescript
+import { VIew } from "View";
+
+export class Page1View extends View {
+
+    private interval;
+
+    public handle() {
+
+    }
+
+    // 前画面から戻ってきた場合
+    public handleLeaveBack() {
+        console.log("handle leave back ....");
+    }
+}
+```
+
 ## # 仮想DOM操作
 
+レンダリングHTMLにて指定の要素に対してテキストの表示、及び押した際のイベントハンドラの実装等を行うには  
+仮想DOMを使って操作を行うのが便利です。  
+Viewでの仮想DOMはViewが表示または非表示されるごとに自動的に仮想DOMの取得作成・破棄が行われます。
+
+仮想DOM(ModernJS)についての詳細は[こちらで解説しています](modernjs.md)。
+
+例としてある画面にてボタンを押した時の挙動を実装した例を下記に示しています。  
+まずレンダリングHTMLにてv属性(仮想DOM名)を指定したボタンのタグを設置します。
+
 ```html
-<a v="button">Button</a>
+<a v="testButton">Button</a>
 ```
+
+あとはViewクラスのハンドラにて指定の仮想DOMを押した時のイベントハンドラを設置するだけです。  
+``this.mjs``にPage1Viewにて取得された仮想DOMリスト(ModernJSクラス)が格納されているので   
+レンダリングHTMLにて指定した仮想DOM名をチェーンで指定します。
 
 ```typescript
 import { VIew } from "View";
@@ -295,13 +371,32 @@ export class Page1View extends View {
 
     public handle() {
 
-        this.mjs.button.onClick = () => {
+        this.mjs.testButton.onClick = () => {
             // buttonが押されたときのイベント
             console.log("Button Click .... OK");
         };
     }
 }
 ```
+
+なお仮想DOMは上記``mjs``と``vdos``でも同様に記述ができます。  
+
+
+```typescript
+import { VIew } from "View";
+
+export class Page1View extends View {
+
+    public handle() {
+
+        this.vdos.testButton.onClick = () => {
+            // buttonが押されたときのイベント
+            console.log("Button Click .... OK");
+        };
+    }
+}
+```
+
     
 ## # sendData: any;
  
@@ -397,7 +492,7 @@ export class Page1View extends View {
 }
 ```
 
-``handleHeadChanged``メソッドを使用することで、headタグ内が変更された際に実行されるイベントハンドラを指定できます。  
+``handleHeadChanged``メソッドを使用することで、headタグ内が変更された際に実行されるハンドラを指定できます。  
 引数にheadタグのUIクラスオブジェクトが渡されるため、  
 例えば下記のように仮想VOMを使ってtitleタグの内容を変更することもできます。
 

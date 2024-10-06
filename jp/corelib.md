@@ -33,7 +33,7 @@ Mikenekoで用意されているコアライブラリクラスは下記一覧に
 |[Dialog](datdialoga.md)|ダイアログ表示用クラス|
 |[KeyEvent](keyevent.md)|キー入力イベント用クラス|
 |[ModernJS](modernjs.md)|仮想DOM制御用クラス|
-|[Response](response)|画面背に操作・View・Dialog・UI表示操作用クラス|
+|[Response](response)|画面遷移操作用クラス|
 |[Routes](routes.md)|ルーティング用クラス|
 |[Shortcode](shortcode.md)|ショートコード管理用クラス|
 |[Storage](storage.md)|ストレージ(localStorage/SessionStorage)管理用クラス|

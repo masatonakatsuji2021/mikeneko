@@ -22,9 +22,7 @@ Templateはそのテンプレートごとにロジックを実装できるクラ
 
 ## # ViewまたはControllerでのテンプレート使用
 
-ViewまたはControllerにてテンプレートを指定するには方法が2種類あります。
-
-一つはpublic変数``template``で定義する方法です。
+ViewまたはControllerにてテンプレートを指定するにはpublic変数``template``を定義してください。  
 この場合は下記のように使用するテンプレート名を指定するだけで、テンプレートが適用されます。
 
 ```typescript
@@ -40,8 +38,7 @@ export class Page1View extends View {
 }
 ```
 
-テンプレートを決定する場合は、この方法が一番簡単な方法です。
-ただしライフサイクルが開始されて、handleBefore/handleAfter以後ですでに画面切替が終わっている場合は  
+注意点としてライフサイクルが開始されて、handleBefore/handleAfter以後ですでに画面切替が終わっている場合は  
 public変数にてテンプレートを切り替えることはできません。
 
 ```typescript
@@ -52,23 +49,6 @@ export class Page1View extends View {
     public handle() {
         // ↓ ✕ 切り替えれない 
         this.template = "default";
-
-        console.log("handle .... OK");
-    }
-}
-```
-
-setTemplateメソッドを使う場合は下記のように、  
-各イベントハンドラ内にて使用するテンプレート名を引数に代入するタイプのため、  
-すでに画面切替が終わっている場合でもテンプレートを切り替えることができます。
-
-```typescript
-import { View } from "View";
-
-export class Page1View extends View {
-
-    public handle() {
-        this.setTemplate("default");
 
         console.log("handle .... OK");
     }
