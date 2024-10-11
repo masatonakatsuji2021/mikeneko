@@ -165,8 +165,13 @@ class Response {
                     (0, ModernJS_1.dom)("main").removeClass(MyApp.animationOpenClassName);
                 if (MyApp.delay)
                     yield Lib_1.Lib.sleep(MyApp.delay);
-                if (route.mode == Routes_1.DecisionRouteMode.Notfound)
-                    throw ("Page Not found");
+                if (route.mode == Routes_1.DecisionRouteMode.Notfound) {
+                    if (MyApp.notFoundView) {
+                        route.view = MyApp.notFoundView;
+                        yield Response.renderingOnView(route, send);
+                    }
+                    throw ("Page Not found. \"" + route.url + "\"");
+                }
                 if (route.controller) {
                     yield Response.renderingOnController(route, send);
                 }

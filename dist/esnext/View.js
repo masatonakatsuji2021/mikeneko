@@ -9,7 +9,7 @@ class View extends Render_1.Render {
     static type = "View";
     static bind(mjs, ViewName, sendData) {
         if (ViewName)
-            ViewName = "view/" + View;
+            ViewName = "view/" + ViewName;
         return super.bind(mjs, ViewName, sendData, this);
     }
     static append(mjs, ViewName, sendData) {

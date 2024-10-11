@@ -3,7 +3,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.App = exports.AppRouteType = void 0;
 var AppRouteType;
 (function (AppRouteType) {
+    /**
+     * ***web*** : This mode corresponds to screen transitions on the browser.
+     * You can use the back or forward buttons on your browser.
+     */
     AppRouteType["web"] = "web";
+    /**
+     * ***application*** : Modes for mobile and desktop apps.
+     */
     AppRouteType["application"] = "application";
 })(AppRouteType || (exports.AppRouteType = AppRouteType = {}));
 /**
@@ -20,6 +27,10 @@ class App {
      * - **web** : Change the browser URL and move to the page. You can go back by pressing the back button on the browser.
      */
     static routeType = AppRouteType.web;
+    /**
+     * ***notFoundView*** :
+     */
+    static notFoundView;
     /**
      * ***routes*** : Routing Settings.
      * Enter the View or Controller name to be applied to the route path (URL) as shown below.

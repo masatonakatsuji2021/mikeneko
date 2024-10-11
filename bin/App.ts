@@ -3,7 +3,15 @@ export interface Routes {
 }
 
 export enum AppRouteType {
+    /** 
+     * ***web*** : This mode corresponds to screen transitions on the browser.  
+     * You can use the back or forward buttons on your browser. 
+     */
     web = "web",
+
+    /**
+     * ***application*** : Modes for mobile and desktop apps.
+     */
     application = "application",
 }
 
@@ -23,6 +31,11 @@ export class App {
      * - **web** : Change the browser URL and move to the page. You can go back by pressing the back button on the browser.  
      */
     public static routeType : AppRouteType = AppRouteType.web;
+
+    /**
+     * ***notFoundView*** : 
+     */
+    public static notFoundView : string;
 
     /**
      * ***routes*** : Routing Settings.  

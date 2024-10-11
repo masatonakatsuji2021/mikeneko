@@ -42,7 +42,7 @@ var View = /** @class */ (function (_super) {
     }
     View.bind = function (mjs, ViewName, sendData) {
         if (ViewName)
-            ViewName = "view/" + View;
+            ViewName = "view/" + ViewName;
         return _super.bind.call(this, mjs, ViewName, sendData, this);
     };
     View.append = function (mjs, ViewName, sendData) {

@@ -15,10 +15,16 @@ class Dialog extends Render_1.Render {
      */
     handle(_sendData) { }
     /**
+     * ***handleClose*** : Handler executed when the dialog is closed.
+     * @returns {void}
+     */
+    handleClose() { }
+    /**
      * ***close*** : Method for closing the dialog.
      */
     close() {
         this.myMjs.removeClass("open");
+        this.handleClose();
         setTimeout(() => {
             this.myMjs.remove();
         }, 300);

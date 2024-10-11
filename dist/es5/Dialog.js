@@ -33,11 +33,17 @@ var Dialog = /** @class */ (function (_super) {
      */
     Dialog.prototype.handle = function (_sendData) { };
     /**
+     * ***handleClose*** : Handler executed when the dialog is closed.
+     * @returns {void}
+     */
+    Dialog.prototype.handleClose = function () { };
+    /**
      * ***close*** : Method for closing the dialog.
      */
     Dialog.prototype.close = function () {
         var _this = this;
         this.myMjs.removeClass("open");
+        this.handleClose();
         setTimeout(function () {
             _this.myMjs.remove();
         }, 300);

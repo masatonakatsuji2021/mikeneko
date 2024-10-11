@@ -41,11 +41,18 @@ export class Dialog extends Render {
     public handle(_sendData?: any) : void {}
 
     /**
+     * ***handleClose*** : Handler executed when the dialog is closed.
+     * @returns {void}
+     */
+    public handleClose() : void {}
+
+    /**
      * ***close*** : Method for closing the dialog.
      */
     public close() {
         this.myMjs.removeClass("open");
-        setTimeout(()=>{
+        this.handleClose();
+        setTimeout(() => {
             this.myMjs.remove();
         }, 300);
     }

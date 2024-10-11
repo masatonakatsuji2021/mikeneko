@@ -3,7 +3,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.App = exports.AppRouteType = void 0;
 var AppRouteType;
 (function (AppRouteType) {
+    /**
+     * ***web*** : This mode corresponds to screen transitions on the browser.
+     * You can use the back or forward buttons on your browser.
+     */
     AppRouteType["web"] = "web";
+    /**
+     * ***application*** : Modes for mobile and desktop apps.
+     */
     AppRouteType["application"] = "application";
 })(AppRouteType || (exports.AppRouteType = AppRouteType = {}));
 /**

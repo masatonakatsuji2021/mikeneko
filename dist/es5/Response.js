@@ -176,7 +176,7 @@ var Response = /** @class */ (function () {
                         MyApp = require("app/config/App").MyApp;
                         _a.label = 1;
                     case 1:
-                        _a.trys.push([1, 18, , 19]);
+                        _a.trys.push([1, 21, , 22]);
                         befCont = Data_1.Data.get("beforeController");
                         if (!befCont) return [3 /*break*/, 6];
                         befContAction = Data_1.Data.get("beforeControllerAction");
@@ -234,25 +234,32 @@ var Response = /** @class */ (function () {
                         _a.sent();
                         _a.label = 13;
                     case 13:
-                        if (route.mode == Routes_1.DecisionRouteMode.Notfound)
-                            throw ("Page Not found");
-                        if (!route.controller) return [3 /*break*/, 15];
-                        return [4 /*yield*/, Response.renderingOnController(route, send)];
+                        if (!(route.mode == Routes_1.DecisionRouteMode.Notfound)) return [3 /*break*/, 16];
+                        if (!MyApp.notFoundView) return [3 /*break*/, 15];
+                        route.view = MyApp.notFoundView;
+                        return [4 /*yield*/, Response.renderingOnView(route, send)];
                     case 14:
                         _a.sent();
-                        return [3 /*break*/, 17];
-                    case 15:
-                        if (!route.view) return [3 /*break*/, 17];
-                        return [4 /*yield*/, Response.renderingOnView(route, send)];
+                        _a.label = 15;
+                    case 15: throw ("Page Not found. \"" + route.url + "\"");
                     case 16:
+                        if (!route.controller) return [3 /*break*/, 18];
+                        return [4 /*yield*/, Response.renderingOnController(route, send)];
+                    case 17:
                         _a.sent();
-                        _a.label = 17;
-                    case 17: return [3 /*break*/, 19];
+                        return [3 /*break*/, 20];
                     case 18:
+                        if (!route.view) return [3 /*break*/, 20];
+                        return [4 /*yield*/, Response.renderingOnView(route, send)];
+                    case 19:
+                        _a.sent();
+                        _a.label = 20;
+                    case 20: return [3 /*break*/, 22];
+                    case 21:
                         error_1 = _a.sent();
                         console.error(error_1);
-                        return [3 /*break*/, 19];
-                    case 19: return [2 /*return*/];
+                        return [3 /*break*/, 22];
+                    case 22: return [2 /*return*/];
                 }
             });
         });

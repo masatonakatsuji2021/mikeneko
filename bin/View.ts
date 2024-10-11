@@ -35,7 +35,7 @@ export class View extends Render {
     public static bind(mjs: ModernJS, ViewName : string, sendData : any) : View;
 
     public static bind(mjs: ModernJS, ViewName? : string, sendData? : any) : View {
-        if(ViewName) ViewName = "view/" + View;
+        if(ViewName) ViewName = "view/" + ViewName;
         return super.bind(mjs, ViewName, sendData, this) as View;
     }
 
