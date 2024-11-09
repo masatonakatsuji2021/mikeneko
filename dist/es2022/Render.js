@@ -13,6 +13,16 @@ class Render {
     myMjs;
     /**
      * ***mjs**** : Virtual DOM List of ModernJS Classes.
+     *
+     * Example: First, place a v attribute tag in the HTML file.
+     * ```html
+     * <h1 v="mainTitle"></h1>
+     * ```
+     * Insert text in the View class etc. as follows:
+     * ```typescript
+     * this.mjs.mainTitle.text = "MainTitle Text...";
+     * ```
+     * [How to use VirtualDOM is described in ModernJS classes.](./ModernJS.ts)
      */
     mjs;
     /**
@@ -23,6 +33,17 @@ class Render {
     }
     /**
      * ***vdos*** : Virtual DOM List of ModernJS Classes.
+     * (``mjs`` is also available as a proxy.)
+     *
+     * Example: First, place a v attribute tag in the HTML file.
+     * ```html
+     * <h1 v="mainTitle"></h1>
+     * ```
+     * Insert text in the View class etc. as follows:
+     * ```typescript
+     * this.vdos.mainTitle.text = "MainTitle Text...";
+     * ```
+     * [How to use VirtualDOM is described in ModernJS classes.](./ModernJS.ts)
      */
     get vdos() {
         return this.mjs;
