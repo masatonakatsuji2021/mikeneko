@@ -520,18 +520,28 @@ exports.ValidateErrorResult = ValidateErrorResult;
  * Specify validation check rules directly using the ``verify`` method, etc.
  */
 class Validation {
-    static verify(data, rules) {
+    static verify(data, rules, options) {
         const my = new this();
-        if (rules)
-            my.rules = rules;
+        if (rules) {
+            if (typeof rules == "string") {
+                if (my[rules])
+                    my.rules = my[rules];
+            }
+            else {
+                my.rules = rules;
+            }
+        }
         return my.verify(data);
     }
     /**
      * ***verify*** : Runs validation checks on given input data.
      * @param {any} data Input data
+     * @param {ValidateOption} options Validate Options
      * @returns {ValidateErrorResult}
      */
-    verify(data) {
+    verify(data, options) {
+        if (!options)
+            options = {};
         const vm = new ValidateMethod(data, this);
         const c = Object.keys(this.rules);
         let result = new ValidateErrorResult();
@@ -550,12 +560,18 @@ class Validation {
                         if (!status) {
                             if (!result.errors[name])
                                 result.errors[name] = [];
-                            result.errors[name].push({
+                            const errors = {
                                 rule: rule.rule,
                                 index: index,
                                 args: rule.args,
                                 message: rule.message,
-                            });
+                            };
+                            if (options.oneMessage) {
+                                result.errors[name][0] = errors;
+                            }
+                            else {
+                                result.errors[name].push(errors);
+                            }
                         }
                     });
                 }

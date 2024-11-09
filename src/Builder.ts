@@ -98,7 +98,14 @@ export class Builder {
 
         // typescript trance complie
         let tsType : string = "es6";
-        if (option.tranceComplied) tsType = this.typescriptComplie(rootDir);
+        try {
+            if (option.tranceComplied) tsType = this.typescriptComplie(rootDir);
+        } catch (error) {
+            console.log("\n\n[TypeScript TrancePlie Error]")
+            console.log(error.stdout.toString());
+            console.log("\n\n ...... Failed!");
+            return;
+        }
 
         // mkdir
         const buildDir : string = rootDir + "/output";
@@ -361,12 +368,7 @@ export class Builder {
         if (!tsType) tsType = "es6";
         console.log("# TranceComplieType = " + tsType);
         console.log("# Trance Complie...");
-        try {
-            execSync("tsc");
-        }catch(error){
-            console.log(error.stack);
-            return;
-        }
+        execSync("tsc --pretty");
         console.log("# ..OK");
         return tsType;
     }

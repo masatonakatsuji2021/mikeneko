@@ -525,18 +525,28 @@ exports.ValidateErrorResult = ValidateErrorResult;
 var Validation = /** @class */ (function () {
     function Validation() {
     }
-    Validation.verify = function (data, rules) {
+    Validation.verify = function (data, rules, options) {
         var my = new this();
-        if (rules)
-            my.rules = rules;
+        if (rules) {
+            if (typeof rules == "string") {
+                if (my[rules])
+                    my.rules = my[rules];
+            }
+            else {
+                my.rules = rules;
+            }
+        }
         return my.verify(data);
     };
     /**
      * ***verify*** : Runs validation checks on given input data.
      * @param {any} data Input data
+     * @param {ValidateOption} options Validate Options
      * @returns {ValidateErrorResult}
      */
-    Validation.prototype.verify = function (data) {
+    Validation.prototype.verify = function (data, options) {
+        if (!options)
+            options = {};
         var vm = new ValidateMethod(data, this);
         var c = Object.keys(this.rules);
         var result = new ValidateErrorResult();
@@ -555,12 +565,18 @@ var Validation = /** @class */ (function () {
                         if (!status) {
                             if (!result.errors[name_1])
                                 result.errors[name_1] = [];
-                            result.errors[name_1].push({
+                            var errors = {
                                 rule: rule.rule,
                                 index: index,
                                 args: rule.args,
                                 message: rule.message,
-                            });
+                            };
+                            if (options.oneMessage) {
+                                result.errors[name_1][0] = errors;
+                            }
+                            else {
+                                result.errors[name_1].push(errors);
+                            }
                         }
                     });
                 }
