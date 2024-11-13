@@ -17,6 +17,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Dialog = void 0;
 var Render_1 = require("Render");
+var Lib_1 = require("Lib");
 var ModernJS_1 = require("ModernJS");
 /**
  * ***Dialog*** : A class for displaying or manipulating a dialog screen.
@@ -47,6 +48,22 @@ var Dialog = /** @class */ (function (_super) {
         setTimeout(function () {
             _this.myMjs.remove();
         }, 300);
+    };
+    Dialog.addDialog = function (dialog) {
+        var id = Lib_1.Lib.uniqId();
+        this.__openDialogs[id] = dialog;
+    };
+    /**
+     * ***forceClose*** : Forces all open dialogs to close.
+     */
+    Dialog.forceClose = function () {
+        var c = Object.keys(this.__openDialogs);
+        for (var n = 0; n < c.length; n++) {
+            var id = c[n];
+            var dialog = this.__openDialogs[id];
+            dialog.close();
+            delete this.__openDialogs[id];
+        }
     };
     Dialog.bind = function (mjs, dialogName, sendData) {
         if (dialogName)
@@ -96,6 +113,7 @@ var Dialog = /** @class */ (function (_super) {
             dialogMjs.addClass("open");
         }, 100);
         var dialog = this.loadClass(dialogMjs, dialogName, option.sendData, this);
+        Dialog.addDialog(dialog);
         if (option.handle)
             option.handle(dialog);
         return dialog;
@@ -107,6 +125,7 @@ var Dialog = /** @class */ (function (_super) {
         (0, ModernJS_1.dom)("head").afterBegin("<link rel=\"stylesheet\" m=\"dl\" href=\"data:text/css;base64," + style + "\">");
     };
     Dialog.type = "Dialog";
+    Dialog.__openDialogs = {};
     return Dialog;
 }(Render_1.Render));
 exports.Dialog = Dialog;

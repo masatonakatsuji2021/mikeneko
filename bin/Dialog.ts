@@ -1,4 +1,5 @@
 import { Render } from "Render";
+import { Lib } from "Lib";
 import { ModernJS, dom } from "ModernJS";
 
 /**
@@ -33,6 +34,8 @@ export class Dialog extends Render {
 
     protected static type : string = "Dialog";
 
+    public static __openDialogs: {[id: string] : Dialog} = {};
+
     /**
      * ***handle*** : An event handler that runs when the dialog is opened.
      * @param {any} _sendData 
@@ -55,6 +58,24 @@ export class Dialog extends Render {
         setTimeout(() => {
             this.myMjs.remove();
         }, 300);
+    }
+
+    private static addDialog(dialog: Dialog){
+        const id = Lib.uniqId();
+        this.__openDialogs[id] = dialog;
+    }
+
+    /**
+     * ***forceClose*** : Forces all open dialogs to close.
+     */
+    public static forceClose() {
+        const c = Object.keys(this.__openDialogs);
+        for(let n = 0 ; n < c.length ; n++) {
+            const id = c[n];
+            const dialog = this.__openDialogs[id];
+            dialog.close();
+            delete this.__openDialogs[id];
+        }
     }
     
     /**
@@ -177,6 +198,7 @@ export class Dialog extends Render {
             dialogMjs.addClass("open");
         }, 100);
         const dialog : Dialog = this.loadClass(dialogMjs, dialogName, option.sendData, this);
+        Dialog.addDialog(dialog);
         if (option.handle) option.handle(dialog);
         return dialog;
     }
