@@ -86,6 +86,30 @@ export interface BuildCordova {
 
 export class Builder {
 
+    private static BuildCoreList : Array<string> = [
+        "Ajax",
+        "App", 
+        "Background", 
+        "Controller", 
+        "Data", 
+        "Dialog",
+        "ModernJS",
+        "Exception", 
+        "KeyEvent", 
+        "Response", 
+        "Routes", 
+        "Render",
+        "Startor", 
+        "Storage", 
+        "Shortcode",
+        "Template", 
+        "Lib", 
+        "Validation",
+        "View", 
+        "UI", 
+        "Core",
+    ];
+
     public static build(option? : BuildOption) {
         if (!option) option = {};
         if (option.debug == undefined) option.debug = false;
@@ -147,30 +171,7 @@ export class Builder {
             this.jsStart(codeList, tsType, platform.name, debug);
 
             // core module mount
-            const coreList : Array<string> = [
-                "Ajax",
-                "App", 
-                "Background", 
-                "Controller", 
-                "Data", 
-                "Dialog",
-                "ModernJS",
-                "Exception", 
-                "KeyEvent", 
-                "Response", 
-                "Routes", 
-                "Render",
-                "Startor", 
-                "Storage", 
-                "Shortcode",
-                "Template", 
-                "Lib", 
-                "Validation",
-                "View", 
-                "UI", 
-            ];
-
-            coreList.forEach((core : string) => {
+            this.BuildCoreList.forEach((core : string) => {
                  // core module mount
                  this.coreModuleMount(codeList, tsType, core);
              });
