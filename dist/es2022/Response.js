@@ -266,7 +266,6 @@ class Response {
         const View_ = use(viewPath);
         const vm = new View_[viewName]();
         vm.sendData = data;
-        vm.myMjs = (0, ModernJS_1.dom)("main article");
         if (Data_1.Data.get("beforeViewPath") != viewPath) {
             Data_1.Data.set("beforeViewPath", viewPath);
             if (vm.handleBegin)
@@ -285,6 +284,7 @@ class Response {
             (0, ModernJS_1.dom)("main").removeClass(MyApp.animationCloseClassName);
         if (MyApp.animationOpenClassName)
             (0, ModernJS_1.dom)("main").addClass(MyApp.animationOpenClassName);
+        vm.myMjs = (0, ModernJS_1.dom)("main article");
         await vm.handleRenderBefore();
         // is next page..
         if (Response.isNext) {
