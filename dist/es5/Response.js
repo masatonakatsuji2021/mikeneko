@@ -415,6 +415,7 @@ var Response = /** @class */ (function () {
                             (0, ModernJS_1.dom)("main").removeClass(MyApp.animationCloseClassName);
                         if (MyApp.animationOpenClassName)
                             (0, ModernJS_1.dom)("main").addClass(MyApp.animationOpenClassName);
+                        vm.myMjs = (0, ModernJS_1.dom)("main article");
                         return [4 /*yield*/, vm.handleRenderBefore()];
                     case 6:
                         _a.sent();

@@ -70,29 +70,7 @@ class Builder {
                 debug = platform.debug;
             this.jsStart(codeList, tsType, platform.name, debug);
             // core module mount
-            const coreList = [
-                "Ajax",
-                "App",
-                "Background",
-                "Controller",
-                "Data",
-                "Dialog",
-                "ModernJS",
-                "Exception",
-                "KeyEvent",
-                "Response",
-                "Routes",
-                "Render",
-                "Startor",
-                "Storage",
-                "Shortcode",
-                "Template",
-                "Lib",
-                "Validation",
-                "View",
-                "UI",
-            ];
-            coreList.forEach((core) => {
+            this.BuildCoreList.forEach((core) => {
                 // core module mount
                 this.coreModuleMount(codeList, tsType, core);
             });
@@ -326,3 +304,26 @@ class Builder {
     }
 }
 exports.Builder = Builder;
+Builder.BuildCoreList = [
+    "Ajax",
+    "App",
+    "Background",
+    "Controller",
+    "Data",
+    "Dialog",
+    "ModernJS",
+    "Exception",
+    "KeyEvent",
+    "Response",
+    "Routes",
+    "Render",
+    "Startor",
+    "Storage",
+    "Shortcode",
+    "Template",
+    "Lib",
+    "Validation",
+    "View",
+    "UI",
+    "Core",
+];

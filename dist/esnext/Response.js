@@ -132,7 +132,6 @@ class Response {
     // rendering....
     static async rendering(route, data) {
         const MyApp = require("app/config/App").MyApp;
-        //try{
         // Controller & View Leave 
         const befCont = Data_1.Data.get("beforeController");
         if (befCont) {
@@ -186,11 +185,6 @@ class Response {
         else if (route.view) {
             await Response.renderingOnView(route, data);
         }
-        /*
-                }catch(error) {
-                    console.error(error);
-                }
-                    */
     }
     static async renderingOnController(route, data) {
         const controllerName = Lib_1.Lib.getModuleName(route.controller + "Controller");
@@ -272,6 +266,7 @@ class Response {
         const View_ = use(viewPath);
         const vm = new View_[viewName]();
         vm.sendData = data;
+        vm.myMjs = (0, ModernJS_1.dom)("main article");
         if (Data_1.Data.get("beforeViewPath") != viewPath) {
             Data_1.Data.set("beforeViewPath", viewPath);
             if (vm.handleBegin)

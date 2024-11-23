@@ -132,7 +132,6 @@ class Response {
     static rendering(route, data) {
         return __awaiter(this, void 0, void 0, function* () {
             const MyApp = require("app/config/App").MyApp;
-            //try{
             // Controller & View Leave 
             const befCont = Data_1.Data.get("beforeController");
             if (befCont) {
@@ -186,11 +185,6 @@ class Response {
             else if (route.view) {
                 yield Response.renderingOnView(route, data);
             }
-            /*
-                    }catch(error) {
-                        console.error(error);
-                    }
-                        */
         });
     }
     static renderingOnController(route, data) {
@@ -294,6 +288,7 @@ class Response {
                 (0, ModernJS_1.dom)("main").removeClass(MyApp.animationCloseClassName);
             if (MyApp.animationOpenClassName)
                 (0, ModernJS_1.dom)("main").addClass(MyApp.animationOpenClassName);
+            vm.myMjs = (0, ModernJS_1.dom)("main article");
             yield vm.handleRenderBefore();
             // is next page..
             if (Response.isNext) {

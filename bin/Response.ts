@@ -351,6 +351,8 @@ export class Response {
         if (MyApp.animationCloseClassName) dom("main").removeClass(MyApp.animationCloseClassName);
         if (MyApp.animationOpenClassName) dom("main").addClass(MyApp.animationOpenClassName);
 
+        vm.myMjs = dom("main article");
+        
         await vm.handleRenderBefore();
 
         // is next page..
