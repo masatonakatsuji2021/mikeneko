@@ -2,13 +2,41 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Data = void 0;
 class Data {
+    /**
+     * get
+     * Get the value from the specified name
+     * @param {string} name
+     * @returns
+     */
     static get(name) {
         return this.__data[name];
     }
+    /**
+     * set
+     * Hold the value statically for the specified name
+     * @param {string} name
+     * @param {any} value
+     * @returns
+     */
     static set(name, value) {
         this.__data[name] = value;
         return this;
     }
+    /**
+     * remove
+     * Delete the value with the specified name
+     * @param {string} name
+     */
+    static remove(name) {
+        delete this.__data[name];
+    }
+    /**
+     * push
+     * Add and save a value in the specified name area
+     * @param {string} name
+     * @param {any} value
+     * @returns
+     */
     static push(name, value) {
         if (!this.__data[name])
             this.__data[name] = [];

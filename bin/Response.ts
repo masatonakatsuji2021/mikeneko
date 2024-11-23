@@ -8,6 +8,13 @@ import { Template } from "Template";
 import { UI } from "UI";
 import { dom} from "ModernJS";
 
+export interface PageHistory {
+
+    url: string,
+
+    data?: any,
+}
+
 export class Response {
 
     /**
@@ -39,19 +46,19 @@ export class Response {
         if (this.isBack) return false;
         this.isBack = true;
 
-        let backUrl : string;
+        let hdata : PageHistory;
         if (this.routeType == AppRouteType.application) {
             if (Data.getLength("history") == 1) return false;
             Data.pop("history");
-            backUrl= Data.now("history");     
+            hdata= Data.now("history");
         }
         else if(this.routeType == AppRouteType.web) {
             history.back();
             return true;
         }
        
-        const route : DecisionRoute = Routes.searchRoute(backUrl);
-        Response.rendering(route).then(()=>{
+        const route : DecisionRoute = Routes.searchRoute(hdata.url);
+        Response.rendering(route, hdata.data).then(()=>{
             this.isBack = false;
         });
 
@@ -70,17 +77,21 @@ export class Response {
      * ***next*** : Transition to the specified URL (route path)  
      * It cannot be used if screen transitions are disabled by lock, etc.  
      * @param {string} url route path
-     * @param {any?} send Transmission data contents
+     * @param {any?} data Transmission data contents
      * @returns {void}
      */
-    public static next(url : string, send : any) : void;
+    public static next(url : string, data : any) : void;
 
-    public static next(url : string, send? : any) : void {
+    public static next(url : string, data? : any) : void {
         if (Response.lock) return;
         this.isBack = false;
-        Data.push("history", url);
+        const hdata : PageHistory= {
+            url: url,
+            data: data,
+        };
+        Data.push("history", hdata);
         const route : DecisionRoute = Routes.searchRoute(url);
-        Response.rendering(route, send);
+        Response.rendering(route, data);
         if (this.routeType == AppRouteType.web) location.href = "#" + url;
     }
 
@@ -90,10 +101,14 @@ export class Response {
      * @param {string} url route path
      * @returns {void}
      */
-    public static addHistory(url : string) : void {
+    public static addHistory(url : string, data?: any) : void {
         if (Response.lock) return;
         this.isBack = false;
-        Data.push("history", url);
+        const hdata : PageHistory= {
+            url: url,
+            data: data,
+        };
+        Data.push("history", hdata);
     }
 
     /**
@@ -162,72 +177,66 @@ export class Response {
     }
 
     // rendering....
-    public static async rendering (route: DecisionRoute, send? : any) {
+    public static async rendering (route: DecisionRoute, data? : any) {
 
         const MyApp : typeof App = require("app/config/App").MyApp;
 
-        try{
+        // Controller & View Leave 
+        const befCont : Controller = Data.get("beforeController");
+        if(befCont){
+            const befContAction = Data.get("beforeControllerAction");
+            const res = await befCont.handleLeave(befContAction);
+            if (typeof res == "boolean" && res === false) return;
 
-            // Controller & View Leave 
-            const befCont : Controller = Data.get("beforeController");
-            if(befCont){
-                const befContAction = Data.get("beforeControllerAction");
-                const res = await befCont.handleLeave(befContAction);
-                if (typeof res == "boolean" && res === false) return;
-
-                if (this.isBack) {
-                    const resBack = await befCont.handleLeaveBack(befContAction);
-                    if (typeof resBack == "boolean" && resBack === false) return;
-                }
-
-                if (this.isNext) {
-                    const resNext = await befCont.handleLeaveNext(befContAction);
-                    if (typeof resNext == "boolean" && resNext === false) return;
-                }
+            if (this.isBack) {
+                const resBack = await befCont.handleLeaveBack(befContAction);
+                if (typeof resBack == "boolean" && resBack === false) return;
             }
 
-            const befView = Data.get("beforeView");
-            if(befView) {
-                const res = await befView.handleLeave();
-                if (typeof res == "boolean" && res === false) return;
+            if (this.isNext) {
+                const resNext = await befCont.handleLeaveNext(befContAction);
+                if (typeof resNext == "boolean" && resNext === false) return;
+            }
+        }
 
-                if (this.isBack) {
-                    const resBack = await befView.handleLeaveBack();
-                    if (typeof resBack == "boolean" && resBack === false) return;
-                }
+        const befView = Data.get("beforeView");
+        if(befView) {
+            const res = await befView.handleLeave();
+            if (typeof res == "boolean" && res === false) return;
 
-                if (this.isNext) {
-                    const resNext = await befView.handleLeaveNext();
-                    if (typeof resNext == "boolean" && resNext === false) return;
-                }
+            if (this.isBack) {
+                const resBack = await befView.handleLeaveBack();
+                if (typeof resBack == "boolean" && resBack === false) return;
             }
 
-            if (MyApp.animationCloseClassName) dom("main").addClass(MyApp.animationCloseClassName);
-            if (MyApp.animationOpenClassName) dom("main").removeClass(MyApp.animationOpenClassName);
-
-            if (MyApp.delay) await Lib.sleep(MyApp.delay);
-
-            if(route.mode == DecisionRouteMode.Notfound) {
-                if (MyApp.notFoundView) {
-                    route.view = MyApp.notFoundView;
-                    await Response.renderingOnView(route, send);
-                }
-                throw("Page Not found. \"" + route.url + "\"");
+            if (this.isNext) {
+                const resNext = await befView.handleLeaveNext();
+                if (typeof resNext == "boolean" && resNext === false) return;
             }
+        }
 
-            if(route.controller){
-                await Response.renderingOnController(route, send);
-            }
-            else if(route.view){
-                await Response.renderingOnView(route, send);
-            }
+        if (MyApp.animationCloseClassName) dom("main").addClass(MyApp.animationCloseClassName);
+        if (MyApp.animationOpenClassName) dom("main").removeClass(MyApp.animationOpenClassName);
 
-        }catch(error) {
-            console.error(error);
+        if (MyApp.delay) await Lib.sleep(MyApp.delay);
+
+        if(route.mode == DecisionRouteMode.Notfound) {
+            if (MyApp.notFoundView) {
+                route.view = MyApp.notFoundView;
+                await Response.renderingOnView(route, data);
+            }
+            throw("Page Not found. \"" + route.url + "\"");
+        }
+
+        if(route.controller){
+            await Response.renderingOnController(route, data);
+        }
+        else if(route.view){
+            await Response.renderingOnView(route, data);
         }
     }
 
-    private static async renderingOnController(route : DecisionRoute, send?: any) {
+    private static async renderingOnController(route : DecisionRoute, data?: any) {
         const controllerName : string = Lib.getModuleName(route.controller + "Controller");
         const controllerPath : string = "app/controller/" + Lib.getModulePath(route.controller + "Controller");
         if(!useExists(controllerPath)){
@@ -236,7 +245,7 @@ export class Response {
 
         const controllerClass = use(controllerPath);
         const cont : Controller = new controllerClass[controllerName]();
-        cont.sendData = send;
+        cont.sendData = data;
 
         const viewName = route.action + "View";
         const viewPath : string = "app/view/" + route.controller + "/" + Lib.getModulePath(viewName);
@@ -249,7 +258,7 @@ export class Response {
             }
             else {
                 vw = new View_[Lib.getModuleName(viewName)]();
-                vw.sendData = send;
+                vw.sendData = data;
             }
         }
 
@@ -308,7 +317,7 @@ export class Response {
     }
 
 
-    private static async renderingOnView(route : DecisionRoute, send?: any) {
+    private static async renderingOnView(route : DecisionRoute, data?: any) {
         const viewName : string = Lib.getModuleName(route.view + "View");
         const viewPath : string = "app/view/" + Lib.getModulePath(route.view + "View");
 
@@ -318,7 +327,7 @@ export class Response {
 
         const View_ = use(viewPath);
         const vm : View = new View_[viewName]();
-        vm.sendData = send;
+        vm.sendData = data;
         
         if(Data.get("beforeViewPath") != viewPath){
             Data.set("beforeViewPath", viewPath);
@@ -343,6 +352,26 @@ export class Response {
         if (MyApp.animationOpenClassName) dom("main").addClass(MyApp.animationOpenClassName);
 
         await vm.handleRenderBefore();
+
+        // is next page..
+        if (Response.isNext) {
+            if(route.args){                    
+                await vm.handleNext(...route.args);
+            }
+            else {
+                await vm.handleNext();
+            }
+        }
+
+        // is back page...
+        if (Response.isBack) {
+            if(route.args){                    
+                await vm.handleBack(...route.args);
+            }
+            else {
+                await vm.handleBack();
+            }
+        }
 
         if(route.args){
             await vm.handle(...route.args);

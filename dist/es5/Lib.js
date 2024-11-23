@@ -122,6 +122,30 @@ var Lib = /** @class */ (function () {
         return new SbnDateTime(datetime);
     };
     /**
+     * passByValue
+     * @param {any} values
+     * @returns
+     */
+    Lib.passByValue = function (values) {
+        return this._passByValue(values);
+    };
+    Lib._passByValue = function (values) {
+        var buffers = {};
+        var c = Object.keys(values);
+        for (var n = 0; n < c.length; n++) {
+            var name_1 = c[n];
+            var value = values[name_1];
+            if (typeof value == "object") {
+                var value_ = this._passByValue(value);
+                buffers[name_1] = value_;
+            }
+            else {
+                buffers[name_1] = value;
+            }
+        }
+        return buffers;
+    };
+    /**
      * ***sleep*** :  Stop processing for a certain period of time.(Synchronous processing)
      * This method is synchronized by executing it with await inside the asynced function.
      *

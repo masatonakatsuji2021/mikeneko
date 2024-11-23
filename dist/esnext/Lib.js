@@ -120,6 +120,30 @@ class Lib {
         return new SbnDateTime(datetime);
     }
     /**
+     * passByValue
+     * @param {any} values
+     * @returns
+     */
+    static passByValue(values) {
+        return this._passByValue(values);
+    }
+    static _passByValue(values) {
+        let buffers = {};
+        const c = Object.keys(values);
+        for (let n = 0; n < c.length; n++) {
+            const name = c[n];
+            const value = values[name];
+            if (typeof value == "object") {
+                const value_ = this._passByValue(value);
+                buffers[name] = value_;
+            }
+            else {
+                buffers[name] = value;
+            }
+        }
+        return buffers;
+    }
+    /**
      * ***sleep*** :  Stop processing for a certain period of time.(Synchronous processing)
      * This method is synchronized by executing it with await inside the asynced function.
      *

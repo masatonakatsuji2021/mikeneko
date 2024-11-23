@@ -1,5 +1,7 @@
 import { Builder, BuildOption, BuildPlatrom } from "mikeneko/src/Builder";
 
+export * from "mikeneko/src/Builder";
+
 export class Mikeneko {
     public static build (option? : BuildOption) {
         Builder.build(option);

@@ -108,6 +108,18 @@ export class View extends Render {
     public handle(...aregment : Array<string | number>) : void{}
 
     /**
+     * handleNext
+     * A handler that runs automatically when the screen is painted after advancing from the previous screen.
+     */
+    public handleNext(...aregment : Array<string | number>) : void{}
+
+    /**
+     * handleBack
+     * A handler that runs automatically when painting after returning from the previous screen.
+     */
+    public handleBack(...aregment : Array<string | number>) :void {}
+
+    /**
      * ***handleAlways*** : A handler that runs automatically when the View is displayed on screen.  
      * This event is always executed even if the same View has already been rendered..
      */

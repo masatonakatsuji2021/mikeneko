@@ -36,30 +36,34 @@ class Response {
         if (this.isBack)
             return false;
         this.isBack = true;
-        let backUrl;
+        let hdata;
         if (this.routeType == App_1.AppRouteType.application) {
             if (Data_1.Data.getLength("history") == 1)
                 return false;
             Data_1.Data.pop("history");
-            backUrl = Data_1.Data.now("history");
+            hdata = Data_1.Data.now("history");
         }
         else if (this.routeType == App_1.AppRouteType.web) {
             history.back();
             return true;
         }
-        const route = Routes_1.Routes.searchRoute(backUrl);
-        Response.rendering(route).then(() => {
+        const route = Routes_1.Routes.searchRoute(hdata.url);
+        Response.rendering(route, hdata.data).then(() => {
             this.isBack = false;
         });
         return true;
     }
-    static next(url, send) {
+    static next(url, data) {
         if (Response.lock)
             return;
         this.isBack = false;
-        Data_1.Data.push("history", url);
+        const hdata = {
+            url: url,
+            data: data,
+        };
+        Data_1.Data.push("history", hdata);
         const route = Routes_1.Routes.searchRoute(url);
-        Response.rendering(route, send);
+        Response.rendering(route, data);
         if (this.routeType == App_1.AppRouteType.web)
             location.href = "#" + url;
     }
@@ -69,11 +73,15 @@ class Response {
      * @param {string} url route path
      * @returns {void}
      */
-    static addHistory(url) {
+    static addHistory(url, data) {
         if (Response.lock)
             return;
         this.isBack = false;
-        Data_1.Data.push("history", url);
+        const hdata = {
+            url: url,
+            data: data,
+        };
+        Data_1.Data.push("history", hdata);
     }
     /**
      * ***historyClear*** : Clear screen transition history
@@ -121,70 +129,71 @@ class Response {
             return Data_1.Data.get("beforeController");
     }
     // rendering....
-    static rendering(route, send) {
+    static rendering(route, data) {
         return __awaiter(this, void 0, void 0, function* () {
             const MyApp = require("app/config/App").MyApp;
-            try {
-                // Controller & View Leave 
-                const befCont = Data_1.Data.get("beforeController");
-                if (befCont) {
-                    const befContAction = Data_1.Data.get("beforeControllerAction");
-                    const res = yield befCont.handleLeave(befContAction);
-                    if (typeof res == "boolean" && res === false)
+            //try{
+            // Controller & View Leave 
+            const befCont = Data_1.Data.get("beforeController");
+            if (befCont) {
+                const befContAction = Data_1.Data.get("beforeControllerAction");
+                const res = yield befCont.handleLeave(befContAction);
+                if (typeof res == "boolean" && res === false)
+                    return;
+                if (this.isBack) {
+                    const resBack = yield befCont.handleLeaveBack(befContAction);
+                    if (typeof resBack == "boolean" && resBack === false)
                         return;
-                    if (this.isBack) {
-                        const resBack = yield befCont.handleLeaveBack(befContAction);
-                        if (typeof resBack == "boolean" && resBack === false)
-                            return;
-                    }
-                    if (this.isNext) {
-                        const resNext = yield befCont.handleLeaveNext(befContAction);
-                        if (typeof resNext == "boolean" && resNext === false)
-                            return;
-                    }
                 }
-                const befView = Data_1.Data.get("beforeView");
-                if (befView) {
-                    const res = yield befView.handleLeave();
-                    if (typeof res == "boolean" && res === false)
+                if (this.isNext) {
+                    const resNext = yield befCont.handleLeaveNext(befContAction);
+                    if (typeof resNext == "boolean" && resNext === false)
                         return;
-                    if (this.isBack) {
-                        const resBack = yield befView.handleLeaveBack();
-                        if (typeof resBack == "boolean" && resBack === false)
-                            return;
-                    }
-                    if (this.isNext) {
-                        const resNext = yield befView.handleLeaveNext();
-                        if (typeof resNext == "boolean" && resNext === false)
-                            return;
-                    }
-                }
-                if (MyApp.animationCloseClassName)
-                    (0, ModernJS_1.dom)("main").addClass(MyApp.animationCloseClassName);
-                if (MyApp.animationOpenClassName)
-                    (0, ModernJS_1.dom)("main").removeClass(MyApp.animationOpenClassName);
-                if (MyApp.delay)
-                    yield Lib_1.Lib.sleep(MyApp.delay);
-                if (route.mode == Routes_1.DecisionRouteMode.Notfound) {
-                    if (MyApp.notFoundView) {
-                        route.view = MyApp.notFoundView;
-                        yield Response.renderingOnView(route, send);
-                    }
-                    throw ("Page Not found. \"" + route.url + "\"");
-                }
-                if (route.controller) {
-                    yield Response.renderingOnController(route, send);
-                }
-                else if (route.view) {
-                    yield Response.renderingOnView(route, send);
                 }
             }
-            catch (error) {
-                console.error(error);
+            const befView = Data_1.Data.get("beforeView");
+            if (befView) {
+                const res = yield befView.handleLeave();
+                if (typeof res == "boolean" && res === false)
+                    return;
+                if (this.isBack) {
+                    const resBack = yield befView.handleLeaveBack();
+                    if (typeof resBack == "boolean" && resBack === false)
+                        return;
+                }
+                if (this.isNext) {
+                    const resNext = yield befView.handleLeaveNext();
+                    if (typeof resNext == "boolean" && resNext === false)
+                        return;
+                }
             }
+            if (MyApp.animationCloseClassName)
+                (0, ModernJS_1.dom)("main").addClass(MyApp.animationCloseClassName);
+            if (MyApp.animationOpenClassName)
+                (0, ModernJS_1.dom)("main").removeClass(MyApp.animationOpenClassName);
+            if (MyApp.delay)
+                yield Lib_1.Lib.sleep(MyApp.delay);
+            if (route.mode == Routes_1.DecisionRouteMode.Notfound) {
+                if (MyApp.notFoundView) {
+                    route.view = MyApp.notFoundView;
+                    yield Response.renderingOnView(route, data);
+                }
+                throw ("Page Not found. \"" + route.url + "\"");
+            }
+            if (route.controller) {
+                yield Response.renderingOnController(route, data);
+            }
+            else if (route.view) {
+                yield Response.renderingOnView(route, data);
+            }
+            /*
+                    }catch(error) {
+                        console.error(error);
+                    }
+                        */
         });
     }
-    static renderingOnController(route, send) {
+    static renderingOnController(route, data) {
         return __awaiter(this, void 0, void 0, function* () {
             const controllerName = Lib_1.Lib.getModuleName(route.controller + "Controller");
             const controllerPath = "app/controller/" + Lib_1.Lib.getModulePath(route.controller + "Controller");
@@ -193,7 +202,7 @@ class Response {
             }
             const controllerClass = use(controllerPath);
             const cont = new controllerClass[controllerName]();
-            cont.sendData = send;
+            cont.sendData = data;
             const viewName = route.action + "View";
             const viewPath = "app/view/" + route.controller + "/" + Lib_1.Lib.getModulePath(viewName);
             let vw;
@@ -204,7 +213,7 @@ class Response {
                 }
                 else {
                     vw = new View_[Lib_1.Lib.getModuleName(viewName)]();
-                    vw.sendData = send;
+                    vw.sendData = data;
                 }
             }
             if (Data_1.Data.get("beforeControllerPath") != controllerPath) {
@@ -257,7 +266,7 @@ class Response {
                 yield vw.handleRenderAfter();
         });
     }
-    static renderingOnView(route, send) {
+    static renderingOnView(route, data) {
         return __awaiter(this, void 0, void 0, function* () {
             const viewName = Lib_1.Lib.getModuleName(route.view + "View");
             const viewPath = "app/view/" + Lib_1.Lib.getModulePath(route.view + "View");
@@ -266,7 +275,7 @@ class Response {
             }
             const View_ = use(viewPath);
             const vm = new View_[viewName]();
-            vm.sendData = send;
+            vm.sendData = data;
             if (Data_1.Data.get("beforeViewPath") != viewPath) {
                 Data_1.Data.set("beforeViewPath", viewPath);
                 if (vm.handleBegin)
@@ -286,6 +295,24 @@ class Response {
             if (MyApp.animationOpenClassName)
                 (0, ModernJS_1.dom)("main").addClass(MyApp.animationOpenClassName);
             yield vm.handleRenderBefore();
+            // is next page..
+            if (Response.isNext) {
+                if (route.args) {
+                    yield vm.handleNext(...route.args);
+                }
+                else {
+                    yield vm.handleNext();
+                }
+            }
+            // is back page...
+            if (Response.isBack) {
+                if (route.args) {
+                    yield vm.handleBack(...route.args);
+                }
+                else {
+                    yield vm.handleBack();
+                }
+            }
             if (route.args) {
                 yield vm.handle(...route.args);
             }

@@ -62,6 +62,26 @@ var View = /** @class */ (function (_super) {
         }
     };
     /**
+     * handleNext
+     * A handler that runs automatically when the screen is painted after advancing from the previous screen.
+     */
+    View.prototype.handleNext = function () {
+        var aregment = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            aregment[_i] = arguments[_i];
+        }
+    };
+    /**
+     * handleBack
+     * A handler that runs automatically when painting after returning from the previous screen.
+     */
+    View.prototype.handleBack = function () {
+        var aregment = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            aregment[_i] = arguments[_i];
+        }
+    };
+    /**
      * ***handleAlways*** : A handler that runs automatically when the View is displayed on screen.
      * This event is always executed even if the same View has already been rendered..
      */

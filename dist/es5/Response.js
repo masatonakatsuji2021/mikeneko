@@ -70,30 +70,34 @@ var Response = /** @class */ (function () {
         if (this.isBack)
             return false;
         this.isBack = true;
-        var backUrl;
+        var hdata;
         if (this.routeType == App_1.AppRouteType.application) {
             if (Data_1.Data.getLength("history") == 1)
                 return false;
             Data_1.Data.pop("history");
-            backUrl = Data_1.Data.now("history");
+            hdata = Data_1.Data.now("history");
         }
         else if (this.routeType == App_1.AppRouteType.web) {
             history.back();
             return true;
         }
-        var route = Routes_1.Routes.searchRoute(backUrl);
-        Response.rendering(route).then(function () {
+        var route = Routes_1.Routes.searchRoute(hdata.url);
+        Response.rendering(route, hdata.data).then(function () {
             _this.isBack = false;
         });
         return true;
     };
-    Response.next = function (url, send) {
+    Response.next = function (url, data) {
         if (Response.lock)
             return;
         this.isBack = false;
-        Data_1.Data.push("history", url);
+        var hdata = {
+            url: url,
+            data: data,
+        };
+        Data_1.Data.push("history", hdata);
         var route = Routes_1.Routes.searchRoute(url);
-        Response.rendering(route, send);
+        Response.rendering(route, data);
         if (this.routeType == App_1.AppRouteType.web)
             location.href = "#" + url;
     };
@@ -103,11 +107,15 @@ var Response = /** @class */ (function () {
      * @param {string} url route path
      * @returns {void}
      */
-    Response.addHistory = function (url) {
+    Response.addHistory = function (url, data) {
         if (Response.lock)
             return;
         this.isBack = false;
-        Data_1.Data.push("history", url);
+        var hdata = {
+            url: url,
+            data: data,
+        };
+        Data_1.Data.push("history", hdata);
     };
     /**
      * ***historyClear*** : Clear screen transition history
@@ -167,104 +175,96 @@ var Response = /** @class */ (function () {
         configurable: true
     });
     // rendering....
-    Response.rendering = function (route, send) {
+    Response.rendering = function (route, data) {
         return __awaiter(this, void 0, void 0, function () {
-            var MyApp, befCont, befContAction, res, resBack, resNext, befView, res, resBack, resNext, error_1;
+            var MyApp, befCont, befContAction, res, resBack, resNext, befView, res, resBack, resNext;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         MyApp = require("app/config/App").MyApp;
-                        _a.label = 1;
-                    case 1:
-                        _a.trys.push([1, 21, , 22]);
                         befCont = Data_1.Data.get("beforeController");
-                        if (!befCont) return [3 /*break*/, 6];
+                        if (!befCont) return [3 /*break*/, 5];
                         befContAction = Data_1.Data.get("beforeControllerAction");
                         return [4 /*yield*/, befCont.handleLeave(befContAction)];
-                    case 2:
+                    case 1:
                         res = _a.sent();
                         if (typeof res == "boolean" && res === false)
                             return [2 /*return*/];
-                        if (!this.isBack) return [3 /*break*/, 4];
+                        if (!this.isBack) return [3 /*break*/, 3];
                         return [4 /*yield*/, befCont.handleLeaveBack(befContAction)];
-                    case 3:
+                    case 2:
                         resBack = _a.sent();
                         if (typeof resBack == "boolean" && resBack === false)
                             return [2 /*return*/];
-                        _a.label = 4;
-                    case 4:
-                        if (!this.isNext) return [3 /*break*/, 6];
+                        _a.label = 3;
+                    case 3:
+                        if (!this.isNext) return [3 /*break*/, 5];
                         return [4 /*yield*/, befCont.handleLeaveNext(befContAction)];
-                    case 5:
+                    case 4:
                         resNext = _a.sent();
                         if (typeof resNext == "boolean" && resNext === false)
                             return [2 /*return*/];
-                        _a.label = 6;
-                    case 6:
+                        _a.label = 5;
+                    case 5:
                         befView = Data_1.Data.get("beforeView");
-                        if (!befView) return [3 /*break*/, 11];
+                        if (!befView) return [3 /*break*/, 10];
                         return [4 /*yield*/, befView.handleLeave()];
-                    case 7:
+                    case 6:
                         res = _a.sent();
                         if (typeof res == "boolean" && res === false)
                             return [2 /*return*/];
-                        if (!this.isBack) return [3 /*break*/, 9];
+                        if (!this.isBack) return [3 /*break*/, 8];
                         return [4 /*yield*/, befView.handleLeaveBack()];
-                    case 8:
+                    case 7:
                         resBack = _a.sent();
                         if (typeof resBack == "boolean" && resBack === false)
                             return [2 /*return*/];
-                        _a.label = 9;
-                    case 9:
-                        if (!this.isNext) return [3 /*break*/, 11];
+                        _a.label = 8;
+                    case 8:
+                        if (!this.isNext) return [3 /*break*/, 10];
                         return [4 /*yield*/, befView.handleLeaveNext()];
-                    case 10:
+                    case 9:
                         resNext = _a.sent();
                         if (typeof resNext == "boolean" && resNext === false)
                             return [2 /*return*/];
-                        _a.label = 11;
-                    case 11:
+                        _a.label = 10;
+                    case 10:
                         if (MyApp.animationCloseClassName)
                             (0, ModernJS_1.dom)("main").addClass(MyApp.animationCloseClassName);
                         if (MyApp.animationOpenClassName)
                             (0, ModernJS_1.dom)("main").removeClass(MyApp.animationOpenClassName);
-                        if (!MyApp.delay) return [3 /*break*/, 13];
+                        if (!MyApp.delay) return [3 /*break*/, 12];
                         return [4 /*yield*/, Lib_1.Lib.sleep(MyApp.delay)];
+                    case 11:
+                        _a.sent();
+                        _a.label = 12;
                     case 12:
-                        _a.sent();
-                        _a.label = 13;
-                    case 13:
-                        if (!(route.mode == Routes_1.DecisionRouteMode.Notfound)) return [3 /*break*/, 16];
-                        if (!MyApp.notFoundView) return [3 /*break*/, 15];
+                        if (!(route.mode == Routes_1.DecisionRouteMode.Notfound)) return [3 /*break*/, 15];
+                        if (!MyApp.notFoundView) return [3 /*break*/, 14];
                         route.view = MyApp.notFoundView;
-                        return [4 /*yield*/, Response.renderingOnView(route, send)];
-                    case 14:
+                        return [4 /*yield*/, Response.renderingOnView(route, data)];
+                    case 13:
                         _a.sent();
-                        _a.label = 15;
-                    case 15: throw ("Page Not found. \"" + route.url + "\"");
+                        _a.label = 14;
+                    case 14: throw ("Page Not found. \"" + route.url + "\"");
+                    case 15:
+                        if (!route.controller) return [3 /*break*/, 17];
+                        return [4 /*yield*/, Response.renderingOnController(route, data)];
                     case 16:
-                        if (!route.controller) return [3 /*break*/, 18];
-                        return [4 /*yield*/, Response.renderingOnController(route, send)];
+                        _a.sent();
+                        return [3 /*break*/, 19];
                     case 17:
-                        _a.sent();
-                        return [3 /*break*/, 20];
+                        if (!route.view) return [3 /*break*/, 19];
+                        return [4 /*yield*/, Response.renderingOnView(route, data)];
                     case 18:
-                        if (!route.view) return [3 /*break*/, 20];
-                        return [4 /*yield*/, Response.renderingOnView(route, send)];
-                    case 19:
                         _a.sent();
-                        _a.label = 20;
-                    case 20: return [3 /*break*/, 22];
-                    case 21:
-                        error_1 = _a.sent();
-                        console.error(error_1);
-                        return [3 /*break*/, 22];
-                    case 22: return [2 /*return*/];
+                        _a.label = 19;
+                    case 19: return [2 /*return*/];
                 }
             });
         });
     };
-    Response.renderingOnController = function (route, send) {
+    Response.renderingOnController = function (route, data) {
         return __awaiter(this, void 0, void 0, function () {
             var controllerName, controllerPath, controllerClass, cont, viewName, viewPath, vw, View_, method, method;
             return __generator(this, function (_a) {
@@ -277,7 +277,7 @@ var Response = /** @class */ (function () {
                         }
                         controllerClass = use(controllerPath);
                         cont = new controllerClass[controllerName]();
-                        cont.sendData = send;
+                        cont.sendData = data;
                         viewName = route.action + "View";
                         viewPath = "app/view/" + route.controller + "/" + Lib_1.Lib.getModulePath(viewName);
                         if (useExists(viewPath)) {
@@ -287,7 +287,7 @@ var Response = /** @class */ (function () {
                             }
                             else {
                                 vw = new View_[Lib_1.Lib.getModuleName(viewName)]();
-                                vw.sendData = send;
+                                vw.sendData = data;
                             }
                         }
                         if (Data_1.Data.get("beforeControllerPath") != controllerPath) {
@@ -374,7 +374,7 @@ var Response = /** @class */ (function () {
             });
         });
     };
-    Response.renderingOnView = function (route, send) {
+    Response.renderingOnView = function (route, data) {
         return __awaiter(this, void 0, void 0, function () {
             var viewName, viewPath, View_, vm, MyApp;
             return __generator(this, function (_a) {
@@ -387,7 +387,7 @@ var Response = /** @class */ (function () {
                         }
                         View_ = use(viewPath);
                         vm = new View_[viewName]();
-                        vm.sendData = send;
+                        vm.sendData = data;
                         if (!(Data_1.Data.get("beforeViewPath") != viewPath)) return [3 /*break*/, 2];
                         Data_1.Data.set("beforeViewPath", viewPath);
                         if (!vm.handleBegin) return [3 /*break*/, 2];
@@ -418,17 +418,39 @@ var Response = /** @class */ (function () {
                         return [4 /*yield*/, vm.handleRenderBefore()];
                     case 6:
                         _a.sent();
+                        if (!Response.isNext) return [3 /*break*/, 10];
                         if (!route.args) return [3 /*break*/, 8];
-                        return [4 /*yield*/, vm.handle.apply(vm, route.args)];
+                        return [4 /*yield*/, vm.handleNext.apply(vm, route.args)];
                     case 7:
                         _a.sent();
                         return [3 /*break*/, 10];
-                    case 8: return [4 /*yield*/, vm.handle()];
+                    case 8: return [4 /*yield*/, vm.handleNext()];
                     case 9:
                         _a.sent();
                         _a.label = 10;
-                    case 10: return [4 /*yield*/, vm.handleRenderAfter()];
+                    case 10:
+                        if (!Response.isBack) return [3 /*break*/, 14];
+                        if (!route.args) return [3 /*break*/, 12];
+                        return [4 /*yield*/, vm.handleBack.apply(vm, route.args)];
                     case 11:
+                        _a.sent();
+                        return [3 /*break*/, 14];
+                    case 12: return [4 /*yield*/, vm.handleBack()];
+                    case 13:
+                        _a.sent();
+                        _a.label = 14;
+                    case 14:
+                        if (!route.args) return [3 /*break*/, 16];
+                        return [4 /*yield*/, vm.handle.apply(vm, route.args)];
+                    case 15:
+                        _a.sent();
+                        return [3 /*break*/, 18];
+                    case 16: return [4 /*yield*/, vm.handle()];
+                    case 17:
+                        _a.sent();
+                        _a.label = 18;
+                    case 18: return [4 /*yield*/, vm.handleRenderAfter()];
+                    case 19:
                         _a.sent();
                         return [2 /*return*/];
                 }
