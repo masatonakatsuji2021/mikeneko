@@ -38,7 +38,7 @@ class Response {
             history.back();
             return true;
         }
-        const route = Routes_1.Routes.searchRoute(hdata.url);
+        const route = Routes_1.Routes.searchRoute(hdata.url.toString());
         Response.rendering(route, hdata.data).then(() => {
             this.isBack = false;
         });
@@ -53,7 +53,7 @@ class Response {
             data: data,
         };
         Data_1.Data.push("history", hdata);
-        const route = Routes_1.Routes.searchRoute(url);
+        const route = Routes_1.Routes.searchRoute(url.toString());
         Response.rendering(route, data);
         if (this.routeType == App_1.AppRouteType.web)
             location.href = "#" + url;

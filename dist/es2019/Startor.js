@@ -31,7 +31,7 @@ class Startor {
                 await this.popStateHandleDelegate(e);
             });
             await Background_1.Background.load();
-            let url = "/";
+            let url = this.MyApp.beginURL;
             if (this.MyApp.routeType == App_1.AppRouteType.web) {
                 if (location.hash)
                     url = location.hash.substring(1);

@@ -37,7 +37,7 @@ export class Startor {
             });
         
             await Background.load();
-            let url : string = "/";
+            let url : string = this.MyApp.beginURL;
             if (this.MyApp.routeType == AppRouteType.web) {
                 if (location.hash) url = location.hash.substring(1);
             }

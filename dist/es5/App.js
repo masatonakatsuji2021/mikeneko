@@ -26,6 +26,12 @@ var App = /** @class */ (function () {
      */
     App.routeType = AppRouteType.web;
     /**
+     * ***beginURL*** :
+     * Screen URL to open immediately after launching the app.
+     * (Default is "/".)
+     */
+    App.beginURL = "/";
+    /**
      * ***delay*** : Specify the delay time for screen transitions.
      * Default is 100 (ms).
      * If you specify 0, the button will transition immediately without executing the animation when pressed.

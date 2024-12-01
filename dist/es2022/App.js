@@ -29,8 +29,15 @@ class App {
     static routeType = AppRouteType.web;
     /**
      * ***notFoundView*** :
+     * The view to display when accessing a URL that is not set in the routing.
      */
     static notFoundView;
+    /**
+     * ***beginURL*** :
+     * Screen URL to open immediately after launching the app.
+     * (Default is "/".)
+     */
+    static beginURL = "/";
     /**
      * ***routes*** : Routing Settings.
      * Enter the View or Controller name to be applied to the route path (URL) as shown below.

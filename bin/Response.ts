@@ -10,7 +10,7 @@ import { dom} from "ModernJS";
 
 export interface PageHistory {
 
-    url: string,
+    url: string | number,
 
     data?: any,
 }
@@ -57,7 +57,7 @@ export class Response {
             return true;
         }
        
-        const route : DecisionRoute = Routes.searchRoute(hdata.url);
+        const route : DecisionRoute = Routes.searchRoute(hdata.url.toString());
         Response.rendering(route, hdata.data).then(()=>{
             this.isBack = false;
         });
@@ -71,7 +71,7 @@ export class Response {
      * @param {string} url route path
      * @returns {void}
      */
-    public static next(url : string) : void;
+    public static next(url : string | number) : void;
 
     /**
      * ***next*** : Transition to the specified URL (route path)  
@@ -80,9 +80,9 @@ export class Response {
      * @param {any?} data Transmission data contents
      * @returns {void}
      */
-    public static next(url : string, data : any) : void;
+    public static next(url : string | number, data : any) : void;
 
-    public static next(url : string, data? : any) : void {
+    public static next(url : string | number, data? : any) : void {
         if (Response.lock) return;
         this.isBack = false;
         const hdata : PageHistory= {
@@ -90,7 +90,7 @@ export class Response {
             data: data,
         };
         Data.push("history", hdata);
-        const route : DecisionRoute = Routes.searchRoute(url);
+        const route : DecisionRoute = Routes.searchRoute(url.toString());
         Response.rendering(route, data);
         if (this.routeType == AppRouteType.web) location.href = "#" + url;
     }

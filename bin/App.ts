@@ -33,9 +33,17 @@ export class App {
     public static routeType : AppRouteType = AppRouteType.web;
 
     /**
-     * ***notFoundView*** : 
+     * ***notFoundView*** :  
+     * The view to display when accessing a URL that is not set in the routing.
      */
     public static notFoundView : string;
+
+    /**
+     * ***beginURL*** : 
+     * Screen URL to open immediately after launching the app.  
+     * (Default is "/".)
+     */
+    public static beginURL : string = "/";
 
     /**
      * ***routes*** : Routing Settings.  
@@ -84,7 +92,6 @@ export class App {
      * If you specify 0, the button will transition immediately without executing the animation when pressed.
      */
     public static delay : number = 100;
-
 
     /**
      * ***animationOpenClassName*** : Class attribute name when opening a page with animation.
