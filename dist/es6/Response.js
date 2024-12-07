@@ -23,30 +23,28 @@ class Response {
         const MyApp = require("app/config/App").MyApp;
         return MyApp.routeType;
     }
-    /**
-     * ***back*** : Return to the previous screen.
-     * However, this cannot be used if there is no history of the previous screen
-     * or if screen transitions are disabled using lock.
-     * The return value indicates whether the return to the previous screen was successful.
-     * @returns {boolean}
-     */
-    static back() {
+    static back(index) {
+        if (!index)
+            index = 1;
         if (Response.lock)
             return false;
         if (this.isBack)
             return false;
         this.isBack = true;
         let hdata;
-        if (this.routeType == App_1.AppRouteType.application) {
-            if (Data_1.Data.getLength("history") == 1)
-                return false;
-            Data_1.Data.pop("history");
-            hdata = Data_1.Data.now("history");
+        for (let n = 0; n < index; n++) {
+            if (this.routeType == App_1.AppRouteType.application) {
+                if (Data_1.Data.getLength("history") == 1)
+                    return false;
+                Data_1.Data.pop("history");
+                hdata = Data_1.Data.now("history");
+            }
+            else if (this.routeType == App_1.AppRouteType.web) {
+                history.back();
+            }
         }
-        else if (this.routeType == App_1.AppRouteType.web) {
-            history.back();
+        if (this.routeType == App_1.AppRouteType.web)
             return true;
-        }
         const route = Routes_1.Routes.searchRoute(hdata.url.toString());
         Response.rendering(route, hdata.data).then(() => {
             this.isBack = false;

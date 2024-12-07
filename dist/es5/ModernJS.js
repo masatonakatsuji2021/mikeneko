@@ -609,6 +609,25 @@ var ModernJS = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
+    Object.defineProperty(ModernJS.prototype, "disable", {
+        /**
+         * ***disable*** : Specifies whether the element can be disabled.
+         * A code sample of TypeScript is shown below.
+         * ```typescript
+         * mjs.disable = true;
+         * ```
+         */
+        set: function (status) {
+            if (status) {
+                this.attr("disable", 1);
+            }
+            else {
+                this.removeAttr("disable");
+            }
+        },
+        enumerable: false,
+        configurable: true
+    });
     Object.defineProperty(ModernJS.prototype, "id", {
         get: function () {
             return this.attr("id");

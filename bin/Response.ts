@@ -41,21 +41,38 @@ export class Response {
      * The return value indicates whether the return to the previous screen was successful.
      * @returns {boolean} 
      */
-    public static back() : boolean {
+    public static back() : boolean;
+
+
+    /**
+     * ***back*** : Return to the previous screen.  
+     * However, this cannot be used if there is no history of the previous screen  
+     * or if screen transitions are disabled using lock.  
+     * The return value indicates whether the return to the previous screen was successful.
+     * @param {number} index Number of screens to go back.
+    * @returns {boolean} 
+     */
+    public static back(index : number) : boolean;
+
+    public static back(index? : number) : boolean {
+        if (!index) index = 1;
         if (Response.lock) return false;
         if (this.isBack) return false;
         this.isBack = true;
 
         let hdata : PageHistory;
-        if (this.routeType == AppRouteType.application) {
-            if (Data.getLength("history") == 1) return false;
-            Data.pop("history");
-            hdata= Data.now("history");
+        for (let n = 0 ; n < index ; n++) {
+            if (this.routeType == AppRouteType.application) {
+                if (Data.getLength("history") == 1) return false;
+                Data.pop("history");
+                hdata= Data.now("history");
+            }
+            else if(this.routeType == AppRouteType.web) {
+                history.back();
+            }    
         }
-        else if(this.routeType == AppRouteType.web) {
-            history.back();
-            return true;
-        }
+
+        if(this.routeType == AppRouteType.web) return true;
        
         const route : DecisionRoute = Routes.searchRoute(hdata.url.toString());
         Response.rendering(route, hdata.data).then(()=>{

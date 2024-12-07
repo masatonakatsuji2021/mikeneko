@@ -549,6 +549,21 @@ class ModernJS {
         }
     }
     /**
+     * ***disable*** : Specifies whether the element can be disabled.
+     * A code sample of TypeScript is shown below.
+     * ```typescript
+     * mjs.disable = true;
+     * ```
+     */
+    set disable(status) {
+        if (status) {
+            this.attr("disable", 1);
+        }
+        else {
+            this.removeAttr("disable");
+        }
+    }
+    /**
      * ***id*** : Gets or sets the ID attribute value of an element.
      * A code sample of TypeScript is shown below.
      * An example of setting the src attribute is as follows:
