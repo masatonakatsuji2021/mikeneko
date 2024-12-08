@@ -504,6 +504,20 @@ this.vdos.target.display = true;
 this.vdos.target.display = false;
 ```
 
+## # 要素の有効化/無効化の切替操作
+
+```html
+<input type="text" v="value1">
+```
+
+```typescript
+// 要素を無効化
+this.vdos.value1.disable = true;     
+
+// 要素を有効化
+this.vdos.value1.disable = false;
+```
+
 ## # class属性の存在可否
 
 ```html
@@ -688,10 +702,12 @@ this.vdos.target.onMouseMove = (_, my : VirtualDom) => {
 ```
 
 ```typescript
+// ボタンclickイベントの設定
 this.vdos.btn.onClick = () => {
     console.log("Button Click!");
 };
 
+// ボタンを押す
 this.vdos.btn.dispatch("click");
 ```
 
