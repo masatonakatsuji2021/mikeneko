@@ -70,27 +70,27 @@ export class Page1View extends View {
 ````
 { 指定Viewへのルーティングが確定した場合 }
         |
-View.handleBefore を実行
+View.handleBefore
         |
-View.handleAfter を実行
+View.handleAfter
         |
 { レンダリング実行により画面切替 }
         |
         |
         |       templateが指定/変更された場合
-        |----------------------------------- View.handleTemplateChanged を実行
+        |----------------------------------- View.handleTemplateChanged
         |
         |
         |       headが指定/変更された場合
-        |----------------------------------- View.handleHeadChanged を実行
+        |----------------------------------- View.handleHeadChanged
         |
         |
         |       headerが指定/変更された場合
-        |----------------------------------- View.handleHeaderChanged を実行
+        |----------------------------------- View.handleHeaderChanged
         |
         |
         |       footerが指定/変更された場合
-        |----------------------------------- View.handleFooterChanged を実行
+        |----------------------------------- View.handleFooterChanged
         |
         |
         |
@@ -98,21 +98,29 @@ View.handleRenderBefore を実行
         |
 View.handle を実行
         |
-View.handleRenderAfter を実行
+        |       前画面から進んでいる場合
+        |----------------------------------- View.handleNext
+        |
+        | 
+        |       前画面から戻っている場合
+        |----------------------------------- View.handleBack
+        |
+        |
+View.handleRenderAfter
         |
      ........
         |
 { 他のViewまたはControllerに移動が確定した場合 }
         |
-View.handleLeave を実行
+View.handleLeave
         |
         |
         |       前画面から進んでいる場合
-        |----------------------------------- View.handleLeaveNext を実行
+        |----------------------------------- View.handleLeaveNext
         |
         |
         |      前画面から戻っている場合
-        |----------------------------------- View.handleLeaveBack を実行
+        |----------------------------------- View.handleLeaveBack
 ````
 
 各ハンドラの解説を下記に示します。
@@ -250,6 +258,17 @@ export class Page1View extends View {
 
 画面切替が完了した直後に実行されるハンドラです。  
 これがメインのハンドラとなるため、迷いがない場合はこちらを優先的に使用します。
+
+前画面からの操作関係(進む・戻る)が関連する場合、処理の切り分けを行う場合は  
+``handleNext``または``handleBack``を使う方法もあります。
+
+### - handleNext イベント
+
+画面切替が完了した直後で、前画面から進んだ場合にのみ実行されるハンドラです。  
+
+### - handleBack イベント
+
+画面切替が完了した直後で、前画面から戻った場合にのみ実行されるハンドラです。  
 
 ### - handleRenderAfter イベント
 

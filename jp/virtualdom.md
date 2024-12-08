@@ -15,7 +15,7 @@ export class HomeView extends View {
 
     public handle() {
 
-        this.vdios.title.text = "Title Text Sample .....";
+        this.vdos.title.text = "Title Text Sample .....";
     }
 }
 ```
@@ -31,10 +31,10 @@ export class HomeView extends View {
 
 ```typescript
 // text.area1 へのテキスト指定
-this.vdios.text.childs.area1.text = "Area1 Text ....";
+this.vdos.text.childs.area1.text = "Area1 Text ....";
 
 // text.area2 へのテキスト指定
-this.vdios.text.childs.area2.text = "Area2 Text ....";
+this.vdos.text.childs.area2.text = "Area2 Text ....";
 ```
 
 ## # 仮想DOMの指定要素の操作方法
@@ -52,14 +52,14 @@ this.vdios.text.childs.area2.text = "Area2 Text ....";
 ```
 
 ```typescript
-const length : number = this.vdios.item.length;
+const length : number = this.vdos.item.length;
 ```
 
 
 ### : 一番最初の要素を操作
 
 ```typescript
-this.vdios.item.first.text = "First Item";
+this.vdos.item.first.text = "First Item";
 ```
 
 ```html
@@ -75,7 +75,7 @@ this.vdios.item.first.text = "First Item";
 ### : 一番最後の要素を操作
 
 ```typescript
-this.vdios.item.last.text = "Last Item";
+this.vdos.item.last.text = "Last Item";
 ```
 
 ```html
@@ -92,7 +92,7 @@ this.vdios.item.last.text = "Last Item";
 
 ```typescript
 // 2番目の要素にテキスト設定
-this.vdios.item.index(2).text = "Index Item (2)";
+this.vdos.item.index(2).text = "Index Item (2)";
 ```
 
 ```html
@@ -108,7 +108,7 @@ this.vdios.item.index(2).text = "Index Item (2)";
 ### : 1つ前の要素を操作
 
 ```typescript
-this.vdios.now.prev.text = "Prev Text ....";
+this.vdos.now.prev.text = "Prev Text ....";
 ```
 
 ```html
@@ -121,7 +121,7 @@ this.vdios.now.prev.text = "Prev Text ....";
 ### : 1つ先の要素を操作
 
 ```typescript
-this.vdios.now.next.text = "Next Text ....";
+this.vdos.now.next.text = "Next Text ....";
 ```
 
 ```html
@@ -134,7 +134,7 @@ this.vdios.now.next.text = "Next Text ....";
 ### : 親の要素を操作
 
 ```typescript
-this.vdios.now.parent.append("Parent Text ....");
+this.vdos.now.parent.append("Parent Text ....");
 ```
 
 ```html
@@ -147,7 +147,7 @@ this.vdios.now.parent.append("Parent Text ....");
 ### : 一番最後の要素を操作
 
 ```typescript
-this.vdios.item.last.text = "First Item";
+this.vdos.item.last.text = "First Item";
 ```
 
 ## # テキストの設定・取得
@@ -161,7 +161,7 @@ this.vdios.item.last.text = "First Item";
 ```
 
 ```typescript
-this.vdios.title.text = "Title Text Sample .....";
+this.vdos.title.text = "Title Text Sample .....";
 ```
 
 テキストは複数の要素を配置しても対応が可能
@@ -177,7 +177,7 @@ this.vdios.title.text = "Title Text Sample .....";
 ```
 
 ```typescript
-this.vdios.title.text = "Title Text Sample .....";
+this.vdos.title.text = "Title Text Sample .....";
 ```
 
 ### : テキストの取得
@@ -189,7 +189,7 @@ this.vdios.title.text = "Title Text Sample .....";
 ```
 
 ```typescript
-console.log(this.vdios.title.text);   // <= "Text Sample ..... OK"を出力
+console.log(this.vdos.title.text);   // <= "Text Sample ..... OK"を出力
 ```
 
 ## # HTMLタグの設定/取得
@@ -203,7 +203,7 @@ console.log(this.vdios.title.text);   // <= "Text Sample ..... OK"を出力
 ```
 
 ```typescript
-this.vdios.htmlContent.html = "<h2>HTML Content .....</h2>";
+this.vdos.htmlContent.html = "<h2>HTML Content .....</h2>";
 ```
 
 テキストは複数の要素を配置しても対応が可能
@@ -219,7 +219,7 @@ this.vdios.htmlContent.html = "<h2>HTML Content .....</h2>";
 ```
 
 ```typescript
-this.vdios.htmlContent.html = "<h2>HTML Content .....</h2>";
+this.vdos.htmlContent.html = "<h2>HTML Content .....</h2>";
 ```
 
 ### : HTMLタグの取得
@@ -231,13 +231,13 @@ this.vdios.htmlContent.html = "<h2>HTML Content .....</h2>";
 ```
 
 ```typescript
-console.log(this.vdios.htmlContent.html);   // <= "<h2>HTML Content ......</h2>"を出力
+console.log(this.vdos.htmlContent.html);   // <= "<h2>HTML Content ......</h2>"を出力
 ```
 
 ## # OuterHTMLタグの取得
 
 ```typescript
-const outerHtml : string = this.vdios.htmlContent.outerHtml;
+const outerHtml : string = this.vdos.htmlContent.outerHtml;
 ```
 
 ## # 仮想DOM内の要素取得 (querySelector)
@@ -252,7 +252,7 @@ const outerHtml : string = this.vdios.htmlContent.outerHtml;
 ```
 
 ```typescript
-const subClass : VirtualDom = this.vdios.target.querySelector(".subclass");
+const subClass : VirtualDom = this.vdos.target.querySelector(".subclass");
 subClass.text = "SubClass Text";
 ```
 
@@ -263,9 +263,9 @@ subClass.text = "SubClass Text";
 ```
 
 ```typescript
-this.vdios.list.afterBegin("<div>After Begin1...</div>");
-this.vdios.list.afterBegin("<div>After Begin2...</div>");
-this.vdios.list.afterBegin("<div>After Begin3...</div>");
+this.vdos.list.afterBegin("<div>After Begin1...</div>");
+this.vdos.list.afterBegin("<div>After Begin2...</div>");
+this.vdos.list.afterBegin("<div>After Begin3...</div>");
 ```
 
 ```html
@@ -283,9 +283,9 @@ this.vdios.list.afterBegin("<div>After Begin3...</div>");
 ```
 
 ```typescript
-this.vdios.list.append("<div>Append1...</div>");
-this.vdios.list.append("<div>Append2...</div>");
-this.vdios.list.append("<div>Append3...</div>");
+this.vdos.list.append("<div>Append1...</div>");
+this.vdos.list.append("<div>Append2...</div>");
+this.vdos.list.append("<div>Append3...</div>");
 ```
 
 ```html
@@ -303,7 +303,7 @@ this.vdios.list.append("<div>Append3...</div>");
 ```
 
 ```typescript
-this.vdios.delTarget.remove();
+this.vdos.delTarget.remove();
 ```
 
 ## # スタイルシートの設定
@@ -313,7 +313,7 @@ this.vdios.delTarget.remove();
 ```
 
 ```typescript
-this.vdios.target.style({ color: "red" });
+this.vdos.target.style({ color: "red" });
 ```
 
 ```html
@@ -327,7 +327,7 @@ this.vdios.target.style({ color: "red" });
 ```
 
 ```typescript
-console.log(this.vdios.target.getStyle("color")); // <= redを出力
+console.log(this.vdos.target.getStyle("color")); // <= redを出力
 ```
 
 ## # 属性値の設定/取得
@@ -339,7 +339,7 @@ console.log(this.vdios.target.getStyle("color")); // <= redを出力
 ```
 
 ```typescript
-this.vdios.target.attr("data-id", "sample-data");
+this.vdos.target.attr("data-id", "sample-data");
 ```
 
 ```html
@@ -353,7 +353,7 @@ this.vdios.target.attr("data-id", "sample-data");
 ```
 
 ```typescript
-console.log(this.vdios.target.attr("data-id"));      // <= "data-id" を出力
+console.log(this.vdos.target.attr("data-id"));      // <= "data-id" を出力
 ```
 
 ## # 属性値の存在可否
@@ -363,7 +363,7 @@ console.log(this.vdios.target.attr("data-id"));      // <= "data-id" を出力
 ```
 
 ```typescript
-console.log(this.vdios.target.isAttr("data-id"));      // <= 存在している場合は true を出力
+console.log(this.vdos.target.isAttr("data-id"));      // <= 存在している場合は true を出力
 ```
 
 ## # 属性値の削除
@@ -373,7 +373,7 @@ console.log(this.vdios.target.isAttr("data-id"));      // <= 存在している�
 ```
 
 ```typescript
-this.vdios.target.removeAttr("data-id");
+this.vdos.target.removeAttr("data-id");
 ```
 
 ```html
@@ -389,7 +389,7 @@ this.vdios.target.removeAttr("data-id");
 ```
 
 ```typescript
-this.vdios.target.src = "img/sample.png";
+this.vdos.target.src = "img/sample.png";
 ```
 
 ```html
@@ -399,7 +399,7 @@ this.vdios.target.src = "img/sample.png";
 ### : src値の取得
 
 ```typescript
-console.log(this.vdios.target.src);
+console.log(this.vdos.target.src);
 ```
 
 ## # placeHolderの設定/取得
@@ -411,7 +411,7 @@ console.log(this.vdios.target.src);
 ```
 
 ```typescript
-this.vdios.target.placeHolder = "placeHolder text";
+this.vdos.target.placeHolder = "placeHolder text";
 ```
 
 ```html
@@ -421,7 +421,7 @@ this.vdios.target.placeHolder = "placeHolder text";
 ### : placeHolderの取得
 
 ```typescript
-console.log(this.vdios.target.placeholder);
+console.log(this.vdos.target.placeholder);
 ```
 
 ## # hrefの設定/取得
@@ -433,7 +433,7 @@ console.log(this.vdios.target.placeholder);
 ```
 
 ```typescript
-this.vdios.target.href = "style.css";
+this.vdos.target.href = "style.css";
 ```
 
 ```html
@@ -443,7 +443,7 @@ this.vdios.target.href = "style.css";
 ### : hrefの取得
 
 ```typescript
-console.log(this.vdios.target.href);
+console.log(this.vdos.target.href);
 ```
 
 ## # idの設定/取得
@@ -455,7 +455,7 @@ console.log(this.vdios.target.href);
 ```
 
 ```typescript
-this.vdios.target.id = "id1";
+this.vdos.target.id = "id1";
 ```
 
 ```html
@@ -465,7 +465,7 @@ this.vdios.target.id = "id1";
 ### : idの取得
 
 ```typescript
-console.log(this.vdios.target.id);
+console.log(this.vdos.target.id);
 ```
 
 ## # nameの設定/取得
@@ -477,7 +477,7 @@ console.log(this.vdios.target.id);
 ```
 
 ```typescript
-this.vdios.target.name = "name1";
+this.vdos.target.name = "name1";
 ```
 
 ```html
@@ -487,7 +487,7 @@ this.vdios.target.name = "name1";
 ### : nameの取得
 
 ```typescript
-console.log(this.vdios.target.name);
+console.log(this.vdos.target.name);
 ```
 
 ## # 要素の表示/非表示の切替操作
@@ -498,10 +498,10 @@ console.log(this.vdios.target.name);
 
 ```typescript
 // 要素を表示
-this.vdios.target.display = true;     
+this.vdos.target.display = true;     
 
 // 要素を非表示
-this.vdios.target.display = false;
+this.vdos.target.display = false;
 ```
 
 ## # class属性の存在可否
@@ -511,7 +511,7 @@ this.vdios.target.display = false;
 ```
 
 ```typescript
-console.log(this.vdios.target.isClass("class1"));          // <= 存在する場合は true を出力
+console.log(this.vdos.target.isClass("class1"));          // <= 存在する場合は true を出力
 ```
 
 ## # class属性の追加
@@ -521,7 +521,7 @@ console.log(this.vdios.target.isClass("class1"));          // <= 存在する場
 ```
 
 ```typescript
-this.vdios.target.addClass("open");
+this.vdos.target.addClass("open");
 ```
 
 ```html
@@ -536,7 +536,7 @@ this.vdios.target.addClass("open");
 ```
 
 ```typescript
-this.vdios.target.removeClass("open");
+this.vdos.target.removeClass("open");
 ```
 
 ```html
@@ -552,19 +552,19 @@ this.vdios.target.removeClass("open");
 ```
 
 ```typescript
-this.vdios.target.data("value", 123);
+this.vdos.target.data("value", 123);
 ```
 
 ### : データの取得
 
 ```typescript
-console.log(this.vdios.target.data("value"));
+console.log(this.vdos.target.data("value"));
 ```
 
 ## # 仮想DOMのデータ削除
 
 ```typescript
-this.vdios.target.removeData("value");
+this.vdos.target.removeData("value");
 ```
 
 ## # イベントハンドラの設定
@@ -574,7 +574,7 @@ this.vdios.target.removeData("value");
 ```
 
 ```typescript
-this.vdios.btn.on("click", () => {
+this.vdos.btn.on("click", () => {
     console.log("Button Click....");
 });
 ```
@@ -582,15 +582,15 @@ this.vdios.btn.on("click", () => {
 ### : ハンドラの引数
 
 ```typescript
-this.vdios.btn.on("click", (e : Event) => {
+this.vdos.btn.on("click", (e : Event) => {
     console.log(e);
 });
 ```
 
 ```typescript
-this.vdios.btn.data("value", 2345);
+this.vdos.btn.data("value", 2345);
 
-this.vdios.btn.on("click", (_, my: VirtualDom) => {
+this.vdos.btn.on("click", (_, my: VirtualDom) => {
     console.log(my.data("value"));      // <= 2345 を出力
 });
 ```
@@ -604,7 +604,7 @@ this.vdios.btn.on("click", (_, my: VirtualDom) => {
 ```
 
 ```typescript
-this.vdios.btn.onClick = (_, my : VirtualDom) => {
+this.vdos.btn.onClick = (_, my : VirtualDom) => {
     console.log(my.text);
 };
 ```
@@ -616,7 +616,7 @@ this.vdios.btn.onClick = (_, my : VirtualDom) => {
 ```
 
 ```typescript
-this.vdios.btn.onDblClick = (_, my : VirtualDom) => {
+this.vdos.btn.onDblClick = (_, my : VirtualDom) => {
     console.log(my.text);
 };
 ```
@@ -628,7 +628,7 @@ this.vdios.btn.onDblClick = (_, my : VirtualDom) => {
 ```
 
 ```typescript
-this.vdios.input.onFocus = (_, my : VirtualDom) => {
+this.vdos.input.onFocus = (_, my : VirtualDom) => {
     console.log(my.value);
 };
 ```
@@ -640,7 +640,7 @@ this.vdios.input.onFocus = (_, my : VirtualDom) => {
 ```
 
 ```typescript
-this.vdios.input.onChange = (_, my : VirtualDom) => {
+this.vdos.input.onChange = (_, my : VirtualDom) => {
     console.log(my.value);
 };
 ```
@@ -652,7 +652,7 @@ this.vdios.input.onChange = (_, my : VirtualDom) => {
 ```
 
 ```typescript
-this.vdios.target.onMouseDown = (_, my : VirtualDom) => {
+this.vdos.target.onMouseDown = (_, my : VirtualDom) => {
     console.log(my.text);
 };
 ```
@@ -664,7 +664,7 @@ this.vdios.target.onMouseDown = (_, my : VirtualDom) => {
 ```
 
 ```typescript
-this.vdios.target.onMouseUp = (_, my : VirtualDom) => {
+this.vdos.target.onMouseUp = (_, my : VirtualDom) => {
     console.log(my.text);
 };
 ```
@@ -676,7 +676,7 @@ this.vdios.target.onMouseUp = (_, my : VirtualDom) => {
 ```
 
 ```typescript
-this.vdios.target.onMouseMove = (_, my : VirtualDom) => {
+this.vdos.target.onMouseMove = (_, my : VirtualDom) => {
     console.log(my.text);
 };
 ```
@@ -688,11 +688,11 @@ this.vdios.target.onMouseMove = (_, my : VirtualDom) => {
 ```
 
 ```typescript
-this.vdios.btn.onClick = () => {
+this.vdos.btn.onClick = () => {
     console.log("Button Click!");
 };
 
-this.vdios.btn.dispatch("click");
+this.vdos.btn.dispatch("click");
 ```
 
 ## # 入力値/選択値の設定
@@ -704,7 +704,7 @@ this.vdios.btn.dispatch("click");
 ```
 
 ```typescript
-this.vdios.input.value = "Input Text...">
+this.vdos.input.value = "Input Text...">
 ```
 
 ### : プルダウンメニューの場合
@@ -719,7 +719,7 @@ this.vdios.input.value = "Input Text...">
 ```
 
 ```typescript
-this.vdios.select.value = 1;
+this.vdos.select.value = 1;
 ```
 
 ### : ラジオボタンの設定
@@ -740,7 +740,7 @@ this.vdios.select.value = 1;
 ```
 
 ```typescript
-this.vdios.radio.value = 1;
+this.vdos.radio.value = 1;
 ```
 
 ### : チェックボックス(単一)の場合
@@ -752,7 +752,7 @@ this.vdios.radio.value = 1;
 ```
 
 ```typescript
-this.vdios.agree.checked = true;
+this.vdos.agree.checked = true;
 ```
 
 ### : チェックボックス(複数)の場合
@@ -773,7 +773,7 @@ this.vdios.agree.checked = true;
 ```
 
 ```typescript
-this.vdios.checkbox.value = [ 1, 3 ];
+this.vdos.checkbox.value = [ 1, 3 ];
 ```
 
 ## # 入力値/選択値の取得
@@ -783,7 +783,7 @@ this.vdios.checkbox.value = [ 1, 3 ];
 ```
 
 ```typescript
-conosle.log(this.vdios.input.value);
+conosle.log(this.vdos.input.value);
 ```
 
 ### : チェックボックス(単体)の場合
@@ -795,7 +795,7 @@ conosle.log(this.vdios.input.value);
 ```
 
 ```typescript
-conosle.log(this.vdios.agree.checked);
+conosle.log(this.vdos.agree.checked);
 ```
 
 ### : チェックボックス(複数)の場合
@@ -816,7 +816,7 @@ conosle.log(this.vdios.agree.checked);
 ```
 
 ```typescript
-console.log(this.vdios.checkbox.value);
+console.log(this.vdos.checkbox.value);
 ```
 
 ## # 入力値/選択値のクリア
@@ -826,7 +826,7 @@ console.log(this.vdios.checkbox.value);
 ```
 
 ```typescript
-this.vdios.input.reset();
+this.vdos.input.reset();
 ```
 
 ## # (selectタグ) 項目選択肢の設定
@@ -836,7 +836,7 @@ this.vdios.input.reset();
 ```
 
 ```typescript
-this.vdios.select.selectAddParam({
+this.vdos.select.selectAddParam({
     0: "Select 0",
     1: "Select 1",
     2: "Select 2",
@@ -848,17 +848,17 @@ this.vdios.select.selectAddParam({
 ## # (selectタグ) 項目選択肢のリセット
 
 ```typescript
-this.vdios.select.selectResetParam();
+this.vdos.select.selectResetParam();
 ```
 
 ## # (selectタグ) 未選択項目のセット
 
 ```typescript
-this.vdios.select.selectEmpty("---- Select ----");
+this.vdos.select.selectEmpty("---- Select ----");
 ```
 
 ## # (selectタグ) 選択テキストの取得
 
 ```typescript
-console.log(this.vdios.select.selectedText());
+console.log(this.vdos.select.selectedText());
 ```
