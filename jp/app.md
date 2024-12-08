@@ -101,24 +101,24 @@ public static sessionStorage : string = "mike_ss";
 
 ## # localStorage
 
- LocalStorage Identifiers.  
- For an overview of the local-storage, [see here](storage.md#local)
+LocalStorage Identifiers.  
+For an overview of the local-storage, [see here](storage.md#local)
 
- ```typescript
- public static localStorage : string = "mike_local";
- ```
+```typescript
+public static localStorage : string = "mike_local";
+```
 
- ## # Delay during screen transitions
+## # Delay during screen transitions
 
 Set this variable if you want to delay temporarily when transitioning to another screen.  
 The unit is specified in milliseconds.  
 (The default is 100ms.)
 
- ```typescript
- public static delay : number = 100;
- ```
+```typescript
+public static delay : number = 100;
+```
 
- ## # Not Found View
+## # Not Found View
 
 If there is no screen transition destination available and you want to display a dedicated NotFound page, specify the View class name to display here.
 

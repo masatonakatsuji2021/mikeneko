@@ -101,14 +101,14 @@ public static sessionStorage : string = "mike_ss";
 
 ## # localStorage
 
- LocalStorage Identifiers.  
- For an overview of the local-storage, [see here](storage.md#local)
+LocalStorage Identifiers.  
+For an overview of the local-storage, [see here](storage.md#local)
 
- ```typescript
- public static localStorage : string = "mike_local";
- ```
+```typescript
+public static localStorage : string = "mike_local";
+```
 
- ## # Delay during screen transitions
+## # Delay during screen transitions
 
 Set this variable if you want to delay temporarily when transitioning to another screen.  
 The unit is specified in milliseconds.  
@@ -117,3 +117,38 @@ The unit is specified in milliseconds.
  ```typescript
  public static delay : number = 100;
  ```
+
+## # Not Found View
+ 
+If there is no screen transition destination available and you want to display a dedicated NotFound page, specify the View class name to display here.
+ 
+ 
+```typescript
+public static notFoundView : string = "NotFoundPage";
+```
+ 
+After specifying the view name, write the class code and set the HTML based on [View class](view.md).
+ 
+## # beginURL 
+ 
+You can optionally specify the URL to display when the app is launched.  
+If you do not specify a URL, the View or Controller screen specified by ``/`` in the routing will be displayed.
+ 
+```typescript
+public static beginURL : string = "/home";
+```
+ 
+## # Animation Xlass Name
+ 
+If you want to add a class attribute to the article tag before and after a screen transition, use
+``animationOpenClassName`` or ``animationCloseClassName``.
+ 
+By using this, you can use CSS to animate the screen when switching between screens.
+ 
+```typescript
+// open class attribute
+public static animationOpenClassName : string = "open";
+ 
+// close class attribute
+public static animationCloseClassName : string = "close";
+```
