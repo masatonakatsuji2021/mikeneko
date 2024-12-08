@@ -30,7 +30,7 @@ export class ItemUI extends UI {
 
     public handle() {
 
-        this.mjs.messsage.text = "Item Message Text....";
+        this.vdios.messsage.text = "Item Message Text....";
     }
 }
 ```
@@ -166,8 +166,8 @@ export class HomeView extends View {
     public handle() {
 
         // ItemUI Bind....
-        const item : UI = UI.bind(this.mjs.bind, "item");
-        item.mjs.message.text = "Item Message Text ..... OK";
+        const item : UI = UI.bind(this.vdios.bind, "item");
+        item.vdios.message.text = "Item Message Text ..... OK";
     }
 }
 ```
@@ -187,7 +187,7 @@ export class ItemUI extends UI {
 
     public handle() {
 
-        this.mjs.messsage.text = "Item Message Text....";
+        this.vdios.messsage.text = "Item Message Text....";
     }
 }
 ```
@@ -208,9 +208,9 @@ export class HomeView extends View {
     public handle() {
 
         // ItemUI Bind....
-        const item : ItemUI = ItemUI.bind(this.mjs.bind);
+        const item : ItemUI = ItemUI.bind(this.vdios.bind);
         // 追加で文字色を変更
-        item.mjs.message.style({ color : "orange" });
+        item.vdios.message.style({ color : "orange" });
     }
 }
 ```
@@ -270,9 +270,9 @@ export class HomeView extends View {
         // ItemUI append
         for (let n = 0 ; n < 4 ; n++) {
             // 4回追記する
-            const item : UI = UI.append(this.mjs.list, "item");
+            const item : UI = UI.append(this.vdios.list, "item");
             // 追記後にメッセージをセット
-            item.mjs.message.text = "Item Message Text " + n + " ....";
+            item.vdios.message.text = "Item Message Text " + n + " ....";
         }
     }
 }
@@ -293,7 +293,7 @@ import { UI } from "UI";
 export class ItemUI extends UI {
 
      public setIndex(index: number) {
-        this.mjs.messsage.text = "Item Message Text " + index + " ....";
+        this.vdios.messsage.text = "Item Message Text " + index + " ....";
     }
 }
 ```
@@ -316,7 +316,7 @@ export class HomeView extends View {
         // ItemUI Bind....
         for (let n = 0 ; n < 4 ; n++) {
             // 4回追記する
-            const item : ItemUI = ItemUI.append(this.mjs.bind);
+            const item : ItemUI = ItemUI.append(this.vdios.bind);
             // メッセージ表示用に回数をセット
             item.setIndex(n);
         }
@@ -330,7 +330,7 @@ export class HomeView extends View {
 仮想DOMを使って操作を行うのが便利です。  
 UIでの仮想DOMは対象UIが表示または非表示されるごとに自動的に仮想DOMの取得作成・破棄が行われます。
 
-仮想DOM(ModernJS)についての詳細は[こちらで解説しています](modernjs.md)。
+仮想DOM(VirtualDom)についての詳細は[こちらで解説しています](virtualdom.md)。
 
 例としてある画面にてボタンを押した時の挙動を実装した例を下記に示しています。  
 まずレンダリングHTMLにてv属性(仮想DOM名)を指定したボタンのタグを設置します。
@@ -340,7 +340,7 @@ UIでの仮想DOMは対象UIが表示または非表示されるごとに自動�
 ```
 
 あとはViewクラスのハンドラにて指定の仮想DOMを押した時のイベントハンドラを設置するだけです。  
-``this.mjs``にItemUIにて取得された仮想DOMリスト(ModernJSクラス)が格納されているので   
+``this.vdios``にItemUIにて取得された仮想DOMリスト(VirtualDomクラス)が格納されているので   
 レンダリングHTMLにて指定した仮想DOM名をチェーンで指定します。
 
 ```typescript
@@ -350,7 +350,7 @@ export class ItemUI extends UI {
 
     public handle() {
 
-        this.mjs.testButton.onClick = () => {
+        this.vdios.testButton.onClick = () => {
             // buttonが押されたときのイベント
             console.log("Button Click .... OK");
         };
@@ -358,7 +358,7 @@ export class ItemUI extends UI {
 }
 ```
 
-なお仮想DOMは上記``mjs``と``vdos``でも同様に記述ができます。  
+なお仮想DOMは上記``vdios``と``vdos``でも同様に記述ができます。  
 
 ```typescript
 import { UI } from "UI";

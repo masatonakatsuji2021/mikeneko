@@ -14,7 +14,7 @@ export class HomeView extends View {
 
     public handle() {
 
-        this.mjs.link1.onClick = () => {
+        this.vdios.link1.onClick = () => {
             // link1 のボタンを押したときに、別画面(/page1)に移動
             Response.next("/page1");
         };

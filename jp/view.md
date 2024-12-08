@@ -52,7 +52,7 @@ export class Page1View extends View {
 
     public handle(){
 
-        this.mjs.button.onClick = () => {
+        this.vdios.button.onClick = () => {
             alert("button click!");
         };
     }
@@ -158,7 +158,7 @@ export class Page1View extends View {
     }
 
     public handleTemplateChanged(template : UI) {
-        template.mjs.title.text = "Page Title Text...";
+        template.vdios.title.text = "Page Title Text...";
     }
 }
 ```
@@ -183,7 +183,7 @@ export class Page1View extends View {
     }
 
     public handleHeadChanged(head : UI) {
-        head.mjs.title.text = "Page Title Text...";
+        head.vdios.title.text = "Page Title Text...";
     }
 }
 ```
@@ -208,7 +208,7 @@ export class Page1View extends View {
     }
 
     public handleHeaderChanged(header : UI) {
-        header.mjs.title.text = "Page Title Text...";
+        header.vdios.title.text = "Page Title Text...";
     }
 }
 ```
@@ -233,7 +233,7 @@ export class Page1View extends View {
     }
 
     public handlefooterChanged(footer : UI) {
-        footer.mjs.title.text = "Page Title Text...";
+        footer.vdios.title.text = "Page Title Text...";
     }
 }
 ```
@@ -351,7 +351,7 @@ export class Page1View extends View {
 仮想DOMを使って操作を行うのが便利です。  
 Viewでの仮想DOMはViewが表示または非表示されるごとに自動的に仮想DOMの取得作成・破棄が行われます。
 
-仮想DOM(ModernJS)についての詳細は[こちらで解説しています](modernjs.md)。
+仮想DOM(VirtualDom)についての詳細は[こちらで解説しています](virtualdom.md)。
 
 例としてある画面にてボタンを押した時の挙動を実装した例を下記に示しています。  
 まずレンダリングHTMLにてv属性(仮想DOM名)を指定したボタンのタグを設置します。
@@ -361,7 +361,7 @@ Viewでの仮想DOMはViewが表示または非表示されるごとに自動的
 ```
 
 あとはViewクラスのハンドラにて指定の仮想DOMを押した時のイベントハンドラを設置するだけです。  
-``this.mjs``にPage1Viewにて取得された仮想DOMリスト(ModernJSクラス)が格納されているので   
+``this.vdios``にPage1Viewにて取得された仮想DOMリスト(VirtualDomクラス)が格納されているので   
 レンダリングHTMLにて指定した仮想DOM名をチェーンで指定します。
 
 ```typescript
@@ -371,7 +371,7 @@ export class Page1View extends View {
 
     public handle() {
 
-        this.mjs.testButton.onClick = () => {
+        this.vdios.testButton.onClick = () => {
             // buttonが押されたときのイベント
             console.log("Button Click .... OK");
         };
@@ -379,7 +379,7 @@ export class Page1View extends View {
 }
 ```
 
-なお仮想DOMは上記``mjs``と``vdos``でも同様に記述ができます。  
+なお仮想DOMは上記``vdios``と``vdos``でも同様に記述ができます。  
 
 
 ```typescript
@@ -508,7 +508,7 @@ export class Page1View extends View {
     }
 
     public handleHeadChanged(head : UI) {
-        head.mjs.title.text = "Page Title Text...";
+        head.vdios.title.text = "Page Title Text...";
     }
 }
 ```

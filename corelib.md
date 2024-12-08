@@ -29,7 +29,7 @@ The available core library classes are:
 |Data|Data sharing management class.<br>[Click here for details](data.md)|
 |Dialog|Class for displaying dialogs.<br>[Click here for details](dialog.md)|
 |KeyEvent|Class for key operation events.<br>[Click here for details](keyevent.md)|
-|ModernJS|Virtual DOM or modern JS classes for DOM manipulation.<br>[Click here for details](modernjs.md)|
+|VirtualDom|Virtual DOM or modern JS classes for DOM manipulation.<br>[Click here for details](virtualdom.md)|
 |Response|Response manipulation class.<br>[Click here for details](response.md)|
 |Routes|Routing Classes.<br>[Click here for details](routes.md)|
 |Shortcode|Class for managing shortcodes.<br>[Click here for details](shortcode.md)|

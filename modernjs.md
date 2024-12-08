@@ -1,3 +1,3 @@
-# ModernJS Class
+# VirtualDom Class
 
 Comming Soon....

@@ -29,7 +29,7 @@ In the above case, the HTML tag information of ``rendering/ui/test.html`` is obt
 
 ## # Bind UI (Response.bindUI)
 
-The ``Response.bindUI`` method binds a specified UI to a specified element (ModernJS class).
+The ``Response.bindUI`` method binds a specified UI to a specified element (VirtualDom class).
 The event handler is executed immediately after binding,   
 so if the specified UI inheritance class exists and has a ``handle`` method,  
 then that method will be executed.
@@ -41,7 +41,7 @@ import { TestUI } from "app/ui/TestUI";
 
 // ....
 
-const testUI : TestUI = Response.bindUI(this.mjs.target, "test");
+const testUI : TestUI = Response.bindUI(this.vdios.target, "test");
 ```
 
 In the above case, if you place the ``app/ui/TestUI.ts`` file containing the following code,   
@@ -65,7 +65,7 @@ export class TestUI extends UI {
 
 ## # Append UI (Response.appendUI)
 
-The ``Response.appendUI`` method appends to a specified element (ModernJS class).  
+The ``Response.appendUI`` method appends to a specified element (VirtualDom class).  
 While ``Response.bindUI`` overwrites the tag information of the specified UI, this is added.  
 This method is mainly suitable for displaying list information.
 
@@ -75,7 +75,7 @@ import { ItemUI } from "app/ui/ItemUI";
 
 // ....
 
-const itemUI : ItemUI = Response.appendUI(this.mjs.list, "item");
+const itemUI : ItemUI = Response.appendUI(this.vdios.list, "item");
 ```
 
 In the above case, if you place the ``app/ui/TestUI.ts`` file containing the following code,   

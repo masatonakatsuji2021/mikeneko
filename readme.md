@@ -15,7 +15,7 @@ A framework for SPA (Single-Page-Action) that can be installed on Web, Android, 
     - [Data](data.md)
     - [Dialog](dialog.md)
     - [KeyEvent](keyevent.md)
-    - [ModernJS](modernjs.md)
+    - [VirtualDom](virtualdom.md)
     - [Response](response.md)
     - [Routes](routes.md)
     - [Shortcode](shortcode.md)

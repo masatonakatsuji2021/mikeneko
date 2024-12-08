@@ -30,18 +30,18 @@ export class FormtagUI extends UI {
 
     public handle() {
 
-        this.mjs.send.onClick = () => {
+        this.vdios.send.onClick = () => {
             // When the Send button is pressed
             console.log({
-                email: this.mjs.email.value,
-                message: this.mjs.message.value,
+                email: this.vdios.email.value,
+                message: this.vdios.message.value,
             });
         };
     }
 }
 ```
 
-Define a virtual DOM(ModernJS) by specifying the ``v`` attribute on the tag where you want to apply this in the rendering HTML of the ``View`` or ``Controller``.
+Define a virtual DOM(VirtualDom) by specifying the ``v`` attribute on the tag where you want to apply this in the rendering HTML of the ``View`` or ``Controller``.
 
 ```html
 <div v="form_area"></div>
@@ -60,7 +60,7 @@ export class Form1View extends View {
     public handle() {
 
         // bind FormTag UI
-        Response.bindUI(this.mjs.form_area, "formtag");
+        Response.bindUI(this.vdios.form_area, "formtag");
     }
 }
 ```
@@ -81,18 +81,18 @@ export class Form1View extends View {
         const formTag : string = Response.UI("formtag");
 
         // bind FormTag
-        this.mjs.form_area.html = formTag;
+        this.vdios.form_area.html = formTag;
     }
 }
 ```
 
-### : Using Virtual Dom (ModernJS)
+### : Using Virtual Dom (VirtualDom)
 
 By using a virtual Dom, you can simplify element selection when performing complex Dom control.
 
-For more information about Virtual Dom, [see here.](#modernjs)
+For more information about Virtual Dom, [see here.](#VirtualDom)
 
-In the UI class, you can easily insert text into tags and set event control for elements using the public variable ``mjs`.
+In the UI class, you can easily insert text into tags and set event control for elements using the public variable ``vdios`.
 
 For example, to display text from the View class on a page, write it as follows:
 
@@ -104,10 +104,10 @@ export class ItemUI extends UI {
     public handle() {
 
         // title 
-        this.mjs.title.text = "UI Item Text ....";
+        this.vdios.title.text = "UI Item Text ....";
 
         // description
-        this.mjs.description.text = "description Text Sample Text Sample Text Sample Text Sample ....";
+        this.vdios.description.text = "description Text Sample Text Sample Text Sample Text Sample ....";
     }
 }
 ```

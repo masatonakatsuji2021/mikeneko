@@ -59,13 +59,13 @@ Generally, the ``handle`` method is used as an event handler, but if you create 
 
 If you need to include termination processing when transitioning from a View to another Controller or View, use ``handleave``.
 
-### : Using Virtual Dom (ModernJS)
+### : Using Virtual Dom (VirtualDom)
 
 By using a virtual Dom, you can simplify element selection when performing complex Dom control.
 
-For more information about Virtual Dom, [see here.](#modernjs)
+For more information about Virtual Dom, [see here.](#VirtualDom)
 
-In the View class, you can easily insert text into tags and set event control for elements using the public variable ``mjs``.
+In the View class, you can easily insert text into tags and set event control for elements using the public variable ``vdios``.
 
 For example, to display text from the View class on a page, write it as follows:
 
@@ -77,10 +77,10 @@ export class Page1View extends View {
     public handle() {
 
         // set title
-        this.mjs.title.text = "Page1 Text Sample ...";
+        this.vdios.title.text = "Page1 Text Sample ...";
 
         // set description
-        this.mjs.description.text = "Page1 Description Text Sample ..... ";
+        this.vdios.description.text = "Page1 Description Text Sample ..... ";
     }
 }
 ```

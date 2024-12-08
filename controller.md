@@ -72,13 +72,13 @@ you can use the handleBefore method or handleRenderBefore method of the parent C
 
 Use handleave if you need to include termination processing when transitioning from a Controller to another Controller or Controller.
 
-### : Using Virtual Dom (ModernJS)
+### : Using Virtual Dom (VirtualDom)
 
 By using a virtual Dom, you can simplify element selection when performing complex Dom control.
 
-For more information about Virtual Dom, [see here.](#modernjs)
+For more information about Virtual Dom, [see here.](#VirtualDom)
 
-In the Controller class, you can easily insert text into tags and set event control for elements using the public variable mjs.
+In the Controller class, you can easily insert text into tags and set event control for elements using the public variable vdios.
 
 For example, to display text from the Controller class on a page, write it as follows:
 
@@ -90,10 +90,10 @@ export class MainController extends Controller {
     public index() {
 
         // set title
-        this.mjs.title.text = "Main Index Text Sample ...";
+        this.vdios.title.text = "Main Index Text Sample ...";
 
         // set description
-        this.mjs.description.text = "Main Index Description Text Sample ..... ";
+        this.vdios.description.text = "Main Index Description Text Sample ..... ";
     }
 }
 ```

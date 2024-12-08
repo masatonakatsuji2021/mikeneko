@@ -109,7 +109,7 @@ export class DefaultTemplate extends Template {
 
     public handle() {
 
-        this.mjs.back.onClick = () => {
+        this.vdios.back.onClick = () => {
             Response.back();
         };
     }
@@ -154,7 +154,7 @@ export class Page1View extends View {
 
     // Templateイベントハンドラの代理実行
     public handleTemplateChanged(template : Template) {
-        this.mjs.back.onClick = () => {
+        this.vdios.back.onClick = () => {
             Response.back();
         };
     }

@@ -22,7 +22,7 @@ MikenekoはWeb、Android、iOS にインストールできる SPA (Single-Page-A
     - [Data](data.md)
     - [Dialog](dialog.md)
     - [KeyEvent](keyevent.md)
-    - [ModernJS](modernjs.md)
+    - [VirtualDom](virtualdom.md)
     - [Response](response.md)
     - [Routes](routes.md)
     - [Shortcode](shortcode.md)
