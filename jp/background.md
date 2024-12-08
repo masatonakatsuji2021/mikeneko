@@ -1,4 +1,4 @@
-# Background Class
+# Backgroundクラス
 
 Backgroundはアプリ起動直後に自動実行するための機能です。  
 各画面遷移ごとにハンドラを実行するViewやControllerとは別途で実行されます。

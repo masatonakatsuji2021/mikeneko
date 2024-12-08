@@ -1,10 +1,10 @@
-# App Class
+# Appクラス
 
-The App class is the initial setting class for the project.  
-Specify the routing for each screen and the Background class to be used.
+App クラスは、プロジェクトの初期設定クラスです。  
+各画面のルーティング設定などを指定します。
 
-The App class is written in the project source ``src/app/config/App.ts`` with the following code.   
-(Make sure to name the class ``MyApp``)
+App クラスは、プロジェクト内の``src/app/config/App.ts`` に下記のコードで記述します。  
+(クラス名は必ず``MyApp``にしてください)
 
 ```typescript
 import { App, Routes, AppRouteType } from "App";
@@ -36,7 +36,7 @@ export class MyApp extends App {
 
 ## # appName
 
-Name of the application. 
+アプリの名称を指定できます。
 
 ```typescript
 public static appName : string = "Mikeneko App";
@@ -44,16 +44,17 @@ public static appName : string = "Mikeneko App";
 
 ## # routeType
 
- Method for page transition.  
+画面遷移の方式を指定します。  
 
+列挙型である``AppRouteType``で指定することができます。  
+実際に指定できる方式は下記のとおりです。
 
- -  **web** : Change the browser URL and move to the page.   
- You can go back by pressing the back button on the browser.    
- It is mainly intended to be used in a web browser.
- * **application*** : In this mode, the history of screen actions is stored internally,   
-so you cannot press the back button on the browser.  
-To go back to the previous screen, you need to add a button event and use ``Response.back()`` to go back to the previous screen.  
-This mode is for Android/iOS/Windows apps.
+ -  **web** : Webブラウザなどを使った閲覧が可能な方式。　
+実際にURLでアクセスしてルーティングの通りの画面に移動できます。     
+ブラウザの戻るボタンを押すと戻ることができます。    
+ * **application*** : 主にスマホアプリやデスクトップアプリなどに使用する方式。  
+このモードでは、画面操作の履歴が内部に保存されるため、ブラウザの戻るボタンを押すことはできません。  
+前の画面に戻るには、ボタン イベントを追加して``Response.back``メソッドなどを使用して前の画面に戻る必要があります。  
 
 ```typescript
 public static routeType : AppRouteType = AppRouteType.web;
@@ -61,10 +62,11 @@ public static routeType : AppRouteType = AppRouteType.web;
 
 ## # routes
 
-This is the routing setting item.<br>
-Specify each path during screen transition, the destination view or controller, and the action name (public method name).
+ルーティング設定用です。  
+画面遷移時の各パス、遷移先のView  
+またはControllerとアクション名(publicメソッド名)を指定します。
 
-For information on setting up routing, [see here](routes.md)
+ルーティング設定の詳細については、[こちら](routes.md)を参照してください。
 
 ```typescript
 // Routing
@@ -79,10 +81,10 @@ public static routes : Routes = {
 ```
 ## # backgrounds
 
-Background class list to run.   
-Execution will begin in the order specified in the list.
+実行するBackgroundクラスのリストをここに列挙します。  
+実行はリストに指定された順序で開始されます。
 
-For an overview of the Background class, [see here](background.md)
+Background クラスの概要については、[こちら](background.md) を参照してください。
 
 ```typescript
 public static backgrounds: Array<string> = [
@@ -92,8 +94,8 @@ public static backgrounds: Array<string> = [
 
 ## # sessionStorage
 
-SessionStorage Identifier.  
-For an overview of the session-storage, [see here](storage.md#session)
+Storageクラスで使用するsessionStorageの識別子を指定できます。  
+SessionStorageの概要については、[こちら](storage.md#session) を参照してください。
 
 ```typescript
 public static sessionStorage : string = "mike_ss";
@@ -101,18 +103,20 @@ public static sessionStorage : string = "mike_ss";
 
 ## # localStorage
 
-LocalStorage Identifiers.  
-For an overview of the local-storage, [see here](storage.md#local)
+Storageクラスで使用するlocalStorageの識別子を指定できます。  
+localStorageの概要については、[こちら](storage.md#local) を参照してください。
 
 ```typescript
 public static localStorage : string = "mike_local";
 ```
 
-## # Delay during screen transitions
+## # 画面遷移時の遅延時間(delay)
 
-Set this variable if you want to delay temporarily when transitioning to another screen.  
-The unit is specified in milliseconds.  
-(The default is 100ms.)
+別画面に遷移するときに一時的に遅延させたい場合は、  
+この変数を設定します。 
+
+単位はミリ秒で指定します。  
+(デフォルトは 100 ミリ秒です。)
 
 ```typescript
 public static delay : number = 100;
@@ -120,19 +124,20 @@ public static delay : number = 100;
 
 ## # Not Found View
 
-If there is no screen transition destination available and you want to display a dedicated NotFound page, specify the View class name to display here.
-
+繊維後に遷移先のViewまたはルーティングが指定されておらず、  
+専用の画面を表示させたい場合は、  
+ここで表示する View クラス名を指定します。
 
 ```typescript
 public static notFoundView : string = "NotFoundPage";
 ```
 
-After specifying the view name, write the class code and set the HTML based on [View class](view.md).
+View名を指定後の、ViewクラスやHTMLの設置については[Viewクラス](view.md) を参照。
 
 ## # beginURL 
 
-You can optionally specify the URL to display when the app is launched.  
-If you do not specify a URL, the View or Controller screen specified by ``/`` in the routing will be displayed.
+アプリの起動時に表示するURL(ルーティング)を指定できます。  
+URLを指定しない場合は、ルーティング内の「/」で指定されたViewまたはController画面が表示されます。
 
 ```typescript
 public static beginURL : string = "/home";
@@ -140,10 +145,10 @@ public static beginURL : string = "/home";
 
 ## # Animation Class Name
 
-If you want to add a class attribute to the article tag before and after a screen transition, use
-``animationOpenClassName`` or ``animationCloseClassName``.
+画面遷移の前後にarticleタグにクラス属性を追加する場合は、  
+``animationOpenClassName`` または ``animationCloseClassName`` を使用します。
 
-By using this, you can use CSS to animate the screen when switching between screens.
+これを使うと、画面切替時にCSSを使ってアニメーション操作をさせることができます。
 
 ```typescript
 // open class attribute
