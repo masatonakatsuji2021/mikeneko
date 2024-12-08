@@ -28,7 +28,7 @@ class Controller {
         return this.myMjs;
     }
     /**
-     * ***vdos*** : Virtual DOM List of ModernJS Classes.
+     * ***vdos*** : Virtual DOM List of VirtualDom Classes.
      */
     get vdos() {
         return this.mjs;

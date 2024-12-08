@@ -1,6 +1,6 @@
 import { Render } from "Render";
 import { Lib } from "Lib";
-import { ModernJS, dom } from "ModernJS";
+import { VirtualDom, dom } from "VirtualDom";
 
 /**
  * ***DialogOption*** : Option settings when the dialog is displayed
@@ -80,58 +80,58 @@ export class Dialog extends Render {
     
     /**
      * ***bind*** : Bind the Dialog content to the specified virtual DOM class.
-     * @param {ModernJS} mjs Bind Virtual Dom
+     * @param {VirtualDom} mjs Bind Virtual Dom
      * @returns {View}
      */
-    public static bind(mjs: ModernJS) : Dialog;
+    public static bind(mjs: VirtualDom) : Dialog;
 
     /**
      * ***bind*** : Bind the Dialog content to the specified virtual DOM class.
-     * @param {ModernJS} mjs Bind Virtual Dom
+     * @param {VirtualDom} mjs Bind Virtual Dom
      * @param {string} dialogName Dialog Name
      * @returns {Dialog}
      */
-    public static bind(mjs: ModernJS, dialogName : string) : Dialog;
+    public static bind(mjs: VirtualDom, dialogName : string) : Dialog;
 
     /**
      * ***bind*** : Bind the Dialog content to the specified virtual DOM class.
-     * @param {ModernJS} mjs Bind Virtual Dom
+     * @param {VirtualDom} mjs Bind Virtual Dom
      * @param {string} dialogName Dialog Name
      * @param {any} sendData Transmission data contents
      * @returns {Dialog}
      */
-    public static bind(mjs: ModernJS, dialogName : string, sendData : any) : Dialog;
+    public static bind(mjs: VirtualDom, dialogName : string, sendData : any) : Dialog;
 
-    public static bind(mjs: ModernJS, dialogName? : string, sendData? : any) : Dialog {
+    public static bind(mjs: VirtualDom, dialogName? : string, sendData? : any) : Dialog {
         if(dialogName) dialogName = "dialog/" + dialogName;
         return super.bind(mjs, dialogName, sendData, this) as Dialog;
     }
 
     /**
      * ***append*** : Appends the Dialog content to the specified virtual DOM class.
-     * @param {ModernJS} mjs Append Virtual Dom
+     * @param {VirtualDom} mjs Append Virtual Dom
      * @returns {Dialog}
      */
-    public static append(mjs: ModernJS) : Dialog;
+    public static append(mjs: VirtualDom) : Dialog;
 
     /**
      * ***append*** : Appends the Dialog content to the specified virtual DOM class.
-     * @param {ModernJS} mjs Append Virtual Dom
+     * @param {VirtualDom} mjs Append Virtual Dom
      * @param {string} dialogName Dialog name
      * @returns {Dialog}
      */
-    public static append(mjs: ModernJS, dialogName : string) : Dialog;
+    public static append(mjs: VirtualDom, dialogName : string) : Dialog;
     
     /**
      * ***append*** : Appends the Dialog content to the specified virtual DOM class.
-     * @param {ModernJS} mjs Append Virtual Dom
+     * @param {VirtualDom} mjs Append Virtual Dom
      * @param {string} dialogName Dialog name
      * @param {any} sendData Transmission data contents
      * @returns {Dialog}
      */
-    public static append(mjs: ModernJS, dialogName : string, sendData : any) : Dialog;
+    public static append(mjs: VirtualDom, dialogName : string, sendData : any) : Dialog;
     
-    public static append(mjs: ModernJS, dialogName? : string, sendData? : any) : Dialog {
+    public static append(mjs: VirtualDom, dialogName? : string, sendData? : any) : Dialog {
         if(dialogName) dialogName = "dialog/" + dialogName;
         return super.append(mjs, dialogName, sendData, this) as Dialog;
     }
@@ -183,7 +183,7 @@ export class Dialog extends Render {
         if (!option) option = {};
         this.setDialogCss();
         const dialogStr = "<dwindow>" + this.getHtml(dialogName) + "</dwindow>";
-        const dialogMjs = ModernJS.create(dialogStr, "dialog");
+        const dialogMjs = VirtualDom.create(dialogStr, "dialog");
         
         if (option.class) {
             if (typeof option.class == "string") option.class = [ option.class ];

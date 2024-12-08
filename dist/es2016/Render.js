@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Render = void 0;
 const Lib_1 = require("Lib");
 const Shortcode_1 = require("Shortcode");
-const ModernJS_1 = require("ModernJS");
+const VirtualDom_1 = require("VirtualDom");
 class Render {
     /**
      * ***vdo*** : Virtual Dom for content.
@@ -12,7 +12,7 @@ class Render {
         return this.myMjs;
     }
     /**
-     * ***vdos*** : Virtual DOM List of ModernJS Classes.
+     * ***vdos*** : Virtual DOM List of VirtualDom Classes.
      * (``mjs`` is also available as a proxy.)
      *
      * Example: First, place a v attribute tag in the HTML file.
@@ -23,7 +23,7 @@ class Render {
      * ```typescript
      * this.vdos.mainTitle.text = "MainTitle Text...";
      * ```
-     * [How to use VirtualDOM is described in ModernJS classes.](./ModernJS.ts)
+     * [How to use VirtualDOM is described in VirtualDom classes.](./VirtualDom.ts)
      */
     get vdos() {
         return this.mjs;
@@ -77,7 +77,7 @@ class Render {
     }
     /**
      * ***bindUI*** : Bind the Render content to the specified virtual DOM class.
-     * @param {ModernJS} mjs Bind Virtual Dom
+     * @param {VirtualDom} mjs Bind Virtual Dom
      * @param {string} path render Path
      * @param {any} sendData Transmission data contents
      * @param {any} defaultClass Default Response Class Object
@@ -89,14 +89,14 @@ class Render {
     }
     /**
      * ***bindUI*** : Appends the Render content to the specified virtual DOM class.
-     * @param {ModernJS} mjs Append Virtual Dom
+     * @param {VirtualDom} mjs Append Virtual Dom
      * @param {string} path render Path
      * @param {any} sendData Transmission data contents
      * @param {any} defaultClass Default Response Class Object
      * @returns {Render | UI | View | Template | Dialog}
      */
     static append(mjs, path, sendData, defaultClass) {
-        const myMjs = new ModernJS_1.ModernJS();
+        const myMjs = new VirtualDom_1.VirtualDom();
         mjs.append(this.getHtml(path), true);
         mjs.reload(myMjs);
         return this.loadClass(myMjs, path, sendData, defaultClass);

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Builder = void 0;
+exports.Builder = exports.BuildPlatformType = void 0;
 const fs = require("fs");
 const path = require("path");
 const mime = require("mime-types");
@@ -9,6 +9,13 @@ const strip = require("strip-comments");
 const child_process_1 = require("child_process");
 const obfucator = require("javascript-obfuscator");
 const mikeneko_1 = require("mikeneko");
+var BuildPlatformType;
+(function (BuildPlatformType) {
+    BuildPlatformType["Web"] = "web";
+    BuildPlatformType["Cordova"] = "cordova";
+    BuildPlatformType["Capacitor"] = "capacitor";
+    BuildPlatformType["Electron"] = "electron";
+})(BuildPlatformType || (exports.BuildPlatformType = BuildPlatformType = {}));
 class Builder {
     static build(option) {
         if (!option)
@@ -41,6 +48,17 @@ class Builder {
         for (let n = 0; n < option.platforms.length; n++) {
             // platforms building 
             const platform = option.platforms[n];
+            if (!platform.buildType)
+                platform.buildType = BuildPlatformType.Web;
+            let platformOptionClass;
+            try {
+                const pbName = "Platform" + platform.buildType.substring(0, 1).toUpperCase() + platform.buildType.substring(1);
+                const pb_ = require("mikeneko-platform-" + platform.buildType);
+                if (pb_[pbName]) {
+                    platformOptionClass = pb_[pbName];
+                }
+            }
+            catch (error) { }
             let buildhandle = mikeneko_1.BuildHandle;
             try {
                 buildhandle = require(rootDir + "/src/BuildHandle").BuildHandle;
@@ -53,6 +71,7 @@ class Builder {
                 catch (error) { }
             }
             console.log("# platform = " + platform.name);
+            console.log("# buildType = " + platform.buildType);
             // create platform directory
             let platformDir = buildDir + "/" + platform.name;
             if (platform.optionDir)
@@ -101,10 +120,16 @@ class Builder {
             fs.writeFileSync(platformDir + "/index.js", coreStr);
             console.log("# write index.html");
             let indexHTML = "<!DOCTYPE html><head><meta charset=\"UTF-8\"><script src=\"index.js\"></script></head><body></body></html>";
-            if (platform.buildType == "cordova") {
-                indexHTML = "<!DOCTYPE html><head><meta charset=\"UTF-8\"><script src=\"cordova.js\"></script><script src=\"index.js\"></script></head><body></body></html>";
+            if (platformOptionClass) {
+                const htmlBuffer = platformOptionClass.handleCreateIndexHTML();
+                if (htmlBuffer)
+                    indexHTML = htmlBuffer;
             }
             fs.writeFileSync(platformDir + "/index.html", indexHTML);
+            console.log("# Web Build Comlete.");
+            if (platformOptionClass) {
+                platformOptionClass.handleWebBuildCompleted();
+            }
             console.log("# ........ platform = " + platform.name + " ok");
             // build handle platform  complete
             buildhandle.handleComplete(platform);
@@ -134,6 +159,13 @@ class Builder {
         let contents = fs.readFileSync(fullPath).toString();
         contents = "var exports = {};\n" + contents + ";\nreturn exports;";
         codeList[name] = this.setFn(name, contents, true);
+    }
+    static coreModuleMountPlatformType(typeName, typePath, codeList, tsType) {
+        console.log("# core module mount(typename = " + typeName + ")".padEnd(30) + " " + name);
+        const fullPath = typePath + "/dist/" + tsType + "/" + name + ".js";
+        let contents = fs.readFileSync(fullPath).toString();
+        contents = "var exports = {};\n" + contents + ";\nreturn exports;";
+        codeList[typeName + "/" + name] = this.setFn(typeName + "/" + name, contents, true);
     }
     static coreResourceMount(codeList, tsType) {
         const targetPath = path.dirname(__dirname) + "/bin/res";
@@ -311,7 +343,7 @@ Builder.BuildCoreList = [
     "Controller",
     "Data",
     "Dialog",
-    "ModernJS",
+    "VirtualDom",
     "Exception",
     "KeyEvent",
     "Response",

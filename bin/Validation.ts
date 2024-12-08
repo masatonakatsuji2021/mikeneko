@@ -1,4 +1,4 @@
-import { ModernJS, ModernJSList } from "ModernJS";
+import { VirtualDom, VirtualDomList } from "VirtualDom";
 
 /**
  * ***ValidateRule*** : Validation check rule enumeration.
@@ -538,10 +538,10 @@ export class ValidateErrorResult {
      * ```html
      * <div v="error.name"></div>
      * ```
-     * @param {ModernJSList} mjs Virtual DOM List
+     * @param {VirtualDomList} mjs Virtual DOM List
      * @returns {void}
      */
-    public bind(mjs : ModernJSList) : void;
+    public bind(mjs : VirtualDomList) : void;
 
     /**
      * ***bind*** : Based on the result of the validation check, an error message is bound to the error virtual DOM from the specified virtual DOM list.  
@@ -549,11 +549,11 @@ export class ValidateErrorResult {
      * ```html
      * <div v="error.name"></div>
      * ```
-     * @param {ModernJSList} mjs Virtual DOM List
+     * @param {VirtualDomList} mjs Virtual DOM List
      * @param {string} name field name
      * @returns {void}
      */
-    public bind(mjs : ModernJSList, name : string) : void;
+    public bind(mjs : VirtualDomList, name : string) : void;
 
     /**
      * ***bind*** : Based on the result of the validation check, an error message is bound to the error virtual DOM from the specified virtual DOM list.  
@@ -561,18 +561,18 @@ export class ValidateErrorResult {
      * ```html
      * <div v="error.name"></div>
      * ```
-     * @param {ModernJSList} mjs Virtual DOM List
+     * @param {VirtualDomList} mjs Virtual DOM List
      * @param {string} name field name
      * @param {number} index Index Number
      * @returns {void}
      */
-    public bind(mjs : ModernJSList, name : string, index : number) : void;
+    public bind(mjs : VirtualDomList, name : string, index : number) : void;
 
-    public bind(mjs : ModernJSList, name? : string, index? : number) : void {
+    public bind(mjs : VirtualDomList, name? : string, index? : number) : void {
         if (name) {
             if (!mjs.error) return;
             if (!mjs.error.childs[name]) return;
-            let target : ModernJS = mjs.error.childs[name];
+            let target : VirtualDom = mjs.error.childs[name];
             let result;
             if (index) {
                 if (target.index(index)) {
@@ -765,22 +765,22 @@ export class Validation {
 
     /**
      * ***verifyBind*** : After checking the input data for validity, the error content is automatically bound using the virtual DOM.
-     * @param {ModernJSList} mjs Virtual DOM Class List
+     * @param {VirtualDomList} mjs Virtual DOM Class List
      * @param {any} data input data
      * @returns {ValidateErrorResult} 
      */
-    public static verifyBind(mjs: ModernJSList, data: any) : ValidateErrorResult;
+    public static verifyBind(mjs: VirtualDomList, data: any) : ValidateErrorResult;
 
     /**
      * ***verifyBind*** : After checking the input data for validity, the error content is automatically bound using the virtual DOM.
-     * @param {ModernJSList} mjs Virtual DOM Class List
+     * @param {VirtualDomList} mjs Virtual DOM Class List
      * @param {any} data input data
      * @param {ValidateRuleMaps} rules Validation Check Rules
      * @returns {ValidateErrorResult} 
      */
-    public static verifyBind(mjs: ModernJSList, data: any, rules : ValidateRuleMaps) : ValidateErrorResult;
+    public static verifyBind(mjs: VirtualDomList, data: any, rules : ValidateRuleMaps) : ValidateErrorResult;
     
-    public static verifyBind(mjs: ModernJSList, data: any, rules? : ValidateRuleMaps) : ValidateErrorResult {
+    public static verifyBind(mjs: VirtualDomList, data: any, rules? : ValidateRuleMaps) : ValidateErrorResult {
         const my = new this();
         if (rules) my.rules = rules;
         return my.verifyBind(mjs, data);
@@ -788,11 +788,11 @@ export class Validation {
 
     /**
      * ***verifyBind*** : After checking the input data for validity, the error content is automatically bound using the virtual DOM.
-     * @param {ModernJSList} mjs Virtual DOM Class List
+     * @param {VirtualDomList} mjs Virtual DOM Class List
      * @param {any} data input data
      * @returns {ValidateErrorResult} 
      */
-    public verifyBind(mjs: ModernJSList, data : any) : ValidateErrorResult {
+    public verifyBind(mjs: VirtualDomList, data : any) : ValidateErrorResult {
         const result = this.verify(data);
         result.bind(mjs);
         return result;

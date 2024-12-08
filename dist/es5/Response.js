@@ -44,7 +44,7 @@ var Data_1 = require("Data");
 var View_1 = require("View");
 var Template_1 = require("Template");
 var UI_1 = require("UI");
-var ModernJS_1 = require("ModernJS");
+var VirtualDom_1 = require("VirtualDom");
 var Response = /** @class */ (function () {
     function Response() {
     }
@@ -228,9 +228,9 @@ var Response = /** @class */ (function () {
                         _a.label = 10;
                     case 10:
                         if (MyApp.animationCloseClassName)
-                            (0, ModernJS_1.dom)("main").addClass(MyApp.animationCloseClassName);
+                            (0, VirtualDom_1.dom)("main").addClass(MyApp.animationCloseClassName);
                         if (MyApp.animationOpenClassName)
-                            (0, ModernJS_1.dom)("main").removeClass(MyApp.animationOpenClassName);
+                            (0, VirtualDom_1.dom)("main").removeClass(MyApp.animationOpenClassName);
                         if (!MyApp.delay) return [3 /*break*/, 12];
                         return [4 /*yield*/, Lib_1.Lib.sleep(MyApp.delay)];
                     case 11:
@@ -410,10 +410,10 @@ var Response = /** @class */ (function () {
                         _a.sent();
                         MyApp = require("app/config/App").MyApp;
                         if (MyApp.animationCloseClassName)
-                            (0, ModernJS_1.dom)("main").removeClass(MyApp.animationCloseClassName);
+                            (0, VirtualDom_1.dom)("main").removeClass(MyApp.animationCloseClassName);
                         if (MyApp.animationOpenClassName)
-                            (0, ModernJS_1.dom)("main").addClass(MyApp.animationOpenClassName);
-                        vm.myMjs = (0, ModernJS_1.dom)("main article");
+                            (0, VirtualDom_1.dom)("main").addClass(MyApp.animationOpenClassName);
+                        vm.myMjs = (0, VirtualDom_1.dom)("main article");
                         return [4 /*yield*/, vm.handleRenderBefore()];
                     case 6:
                         _a.sent();
@@ -475,7 +475,7 @@ var Response = /** @class */ (function () {
                         if (!(beforeTemplate != context.template)) return [3 /*break*/, 2];
                         // Template Rendering...
                         Data_1.Data.set("beforeTemplate", context.template);
-                        template = Template_1.Template.bind((0, ModernJS_1.dom)("body"), context.template);
+                        template = Template_1.Template.bind((0, VirtualDom_1.dom)("body"), context.template);
                         if (!context.handleTemplateChanged) return [3 /*break*/, 2];
                         return [4 /*yield*/, context.handleTemplateChanged(template)];
                     case 1:
@@ -487,16 +487,16 @@ var Response = /** @class */ (function () {
                         _a.label = 4;
                     case 4:
                         viewHtml = View_1.View.getHtml("view/" + context.view);
-                        if (!(0, ModernJS_1.dom)("main").length)
-                            (0, ModernJS_1.dom)("body").append("<main></main>");
-                        main = (0, ModernJS_1.dom)("main");
+                        if (!(0, VirtualDom_1.dom)("main").length)
+                            (0, VirtualDom_1.dom)("body").append("<main></main>");
+                        main = (0, VirtualDom_1.dom)("main");
                         main.html = "<article>" + viewHtml + "</article>";
                         context.mjs = main.childs;
                         beforeHead = Data_1.Data.get("beforeHead");
                         if (!(beforeHead != context.head)) return [3 /*break*/, 8];
                         Data_1.Data.set("beforeHead", context.head);
                         if (!context.head) return [3 /*break*/, 7];
-                        head = UI_1.UI.bind((0, ModernJS_1.dom)("head"), context.head);
+                        head = UI_1.UI.bind((0, VirtualDom_1.dom)("head"), context.head);
                         if (!context.handleHeadChanged) return [3 /*break*/, 6];
                         return [4 /*yield*/, context.handleHeadChanged(head)];
                     case 5:
@@ -504,14 +504,14 @@ var Response = /** @class */ (function () {
                         _a.label = 6;
                     case 6: return [3 /*break*/, 8];
                     case 7:
-                        (0, ModernJS_1.dom)("head").html = "";
+                        (0, VirtualDom_1.dom)("head").html = "";
                         _a.label = 8;
                     case 8:
                         beforeHeader = Data_1.Data.get("beforeHeader");
                         if (!(beforeHeader != context.header)) return [3 /*break*/, 12];
                         Data_1.Data.set("beforeHeader", context.header);
                         if (!context.header) return [3 /*break*/, 11];
-                        header = UI_1.UI.bind((0, ModernJS_1.dom)("header"), context.header);
+                        header = UI_1.UI.bind((0, VirtualDom_1.dom)("header"), context.header);
                         if (!context.handleHeaderChanged) return [3 /*break*/, 10];
                         return [4 /*yield*/, context.handleHeaderChanged(header)];
                     case 9:
@@ -519,14 +519,14 @@ var Response = /** @class */ (function () {
                         _a.label = 10;
                     case 10: return [3 /*break*/, 12];
                     case 11:
-                        (0, ModernJS_1.dom)("header").html = "";
+                        (0, VirtualDom_1.dom)("header").html = "";
                         _a.label = 12;
                     case 12:
                         beforeFooter = Data_1.Data.get("beforeFooter");
                         if (!(beforeFooter != context.footer)) return [3 /*break*/, 16];
                         Data_1.Data.set("beforeFooter", context.footer);
                         if (!context.footer) return [3 /*break*/, 15];
-                        footer = UI_1.UI.bind((0, ModernJS_1.dom)("footer"), context.footer);
+                        footer = UI_1.UI.bind((0, VirtualDom_1.dom)("footer"), context.footer);
                         if (!context.handleFooterChanged) return [3 /*break*/, 14];
                         return [4 /*yield*/, context.handleFooterChanged(footer)];
                     case 13:
@@ -534,7 +534,7 @@ var Response = /** @class */ (function () {
                         _a.label = 14;
                     case 14: return [3 /*break*/, 16];
                     case 15:
-                        (0, ModernJS_1.dom)("footer").html = "";
+                        (0, VirtualDom_1.dom)("footer").html = "";
                         _a.label = 16;
                     case 16: return [2 /*return*/];
                 }

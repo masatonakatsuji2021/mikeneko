@@ -8,7 +8,7 @@ export class HomeView extends View {
 
         this.title = "Mikeneko";
 
-        this.mjs.page1.onClick = () => {
+        this.vdos.page1.onClick = () => {
             Response.next("/page1");
         };
     }

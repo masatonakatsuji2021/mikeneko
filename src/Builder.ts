@@ -6,8 +6,10 @@ import * as strip from "strip-comments";
 import { execSync } from "child_process";
 import * as obfucator from "javascript-obfuscator";
 import { BuildHandle } from "mikeneko";
+import { PlatformBase } from "mikeneko/src/PlatformBase";
 
 export interface BuildOption {
+
     /**
      * ***debug*** : debug mode.
      */
@@ -39,6 +41,17 @@ export interface BuildOption {
     obfuscated? : boolean,
 }
 
+export enum BuildPlatformType {
+
+    Web = "web",
+
+    Cordova = "cordova",
+
+    Capacitor = "capacitor",
+
+    Electron = "electron",
+}
+
 export interface BuildPlatrom {
 
     /**
@@ -46,9 +59,10 @@ export interface BuildPlatrom {
      */
     name? : string,
 
-    buildType? : "web" | "cordova" | "electron",
-
-    cordova? : BuildCordova,
+    /**
+     * ***buildType*** : 
+     */
+    buildType? : BuildPlatformType,
 
     path?: string,
 
@@ -93,7 +107,7 @@ export class Builder {
         "Controller", 
         "Data", 
         "Dialog",
-        "ModernJS",
+        "VirtualDom",
         "Exception", 
         "KeyEvent", 
         "Response", 
@@ -138,6 +152,16 @@ export class Builder {
         for (let n = 0 ; n < option.platforms.length ; n++) {
             // platforms building 
             const platform = option.platforms[n];
+            if (!platform.buildType) platform.buildType = BuildPlatformType.Web;
+
+            let platformOptionClass : typeof PlatformBase;
+            try {
+                const pbName = "Platform" + platform.buildType.substring(0,1).toUpperCase() + platform.buildType.substring(1);
+                const pb_ = require("mikeneko-platform-" + platform.buildType);
+                if (pb_[pbName]) {
+                    platformOptionClass = pb_[pbName];
+                }
+            } catch(error) { }
 
             let buildhandle : typeof BuildHandle = BuildHandle;
             try {
@@ -150,6 +174,7 @@ export class Builder {
             }
             
             console.log("# platform = " + platform.name);
+            console.log("# buildType = " + platform.buildType);
 
             // create platform directory
             let platformDir : string = buildDir + "/" + platform.name;
@@ -208,11 +233,18 @@ export class Builder {
     
             console.log("# write index.html");
             let indexHTML : string = "<!DOCTYPE html><head><meta charset=\"UTF-8\"><script src=\"index.js\"></script></head><body></body></html>";
-            if (platform.buildType == "cordova") {
-                indexHTML =  "<!DOCTYPE html><head><meta charset=\"UTF-8\"><script src=\"cordova.js\"></script><script src=\"index.js\"></script></head><body></body></html>";
+            if (platformOptionClass) {
+                const htmlBuffer = platformOptionClass.handleCreateIndexHTML();
+                if (htmlBuffer) indexHTML = htmlBuffer;
             }
             fs.writeFileSync(platformDir + "/index.html", indexHTML);
     
+            console.log("# Web Build Comlete.");
+
+            if (platformOptionClass) {
+                platformOptionClass.handleWebBuildCompleted();
+            }
+
             console.log("# ........ platform = " + platform.name + " ok");
 
             // build handle platform  complete
@@ -246,6 +278,14 @@ export class Builder {
         let contents : string = fs.readFileSync(fullPath).toString() ;
         contents = "var exports = {};\n" + contents + ";\nreturn exports;";
         codeList[name] = this.setFn(name, contents, true);
+    }
+
+    private static coreModuleMountPlatformType(typeName : string, typePath : string, codeList : {[name : string] : string}, tsType : string) {
+        console.log("# core module mount(typename = " + typeName + ")".padEnd(30) + " " + name);
+        const fullPath : string = typePath + "/dist/" + tsType + "/" + name + ".js"; 
+        let contents : string = fs.readFileSync(fullPath).toString() ;
+        contents = "var exports = {};\n" + contents + ";\nreturn exports;";
+        codeList[typeName + "/" + name] = this.setFn(typeName + "/" + name, contents, true);
     }
 
     private static coreResourceMount(codeList : {[name : string] : string}, tsType : string) {

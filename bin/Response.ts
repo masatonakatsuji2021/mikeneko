@@ -6,7 +6,7 @@ import { Controller } from "Controller";
 import { View } from "View";
 import { Template } from "Template";
 import { UI } from "UI";
-import { dom} from "ModernJS";
+import { dom} from "VirtualDom";
 
 export interface PageHistory {
 

@@ -1,6 +1,6 @@
 import { Template } from "Template";
 import { UI } from "UI";
-import { ModernJS, ModernJSList } from "ModernJS";
+import { VirtualDom, VirtualDomList } from "VirtualDom";
 
 /**
  * ***Controller*** : Main class for each screen.  
@@ -11,24 +11,24 @@ export class Controller {
     /**
      * ***myMjs*** : Virtual Dom for content.
      */
-    public myMjs : ModernJS;
+    public myMjs : VirtualDom;
 
     /**
-     * ***mjs**** : Virtual DOM List of ModernJS Classes.
+     * ***mjs**** : Virtual DOM List of VirtualDom Classes.
      */
-    public mjs : ModernJSList;
+    public mjs : VirtualDomList;
     
     /**
      * ***vdo*** : Virtual Dom for content.
      */
-    public get vdo() : ModernJS {
+    public get vdo() : VirtualDom {
         return this.myMjs;
     }
 
     /**
-     * ***vdos*** : Virtual DOM List of ModernJS Classes.
+     * ***vdos*** : Virtual DOM List of VirtualDom Classes.
      */
-    public get vdos() : ModernJSList {
+    public get vdos() : VirtualDomList {
         return this.mjs;
     }
 

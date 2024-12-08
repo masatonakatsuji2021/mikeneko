@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Render = void 0;
 var Lib_1 = require("Lib");
 var Shortcode_1 = require("Shortcode");
-var ModernJS_1 = require("ModernJS");
+var VirtualDom_1 = require("VirtualDom");
 var Render = /** @class */ (function () {
     function Render() {
     }
@@ -19,7 +19,7 @@ var Render = /** @class */ (function () {
     });
     Object.defineProperty(Render.prototype, "vdos", {
         /**
-         * ***vdos*** : Virtual DOM List of ModernJS Classes.
+         * ***vdos*** : Virtual DOM List of VirtualDom Classes.
          * (``mjs`` is also available as a proxy.)
          *
          * Example: First, place a v attribute tag in the HTML file.
@@ -30,7 +30,7 @@ var Render = /** @class */ (function () {
          * ```typescript
          * this.vdos.mainTitle.text = "MainTitle Text...";
          * ```
-         * [How to use VirtualDOM is described in ModernJS classes.](./ModernJS.ts)
+         * [How to use VirtualDOM is described in VirtualDom classes.](./VirtualDom.ts)
          */
         get: function () {
             return this.mjs;
@@ -87,7 +87,7 @@ var Render = /** @class */ (function () {
     };
     /**
      * ***bindUI*** : Bind the Render content to the specified virtual DOM class.
-     * @param {ModernJS} mjs Bind Virtual Dom
+     * @param {VirtualDom} mjs Bind Virtual Dom
      * @param {string} path render Path
      * @param {any} sendData Transmission data contents
      * @param {any} defaultClass Default Response Class Object
@@ -99,14 +99,14 @@ var Render = /** @class */ (function () {
     };
     /**
      * ***bindUI*** : Appends the Render content to the specified virtual DOM class.
-     * @param {ModernJS} mjs Append Virtual Dom
+     * @param {VirtualDom} mjs Append Virtual Dom
      * @param {string} path render Path
      * @param {any} sendData Transmission data contents
      * @param {any} defaultClass Default Response Class Object
      * @returns {Render | UI | View | Template | Dialog}
      */
     Render.append = function (mjs, path, sendData, defaultClass) {
-        var myMjs = new ModernJS_1.ModernJS();
+        var myMjs = new VirtualDom_1.VirtualDom();
         mjs.append(this.getHtml(path), true);
         mjs.reload(myMjs);
         return this.loadClass(myMjs, path, sendData, defaultClass);

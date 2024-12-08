@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.View = exports.ValidateMethod = exports.ValidateErrorResult = exports.ValidateRule = exports.Validation = exports.UI = exports.Template = exports.LocalStorage = exports.SessionStorage = exports.Shortcode = exports.DecisionRouteMode = exports.Routes = exports.Response = exports.Render = exports.dom = exports.ModernJS = exports.SbnDateTime = exports.Lib = exports.KeyEvent = exports.Dialog = exports.Data = exports.Controller = exports.Background = exports.AppRouteType = exports.App = exports.AjaxMethod = exports.Ajax = void 0;
+exports.View = exports.ValidateMethod = exports.ValidateErrorResult = exports.ValidateRule = exports.Validation = exports.UI = exports.Template = exports.LocalStorage = exports.SessionStorage = exports.Shortcode = exports.DecisionRouteMode = exports.Routes = exports.Response = exports.Render = exports.dom = exports.VirtualDom = exports.SbnDateTime = exports.Lib = exports.KeyEvent = exports.Dialog = exports.Data = exports.Controller = exports.Background = exports.AppRouteType = exports.App = exports.AjaxMethod = exports.Ajax = void 0;
 var Ajax_1 = require("Ajax");
 Object.defineProperty(exports, "Ajax", { enumerable: true, get: function () { return Ajax_1.Ajax; } });
 Object.defineProperty(exports, "AjaxMethod", { enumerable: true, get: function () { return Ajax_1.AjaxMethod; } });
@@ -20,9 +20,9 @@ Object.defineProperty(exports, "KeyEvent", { enumerable: true, get: function () 
 var Lib_1 = require("Lib");
 Object.defineProperty(exports, "Lib", { enumerable: true, get: function () { return Lib_1.Lib; } });
 Object.defineProperty(exports, "SbnDateTime", { enumerable: true, get: function () { return Lib_1.SbnDateTime; } });
-var ModernJS_1 = require("ModernJS");
-Object.defineProperty(exports, "ModernJS", { enumerable: true, get: function () { return ModernJS_1.ModernJS; } });
-Object.defineProperty(exports, "dom", { enumerable: true, get: function () { return ModernJS_1.dom; } });
+var VirtualDom_1 = require("VirtualDom");
+Object.defineProperty(exports, "VirtualDom", { enumerable: true, get: function () { return VirtualDom_1.VirtualDom; } });
+Object.defineProperty(exports, "dom", { enumerable: true, get: function () { return VirtualDom_1.dom; } });
 var Render_1 = require("Render");
 Object.defineProperty(exports, "Render", { enumerable: true, get: function () { return Render_1.Render; } });
 var Response_1 = require("Response");

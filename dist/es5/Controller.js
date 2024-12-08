@@ -33,7 +33,7 @@ var Controller = /** @class */ (function () {
     });
     Object.defineProperty(Controller.prototype, "vdos", {
         /**
-         * ***vdos*** : Virtual DOM List of ModernJS Classes.
+         * ***vdos*** : Virtual DOM List of VirtualDom Classes.
          */
         get: function () {
             return this.mjs;

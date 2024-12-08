@@ -610,7 +610,7 @@ var Validation = /** @class */ (function () {
     };
     /**
      * ***verifyBind*** : After checking the input data for validity, the error content is automatically bound using the virtual DOM.
-     * @param {ModernJSList} mjs Virtual DOM Class List
+     * @param {VirtualDomList} mjs Virtual DOM Class List
      * @param {any} data input data
      * @returns {ValidateErrorResult}
      */

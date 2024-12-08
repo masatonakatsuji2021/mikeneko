@@ -1,5 +1,5 @@
 import { Render } from "Render";
-import { ModernJS } from "ModernJS";
+import { VirtualDom } from "VirtualDom";
 
 /**
  * ***Template*** : Template classes  
@@ -18,58 +18,58 @@ export class Template extends Render {
 
     /**
      * ***bind*** : Bind the Template content to the specified virtual DOM class.
-     * @param {ModernJS} mjs Bind Virtual Dom
+     * @param {VirtualDom} mjs Bind Virtual Dom
      * @returns {Template}
      */
-    public static bind(mjs: ModernJS) : Template;
+    public static bind(mjs: VirtualDom) : Template;
 
     /**
      * ***bind*** : Bind the Template content to the specified virtual DOM class.
-     * @param {ModernJS} mjs Bind Virtual Dom
+     * @param {VirtualDom} mjs Bind Virtual Dom
      * @param {string} TemplateName Template Name
      * @returns {Template}
      */
-    public static bind(mjs: ModernJS, TemplateName : string) : Template;
+    public static bind(mjs: VirtualDom, TemplateName : string) : Template;
     
     /**
      * ***bind*** : Bind the Template content to the specified virtual DOM class.
-     * @param {ModernJS} mjs Bind Virtual Dom
+     * @param {VirtualDom} mjs Bind Virtual Dom
      * @param {string} TemplateName template Name
      * @param {any} sendData Transmission data contents
      * @returns {Template}
      */
-    public static bind(mjs: ModernJS, TemplateName : string, sendData : any) : Template;
+    public static bind(mjs: VirtualDom, TemplateName : string, sendData : any) : Template;
     
-    public static bind(mjs: ModernJS, TemplateName? : string, sendData? : any) : Template {
+    public static bind(mjs: VirtualDom, TemplateName? : string, sendData? : any) : Template {
         if(TemplateName) TemplateName = "template/" + TemplateName;
         return super.bind(mjs, TemplateName, sendData, this) as Template;
     }
     
     /**
      * ***append*** : Appends the Template content to the specified virtual DOM class.
-     * @param {ModernJS} mjs Append Virtual Dom
+     * @param {VirtualDom} mjs Append Virtual Dom
      * @returns {Template}
      */
-    public static append(mjs: ModernJS) : Template;
+    public static append(mjs: VirtualDom) : Template;
     
     /**
      * ***append*** : Appends the Template content to the specified virtual DOM class.
-     * @param {ModernJS} mjs Append Virtual Dom
+     * @param {VirtualDom} mjs Append Virtual Dom
      * @param {string} TemplateName Template name
      * @returns {Template}
      */
-    public static append(mjs: ModernJS, TemplateName : string) : Template;
+    public static append(mjs: VirtualDom, TemplateName : string) : Template;
         
     /**
      * ***append*** : Appends the Template content to the specified virtual DOM class.
-     * @param {ModernJS} mjs Append Virtual Dom
+     * @param {VirtualDom} mjs Append Virtual Dom
      * @param {string} TemplateName Template name
      * @param {any} sendData Transmission data contents
      * @returns {Template}
      */
-    public static append(mjs: ModernJS, TemplateName : string, sendData : any) : Template;
+    public static append(mjs: VirtualDom, TemplateName : string, sendData : any) : Template;
         
-    public static append(mjs: ModernJS, TemplateName? : string, sendData? : any) : Template {
+    public static append(mjs: VirtualDom, TemplateName? : string, sendData? : any) : Template {
         if(TemplateName) TemplateName = "template/" + TemplateName;
         return super.append(mjs, TemplateName, sendData, this) as Template;
     }

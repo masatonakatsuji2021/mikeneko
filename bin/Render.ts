@@ -1,6 +1,6 @@
 import { Lib } from "Lib";
 import { Shortcode } from "Shortcode";
-import { ModernJS, ModernJSList } from "ModernJS";
+import { VirtualDom, VirtualDomList } from "VirtualDom";
 
 export class Render {
 
@@ -10,11 +10,13 @@ export class Render {
 
     /**
      * ***myMjs*** : Virtual Dom for content.
+     * @deprecated The role of this variable has been changed to **vdo**.
      */
-    public myMjs : ModernJS;
+    public myMjs : VirtualDom;
     
     /**
-     * ***mjs**** : Virtual DOM List of ModernJS Classes.
+     * ***mjs**** : Virtual DOM List of VirtualDom Classes.
+     * @deprecated The role of this variable has been changed to **vdos**.
      * 
      * Example: First, place a v attribute tag in the HTML file.
      * ```html
@@ -24,19 +26,19 @@ export class Render {
      * ```typescript
      * this.mjs.mainTitle.text = "MainTitle Text...";
      * ```
-     * [How to use VirtualDOM is described in ModernJS classes.](./ModernJS.ts)
+     * [How to use VirtualDOM is described in VirtualDom classes.](./VirtualDom.ts)
      */
-    public mjs : ModernJSList;
+    public mjs : VirtualDomList;
         
     /**
      * ***vdo*** : Virtual Dom for content.
      */
-    public get vdo() : ModernJS {
+    public get vdo() : VirtualDom {
         return this.myMjs;
     }
     
     /**
-     * ***vdos*** : Virtual DOM List of ModernJS Classes.  
+     * ***vdos*** : Virtual DOM List of VirtualDom Classes.  
      * (``mjs`` is also available as a proxy.)
      * 
      * Example: First, place a v attribute tag in the HTML file.
@@ -47,9 +49,9 @@ export class Render {
      * ```typescript
      * this.vdos.mainTitle.text = "MainTitle Text...";
      * ```
-     * [How to use VirtualDOM is described in ModernJS classes.](./ModernJS.ts)
+     * [How to use VirtualDOM is described in VirtualDom classes.](./VirtualDom.ts)
      */
-    public get vdos() : ModernJSList {
+    public get vdos() : VirtualDomList {
         return this.mjs;
     }
 
@@ -110,33 +112,33 @@ export class Render {
 
     /**
      * ***bindUI*** : Bind the Render content to the specified virtual DOM class.
-     * @param {ModernJS} mjs Bind Virtual Dom
+     * @param {VirtualDom} mjs Bind Virtual Dom
      * @param {string} path render Path
      * @param {any} sendData Transmission data contents
      * @param {any} defaultClass Default Response Class Object
      * @returns {Render | UI | View | Template | Dialog}
      */
-    public static bind(mjs: ModernJS, path : string, sendData : any, defaultClass: any) {
+    public static bind(mjs: VirtualDom, path : string, sendData : any, defaultClass: any) {
         mjs.html = this.getHtml(path);
         return this.loadClass(mjs, path, sendData, defaultClass);
     }
 
     /**
      * ***bindUI*** : Appends the Render content to the specified virtual DOM class.
-     * @param {ModernJS} mjs Append Virtual Dom
+     * @param {VirtualDom} mjs Append Virtual Dom
      * @param {string} path render Path
      * @param {any} sendData Transmission data contents
      * @param {any} defaultClass Default Response Class Object
      * @returns {Render | UI | View | Template | Dialog}
      */
-    public static append(mjs: ModernJS, path : string, sendData : any, defaultClass: any) {
-        const myMjs = new ModernJS();
+    public static append(mjs: VirtualDom, path : string, sendData : any, defaultClass: any) {
+        const myMjs = new VirtualDom();
         mjs.append(this.getHtml(path), true);
         mjs.reload(myMjs);
         return this.loadClass(myMjs, path, sendData, defaultClass);
     }
 
-    protected static loadClass(mjs : ModernJS, path?: string, sendData? : any, defaultClass? : any) {
+    protected static loadClass(mjs : VirtualDom, path?: string, sendData? : any, defaultClass? : any) {
         if (path) {
             path = path + this.type;
         }

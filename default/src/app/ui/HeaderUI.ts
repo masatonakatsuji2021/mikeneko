@@ -1,15 +1,15 @@
-import { ModernJSList } from "ModernJS";
+import { VirtualDomList } from "VirtualDom";
 import { UI } from "UI";
 
 export class HeaderUI extends UI {
 
-    private static mjs: ModernJSList;
+    private static vdos: VirtualDomList;
 
     public handle() {
-        HeaderUI.mjs = this.mjs;
+        HeaderUI.vdos = this.vdos;
     }
 
     public static title(title: string) {
-        this.mjs.title.text = title;
+        this.vdos.title.text = title;
     }
 }

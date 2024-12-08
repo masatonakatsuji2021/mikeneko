@@ -8,9 +8,9 @@ export class Page1View extends View {
 
         this.title = "Page1";
 
-        this.mjs.description.text = "page1 description text sample....";
+        this.vdos.description.text = "page1 description text sample....";
 
-        this.mjs.back.onClick = () => {
+        this.vdos.back.onClick = () => {
             Response.back();
         };
     }

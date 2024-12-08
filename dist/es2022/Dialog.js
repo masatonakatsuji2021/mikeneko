@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Dialog = void 0;
 const Render_1 = require("Render");
 const Lib_1 = require("Lib");
-const ModernJS_1 = require("ModernJS");
+const VirtualDom_1 = require("VirtualDom");
 /**
  * ***Dialog*** : A class for displaying or manipulating a dialog screen.
  */
@@ -77,7 +77,7 @@ class Dialog extends Render_1.Render {
             option = {};
         this.setDialogCss();
         const dialogStr = "<dwindow>" + this.getHtml(dialogName) + "</dwindow>";
-        const dialogMjs = ModernJS_1.ModernJS.create(dialogStr, "dialog");
+        const dialogMjs = VirtualDom_1.VirtualDom.create(dialogStr, "dialog");
         if (option.class) {
             if (typeof option.class == "string")
                 option.class = [option.class];
@@ -85,7 +85,7 @@ class Dialog extends Render_1.Render {
                 dialogMjs.addClass(c);
             });
         }
-        (0, ModernJS_1.dom)("body").append(dialogMjs, true);
+        (0, VirtualDom_1.dom)("body").append(dialogMjs, true);
         dialogMjs.reload();
         setTimeout(() => {
             dialogMjs.addClass("open");
@@ -97,10 +97,10 @@ class Dialog extends Render_1.Render {
         return dialog;
     }
     static setDialogCss() {
-        if ((0, ModernJS_1.dom)("head").querySelector("link[m=dl]").length > 0)
+        if ((0, VirtualDom_1.dom)("head").querySelector("link[m=dl]").length > 0)
             return;
         const style = require("CORERES/dialog/style.css");
-        (0, ModernJS_1.dom)("head").afterBegin("<link rel=\"stylesheet\" m=\"dl\" href=\"data:text/css;base64," + style + "\">");
+        (0, VirtualDom_1.dom)("head").afterBegin("<link rel=\"stylesheet\" m=\"dl\" href=\"data:text/css;base64," + style + "\">");
     }
 }
 exports.Dialog = Dialog;

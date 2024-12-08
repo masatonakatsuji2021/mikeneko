@@ -1,4 +1,4 @@
-import { ModernJS } from "ModernJS";
+import { VirtualDom } from "VirtualDom";
 import { Render } from "Render";
 
 /**
@@ -18,59 +18,59 @@ export class UI extends Render {
 
     /**
      * ***bind*** : Bind the UI content to the specified virtual DOM class.
-     * @param {ModernJS} mjs Bind Virtual Dom
+     * @param {VirtualDom} mjs Bind Virtual Dom
      * @returns {UI}
      */
-    public static bind(mjs: ModernJS) : UI;
+    public static bind(mjs: VirtualDom) : UI;
 
     /**
      * ***bind*** : Bind the UI content to the specified virtual DOM class.
-     * @param {ModernJS} mjs Bind Virtual Dom
+     * @param {VirtualDom} mjs Bind Virtual Dom
      * @param {string} UIName UI Name
      * @returns {UI}
      */
-    public static bind(mjs: ModernJS, UIName : string) : UI;
+    public static bind(mjs: VirtualDom, UIName : string) : UI;
 
     /**
      * ***bind*** : Bind the UI content to the specified virtual DOM class.
-     * @param {ModernJS} mjs Bind Virtual Dom
+     * @param {VirtualDom} mjs Bind Virtual Dom
      * @param {string} UIName UI Name
      * @param {any} sendData Transmission data contents
      * @returns {UI}
      */
-    public static bind(mjs: ModernJS, UIName : string, sendData : any) : UI;
+    public static bind(mjs: VirtualDom, UIName : string, sendData : any) : UI;
 
-    public static bind(mjs: ModernJS, UIName? : string, sendData? : any) : UI {
+    public static bind(mjs: VirtualDom, UIName? : string, sendData? : any) : UI {
         if(UIName) UIName = "ui/" + UIName;
         return super.bind(mjs, UIName, sendData, this) as UI;
     }
 
     /**
      * ***append*** : Appends the UI content to the specified virtual DOM class.
-     * @param {ModernJS} mjs Append Virtual Dom
+     * @param {VirtualDom} mjs Append Virtual Dom
      * @returns {UI}
      */
-    public static append(mjs: ModernJS) : UI;
+    public static append(mjs: VirtualDom) : UI;
 
     /**
      * ***append*** : Appends the UI content to the specified virtual DOM class.
-     * @param {ModernJS} mjs Append Virtual Dom
+     * @param {VirtualDom} mjs Append Virtual Dom
      * @param {string} UIName UI name
      * @param {any} sendData Transmission data contents
      * @returns {UI}
      */
-    public static append(mjs: ModernJS, UIName : string) : UI;
+    public static append(mjs: VirtualDom, UIName : string) : UI;
 
     /**
      * ***append*** : Appends the UI content to the specified virtual DOM class.
-     * @param {ModernJS} mjs Append Virtual Dom
+     * @param {VirtualDom} mjs Append Virtual Dom
      * @param {string} UIName UI name
      * @param {any} sendData Transmission data contents
      * @returns {UI}
      */
-    public static append(mjs: ModernJS, UIName : string, sendData : any) : UI;
+    public static append(mjs: VirtualDom, UIName : string, sendData : any) : UI;
 
-    public static append(mjs: ModernJS, UIName? : string, sendData? : any) : UI {
+    public static append(mjs: VirtualDom, UIName? : string, sendData? : any) : UI {
         if(UIName) UIName = "ui/" + UIName;
         return super.append(mjs, UIName, sendData, this) as UI;
     }

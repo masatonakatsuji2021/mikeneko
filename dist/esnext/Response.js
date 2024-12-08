@@ -8,7 +8,7 @@ const Data_1 = require("Data");
 const View_1 = require("View");
 const Template_1 = require("Template");
 const UI_1 = require("UI");
-const ModernJS_1 = require("ModernJS");
+const VirtualDom_1 = require("VirtualDom");
 class Response {
     /**
      * ***isBack*** : A flag that determines if you are back from the previous screen.
@@ -165,9 +165,9 @@ class Response {
             }
         }
         if (MyApp.animationCloseClassName)
-            (0, ModernJS_1.dom)("main").addClass(MyApp.animationCloseClassName);
+            (0, VirtualDom_1.dom)("main").addClass(MyApp.animationCloseClassName);
         if (MyApp.animationOpenClassName)
-            (0, ModernJS_1.dom)("main").removeClass(MyApp.animationOpenClassName);
+            (0, VirtualDom_1.dom)("main").removeClass(MyApp.animationOpenClassName);
         if (MyApp.delay)
             await Lib_1.Lib.sleep(MyApp.delay);
         if (route.mode == Routes_1.DecisionRouteMode.Notfound) {
@@ -279,10 +279,10 @@ class Response {
         await Response.__rendering(route, vm);
         const MyApp = require("app/config/App").MyApp;
         if (MyApp.animationCloseClassName)
-            (0, ModernJS_1.dom)("main").removeClass(MyApp.animationCloseClassName);
+            (0, VirtualDom_1.dom)("main").removeClass(MyApp.animationCloseClassName);
         if (MyApp.animationOpenClassName)
-            (0, ModernJS_1.dom)("main").addClass(MyApp.animationOpenClassName);
-        vm.myMjs = (0, ModernJS_1.dom)("main article");
+            (0, VirtualDom_1.dom)("main").addClass(MyApp.animationOpenClassName);
+        vm.myMjs = (0, VirtualDom_1.dom)("main article");
         await vm.handleRenderBefore();
         // is next page..
         if (Response.isNext) {
@@ -324,7 +324,7 @@ class Response {
             if (beforeTemplate != context.template) {
                 // Template Rendering...
                 Data_1.Data.set("beforeTemplate", context.template);
-                const template = Template_1.Template.bind((0, ModernJS_1.dom)("body"), context.template);
+                const template = Template_1.Template.bind((0, VirtualDom_1.dom)("body"), context.template);
                 if (context.handleTemplateChanged)
                     await context.handleTemplateChanged(template);
             }
@@ -334,45 +334,45 @@ class Response {
         }
         // View Rendering...
         const viewHtml = View_1.View.getHtml("view/" + context.view);
-        if (!(0, ModernJS_1.dom)("main").length)
-            (0, ModernJS_1.dom)("body").append("<main></main>");
-        const main = (0, ModernJS_1.dom)("main");
+        if (!(0, VirtualDom_1.dom)("main").length)
+            (0, VirtualDom_1.dom)("body").append("<main></main>");
+        const main = (0, VirtualDom_1.dom)("main");
         main.html = "<article>" + viewHtml + "</article>";
         context.mjs = main.childs;
         const beforeHead = Data_1.Data.get("beforeHead");
         if (beforeHead != context.head) {
             Data_1.Data.set("beforeHead", context.head);
             if (context.head) {
-                const head = UI_1.UI.bind((0, ModernJS_1.dom)("head"), context.head);
+                const head = UI_1.UI.bind((0, VirtualDom_1.dom)("head"), context.head);
                 if (context.handleHeadChanged)
                     await context.handleHeadChanged(head);
             }
             else {
-                (0, ModernJS_1.dom)("head").html = "";
+                (0, VirtualDom_1.dom)("head").html = "";
             }
         }
         const beforeHeader = Data_1.Data.get("beforeHeader");
         if (beforeHeader != context.header) {
             Data_1.Data.set("beforeHeader", context.header);
             if (context.header) {
-                const header = UI_1.UI.bind((0, ModernJS_1.dom)("header"), context.header);
+                const header = UI_1.UI.bind((0, VirtualDom_1.dom)("header"), context.header);
                 if (context.handleHeaderChanged)
                     await context.handleHeaderChanged(header);
             }
             else {
-                (0, ModernJS_1.dom)("header").html = "";
+                (0, VirtualDom_1.dom)("header").html = "";
             }
         }
         const beforeFooter = Data_1.Data.get("beforeFooter");
         if (beforeFooter != context.footer) {
             Data_1.Data.set("beforeFooter", context.footer);
             if (context.footer) {
-                const footer = UI_1.UI.bind((0, ModernJS_1.dom)("footer"), context.footer);
+                const footer = UI_1.UI.bind((0, VirtualDom_1.dom)("footer"), context.footer);
                 if (context.handleFooterChanged)
                     await context.handleFooterChanged(footer);
             }
             else {
-                (0, ModernJS_1.dom)("footer").html = "";
+                (0, VirtualDom_1.dom)("footer").html = "";
             }
         }
     }

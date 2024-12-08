@@ -7,7 +7,7 @@ export { Data } from "Data";
 export { Dialog, DialogOption } from "Dialog";
 export { KeyEvent } from "KeyEvent";
 export { Lib, SbnDateTime } from "Lib";
-export { ModernJS, ModernJSList, ModernJSFile, ModernJSSelectOption, dom } from "ModernJS";
+export { VirtualDom, VirtualDomList, VirtualDomFile, VirtualDomSelectOption, dom } from "VirtualDom";
 export { Render } from "Render";
 export { Response } from "Response";
 export { Routes, Route, DecisionRouteMode, DecisionRoute } from "Routes";
