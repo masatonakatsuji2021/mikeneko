@@ -138,7 +138,7 @@ If you do not specify a URL, the View or Controller screen specified by ``/`` in
 public static beginURL : string = "/home";
 ```
 
-## # Animation Xlass Name
+## # Animation Class Name
 
 If you want to add a class attribute to the article tag before and after a screen transition, use
 ``animationOpenClassName`` or ``animationCloseClassName``.
