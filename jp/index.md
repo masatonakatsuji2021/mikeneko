@@ -17,6 +17,7 @@ MikenekoはWeb、Android、iOS にインストールできる SPA (Single-Page-A
 - [コアライブラリクラス](corelib.md)
     - [Ajax](ajax.md)
     - [App](app.md)
+    - [Lib](lib.md)
     - [Background](background.md)
     - [Controller](controller.md)
     - [Data](data.md)
