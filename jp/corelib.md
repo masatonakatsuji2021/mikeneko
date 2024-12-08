@@ -30,7 +30,7 @@ Mikenekoで用意されているコアライブラリクラスは下記一覧に
 |[Background](background.md)|アプリ起動直後に自動実行用のクラス|
 |[Controller](controller.md)|画面表示用クラス<br>1つのControllerを使って複数画面を操作・管理できる|
 |[Data](data.md)|アプリ内データ共有用クラス|
-|[Dialog](datdialoga.md)|ダイアログ表示用クラス|
+|[Dialog](dialog.md)|ダイアログ表示用クラス|
 |[KeyEvent](keyevent.md)|キー入力イベント用クラス|
 |[VirtualDom](virtualdom.md)|仮想DOM制御用クラス|
 |[Response](response)|画面遷移操作用クラス|
