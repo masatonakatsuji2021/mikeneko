@@ -38,7 +38,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.string = exports.Startor = void 0;
 var App_1 = require("App");
-var Routes_1 = require("Routes");
 var Render_1 = require("Render");
 var Lib_1 = require("Lib");
 var Data_1 = require("Data");
@@ -87,6 +86,7 @@ var Startor = /** @class */ (function () {
                             if (location.hash)
                                 url = location.hash.substring(1);
                         }
+                        console.log("beginURL=" + url);
                         Response_1.Response.next(url);
                         return [2 /*return*/];
                 }
@@ -128,7 +128,7 @@ var Startor = /** @class */ (function () {
     };
     Startor.prototype.popStateHandleDelegate = function (e) {
         return __awaiter(this, void 0, void 0, function () {
-            var beforeUrl, url, route;
+            var beforeUrl, url;
             return __generator(this, function (_a) {
                 if (Data_1.Data.get("pageDisable")) {
                     beforeUrl = Data_1.Data.get("beforeUrl");
@@ -144,10 +144,7 @@ var Startor = /** @class */ (function () {
                 url = location.hash.substring(1);
                 if (!url)
                     url = "/";
-                route = Routes_1.Routes.searchRoute(url);
-                Response_1.Response.rendering(route).then(function () {
-                    Response_1.Response.isBack = false;
-                });
+                Response_1.Response.next(url);
                 return [2 /*return*/];
             });
         });

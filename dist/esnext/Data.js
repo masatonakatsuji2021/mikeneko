@@ -61,5 +61,15 @@ class Data {
         const length = this.__data[name].length;
         return this.__data[name][length - 1];
     }
+    static getPrev(name, index) {
+        if (!this.__data[name])
+            return;
+        const length = this.__data[name].length;
+        let prevIndex = length - 2;
+        if (index)
+            prevIndex -= index - 1;
+        if (length > 1)
+            return this.__data[name][prevIndex];
+    }
 }
 exports.Data = Data;

@@ -56,82 +56,229 @@ var Response = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
-    Response.back = function (index) {
-        var _this = this;
-        if (!index)
-            index = 1;
-        if (Response.lock)
-            return false;
-        if (this.isBack)
-            return false;
-        this.isBack = true;
-        var hdata;
-        for (var n = 0; n < index; n++) {
-            if (this.routeType == App_1.AppRouteType.application) {
-                if (Data_1.Data.getLength("history") == 1)
-                    return false;
-                Data_1.Data.pop("history");
-                hdata = Data_1.Data.now("history");
+    Response.back = function (indexOrSearchURI) {
+        return __awaiter(this, void 0, void 0, function () {
+            var index, histories, n, h_, MyApp, hdata, n;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (Response.lock)
+                            return [2 /*return*/, false];
+                        if (this.isBack)
+                            return [2 /*return*/, false];
+                        if (indexOrSearchURI) {
+                            if (typeof indexOrSearchURI == "string") {
+                                index = 0;
+                                histories = Data_1.Data.get("history");
+                                for (n = 0; n < histories.length; n++) {
+                                    h_ = histories[histories.length - (n + 1)];
+                                    if (h_.route.url == indexOrSearchURI) {
+                                        break;
+                                    }
+                                    else {
+                                        index++;
+                                    }
+                                }
+                            }
+                            else {
+                                index = indexOrSearchURI;
+                            }
+                        }
+                        else {
+                            index = 1;
+                        }
+                        this.isBack = true;
+                        return [4 /*yield*/, this.loadPrevHandle(index)];
+                    case 1:
+                        _a.sent();
+                        MyApp = require("app/config/App").MyApp;
+                        if (MyApp.animationCloseClassName)
+                            (0, VirtualDom_1.dom)("main").addClass(MyApp.animationCloseClassName);
+                        if (MyApp.animationOpenClassName)
+                            (0, VirtualDom_1.dom)("main").removeClass(MyApp.animationOpenClassName);
+                        if (!MyApp.delay) return [3 /*break*/, 3];
+                        return [4 /*yield*/, Lib_1.Lib.sleep(MyApp.delay)];
+                    case 2:
+                        _a.sent();
+                        _a.label = 3;
+                    case 3:
+                        n = 0;
+                        _a.label = 4;
+                    case 4:
+                        if (!(n < index)) return [3 /*break*/, 10];
+                        if (!(this.routeType == App_1.AppRouteType.application)) return [3 /*break*/, 8];
+                        Data_1.Data.pop("history");
+                        hdata = Data_1.Data.now("history");
+                        if (!hdata) return [3 /*break*/, 7];
+                        if (!hdata.drawingRequired) return [3 /*break*/, 6];
+                        return [4 /*yield*/, this.rendering(hdata.route, hdata, hdata.data)];
+                    case 5:
+                        _a.sent();
+                        return [3 /*break*/, 7];
+                    case 6:
+                        (0, VirtualDom_1.dom)("main article:last-child").remove();
+                        _a.label = 7;
+                    case 7: return [3 /*break*/, 9];
+                    case 8:
+                        if (this.routeType == App_1.AppRouteType.web) {
+                            history.back();
+                        }
+                        _a.label = 9;
+                    case 9:
+                        n++;
+                        return [3 /*break*/, 4];
+                    case 10:
+                        if (MyApp.animationCloseClassName)
+                            (0, VirtualDom_1.dom)("main").removeClass(MyApp.animationCloseClassName);
+                        if (MyApp.animationOpenClassName)
+                            (0, VirtualDom_1.dom)("main").addClass(MyApp.animationOpenClassName);
+                        console.log("back url=" + hdata.route.url);
+                        this.isBack = false;
+                        return [2 /*return*/, true];
+                }
+            });
+        });
+    };
+    Response.next = function (url, data, replaced) {
+        return __awaiter(this, void 0, void 0, function () {
+            var route, pageHistory, res, get, after, n;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (Response.lock)
+                            return [2 /*return*/];
+                        this.isBack = false;
+                        route = Routes_1.Routes.searchRoute(url.toString());
+                        if (route.mode == Routes_1.DecisionRouteMode.Notfound) {
+                            this.notFoundView(route);
+                            return [2 /*return*/];
+                        }
+                        pageHistory = {
+                            route: route,
+                            data: data,
+                        };
+                        if (route.controller) {
+                            res = this.loadController(route, data);
+                            pageHistory.controller = res.Controller;
+                            pageHistory.view = res.view;
+                        }
+                        else if (route.view) {
+                            pageHistory.view = this.loadView(route, data);
+                        }
+                        Data_1.Data.push("history", pageHistory);
+                        console.log("next url=" + route.url);
+                        return [4 /*yield*/, Response.rendering(route, pageHistory, data)];
+                    case 1:
+                        _a.sent();
+                        if (this.routeType == App_1.AppRouteType.web)
+                            location.href = "#" + url;
+                        if (replaced) {
+                            get = Data_1.Data.get("history");
+                            after = [];
+                            for (n = 0; n < get.length; n++) {
+                                if (n != get.length - 2) {
+                                    after.push(get[n]);
+                                }
+                            }
+                            console.log(after);
+                            Data_1.Data.set("history", after);
+                            (0, VirtualDom_1.dom)("main article").last.prev.remove();
+                        }
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    Response.loadController = function (route, data) {
+        var controllerName = Lib_1.Lib.getModuleName(route.controller + "Controller");
+        var controllerPath = "app/controller/" + Lib_1.Lib.getModulePath(route.controller + "Controller");
+        if (!useExists(controllerPath)) {
+            throw ("\"" + controllerPath + "\" Class is not found.");
+        }
+        var controllerClass = use(controllerPath);
+        var cont = new controllerClass[controllerName]();
+        cont.sendData = data;
+        var viewName = route.action + "View";
+        var viewPath = "app/view/" + route.controller + "/" + Lib_1.Lib.getModulePath(viewName);
+        var vw;
+        if (useExists(viewPath)) {
+            var View_ = use(viewPath);
+            if (!View_[Lib_1.Lib.getModuleName(viewName)]) {
+                console.error("[WARM] \"" + Lib_1.Lib.getModuleName(viewName) + "\"View Class not exists.");
             }
-            else if (this.routeType == App_1.AppRouteType.web) {
-                history.back();
+            else {
+                vw = new View_[Lib_1.Lib.getModuleName(viewName)]();
+                vw.sendData = data;
             }
         }
-        if (this.routeType == App_1.AppRouteType.web)
-            return true;
-        var route = Routes_1.Routes.searchRoute(hdata.url.toString());
-        Response.rendering(route, hdata.data).then(function () {
-            _this.isBack = false;
-        });
-        return true;
-    };
-    Response.next = function (url, data) {
-        if (Response.lock)
-            return;
-        this.isBack = false;
-        var hdata = {
-            url: url,
-            data: data,
+        return {
+            Controller: cont,
+            view: vw,
         };
-        Data_1.Data.push("history", hdata);
-        var route = Routes_1.Routes.searchRoute(url.toString());
-        Response.rendering(route, data);
-        if (this.routeType == App_1.AppRouteType.web)
-            location.href = "#" + url;
+    };
+    Response.loadView = function (route, data) {
+        var viewName = Lib_1.Lib.getModuleName(route.view + "View");
+        var viewPath = "app/view/" + Lib_1.Lib.getModulePath(route.view + "View");
+        if (!useExists(viewPath)) {
+            throw ("\"" + viewName + "\" Class is not found.");
+        }
+        var View_ = use(viewPath);
+        var vm = new View_[viewName]();
+        vm.sendData = data;
+        return vm;
+    };
+    Response.notFoundView = function (route, data) {
+        var MyApp = require("app/config/App").MyApp;
+        if (MyApp.notFoundView) {
+            route.view = MyApp.notFoundView;
+            var errorPageHistory = {
+                route: route,
+                view: this.loadView(route, data),
+            };
+            Data_1.Data.push("history", errorPageHistory);
+            Response.renderingOnView(route, errorPageHistory);
+        }
+        throw Error("Page Not found. \"" + route.url + "\"");
     };
     /**
-     * ***addhistory*** : Add root path to screen transition history.
+     * ***historyAdd*** : Add root path to screen transition history.
      * It will only be added to the history and will not change the screen.
-     * @param {string} url route path
+     * @param {string | number} url route path
+     * @param {any} data send data
      * @returns {void}
      */
-    Response.addHistory = function (url, data) {
+    Response.historyAdd = function (url, data) {
         if (Response.lock)
             return;
         this.isBack = false;
-        var hdata = {
-            url: url,
+        var route = Routes_1.Routes.searchRoute(url.toString());
+        if (route.mode == Routes_1.DecisionRouteMode.Notfound) {
+            this.notFoundView(route);
+            return;
+        }
+        var pageHistory = {
+            route: route,
             data: data,
+            drawingRequired: true,
         };
-        Data_1.Data.push("history", hdata);
+        if (route.controller) {
+            var res = this.loadController(route, data);
+            pageHistory.controller = res.Controller;
+            pageHistory.view = res.view;
+        }
+        else if (route.view) {
+            pageHistory.view = this.loadView(route, data);
+        }
+        Data_1.Data.push("history", pageHistory);
     };
-    /**
-     * ***historyClear*** : Clear screen transition history
-     * @returns {void}
-     */
-    Response.historyClear = function () {
+    Response.historyAllClear = function (url) {
+        (0, VirtualDom_1.dom)("main archive").remove();
         Data_1.Data.set("history", []);
-    };
-    /**
-     * ***pop*** : Go back to the previous screen transition.
-     * @returns {void}
-     */
-    Response.pop = function () {
-        Data_1.Data.pop("history");
+        if (url)
+            this.next(url);
     };
     Response.replace = function (url, send) {
-        this.pop();
-        this.next(url, send);
+        this.next(url, send, true);
     };
     /**
      * ***now*** : Get current route path.
@@ -150,148 +297,110 @@ var Response = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
-    Object.defineProperty(Response, "nowView", {
-        /**
-         * ***nowView*** : Get the current View class object if there is one.
-         */
-        get: function () {
-            if (Data_1.Data.get("beforeView"))
-                return Data_1.Data.get("beforeView");
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(Response, "nowController", {
-        /**
-         * ***nowController*** : Get the current Controller class object if there is one.
-         */
-        get: function () {
-            if (Data_1.Data.get("beforeController"))
-                return Data_1.Data.get("beforeController");
-        },
-        enumerable: false,
-        configurable: true
-    });
-    // rendering....
-    Response.rendering = function (route, data) {
+    Response.loadPrevHandle = function (index) {
         return __awaiter(this, void 0, void 0, function () {
-            var MyApp, befCont, befContAction, res, resBack, resNext, befView, res, resBack, resNext;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
+            var prevHistory, res, resBack, resNext, res, resBack, resNext;
+            var _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0:
-                        MyApp = require("app/config/App").MyApp;
-                        befCont = Data_1.Data.get("beforeController");
-                        if (!befCont) return [3 /*break*/, 5];
-                        befContAction = Data_1.Data.get("beforeControllerAction");
-                        return [4 /*yield*/, befCont.handleLeave(befContAction)];
+                        prevHistory = Data_1.Data.getPrev("history", index);
+                        if (!prevHistory) return [3 /*break*/, 11];
+                        if (!prevHistory.controller) return [3 /*break*/, 5];
+                        return [4 /*yield*/, prevHistory.controller.handleLeave(prevHistory.route.action)];
                     case 1:
-                        res = _a.sent();
+                        res = _b.sent();
                         if (typeof res == "boolean" && res === false)
                             return [2 /*return*/];
                         if (!this.isBack) return [3 /*break*/, 3];
-                        return [4 /*yield*/, befCont.handleLeaveBack(befContAction)];
+                        return [4 /*yield*/, prevHistory.controller.handleLeaveBack(prevHistory.route.action)];
                     case 2:
-                        resBack = _a.sent();
+                        resBack = _b.sent();
                         if (typeof resBack == "boolean" && resBack === false)
                             return [2 /*return*/];
-                        _a.label = 3;
+                        _b.label = 3;
                     case 3:
                         if (!this.isNext) return [3 /*break*/, 5];
-                        return [4 /*yield*/, befCont.handleLeaveNext(befContAction)];
+                        return [4 /*yield*/, prevHistory.controller.handleLeaveNext(prevHistory.route.action)];
                     case 4:
-                        resNext = _a.sent();
+                        resNext = _b.sent();
                         if (typeof resNext == "boolean" && resNext === false)
                             return [2 /*return*/];
-                        _a.label = 5;
+                        _b.label = 5;
                     case 5:
-                        befView = Data_1.Data.get("beforeView");
-                        if (!befView) return [3 /*break*/, 10];
-                        return [4 /*yield*/, befView.handleLeave()];
+                        if (!prevHistory.view) return [3 /*break*/, 11];
+                        return [4 /*yield*/, (_a = prevHistory.view).handleAlways.apply(_a, prevHistory.route.args)];
                     case 6:
-                        res = _a.sent();
+                        _b.sent();
+                        return [4 /*yield*/, prevHistory.view.handleLeave()];
+                    case 7:
+                        res = _b.sent();
                         if (typeof res == "boolean" && res === false)
                             return [2 /*return*/];
-                        if (!this.isBack) return [3 /*break*/, 8];
-                        return [4 /*yield*/, befView.handleLeaveBack()];
-                    case 7:
-                        resBack = _a.sent();
+                        if (!this.isBack) return [3 /*break*/, 9];
+                        return [4 /*yield*/, prevHistory.view.handleLeaveBack()];
+                    case 8:
+                        resBack = _b.sent();
                         if (typeof resBack == "boolean" && resBack === false)
                             return [2 /*return*/];
-                        _a.label = 8;
-                    case 8:
-                        if (!this.isNext) return [3 /*break*/, 10];
-                        return [4 /*yield*/, befView.handleLeaveNext()];
+                        _b.label = 9;
                     case 9:
-                        resNext = _a.sent();
+                        if (!this.isNext) return [3 /*break*/, 11];
+                        return [4 /*yield*/, prevHistory.view.handleLeaveNext()];
+                    case 10:
+                        resNext = _b.sent();
                         if (typeof resNext == "boolean" && resNext === false)
                             return [2 /*return*/];
-                        _a.label = 10;
-                    case 10:
-                        if (MyApp.animationCloseClassName)
-                            (0, VirtualDom_1.dom)("main").addClass(MyApp.animationCloseClassName);
-                        if (MyApp.animationOpenClassName)
-                            (0, VirtualDom_1.dom)("main").removeClass(MyApp.animationOpenClassName);
-                        if (!MyApp.delay) return [3 /*break*/, 12];
-                        return [4 /*yield*/, Lib_1.Lib.sleep(MyApp.delay)];
-                    case 11:
-                        _a.sent();
-                        _a.label = 12;
-                    case 12:
-                        if (!(route.mode == Routes_1.DecisionRouteMode.Notfound)) return [3 /*break*/, 15];
-                        if (!MyApp.notFoundView) return [3 /*break*/, 14];
-                        route.view = MyApp.notFoundView;
-                        return [4 /*yield*/, Response.renderingOnView(route, data)];
-                    case 13:
-                        _a.sent();
-                        _a.label = 14;
-                    case 14: throw ("Page Not found. \"" + route.url + "\"");
-                    case 15:
-                        if (!route.controller) return [3 /*break*/, 17];
-                        return [4 /*yield*/, Response.renderingOnController(route, data)];
-                    case 16:
-                        _a.sent();
-                        return [3 /*break*/, 19];
-                    case 17:
-                        if (!route.view) return [3 /*break*/, 19];
-                        return [4 /*yield*/, Response.renderingOnView(route, data)];
-                    case 18:
-                        _a.sent();
-                        _a.label = 19;
-                    case 19: return [2 /*return*/];
+                        _b.label = 11;
+                    case 11: return [2 /*return*/];
                 }
             });
         });
     };
-    Response.renderingOnController = function (route, data) {
+    // rendering....
+    Response.rendering = function (route, pageHistory, data) {
         return __awaiter(this, void 0, void 0, function () {
-            var controllerName, controllerPath, controllerClass, cont, viewName, viewPath, vw, View_, method, method;
+            var MyApp;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        controllerName = Lib_1.Lib.getModuleName(route.controller + "Controller");
-                        controllerPath = "app/controller/" + Lib_1.Lib.getModulePath(route.controller + "Controller");
-                        if (!useExists(controllerPath)) {
-                            throw ("\"" + controllerPath + "\" Class is not found.");
-                        }
-                        controllerClass = use(controllerPath);
-                        cont = new controllerClass[controllerName]();
-                        cont.sendData = data;
-                        viewName = route.action + "View";
-                        viewPath = "app/view/" + route.controller + "/" + Lib_1.Lib.getModulePath(viewName);
-                        if (useExists(viewPath)) {
-                            View_ = use(viewPath);
-                            if (!View_[Lib_1.Lib.getModuleName(viewName)]) {
-                                console.error("[WARM] \"" + Lib_1.Lib.getModuleName(viewName) + "\"View Class not exists.");
-                            }
-                            else {
-                                vw = new View_[Lib_1.Lib.getModuleName(viewName)]();
-                                vw.sendData = data;
-                            }
-                        }
-                        if (Data_1.Data.get("beforeControllerPath") != controllerPath) {
-                            Data_1.Data.set("beforeControllerPath", controllerPath);
-                            cont.beginStatus = true;
-                        }
+                        MyApp = require("app/config/App").MyApp;
+                        if (MyApp.animationCloseClassName)
+                            (0, VirtualDom_1.dom)("main").addClass(MyApp.animationCloseClassName);
+                        if (MyApp.animationOpenClassName)
+                            (0, VirtualDom_1.dom)("main").removeClass(MyApp.animationOpenClassName);
+                        if (!MyApp.delay) return [3 /*break*/, 2];
+                        return [4 /*yield*/, Lib_1.Lib.sleep(MyApp.delay)];
+                    case 1:
+                        _a.sent();
+                        _a.label = 2;
+                    case 2: return [4 /*yield*/, this.loadPrevHandle()];
+                    case 3:
+                        _a.sent();
+                        if (!route.controller) return [3 /*break*/, 5];
+                        return [4 /*yield*/, Response.renderingOnController(route, pageHistory)];
+                    case 4:
+                        _a.sent();
+                        return [3 /*break*/, 7];
+                    case 5:
+                        if (!route.view) return [3 /*break*/, 7];
+                        return [4 /*yield*/, Response.renderingOnView(route, pageHistory)];
+                    case 6:
+                        _a.sent();
+                        _a.label = 7;
+                    case 7: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    Response.renderingOnController = function (route, pageHistory) {
+        return __awaiter(this, void 0, void 0, function () {
+            var cont, vw, method, method;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        cont = pageHistory.controller;
+                        vw = pageHistory.view;
                         return [4 /*yield*/, cont.handleBefore()];
                     case 1:
                         _a.sent();
@@ -301,10 +410,6 @@ var Response = /** @class */ (function () {
                         _a.sent();
                         _a.label = 3;
                     case 3:
-                        Data_1.Data.set("beforeController", cont);
-                        Data_1.Data.set("beforeControllerAction", route.action);
-                        Data_1.Data.set("beforeView", null);
-                        Data_1.Data.set("beforeViewPath", null);
                         Data_1.Data.set("childClasss", {});
                         if (!cont["before_" + route.action]) return [3 /*break*/, 7];
                         method = "before_" + route.action;
@@ -372,84 +477,49 @@ var Response = /** @class */ (function () {
             });
         });
     };
-    Response.renderingOnView = function (route, data) {
+    Response.renderingOnView = function (route, pageHistory) {
         return __awaiter(this, void 0, void 0, function () {
-            var viewName, viewPath, View_, vm, MyApp;
+            var vm, MyApp;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        viewName = Lib_1.Lib.getModuleName(route.view + "View");
-                        viewPath = "app/view/" + Lib_1.Lib.getModulePath(route.view + "View");
-                        if (!useExists(viewPath)) {
-                            throw ("\"" + viewName + "\" Class is not found.");
-                        }
-                        View_ = use(viewPath);
-                        vm = new View_[viewName]();
-                        vm.sendData = data;
-                        if (!(Data_1.Data.get("beforeViewPath") != viewPath)) return [3 /*break*/, 2];
-                        Data_1.Data.set("beforeViewPath", viewPath);
-                        if (!vm.handleBegin) return [3 /*break*/, 2];
-                        return [4 /*yield*/, vm.handleBegin()];
-                    case 1:
-                        _a.sent();
-                        _a.label = 2;
-                    case 2:
-                        Data_1.Data.set("beforeView", vm);
-                        Data_1.Data.set("beforeController", null);
-                        Data_1.Data.set("beforeControllerPath", null);
-                        Data_1.Data.set("beforeControllerAction", null);
+                        vm = pageHistory.view;
                         Data_1.Data.set("childClasss", {});
                         return [4 /*yield*/, vm.handleBefore()];
-                    case 3:
+                    case 1:
                         _a.sent();
                         return [4 /*yield*/, vm.handleAfter()];
-                    case 4:
+                    case 2:
                         _a.sent();
                         return [4 /*yield*/, Response.__rendering(route, vm)];
-                    case 5:
+                    case 3:
                         _a.sent();
                         MyApp = require("app/config/App").MyApp;
                         if (MyApp.animationCloseClassName)
                             (0, VirtualDom_1.dom)("main").removeClass(MyApp.animationCloseClassName);
                         if (MyApp.animationOpenClassName)
                             (0, VirtualDom_1.dom)("main").addClass(MyApp.animationOpenClassName);
-                        vm.myMjs = (0, VirtualDom_1.dom)("main article");
+                        vm.myMjs = (0, VirtualDom_1.dom)("main article:last-child");
                         return [4 /*yield*/, vm.handleRenderBefore()];
+                    case 4:
+                        _a.sent();
+                        if (!route.args) return [3 /*break*/, 7];
+                        return [4 /*yield*/, vm.handleAlways.apply(vm, route.args)];
+                    case 5:
+                        _a.sent();
+                        return [4 /*yield*/, vm.handle.apply(vm, route.args)];
                     case 6:
                         _a.sent();
-                        if (!Response.isNext) return [3 /*break*/, 10];
-                        if (!route.args) return [3 /*break*/, 8];
-                        return [4 /*yield*/, vm.handleNext.apply(vm, route.args)];
-                    case 7:
-                        _a.sent();
                         return [3 /*break*/, 10];
-                    case 8: return [4 /*yield*/, vm.handleNext()];
+                    case 7: return [4 /*yield*/, vm.handleAlways()];
+                    case 8:
+                        _a.sent();
+                        return [4 /*yield*/, vm.handle()];
                     case 9:
                         _a.sent();
                         _a.label = 10;
-                    case 10:
-                        if (!Response.isBack) return [3 /*break*/, 14];
-                        if (!route.args) return [3 /*break*/, 12];
-                        return [4 /*yield*/, vm.handleBack.apply(vm, route.args)];
+                    case 10: return [4 /*yield*/, vm.handleRenderAfter()];
                     case 11:
-                        _a.sent();
-                        return [3 /*break*/, 14];
-                    case 12: return [4 /*yield*/, vm.handleBack()];
-                    case 13:
-                        _a.sent();
-                        _a.label = 14;
-                    case 14:
-                        if (!route.args) return [3 /*break*/, 16];
-                        return [4 /*yield*/, vm.handle.apply(vm, route.args)];
-                    case 15:
-                        _a.sent();
-                        return [3 /*break*/, 18];
-                    case 16: return [4 /*yield*/, vm.handle()];
-                    case 17:
-                        _a.sent();
-                        _a.label = 18;
-                    case 18: return [4 /*yield*/, vm.handleRenderAfter()];
-                    case 19:
                         _a.sent();
                         return [2 /*return*/];
                 }
@@ -490,7 +560,7 @@ var Response = /** @class */ (function () {
                         if (!(0, VirtualDom_1.dom)("main").length)
                             (0, VirtualDom_1.dom)("body").append("<main></main>");
                         main = (0, VirtualDom_1.dom)("main");
-                        main.html = "<article>" + viewHtml + "</article>";
+                        main.append("<article>" + viewHtml + "</article>");
                         context.mjs = main.childs;
                         beforeHead = Data_1.Data.get("beforeHead");
                         if (!(beforeHead != context.head)) return [3 /*break*/, 8];

@@ -23,81 +23,201 @@ class Response {
         const MyApp = require("app/config/App").MyApp;
         return MyApp.routeType;
     }
-    static back(index) {
-        if (!index)
-            index = 1;
-        if (Response.lock)
-            return false;
-        if (this.isBack)
-            return false;
-        this.isBack = true;
-        let hdata;
-        for (let n = 0; n < index; n++) {
-            if (this.routeType == App_1.AppRouteType.application) {
-                if (Data_1.Data.getLength("history") == 1)
-                    return false;
-                Data_1.Data.pop("history");
-                hdata = Data_1.Data.now("history");
+    static back(indexOrSearchURI) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (Response.lock)
+                return false;
+            if (this.isBack)
+                return false;
+            let index;
+            if (indexOrSearchURI) {
+                if (typeof indexOrSearchURI == "string") {
+                    index = 0;
+                    const histories = Data_1.Data.get("history");
+                    for (let n = 0; n < histories.length; n++) {
+                        const h_ = histories[histories.length - (n + 1)];
+                        if (h_.route.url == indexOrSearchURI) {
+                            break;
+                        }
+                        else {
+                            index++;
+                        }
+                    }
+                }
+                else {
+                    index = indexOrSearchURI;
+                }
             }
-            else if (this.routeType == App_1.AppRouteType.web) {
-                history.back();
+            else {
+                index = 1;
+            }
+            this.isBack = true;
+            yield this.loadPrevHandle(index);
+            const MyApp = require("app/config/App").MyApp;
+            if (MyApp.animationCloseClassName)
+                (0, VirtualDom_1.dom)("main").addClass(MyApp.animationCloseClassName);
+            if (MyApp.animationOpenClassName)
+                (0, VirtualDom_1.dom)("main").removeClass(MyApp.animationOpenClassName);
+            if (MyApp.delay)
+                yield Lib_1.Lib.sleep(MyApp.delay);
+            let hdata;
+            for (let n = 0; n < index; n++) {
+                if (this.routeType == App_1.AppRouteType.application) {
+                    Data_1.Data.pop("history");
+                    hdata = Data_1.Data.now("history");
+                    if (hdata) {
+                        if (hdata.drawingRequired) {
+                            yield this.rendering(hdata.route, hdata, hdata.data);
+                        }
+                        else {
+                            (0, VirtualDom_1.dom)("main article:last-child").remove();
+                        }
+                    }
+                }
+                else if (this.routeType == App_1.AppRouteType.web) {
+                    history.back();
+                }
+            }
+            if (MyApp.animationCloseClassName)
+                (0, VirtualDom_1.dom)("main").removeClass(MyApp.animationCloseClassName);
+            if (MyApp.animationOpenClassName)
+                (0, VirtualDom_1.dom)("main").addClass(MyApp.animationOpenClassName);
+            console.log("back url=" + hdata.route.url);
+            this.isBack = false;
+            return true;
+        });
+    }
+    static next(url, data, replaced) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (Response.lock)
+                return;
+            this.isBack = false;
+            const route = Routes_1.Routes.searchRoute(url.toString());
+            if (route.mode == Routes_1.DecisionRouteMode.Notfound) {
+                this.notFoundView(route);
+                return;
+            }
+            let pageHistory = {
+                route: route,
+                data: data,
+            };
+            if (route.controller) {
+                const res = this.loadController(route, data);
+                pageHistory.controller = res.Controller;
+                pageHistory.view = res.view;
+            }
+            else if (route.view) {
+                pageHistory.view = this.loadView(route, data);
+            }
+            Data_1.Data.push("history", pageHistory);
+            console.log("next url=" + route.url);
+            yield Response.rendering(route, pageHistory, data);
+            if (this.routeType == App_1.AppRouteType.web)
+                location.href = "#" + url;
+            if (replaced) {
+                const get = Data_1.Data.get("history");
+                let after = [];
+                for (let n = 0; n < get.length; n++) {
+                    if (n != get.length - 2) {
+                        after.push(get[n]);
+                    }
+                }
+                console.log(after);
+                Data_1.Data.set("history", after);
+                (0, VirtualDom_1.dom)("main article").last.prev.remove();
+            }
+        });
+    }
+    static loadController(route, data) {
+        const controllerName = Lib_1.Lib.getModuleName(route.controller + "Controller");
+        const controllerPath = "app/controller/" + Lib_1.Lib.getModulePath(route.controller + "Controller");
+        if (!useExists(controllerPath)) {
+            throw ("\"" + controllerPath + "\" Class is not found.");
+        }
+        const controllerClass = use(controllerPath);
+        const cont = new controllerClass[controllerName]();
+        cont.sendData = data;
+        const viewName = route.action + "View";
+        const viewPath = "app/view/" + route.controller + "/" + Lib_1.Lib.getModulePath(viewName);
+        let vw;
+        if (useExists(viewPath)) {
+            const View_ = use(viewPath);
+            if (!View_[Lib_1.Lib.getModuleName(viewName)]) {
+                console.error("[WARM] \"" + Lib_1.Lib.getModuleName(viewName) + "\"View Class not exists.");
+            }
+            else {
+                vw = new View_[Lib_1.Lib.getModuleName(viewName)]();
+                vw.sendData = data;
             }
         }
-        if (this.routeType == App_1.AppRouteType.web)
-            return true;
-        const route = Routes_1.Routes.searchRoute(hdata.url.toString());
-        Response.rendering(route, hdata.data).then(() => {
-            this.isBack = false;
-        });
-        return true;
-    }
-    static next(url, data) {
-        if (Response.lock)
-            return;
-        this.isBack = false;
-        const hdata = {
-            url: url,
-            data: data,
+        return {
+            Controller: cont,
+            view: vw,
         };
-        Data_1.Data.push("history", hdata);
-        const route = Routes_1.Routes.searchRoute(url.toString());
-        Response.rendering(route, data);
-        if (this.routeType == App_1.AppRouteType.web)
-            location.href = "#" + url;
+    }
+    static loadView(route, data) {
+        const viewName = Lib_1.Lib.getModuleName(route.view + "View");
+        const viewPath = "app/view/" + Lib_1.Lib.getModulePath(route.view + "View");
+        if (!useExists(viewPath)) {
+            throw ("\"" + viewName + "\" Class is not found.");
+        }
+        const View_ = use(viewPath);
+        const vm = new View_[viewName]();
+        vm.sendData = data;
+        return vm;
+    }
+    static notFoundView(route, data) {
+        const MyApp = require("app/config/App").MyApp;
+        if (MyApp.notFoundView) {
+            route.view = MyApp.notFoundView;
+            const errorPageHistory = {
+                route: route,
+                view: this.loadView(route, data),
+            };
+            Data_1.Data.push("history", errorPageHistory);
+            Response.renderingOnView(route, errorPageHistory);
+        }
+        throw Error("Page Not found. \"" + route.url + "\"");
     }
     /**
-     * ***addhistory*** : Add root path to screen transition history.
+     * ***historyAdd*** : Add root path to screen transition history.
      * It will only be added to the history and will not change the screen.
-     * @param {string} url route path
+     * @param {string | number} url route path
+     * @param {any} data send data
      * @returns {void}
      */
-    static addHistory(url, data) {
+    static historyAdd(url, data) {
         if (Response.lock)
             return;
         this.isBack = false;
-        const hdata = {
-            url: url,
+        const route = Routes_1.Routes.searchRoute(url.toString());
+        if (route.mode == Routes_1.DecisionRouteMode.Notfound) {
+            this.notFoundView(route);
+            return;
+        }
+        let pageHistory = {
+            route: route,
             data: data,
+            drawingRequired: true,
         };
-        Data_1.Data.push("history", hdata);
+        if (route.controller) {
+            const res = this.loadController(route, data);
+            pageHistory.controller = res.Controller;
+            pageHistory.view = res.view;
+        }
+        else if (route.view) {
+            pageHistory.view = this.loadView(route, data);
+        }
+        Data_1.Data.push("history", pageHistory);
     }
-    /**
-     * ***historyClear*** : Clear screen transition history
-     * @returns {void}
-     */
-    static historyClear() {
+    static historyAllClear(url) {
+        (0, VirtualDom_1.dom)("main archive").remove();
         Data_1.Data.set("history", []);
-    }
-    /**
-     * ***pop*** : Go back to the previous screen transition.
-     * @returns {void}
-     */
-    static pop() {
-        Data_1.Data.pop("history");
+        if (url)
+            this.next(url);
     }
     static replace(url, send) {
-        this.pop();
-        this.next(url, send);
+        this.next(url, send, true);
     }
     /**
      * ***now*** : Get current route path.
@@ -112,113 +232,71 @@ class Response {
     static get isNext() {
         return !this.isBack;
     }
-    /**
-     * ***nowView*** : Get the current View class object if there is one.
-     */
-    static get nowView() {
-        if (Data_1.Data.get("beforeView"))
-            return Data_1.Data.get("beforeView");
-    }
-    /**
-     * ***nowController*** : Get the current Controller class object if there is one.
-     */
-    static get nowController() {
-        if (Data_1.Data.get("beforeController"))
-            return Data_1.Data.get("beforeController");
+    static loadPrevHandle(index) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const prevHistory = Data_1.Data.getPrev("history", index);
+            if (prevHistory) {
+                // Controller & View Leave 
+                if (prevHistory.controller) {
+                    const res = yield prevHistory.controller.handleLeave(prevHistory.route.action);
+                    if (typeof res == "boolean" && res === false)
+                        return;
+                    if (this.isBack) {
+                        const resBack = yield prevHistory.controller.handleLeaveBack(prevHistory.route.action);
+                        if (typeof resBack == "boolean" && resBack === false)
+                            return;
+                    }
+                    if (this.isNext) {
+                        const resNext = yield prevHistory.controller.handleLeaveNext(prevHistory.route.action);
+                        if (typeof resNext == "boolean" && resNext === false)
+                            return;
+                    }
+                }
+                if (prevHistory.view) {
+                    yield prevHistory.view.handleAlways(...prevHistory.route.args);
+                    const res = yield prevHistory.view.handleLeave();
+                    if (typeof res == "boolean" && res === false)
+                        return;
+                    if (this.isBack) {
+                        const resBack = yield prevHistory.view.handleLeaveBack();
+                        if (typeof resBack == "boolean" && resBack === false)
+                            return;
+                    }
+                    if (this.isNext) {
+                        const resNext = yield prevHistory.view.handleLeaveNext();
+                        if (typeof resNext == "boolean" && resNext === false)
+                            return;
+                    }
+                }
+            }
+        });
     }
     // rendering....
-    static rendering(route, data) {
+    static rendering(route, pageHistory, data) {
         return __awaiter(this, void 0, void 0, function* () {
             const MyApp = require("app/config/App").MyApp;
-            // Controller & View Leave 
-            const befCont = Data_1.Data.get("beforeController");
-            if (befCont) {
-                const befContAction = Data_1.Data.get("beforeControllerAction");
-                const res = yield befCont.handleLeave(befContAction);
-                if (typeof res == "boolean" && res === false)
-                    return;
-                if (this.isBack) {
-                    const resBack = yield befCont.handleLeaveBack(befContAction);
-                    if (typeof resBack == "boolean" && resBack === false)
-                        return;
-                }
-                if (this.isNext) {
-                    const resNext = yield befCont.handleLeaveNext(befContAction);
-                    if (typeof resNext == "boolean" && resNext === false)
-                        return;
-                }
-            }
-            const befView = Data_1.Data.get("beforeView");
-            if (befView) {
-                const res = yield befView.handleLeave();
-                if (typeof res == "boolean" && res === false)
-                    return;
-                if (this.isBack) {
-                    const resBack = yield befView.handleLeaveBack();
-                    if (typeof resBack == "boolean" && resBack === false)
-                        return;
-                }
-                if (this.isNext) {
-                    const resNext = yield befView.handleLeaveNext();
-                    if (typeof resNext == "boolean" && resNext === false)
-                        return;
-                }
-            }
             if (MyApp.animationCloseClassName)
                 (0, VirtualDom_1.dom)("main").addClass(MyApp.animationCloseClassName);
             if (MyApp.animationOpenClassName)
                 (0, VirtualDom_1.dom)("main").removeClass(MyApp.animationOpenClassName);
             if (MyApp.delay)
                 yield Lib_1.Lib.sleep(MyApp.delay);
-            if (route.mode == Routes_1.DecisionRouteMode.Notfound) {
-                if (MyApp.notFoundView) {
-                    route.view = MyApp.notFoundView;
-                    yield Response.renderingOnView(route, data);
-                }
-                throw ("Page Not found. \"" + route.url + "\"");
-            }
+            yield this.loadPrevHandle();
             if (route.controller) {
-                yield Response.renderingOnController(route, data);
+                yield Response.renderingOnController(route, pageHistory);
             }
             else if (route.view) {
-                yield Response.renderingOnView(route, data);
+                yield Response.renderingOnView(route, pageHistory);
             }
         });
     }
-    static renderingOnController(route, data) {
+    static renderingOnController(route, pageHistory) {
         return __awaiter(this, void 0, void 0, function* () {
-            const controllerName = Lib_1.Lib.getModuleName(route.controller + "Controller");
-            const controllerPath = "app/controller/" + Lib_1.Lib.getModulePath(route.controller + "Controller");
-            if (!useExists(controllerPath)) {
-                throw ("\"" + controllerPath + "\" Class is not found.");
-            }
-            const controllerClass = use(controllerPath);
-            const cont = new controllerClass[controllerName]();
-            cont.sendData = data;
-            const viewName = route.action + "View";
-            const viewPath = "app/view/" + route.controller + "/" + Lib_1.Lib.getModulePath(viewName);
-            let vw;
-            if (useExists(viewPath)) {
-                const View_ = use(viewPath);
-                if (!View_[Lib_1.Lib.getModuleName(viewName)]) {
-                    console.error("[WARM] \"" + Lib_1.Lib.getModuleName(viewName) + "\"View Class not exists.");
-                }
-                else {
-                    vw = new View_[Lib_1.Lib.getModuleName(viewName)]();
-                    vw.sendData = data;
-                }
-            }
-            if (Data_1.Data.get("beforeControllerPath") != controllerPath) {
-                Data_1.Data.set("beforeControllerPath", controllerPath);
-                cont.beginStatus = true;
-            }
+            const cont = pageHistory.controller;
+            const vw = pageHistory.view;
             yield cont.handleBefore();
             if (vw)
                 yield vw.handleBefore();
-            Data_1.Data.set("beforeController", cont);
-            Data_1.Data.set("beforeControllerAction", route.action);
-            Data_1.Data.set("beforeView", null);
-            Data_1.Data.set("beforeViewPath", null);
             Data_1.Data.set("childClasss", {});
             if (cont["before_" + route.action]) {
                 const method = "before_" + route.action;
@@ -258,25 +336,9 @@ class Response {
                 yield vw.handleRenderAfter();
         });
     }
-    static renderingOnView(route, data) {
+    static renderingOnView(route, pageHistory) {
         return __awaiter(this, void 0, void 0, function* () {
-            const viewName = Lib_1.Lib.getModuleName(route.view + "View");
-            const viewPath = "app/view/" + Lib_1.Lib.getModulePath(route.view + "View");
-            if (!useExists(viewPath)) {
-                throw ("\"" + viewName + "\" Class is not found.");
-            }
-            const View_ = use(viewPath);
-            const vm = new View_[viewName]();
-            vm.sendData = data;
-            if (Data_1.Data.get("beforeViewPath") != viewPath) {
-                Data_1.Data.set("beforeViewPath", viewPath);
-                if (vm.handleBegin)
-                    yield vm.handleBegin();
-            }
-            Data_1.Data.set("beforeView", vm);
-            Data_1.Data.set("beforeController", null);
-            Data_1.Data.set("beforeControllerPath", null);
-            Data_1.Data.set("beforeControllerAction", null);
+            const vm = pageHistory.view;
             Data_1.Data.set("childClasss", {});
             yield vm.handleBefore();
             yield vm.handleAfter();
@@ -286,30 +348,14 @@ class Response {
                 (0, VirtualDom_1.dom)("main").removeClass(MyApp.animationCloseClassName);
             if (MyApp.animationOpenClassName)
                 (0, VirtualDom_1.dom)("main").addClass(MyApp.animationOpenClassName);
-            vm.myMjs = (0, VirtualDom_1.dom)("main article");
+            vm.myMjs = (0, VirtualDom_1.dom)("main article:last-child");
             yield vm.handleRenderBefore();
-            // is next page..
-            if (Response.isNext) {
-                if (route.args) {
-                    yield vm.handleNext(...route.args);
-                }
-                else {
-                    yield vm.handleNext();
-                }
-            }
-            // is back page...
-            if (Response.isBack) {
-                if (route.args) {
-                    yield vm.handleBack(...route.args);
-                }
-                else {
-                    yield vm.handleBack();
-                }
-            }
             if (route.args) {
+                yield vm.handleAlways(...route.args);
                 yield vm.handle(...route.args);
             }
             else {
+                yield vm.handleAlways();
                 yield vm.handle();
             }
             yield vm.handleRenderAfter();
@@ -343,7 +389,7 @@ class Response {
             if (!(0, VirtualDom_1.dom)("main").length)
                 (0, VirtualDom_1.dom)("body").append("<main></main>");
             const main = (0, VirtualDom_1.dom)("main");
-            main.html = "<article>" + viewHtml + "</article>";
+            main.append("<article>" + viewHtml + "</article>");
             context.mjs = main.childs;
             const beforeHead = Data_1.Data.get("beforeHead");
             if (beforeHead != context.head) {

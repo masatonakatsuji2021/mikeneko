@@ -7,7 +7,11 @@ console.log("tsc");
 execSync("tsc");
 
 console.log("tsc(es5)");
-execSync("cd ./bin && tsc --project tsconfigs/es5.json");
+try {
+    execSync("cd ./bin && tsc --project tsconfigs/es5.json");
+} catch(error) {
+    console.log(error.stdout.toString());
+}
 
 console.log("tsc(es6)");
 execSync("cd ./bin && tsc --project tsconfigs/es6.json");

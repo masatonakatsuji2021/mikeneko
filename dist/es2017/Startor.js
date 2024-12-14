@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.string = exports.Startor = void 0;
 const App_1 = require("App");
-const Routes_1 = require("Routes");
 const Render_1 = require("Render");
 const Lib_1 = require("Lib");
 const Data_1 = require("Data");
@@ -36,6 +35,7 @@ class Startor {
                 if (location.hash)
                     url = location.hash.substring(1);
             }
+            console.log("beginURL=" + url);
             Response_1.Response.next(url);
         })();
     }
@@ -87,10 +87,7 @@ class Startor {
         let url = location.hash.substring(1);
         if (!url)
             url = "/";
-        const route = Routes_1.Routes.searchRoute(url);
-        Response_1.Response.rendering(route).then(() => {
-            Response_1.Response.isBack = false;
-        });
+        Response_1.Response.next(url);
     }
     setShortcode() {
         Shortcode_1.Shortcode.add("rendering", (args) => {

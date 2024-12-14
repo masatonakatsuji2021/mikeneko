@@ -1,5 +1,4 @@
 import { App, AppRouteType } from "App";
-import { Routes, DecisionRoute  } from "Routes";
 import { Render } from "Render";
 import { Lib } from "Lib";
 import { Data } from "Data";
@@ -41,6 +40,7 @@ export class Startor {
             if (this.MyApp.routeType == AppRouteType.web) {
                 if (location.hash) url = location.hash.substring(1);
             }
+            console.log("beginURL=" + url);
             Response.next(url);
         })();
     }
@@ -87,10 +87,7 @@ export class Startor {
 
         if (!url) url = "/";
 
-        const route : DecisionRoute = Routes.searchRoute(url);
-        Response.rendering(route).then(()=>{
-            Response.isBack = false;
-        });
+        Response.next(url);
     }
 
     private setShortcode(){

@@ -40,24 +40,11 @@ class View extends Render_1.Render {
      */
     handle(...aregment) { }
     /**
-     * handleNext
-     * A handler that runs automatically when the screen is painted after advancing from the previous screen.
+     * ***handle*** :
+     * A handler that runs automatically when the view is drawn on the screen.
+     * This event is executed only when rendered.
      */
-    handleNext(...aregment) { }
-    /**
-     * handleBack
-     * A handler that runs automatically when painting after returning from the previous screen.
-     */
-    handleBack(...aregment) { }
-    /**
-     * ***handleAlways*** : A handler that runs automatically when the View is displayed on screen.
-     * This event is always executed even if the same View has already been rendered..
-     */
-    handleAlways() { }
-    /**
-     * ***handleBegin*** : A handler executed just before transitioning to the page.
-     */
-    handleBegin() { }
+    handleAlways(...aregment) { }
     /**
      * ***handleBefore*** : A handler executed just before transitioning to the page.
      */
