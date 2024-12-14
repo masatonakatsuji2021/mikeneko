@@ -62,15 +62,15 @@ var Data = /** @class */ (function () {
         var length = this.__data[name].length;
         return this.__data[name][length - 1];
     };
-    Data.getPrev = function (name, index) {
+    Data.getIndex = function (name, index) {
         if (!this.__data[name])
             return;
         var length = this.__data[name].length;
-        var prevIndex = length - 2;
+        var targetIndex = length - 1;
         if (index)
-            prevIndex -= index - 1;
+            targetIndex = targetIndex - index;
         if (length > 1)
-            return this.__data[name][prevIndex];
+            return this.__data[name][targetIndex];
     };
     Data.__data = {};
     return Data;

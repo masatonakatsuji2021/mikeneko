@@ -52,7 +52,7 @@ class Response {
                 index = 1;
             }
             this.isBack = true;
-            yield this.loadPrevHandle(index);
+            yield this.loadLeaveHandle();
             const MyApp = require("app/config/App").MyApp;
             if (MyApp.animationCloseClassName)
                 (0, VirtualDom_1.dom)("main").addClass(MyApp.animationCloseClassName);
@@ -78,6 +78,15 @@ class Response {
                     history.back();
                 }
             }
+            const nowHistory = Data_1.Data.now("history");
+            if (nowHistory.view) {
+                if (nowHistory.route.args) {
+                    yield nowHistory.view.handleAlways(...nowHistory.route.args);
+                }
+                else {
+                    yield nowHistory.view.handleAlways();
+                }
+            }
             if (MyApp.animationCloseClassName)
                 (0, VirtualDom_1.dom)("main").removeClass(MyApp.animationCloseClassName);
             if (MyApp.animationOpenClassName)
@@ -88,7 +97,7 @@ class Response {
         });
     }
     static next(url, data, replaced) {
-        return __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
             if (Response.lock)
                 return;
             this.isBack = false;
@@ -109,6 +118,8 @@ class Response {
             else if (route.view) {
                 pageHistory.view = this.loadView(route, data);
             }
+            yield this.loadLeaveHandle();
+            pageHistory.callback = resolve;
             Data_1.Data.push("history", pageHistory);
             console.log("next url=" + route.url);
             yield Response.rendering(route, pageHistory, data);
@@ -126,7 +137,7 @@ class Response {
                 Data_1.Data.set("history", after);
                 (0, VirtualDom_1.dom)("main article").last.prev.remove();
             }
-        });
+        }));
     }
     static loadController(route, data) {
         const controllerName = Lib_1.Lib.getModuleName(route.controller + "Controller");
@@ -232,40 +243,45 @@ class Response {
     static get isNext() {
         return !this.isBack;
     }
-    static loadPrevHandle(index) {
+    static loadLeaveHandle() {
         return __awaiter(this, void 0, void 0, function* () {
-            const prevHistory = Data_1.Data.getPrev("history", index);
+            const prevHistory = Data_1.Data.now("history");
             if (prevHistory) {
                 // Controller & View Leave 
                 if (prevHistory.controller) {
                     const res = yield prevHistory.controller.handleLeave(prevHistory.route.action);
-                    if (typeof res == "boolean" && res === false)
-                        return;
+                    if (prevHistory.callback) {
+                        prevHistory.callback(res);
+                    }
                     if (this.isBack) {
-                        const resBack = yield prevHistory.controller.handleLeaveBack(prevHistory.route.action);
-                        if (typeof resBack == "boolean" && resBack === false)
-                            return;
+                        const res = yield prevHistory.controller.handleLeaveBack(prevHistory.route.action);
+                        if (prevHistory.callback) {
+                            prevHistory.callback(res);
+                        }
                     }
                     if (this.isNext) {
-                        const resNext = yield prevHistory.controller.handleLeaveNext(prevHistory.route.action);
-                        if (typeof resNext == "boolean" && resNext === false)
-                            return;
+                        const res = yield prevHistory.controller.handleLeaveNext(prevHistory.route.action);
+                        if (prevHistory.callback) {
+                            prevHistory.callback(res);
+                        }
                     }
                 }
                 if (prevHistory.view) {
-                    yield prevHistory.view.handleAlways(...prevHistory.route.args);
                     const res = yield prevHistory.view.handleLeave();
-                    if (typeof res == "boolean" && res === false)
-                        return;
+                    if (prevHistory.callback) {
+                        prevHistory.callback(res);
+                    }
                     if (this.isBack) {
-                        const resBack = yield prevHistory.view.handleLeaveBack();
-                        if (typeof resBack == "boolean" && resBack === false)
-                            return;
+                        const res = yield prevHistory.view.handleLeaveBack();
+                        if (prevHistory.callback) {
+                            prevHistory.callback(res);
+                        }
                     }
                     if (this.isNext) {
-                        const resNext = yield prevHistory.view.handleLeaveNext();
-                        if (typeof resNext == "boolean" && resNext === false)
-                            return;
+                        const res = yield prevHistory.view.handleLeaveNext();
+                        if (prevHistory.callback) {
+                            prevHistory.callback(res);
+                        }
                     }
                 }
             }
@@ -281,7 +297,6 @@ class Response {
                 (0, VirtualDom_1.dom)("main").removeClass(MyApp.animationOpenClassName);
             if (MyApp.delay)
                 yield Lib_1.Lib.sleep(MyApp.delay);
-            yield this.loadPrevHandle();
             if (route.controller) {
                 yield Response.renderingOnController(route, pageHistory);
             }

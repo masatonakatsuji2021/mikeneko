@@ -58,9 +58,10 @@ var Response = /** @class */ (function () {
     });
     Response.back = function (indexOrSearchURI) {
         return __awaiter(this, void 0, void 0, function () {
-            var index, histories, n, h_, MyApp, hdata, n;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
+            var index, histories, n, h_, MyApp, hdata, n, nowHistory;
+            var _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0:
                         if (Response.lock)
                             return [2 /*return*/, false];
@@ -88,9 +89,9 @@ var Response = /** @class */ (function () {
                             index = 1;
                         }
                         this.isBack = true;
-                        return [4 /*yield*/, this.loadPrevHandle(index)];
+                        return [4 /*yield*/, this.loadLeaveHandle()];
                     case 1:
-                        _a.sent();
+                        _b.sent();
                         MyApp = require("app/config/App").MyApp;
                         if (MyApp.animationCloseClassName)
                             (0, VirtualDom_1.dom)("main").addClass(MyApp.animationCloseClassName);
@@ -99,11 +100,11 @@ var Response = /** @class */ (function () {
                         if (!MyApp.delay) return [3 /*break*/, 3];
                         return [4 /*yield*/, Lib_1.Lib.sleep(MyApp.delay)];
                     case 2:
-                        _a.sent();
-                        _a.label = 3;
+                        _b.sent();
+                        _b.label = 3;
                     case 3:
                         n = 0;
-                        _a.label = 4;
+                        _b.label = 4;
                     case 4:
                         if (!(n < index)) return [3 /*break*/, 10];
                         if (!(this.routeType == App_1.AppRouteType.application)) return [3 /*break*/, 8];
@@ -113,21 +114,33 @@ var Response = /** @class */ (function () {
                         if (!hdata.drawingRequired) return [3 /*break*/, 6];
                         return [4 /*yield*/, this.rendering(hdata.route, hdata, hdata.data)];
                     case 5:
-                        _a.sent();
+                        _b.sent();
                         return [3 /*break*/, 7];
                     case 6:
                         (0, VirtualDom_1.dom)("main article:last-child").remove();
-                        _a.label = 7;
+                        _b.label = 7;
                     case 7: return [3 /*break*/, 9];
                     case 8:
                         if (this.routeType == App_1.AppRouteType.web) {
                             history.back();
                         }
-                        _a.label = 9;
+                        _b.label = 9;
                     case 9:
                         n++;
                         return [3 /*break*/, 4];
                     case 10:
+                        nowHistory = Data_1.Data.now("history");
+                        if (!nowHistory.view) return [3 /*break*/, 14];
+                        if (!nowHistory.route.args) return [3 /*break*/, 12];
+                        return [4 /*yield*/, (_a = nowHistory.view).handleAlways.apply(_a, nowHistory.route.args)];
+                    case 11:
+                        _b.sent();
+                        return [3 /*break*/, 14];
+                    case 12: return [4 /*yield*/, nowHistory.view.handleAlways()];
+                    case 13:
+                        _b.sent();
+                        _b.label = 14;
+                    case 14:
                         if (MyApp.animationCloseClassName)
                             (0, VirtualDom_1.dom)("main").removeClass(MyApp.animationCloseClassName);
                         if (MyApp.animationOpenClassName)
@@ -140,7 +153,8 @@ var Response = /** @class */ (function () {
         });
     };
     Response.next = function (url, data, replaced) {
-        return __awaiter(this, void 0, void 0, function () {
+        var _this = this;
+        return new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
             var route, pageHistory, res, get, after, n;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -165,10 +179,14 @@ var Response = /** @class */ (function () {
                         else if (route.view) {
                             pageHistory.view = this.loadView(route, data);
                         }
+                        return [4 /*yield*/, this.loadLeaveHandle()];
+                    case 1:
+                        _a.sent();
+                        pageHistory.callback = resolve;
                         Data_1.Data.push("history", pageHistory);
                         console.log("next url=" + route.url);
                         return [4 /*yield*/, Response.rendering(route, pageHistory, data)];
-                    case 1:
+                    case 2:
                         _a.sent();
                         if (this.routeType == App_1.AppRouteType.web)
                             location.href = "#" + url;
@@ -187,7 +205,7 @@ var Response = /** @class */ (function () {
                         return [2 /*return*/];
                 }
             });
-        });
+        }); });
     };
     Response.loadController = function (route, data) {
         var controllerName = Lib_1.Lib.getModuleName(route.controller + "Controller");
@@ -297,62 +315,64 @@ var Response = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
-    Response.loadPrevHandle = function (index) {
+    Response.loadLeaveHandle = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var prevHistory, res, resBack, resNext, res, resBack, resNext;
-            var _a;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            var prevHistory, res, res_1, res_2, res, res_3, res_4;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
                     case 0:
-                        prevHistory = Data_1.Data.getPrev("history", index);
-                        if (!prevHistory) return [3 /*break*/, 11];
+                        prevHistory = Data_1.Data.now("history");
+                        if (!prevHistory) return [3 /*break*/, 10];
                         if (!prevHistory.controller) return [3 /*break*/, 5];
                         return [4 /*yield*/, prevHistory.controller.handleLeave(prevHistory.route.action)];
                     case 1:
-                        res = _b.sent();
-                        if (typeof res == "boolean" && res === false)
-                            return [2 /*return*/];
+                        res = _a.sent();
+                        if (prevHistory.callback) {
+                            prevHistory.callback(res);
+                        }
                         if (!this.isBack) return [3 /*break*/, 3];
                         return [4 /*yield*/, prevHistory.controller.handleLeaveBack(prevHistory.route.action)];
                     case 2:
-                        resBack = _b.sent();
-                        if (typeof resBack == "boolean" && resBack === false)
-                            return [2 /*return*/];
-                        _b.label = 3;
+                        res_1 = _a.sent();
+                        if (prevHistory.callback) {
+                            prevHistory.callback(res_1);
+                        }
+                        _a.label = 3;
                     case 3:
                         if (!this.isNext) return [3 /*break*/, 5];
                         return [4 /*yield*/, prevHistory.controller.handleLeaveNext(prevHistory.route.action)];
                     case 4:
-                        resNext = _b.sent();
-                        if (typeof resNext == "boolean" && resNext === false)
-                            return [2 /*return*/];
-                        _b.label = 5;
+                        res_2 = _a.sent();
+                        if (prevHistory.callback) {
+                            prevHistory.callback(res_2);
+                        }
+                        _a.label = 5;
                     case 5:
-                        if (!prevHistory.view) return [3 /*break*/, 11];
-                        return [4 /*yield*/, (_a = prevHistory.view).handleAlways.apply(_a, prevHistory.route.args)];
-                    case 6:
-                        _b.sent();
+                        if (!prevHistory.view) return [3 /*break*/, 10];
                         return [4 /*yield*/, prevHistory.view.handleLeave()];
-                    case 7:
-                        res = _b.sent();
-                        if (typeof res == "boolean" && res === false)
-                            return [2 /*return*/];
-                        if (!this.isBack) return [3 /*break*/, 9];
+                    case 6:
+                        res = _a.sent();
+                        if (prevHistory.callback) {
+                            prevHistory.callback(res);
+                        }
+                        if (!this.isBack) return [3 /*break*/, 8];
                         return [4 /*yield*/, prevHistory.view.handleLeaveBack()];
+                    case 7:
+                        res_3 = _a.sent();
+                        if (prevHistory.callback) {
+                            prevHistory.callback(res_3);
+                        }
+                        _a.label = 8;
                     case 8:
-                        resBack = _b.sent();
-                        if (typeof resBack == "boolean" && resBack === false)
-                            return [2 /*return*/];
-                        _b.label = 9;
-                    case 9:
-                        if (!this.isNext) return [3 /*break*/, 11];
+                        if (!this.isNext) return [3 /*break*/, 10];
                         return [4 /*yield*/, prevHistory.view.handleLeaveNext()];
-                    case 10:
-                        resNext = _b.sent();
-                        if (typeof resNext == "boolean" && resNext === false)
-                            return [2 /*return*/];
-                        _b.label = 11;
-                    case 11: return [2 /*return*/];
+                    case 9:
+                        res_4 = _a.sent();
+                        if (prevHistory.callback) {
+                            prevHistory.callback(res_4);
+                        }
+                        _a.label = 10;
+                    case 10: return [2 /*return*/];
                 }
             });
         });
@@ -374,21 +394,19 @@ var Response = /** @class */ (function () {
                     case 1:
                         _a.sent();
                         _a.label = 2;
-                    case 2: return [4 /*yield*/, this.loadPrevHandle()];
+                    case 2:
+                        if (!route.controller) return [3 /*break*/, 4];
+                        return [4 /*yield*/, Response.renderingOnController(route, pageHistory)];
                     case 3:
                         _a.sent();
-                        if (!route.controller) return [3 /*break*/, 5];
-                        return [4 /*yield*/, Response.renderingOnController(route, pageHistory)];
+                        return [3 /*break*/, 6];
                     case 4:
-                        _a.sent();
-                        return [3 /*break*/, 7];
-                    case 5:
-                        if (!route.view) return [3 /*break*/, 7];
+                        if (!route.view) return [3 /*break*/, 6];
                         return [4 /*yield*/, Response.renderingOnView(route, pageHistory)];
-                    case 6:
+                    case 5:
                         _a.sent();
-                        _a.label = 7;
-                    case 7: return [2 /*return*/];
+                        _a.label = 6;
+                    case 6: return [2 /*return*/];
                 }
             });
         });

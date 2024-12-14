@@ -19,6 +19,8 @@ export interface PageHistory {
     data?: any,
 
     drawingRequired? : boolean,
+
+    callback? : Function,
 }
 
 export class Response {
@@ -98,7 +100,7 @@ export class Response {
         }
 
         this.isBack = true;
-        await this.loadPrevHandle(index);
+        await this.loadLeaveHandle();
 
         const MyApp : typeof App = require("app/config/App").MyApp;
         if (MyApp.animationCloseClassName) dom("main").addClass(MyApp.animationCloseClassName);
@@ -121,6 +123,16 @@ export class Response {
             }
             else if(this.routeType == AppRouteType.web) {
                 history.back();
+            }
+        }
+
+        const nowHistory = Data.now("history");
+        if (nowHistory.view) {
+            if (nowHistory.route.args) {
+                await nowHistory.view.handleAlways(...nowHistory.route.args);
+            }
+            else {
+                await nowHistory.view.handleAlways();
             }    
         }
 
@@ -139,7 +151,7 @@ export class Response {
      * @param {string} url route path
      * @returns {void}
      */
-    public static async next(url : string | number) : Promise<any>;
+    public static next(url : string | number) : Promise<any>;
 
     /**
      * ***next*** : Transition to the specified URL (route path)  
@@ -148,50 +160,55 @@ export class Response {
      * @param {any?} data Transmission data contents
      * @returns {void}
      */
-    public static async next(url : string | number, data : any) : Promise<any>;
+    public static next(url : string | number, data : any) : Promise<any>;
 
-    public static async next(url : string | number, data : any, replaced: boolean) : Promise<any>;
+    public static next(url : string | number, data : any, replaced: boolean) : Promise<any>;
 
-    public static async next(url : string | number, data? : any, replaced? : boolean) : Promise<any> {
-        if (Response.lock) return;
-        this.isBack = false;
-        const route : DecisionRoute = Routes.searchRoute(url.toString());
-        if(route.mode == DecisionRouteMode.Notfound) {
-            this.notFoundView(route);
-            return;
-        }
-
-        let pageHistory : PageHistory= {
-            route: route,
-            data: data,
-        };
-
-        if (route.controller) {
-            const res = this.loadController(route, data);
-            pageHistory.controller = res.Controller;
-            pageHistory.view = res.view;
-        }
-        else if (route.view) {
-            pageHistory.view = this.loadView(route, data);
-        }
-        Data.push("history", pageHistory);
-        console.log("next url=" + route.url);
-        await Response.rendering(route, pageHistory, data);
-        if (this.routeType == AppRouteType.web) location.href = "#" + url;
-
-        if (replaced) {
-            
-            const get : Array<PageHistory> = Data.get("history");
-            let after = [];
-            for(let n = 0 ; n < get.length ; n++){
-                if (n != get.length - 2) {
-                    after.push(get[n]);
-                }
+    public static next(url : string | number, data? : any, replaced? : boolean) : Promise<any> {
+        return new Promise(async (resolve)=>{
+            if (Response.lock) return;
+            this.isBack = false;
+            const route : DecisionRoute = Routes.searchRoute(url.toString());
+            if(route.mode == DecisionRouteMode.Notfound) {
+                this.notFoundView(route);
+                return;
             }
-            console.log(after);
-            Data.set("history", after);
-            dom("main article").last.prev.remove();
-        }
+
+            let pageHistory : PageHistory= {
+                route: route,
+                data: data,
+            };
+
+            if (route.controller) {
+                const res = this.loadController(route, data);
+                pageHistory.controller = res.Controller;
+                pageHistory.view = res.view;
+            }
+            else if (route.view) {
+                pageHistory.view = this.loadView(route, data);
+            }
+            await this.loadLeaveHandle();
+            pageHistory.callback = resolve;
+            Data.push("history", pageHistory);
+            console.log("next url=" + route.url);
+            await Response.rendering(route, pageHistory, data);
+            if (this.routeType == AppRouteType.web) location.href = "#" + url;
+
+            if (replaced) {
+                
+                const get : Array<PageHistory> = Data.get("history");
+                let after = [];
+                for(let n = 0 ; n < get.length ; n++){
+                    if (n != get.length - 2) {
+                        after.push(get[n]);
+                    }
+                }
+                console.log(after);
+                Data.set("history", after);
+                dom("main article").last.prev.remove();
+            }
+
+        });
     }
 
     private static loadController(route: DecisionRoute, data? : any) : {Controller: Controller, view: View} {
@@ -339,44 +356,53 @@ export class Response {
         return !this.isBack;
     }
 
+    private static async loadLeaveHandle() {
 
-    private static async loadPrevHandle(index?: number) {
-
-        const prevHistory : PageHistory = Data.getPrev("history", index);
+        const prevHistory : PageHistory = Data.now("history");
 
         if (prevHistory){
             // Controller & View Leave 
             if(prevHistory.controller){
 
                 const res = await prevHistory.controller.handleLeave(prevHistory.route.action);
-                if (typeof res == "boolean" && res === false) return;
+                if (prevHistory.callback) {
+                    prevHistory.callback(res);
+                }
 
                 if (this.isBack) {
-                    const resBack = await prevHistory.controller.handleLeaveBack(prevHistory.route.action);
-                    if (typeof resBack == "boolean" && resBack === false) return;
-                }
+                    const res = await prevHistory.controller.handleLeaveBack(prevHistory.route.action);
+                    if (prevHistory.callback) {
+                        prevHistory.callback(res);
+                    }
+                    }
 
                 if (this.isNext) {
-                    const resNext = await prevHistory.controller.handleLeaveNext(prevHistory.route.action);
-                    if (typeof resNext == "boolean" && resNext === false) return;
-                }
+                    const res = await prevHistory.controller.handleLeaveNext(prevHistory.route.action);
+                    if (prevHistory.callback) {
+                        prevHistory.callback(res);
+                    }
+                    }
             }
 
             if(prevHistory.view) {
 
-                await prevHistory.view.handleAlways(...prevHistory.route.args);
-
                 const res = await prevHistory.view.handleLeave();
-                if (typeof res == "boolean" && res === false) return;
+                if (prevHistory.callback) {
+                    prevHistory.callback(res);
+                }
 
                 if (this.isBack) {
-                    const resBack = await prevHistory.view.handleLeaveBack();
-                    if (typeof resBack == "boolean" && resBack === false) return;
+                    const res = await prevHistory.view.handleLeaveBack();
+                    if (prevHistory.callback) {
+                        prevHistory.callback(res);
+                    }   
                 }
 
                 if (this.isNext) {
-                    const resNext = await prevHistory.view.handleLeaveNext();
-                    if (typeof resNext == "boolean" && resNext === false) return;
+                    const res = await prevHistory.view.handleLeaveNext();
+                    if (prevHistory.callback) {
+                        prevHistory.callback(res);
+                    }
                 }
             }
         }
@@ -390,8 +416,6 @@ export class Response {
         if (MyApp.animationCloseClassName) dom("main").addClass(MyApp.animationCloseClassName);
         if (MyApp.animationOpenClassName) dom("main").removeClass(MyApp.animationOpenClassName);
         if (MyApp.delay) await Lib.sleep(MyApp.delay);
-
-        await this.loadPrevHandle();
 
         if(route.controller){
             await Response.renderingOnController(route, pageHistory);

@@ -52,7 +52,7 @@ class Response {
             index = 1;
         }
         this.isBack = true;
-        await this.loadPrevHandle(index);
+        await this.loadLeaveHandle();
         const MyApp = require("app/config/App").MyApp;
         if (MyApp.animationCloseClassName)
             (0, VirtualDom_1.dom)("main").addClass(MyApp.animationCloseClassName);
@@ -78,6 +78,15 @@ class Response {
                 history.back();
             }
         }
+        const nowHistory = Data_1.Data.now("history");
+        if (nowHistory.view) {
+            if (nowHistory.route.args) {
+                await nowHistory.view.handleAlways(...nowHistory.route.args);
+            }
+            else {
+                await nowHistory.view.handleAlways();
+            }
+        }
         if (MyApp.animationCloseClassName)
             (0, VirtualDom_1.dom)("main").removeClass(MyApp.animationCloseClassName);
         if (MyApp.animationOpenClassName)
@@ -86,44 +95,48 @@ class Response {
         this.isBack = false;
         return true;
     }
-    static async next(url, data, replaced) {
-        if (Response.lock)
-            return;
-        this.isBack = false;
-        const route = Routes_1.Routes.searchRoute(url.toString());
-        if (route.mode == Routes_1.DecisionRouteMode.Notfound) {
-            this.notFoundView(route);
-            return;
-        }
-        let pageHistory = {
-            route: route,
-            data: data,
-        };
-        if (route.controller) {
-            const res = this.loadController(route, data);
-            pageHistory.controller = res.Controller;
-            pageHistory.view = res.view;
-        }
-        else if (route.view) {
-            pageHistory.view = this.loadView(route, data);
-        }
-        Data_1.Data.push("history", pageHistory);
-        console.log("next url=" + route.url);
-        await Response.rendering(route, pageHistory, data);
-        if (this.routeType == App_1.AppRouteType.web)
-            location.href = "#" + url;
-        if (replaced) {
-            const get = Data_1.Data.get("history");
-            let after = [];
-            for (let n = 0; n < get.length; n++) {
-                if (n != get.length - 2) {
-                    after.push(get[n]);
-                }
+    static next(url, data, replaced) {
+        return new Promise(async (resolve) => {
+            if (Response.lock)
+                return;
+            this.isBack = false;
+            const route = Routes_1.Routes.searchRoute(url.toString());
+            if (route.mode == Routes_1.DecisionRouteMode.Notfound) {
+                this.notFoundView(route);
+                return;
             }
-            console.log(after);
-            Data_1.Data.set("history", after);
-            (0, VirtualDom_1.dom)("main article").last.prev.remove();
-        }
+            let pageHistory = {
+                route: route,
+                data: data,
+            };
+            if (route.controller) {
+                const res = this.loadController(route, data);
+                pageHistory.controller = res.Controller;
+                pageHistory.view = res.view;
+            }
+            else if (route.view) {
+                pageHistory.view = this.loadView(route, data);
+            }
+            await this.loadLeaveHandle();
+            pageHistory.callback = resolve;
+            Data_1.Data.push("history", pageHistory);
+            console.log("next url=" + route.url);
+            await Response.rendering(route, pageHistory, data);
+            if (this.routeType == App_1.AppRouteType.web)
+                location.href = "#" + url;
+            if (replaced) {
+                const get = Data_1.Data.get("history");
+                let after = [];
+                for (let n = 0; n < get.length; n++) {
+                    if (n != get.length - 2) {
+                        after.push(get[n]);
+                    }
+                }
+                console.log(after);
+                Data_1.Data.set("history", after);
+                (0, VirtualDom_1.dom)("main article").last.prev.remove();
+            }
+        });
     }
     static loadController(route, data) {
         const controllerName = Lib_1.Lib.getModuleName(route.controller + "Controller");
@@ -229,39 +242,44 @@ class Response {
     static get isNext() {
         return !this.isBack;
     }
-    static async loadPrevHandle(index) {
-        const prevHistory = Data_1.Data.getPrev("history", index);
+    static async loadLeaveHandle() {
+        const prevHistory = Data_1.Data.now("history");
         if (prevHistory) {
             // Controller & View Leave 
             if (prevHistory.controller) {
                 const res = await prevHistory.controller.handleLeave(prevHistory.route.action);
-                if (typeof res == "boolean" && res === false)
-                    return;
+                if (prevHistory.callback) {
+                    prevHistory.callback(res);
+                }
                 if (this.isBack) {
-                    const resBack = await prevHistory.controller.handleLeaveBack(prevHistory.route.action);
-                    if (typeof resBack == "boolean" && resBack === false)
-                        return;
+                    const res = await prevHistory.controller.handleLeaveBack(prevHistory.route.action);
+                    if (prevHistory.callback) {
+                        prevHistory.callback(res);
+                    }
                 }
                 if (this.isNext) {
-                    const resNext = await prevHistory.controller.handleLeaveNext(prevHistory.route.action);
-                    if (typeof resNext == "boolean" && resNext === false)
-                        return;
+                    const res = await prevHistory.controller.handleLeaveNext(prevHistory.route.action);
+                    if (prevHistory.callback) {
+                        prevHistory.callback(res);
+                    }
                 }
             }
             if (prevHistory.view) {
-                await prevHistory.view.handleAlways(...prevHistory.route.args);
                 const res = await prevHistory.view.handleLeave();
-                if (typeof res == "boolean" && res === false)
-                    return;
+                if (prevHistory.callback) {
+                    prevHistory.callback(res);
+                }
                 if (this.isBack) {
-                    const resBack = await prevHistory.view.handleLeaveBack();
-                    if (typeof resBack == "boolean" && resBack === false)
-                        return;
+                    const res = await prevHistory.view.handleLeaveBack();
+                    if (prevHistory.callback) {
+                        prevHistory.callback(res);
+                    }
                 }
                 if (this.isNext) {
-                    const resNext = await prevHistory.view.handleLeaveNext();
-                    if (typeof resNext == "boolean" && resNext === false)
-                        return;
+                    const res = await prevHistory.view.handleLeaveNext();
+                    if (prevHistory.callback) {
+                        prevHistory.callback(res);
+                    }
                 }
             }
         }
@@ -275,7 +293,6 @@ class Response {
             (0, VirtualDom_1.dom)("main").removeClass(MyApp.animationOpenClassName);
         if (MyApp.delay)
             await Lib_1.Lib.sleep(MyApp.delay);
-        await this.loadPrevHandle();
         if (route.controller) {
             await Response.renderingOnController(route, pageHistory);
         }
