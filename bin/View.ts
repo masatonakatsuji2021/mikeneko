@@ -1,7 +1,10 @@
 import { Template } from "Template";
 import { Render } from "Render";
-import { VirtualDom } from "VirtualDom";
+import { dom, VirtualDom } from "VirtualDom";
 import { UI } from "UI";
+import { Lib } from "Lib";
+import { App } from "App";
+import { Data } from "Data";
 
 /**
  * ***View*** : Main class for each screen.
@@ -66,6 +69,71 @@ export class View extends Render {
     public static append(mjs: VirtualDom, ViewName? : string, sendData? : any) : View {
         if(ViewName) ViewName = "view/" + ViewName;
         return super.append(mjs, ViewName, sendData, this) as View;
+    }
+
+
+    /**
+     * ***stackOpen*** : Temporarily bring a view to the foreground  
+     * If it is displayed using this method, it will not be saved in the history.  
+     * If the destination View has a handleLeaveStackClose method, you can get the return value using async/await.
+     * @returns {Promise<any>} 
+     */
+    public static stackOpen() : Promise<any> ;
+
+    /**
+     * ***stackOpen*** : Temporarily bring a view to the foreground  
+     * If it is displayed using this method, it will not be saved in the history.  
+     * If the destination View has a handleLeaveStackClose method, you can get the return value using async/await.
+     * @param {Array<any>} aregments
+     * @returns {Promise<any>} 
+     */
+    public static stackOpen(...aregments : Array<any>) : Promise<any> ;
+
+    public static stackOpen(...aregments : Array<any>) {
+
+        return new Promise(async (resolve) => {
+
+            const view = new this();
+
+            const MyApp : typeof App = require("app/config/App").MyApp;
+            
+            if (MyApp.animationCloseClassName) dom("main").addClass(MyApp.animationCloseClassName);
+            if (MyApp.animationOpenClassName) dom("main").removeClass(MyApp.animationOpenClassName);
+
+            if (MyApp.delay) await Lib.sleep(MyApp.delay);
+
+            const article = VirtualDom.create(this.getHtml(), "article");
+            const main = dom("main");
+            main.append(article);
+            view.mjs = main.childs;
+
+            Data.set("backHandle", async ()=>{
+
+                if (MyApp.animationCloseClassName) dom("main").addClass(MyApp.animationCloseClassName);
+                if (MyApp.animationOpenClassName) dom("main").removeClass(MyApp.animationOpenClassName);
+        
+                if (MyApp.delay) await Lib.sleep(MyApp.delay);
+
+                dom("main article:last-child").remove();
+
+                if (MyApp.animationCloseClassName) dom("main").removeClass(MyApp.animationCloseClassName);
+                if (MyApp.animationOpenClassName) dom("main").addClass(MyApp.animationOpenClassName);
+
+                const output = await view.handleLeaveStackClose();
+
+                resolve(output);
+            });
+
+            if (MyApp.animationCloseClassName) dom("main").removeClass(MyApp.animationCloseClassName);
+            if (MyApp.animationOpenClassName) dom("main").addClass(MyApp.animationOpenClassName);
+
+            if (aregments) {
+                await view.handle(...aregments);
+            }
+            else {
+                await view.handle();
+            }
+        });
     }
 
     /**
@@ -185,4 +253,10 @@ export class View extends Render {
      * ***handleFooterChanged*** : A handler that runs when the template specified in the member variable footer tag changes.
      */
     public handleFooterChanged(footer? : UI) : void | Promise<void> {}
+
+    /**
+     * ***handleLeaveStackClose*** : Handler that is executed when the screen is removed after being temporarily displayed foreground using stackOpen  
+     * @returns 
+     */
+    public handleLeaveStackClose() : Promise<void | any> { return; }
 }

@@ -31,6 +31,13 @@ class Response {
         if (this.isBack)
             return false;
         this.isBack = true;
+        if (Data_1.Data.get("backHandle")) {
+            const backHandle = Data_1.Data.get("backHandle");
+            Data_1.Data.remove("backHandle");
+            backHandle();
+            this.isBack = false;
+            return true;
+        }
         let hdata;
         for (let n = 0; n < index; n++) {
             if (this.routeType == App_1.AppRouteType.application) {

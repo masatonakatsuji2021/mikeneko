@@ -65,6 +65,13 @@ var Response = /** @class */ (function () {
         if (this.isBack)
             return false;
         this.isBack = true;
+        if (Data_1.Data.get("backHandle")) {
+            var backHandle = Data_1.Data.get("backHandle");
+            Data_1.Data.remove("backHandle");
+            backHandle();
+            this.isBack = false;
+            return true;
+        }
         var hdata;
         for (var n = 0; n < index; n++) {
             if (this.routeType == App_1.AppRouteType.application) {

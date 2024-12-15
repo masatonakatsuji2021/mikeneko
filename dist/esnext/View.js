@@ -2,6 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.View = void 0;
 const Render_1 = require("Render");
+const VirtualDom_1 = require("VirtualDom");
+const Lib_1 = require("Lib");
+const Data_1 = require("Data");
 /**
  * ***View*** : Main class for each screen.
  */
@@ -16,6 +19,47 @@ class View extends Render_1.Render {
         if (ViewName)
             ViewName = "view/" + ViewName;
         return super.append(mjs, ViewName, sendData, this);
+    }
+    static stackOpen(...aregments) {
+        return new Promise(async (resolve) => {
+            const view = new this();
+            const MyApp = require("app/config/App").MyApp;
+            if (MyApp.animationCloseClassName)
+                (0, VirtualDom_1.dom)("main").addClass(MyApp.animationCloseClassName);
+            if (MyApp.animationOpenClassName)
+                (0, VirtualDom_1.dom)("main").removeClass(MyApp.animationOpenClassName);
+            if (MyApp.delay)
+                await Lib_1.Lib.sleep(MyApp.delay);
+            const article = VirtualDom_1.VirtualDom.create(this.getHtml(), "article");
+            const main = (0, VirtualDom_1.dom)("main");
+            main.append(article);
+            view.mjs = main.childs;
+            Data_1.Data.set("backHandle", async () => {
+                if (MyApp.animationCloseClassName)
+                    (0, VirtualDom_1.dom)("main").addClass(MyApp.animationCloseClassName);
+                if (MyApp.animationOpenClassName)
+                    (0, VirtualDom_1.dom)("main").removeClass(MyApp.animationOpenClassName);
+                if (MyApp.delay)
+                    await Lib_1.Lib.sleep(MyApp.delay);
+                (0, VirtualDom_1.dom)("main article:last-child").remove();
+                if (MyApp.animationCloseClassName)
+                    (0, VirtualDom_1.dom)("main").removeClass(MyApp.animationCloseClassName);
+                if (MyApp.animationOpenClassName)
+                    (0, VirtualDom_1.dom)("main").addClass(MyApp.animationOpenClassName);
+                const output = await view.handleLeaveStackClose();
+                resolve(output);
+            });
+            if (MyApp.animationCloseClassName)
+                (0, VirtualDom_1.dom)("main").removeClass(MyApp.animationCloseClassName);
+            if (MyApp.animationOpenClassName)
+                (0, VirtualDom_1.dom)("main").addClass(MyApp.animationOpenClassName);
+            if (aregments) {
+                await view.handle(...aregments);
+            }
+            else {
+                await view.handle();
+            }
+        });
     }
     /**
      * ***beginStatus*** :
@@ -113,5 +157,10 @@ class View extends Render_1.Render {
      * ***handleFooterChanged*** : A handler that runs when the template specified in the member variable footer tag changes.
      */
     handleFooterChanged(footer) { }
+    /**
+     * ***handleLeaveStackClose*** : Handler that is executed when the screen is removed after being temporarily displayed foreground using stackOpen
+     * @returns
+     */
+    handleLeaveStackClose() { return; }
 }
 exports.View = View;

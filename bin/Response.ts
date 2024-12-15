@@ -58,7 +58,16 @@ export class Response {
         if (!index) index = 1;
         if (Response.lock) return false;
         if (this.isBack) return false;
+
         this.isBack = true;
+
+        if (Data.get("backHandle")) {
+            const backHandle = Data.get("backHandle");
+            Data.remove("backHandle");
+            backHandle();
+            this.isBack = false;
+            return true;
+        }
 
         let hdata : PageHistory;
         for (let n = 0 ; n < index ; n++) {
