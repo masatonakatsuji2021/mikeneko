@@ -76,7 +76,20 @@ export class Response {
         if (Response.lock) return false;
         if (this.isBack) return false;
 
-        let index;
+        const MyApp : typeof App = require("app/config/App").MyApp;
+
+        if (MyApp.routeType == AppRouteType.application) {
+            return await this.backFromApplication(indexOrSearchURI);
+        }
+        else if (MyApp.routeType == AppRouteType.web) {
+            return await this.backFromWeb(indexOrSearchURI);
+        }
+    }
+
+    private static async backFromApplication(indexOrSearchURI? : number | string) {
+
+        const MyApp : typeof App = require("app/config/App").MyApp;
+        let index = 1;
         if (indexOrSearchURI) {
             if (typeof indexOrSearchURI == "string") {
                 index = 0;
@@ -102,27 +115,21 @@ export class Response {
         this.isBack = true;
         await this.loadLeaveHandle();
 
-        const MyApp : typeof App = require("app/config/App").MyApp;
         if (MyApp.animationCloseClassName) dom("main").addClass(MyApp.animationCloseClassName);
         if (MyApp.animationOpenClassName) dom("main").removeClass(MyApp.animationOpenClassName);
         if (MyApp.delay) await Lib.sleep(MyApp.delay);
 
         let hdata : PageHistory;
         for (let n = 0 ; n < index ; n++) {
-            if (this.routeType == AppRouteType.application) {
-                Data.pop("history");
-                hdata= Data.now("history");
-                if (hdata) {
-                    if (hdata.drawingRequired) {
-                        await this.rendering(hdata.route, hdata, hdata.data);
-                    }
-                    else {
-                        dom("main article:last-child").remove();
-                    }
+            Data.pop("history");
+            hdata= Data.now("history");
+            if (hdata) {
+                if (hdata.drawingRequired) {
+                    await this.rendering(hdata.route, hdata, hdata.data);
                 }
-            }
-            else if(this.routeType == AppRouteType.web) {
-                history.back();
+                else {
+                    dom("main article:last-child").remove();
+                }
             }
         }
 
@@ -145,11 +152,16 @@ export class Response {
         return true;
     }
 
+    private static async backFromWeb(indexOrSearchURI? : number | string) {
+
+        return true;
+    }
+
     /**
      * ***next*** : Transition to the specified URL (route path)  
      * It cannot be used if screen transitions are disabled by lock, etc.  
      * @param {string} url route path
-     * @returns {void}
+     * @returns {Promise<any>}
      */
     public static next(url : string | number) : Promise<any>;
 
@@ -158,16 +170,29 @@ export class Response {
      * It cannot be used if screen transitions are disabled by lock, etc.  
      * @param {string} url route path
      * @param {any?} data Transmission data contents
-     * @returns {void}
+     * @returns {Promise<any>}
      */
     public static next(url : string | number, data : any) : Promise<any>;
 
     public static next(url : string | number, data : any, replaced: boolean) : Promise<any>;
 
-    public static next(url : string | number, data? : any, replaced? : boolean) : Promise<any> {
+    public static next(url : string | number, data? : any, replaced? : boolean) : Promise<any> | void {
+        if (Response.lock) return;
+        this.isBack = false;
+
+        const MyApp : typeof App = require("app/config/App").MyApp;
+
+        if (MyApp.routeType == AppRouteType.application) {
+            return this.nextFromApplication(url, data, replaced);
+        }
+        else if (MyApp.routeType == AppRouteType.web) {
+            return this.nextFromWeb(url, data, replaced);
+        }
+    }
+
+    private static nextFromApplication(url : string | number, data? : any, replaced? : boolean) {
         return new Promise(async (resolve)=>{
-            if (Response.lock) return;
-            this.isBack = false;
+
             const route : DecisionRoute = Routes.searchRoute(url.toString());
             if(route.mode == DecisionRouteMode.Notfound) {
                 this.notFoundView(route);
@@ -192,8 +217,6 @@ export class Response {
             Data.push("history", pageHistory);
             console.log("next url=" + route.url);
             await Response.rendering(route, pageHistory, data);
-            if (this.routeType == AppRouteType.web) location.href = "#" + url;
-
             if (replaced) {
                 
                 const get : Array<PageHistory> = Data.get("history");
@@ -209,6 +232,10 @@ export class Response {
             }
 
         });
+    }
+
+    private static nextFromWeb(url : string | number, data? : any, replaced? : boolean) {
+     
     }
 
     private static loadController(route: DecisionRoute, data? : any) : {Controller: Controller, view: View} {

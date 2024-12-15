@@ -29,7 +29,8 @@ class Response {
                 return false;
             if (this.isBack)
                 return false;
-            let index;
+            const MyApp = require("app/config/App").MyApp;
+            let index = 1;
             if (indexOrSearchURI) {
                 if (typeof indexOrSearchURI == "string") {
                     index = 0;
@@ -53,7 +54,6 @@ class Response {
             }
             this.isBack = true;
             yield this.loadLeaveHandle();
-            const MyApp = require("app/config/App").MyApp;
             if (MyApp.animationCloseClassName)
                 (0, VirtualDom_1.dom)("main").addClass(MyApp.animationCloseClassName);
             if (MyApp.animationOpenClassName)
@@ -62,21 +62,18 @@ class Response {
                 yield Lib_1.Lib.sleep(MyApp.delay);
             let hdata;
             for (let n = 0; n < index; n++) {
-                if (this.routeType == App_1.AppRouteType.application) {
-                    Data_1.Data.pop("history");
-                    hdata = Data_1.Data.now("history");
-                    if (hdata) {
-                        if (hdata.drawingRequired) {
-                            yield this.rendering(hdata.route, hdata, hdata.data);
-                        }
-                        else {
-                            (0, VirtualDom_1.dom)("main article:last-child").remove();
-                        }
+                Data_1.Data.pop("history");
+                hdata = Data_1.Data.now("history");
+                if (hdata) {
+                    if (hdata.drawingRequired) {
+                        yield this.rendering(hdata.route, hdata, hdata.data);
+                    }
+                    else {
+                        (0, VirtualDom_1.dom)("main article:last-child").remove();
                     }
                 }
-                else if (this.routeType == App_1.AppRouteType.web) {
+                if (this.routeType == App_1.AppRouteType.web)
                     history.back();
-                }
             }
             const nowHistory = Data_1.Data.now("history");
             if (nowHistory.view) {
@@ -123,8 +120,12 @@ class Response {
             Data_1.Data.push("history", pageHistory);
             console.log("next url=" + route.url);
             yield Response.rendering(route, pageHistory, data);
-            if (this.routeType == App_1.AppRouteType.web)
-                location.href = "#" + url;
+            if (this.routeType == App_1.AppRouteType.web) {
+                history.pushState({
+                    route: pageHistory.route,
+                    data: pageHistory.data,
+                }, null, "#" + url);
+            }
             if (replaced) {
                 const get = Data_1.Data.get("history");
                 let after = [];

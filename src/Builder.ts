@@ -23,7 +23,7 @@ export interface BuildOption {
     /**
      * ***platforms*** : Platform specific settings.
      */
-    platforms? :  Array<BuildPlatrom>,
+    platforms? :  Array<BuildPlatform>,
 
     /**
      * ***codeCompress*** : code compress.
@@ -52,7 +52,7 @@ export enum BuildPlatformType {
     Electron = "electron",
 }
 
-export interface BuildPlatrom {
+export interface BuildPlatform {
 
     /**
      * ***name*** : platform name

@@ -5,17 +5,18 @@ console.log("TransComplie Start");
 console.log("tsc");
 
 execSync("tsc");
-
+/*
 console.log("tsc(es5)");
 try {
     execSync("cd ./bin && tsc --project tsconfigs/es5.json");
 } catch(error) {
     console.log(error.stdout.toString());
 }
+    */
 
 console.log("tsc(es6)");
 execSync("cd ./bin && tsc --project tsconfigs/es6.json");
-
+/*
 console.log("tsc(es2016)");
 execSync("cd ./bin && tsc --project tsconfigs/es2016.json");
 
@@ -39,5 +40,5 @@ execSync("cd ./bin && tsc --project tsconfigs/es2022.json");
 
 console.log("tsc(esnext)");
 execSync("cd ./bin && tsc --project tsconfigs/esnext.json");
-
+*/
 console.log("......Complete!");

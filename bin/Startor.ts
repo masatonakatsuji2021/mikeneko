@@ -15,6 +15,8 @@ export class Startor {
 
     public constructor() {
 
+        console.log(history);
+
         const MyApp = require("app/config/App");
         if (!MyApp){
             throw Error("App Class is not found.");
@@ -28,23 +30,24 @@ export class Startor {
         this.setShortcode();
 
         (async ()=>{
+            /*
             window.addEventListener("click", (e: MouseEvent) => {
                 return this.clickHandleDelegate(e);
             });
+            
             window.addEventListener("popstate", async (e : PopStateEvent) => {
                 await this.popStateHandleDelegate(e);
             });
-        
+        */
             await Background.load();
             let url : string = this.MyApp.beginURL;
             if (this.MyApp.routeType == AppRouteType.web) {
                 if (location.hash) url = location.hash.substring(1);
             }
-            console.log("beginURL=" + url);
             Response.next(url);
         })();
     }
-
+/*
     private clickHandleDelegate(e : MouseEvent){
         if (Response.lock) return false;
         // @ts-ignore
@@ -89,7 +92,7 @@ export class Startor {
 
         Response.next(url);
     }
-
+*/
     private setShortcode(){
 
         Shortcode.add("rendering", (args : {[name : string] : string}) : string => {
