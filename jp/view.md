@@ -121,6 +121,12 @@ View.handleLeave
         |
         |      前画面から戻っている場合
         |----------------------------------- View.handleLeaveBack
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |
+    |       stackOpenを使って一時表示後に前画面に戻った場合
+    |--------------------------------------------------------- view.handleLeaveStackClose
+
 ````
 
 各ハンドラの解説を下記に示します。
@@ -364,6 +370,34 @@ export class Page1View extends View {
 }
 ```
 
+### - handleLeaveStackClose イベント
+
+このイベントは``stackOpen``メソッドを使って一時的に再前面に画面表示後に前画面に戻ろうとした際に実行されます。  
+stackOpenについては[こちらを参照](#stackOpen)
+
+戻り値を指定すると、stackOpenメソッドの戻り値として値を渡すことができます。
+
+```typescript
+import { VIew } from "View";
+
+export class TimerSetView extends View {
+
+    private interval;
+
+    public handle() {
+
+    }
+
+    // handleLeaveStackClose
+    public handleLeaveStackClose() {
+
+        // 入力値を戻り値とする
+        return this.vdos.timer.value;
+    }
+}
+```
+
+
 ## # 仮想DOM操作
 
 レンダリングHTMLにて指定の要素に対してテキストの表示、及び押した際のイベントハンドラの実装等を行うには  
@@ -417,15 +451,15 @@ export class Page1View extends View {
 ```
 
     
-## # sendData: any;
+## # sendData
  
 ...
 
-## # beginStatus : boolean = false;
+## # beginStatus
 
 ...
 
-## # view : string = null;
+## # view
 
 ...
 
@@ -599,6 +633,39 @@ export class Page1View extends View {
 
     public handle() {
         console.log("handle .... OK");
+    }
+}
+```
+
+<a id="stackOpen"></a>
+
+## # 一時的な画面表示 (stackOpen)
+
+
+
+```typescript
+const value = await TimerSetView.stackOpen();
+console.log(value);
+```
+
+``TimerSetView.ts``
+
+```typescript
+import { VIew } from "View";
+
+export class TimerSetView extends View {
+
+    private interval;
+
+    public handle() {
+
+    }
+
+    // handleLeaveStackClose
+    public handleLeaveStackClose() {
+
+        // 入力値を戻り値とする
+        return this.vdos.timer.value;
     }
 }
 ```
