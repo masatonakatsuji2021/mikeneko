@@ -10,8 +10,10 @@ var FrontControl = /** @class */ (function () {
     FrontControl.prototype.getFn = function (name) {
         if (this.__fn_static[name])
             return this.__fn_static[name];
-        if (!this.__fn[name])
-            throw ("No data available. Check if the file exists in the source file \"" + name + "\".");
+        if (!this.__fn[name]) {
+            console.error("No data available. Check if the file exists in the source file \"" + name + "\".");
+            return;
+        }
         var buffer = this.__fn[name]();
         if (typeof buffer == "object") {
             var c = Object.keys(buffer);

@@ -1,22 +1,24 @@
+import { CLI } from "nktj_cli";
 import { Builder, BuildOption } from "./Builder";
 import { Create } from "./Create";
 
 export const command = ()=>{
 
-    const argv = process.argv;
+    const packageJson = require("../package.json");
 
-    argv.shift();
-    argv.shift();
+    CLI
+        .outn("=====================================")
+        .outn("Mikeneko CLI Version: " + packageJson.version)
+        .outn("=====================================")
+        .br()
+    ;
 
-    console.log("=====================================");
-    console.log("Mikeneko CLI");
-    console.log("=====================================");
-    console.log("");
+    const args = CLI.getArgs();
 
-    if (argv[0] == "create") {
-        Create.create(argv);
+    if (args[0] == "create") {
+        Create.create(args);
     }
-    else if(argv[0] == "build") {
+    else if(args[0] == "build") {
         try {
             const configPath = process.cwd() + "/package.json";
             const config = require(configPath);
@@ -27,11 +29,13 @@ export const command = ()=>{
         }
     }
     else {
-        console.log("[Command List]");
-        console.log("");
-        console.log("  create [project_name]".padEnd(30) + " : Create project source data.");
-        console.log("");
-        console.log("  build".padEnd(30) + " : Build the project sources.");
-        console.log("");
+        CLI
+            .outn("[Command List]")
+            .br()
+            .outn("  create [project_name]".padEnd(30) + " : Create project source data.")
+            .br()
+            .outn("  build".padEnd(30) + " : Build the project sources.")
+            .br()
+        ;
     }
 };

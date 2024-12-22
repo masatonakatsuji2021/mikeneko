@@ -1,4 +1,4 @@
-import { Builder, BuildOption, BuildPlatrom } from "mikeneko/src/Builder";
+import { Builder, BuildOption, BuildPlatform } from "mikeneko/src/Builder";
 
 export * from "mikeneko/src/Builder";
 
@@ -10,7 +10,7 @@ export class Mikeneko {
 
 export class BuildHandle {
 
-    public static handleBegin(platform : BuildPlatrom) : void {}
+    public static handleBegin(platform : BuildPlatform) : void {}
 
-    public static handleComplete(platform : BuildPlatrom) : void {}
+    public static handleComplete(platform : BuildPlatform) : void {}
 }

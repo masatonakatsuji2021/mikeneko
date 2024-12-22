@@ -7,6 +7,7 @@ import { execSync } from "child_process";
 import * as obfucator from "javascript-obfuscator";
 import { BuildHandle } from "mikeneko";
 import { PlatformBase } from "mikeneko/src/PlatformBase";
+import { CLI, Color } from "nktj_cli";
 
 export interface BuildOption {
 
@@ -23,7 +24,7 @@ export interface BuildOption {
     /**
      * ***platforms*** : Platform specific settings.
      */
-    platforms? :  Array<BuildPlatrom>,
+    platforms? :  Array<BuildPlatform>,
 
     /**
      * ***codeCompress*** : code compress.
@@ -43,16 +44,22 @@ export interface BuildOption {
 
 export enum BuildPlatformType {
 
+    /** Web */
     Web = "web",
 
+    /** Cordova */
     Cordova = "cordova",
 
+    /** Capacitor */
     Capacitor = "capacitor",
 
+    /** Electro */
     Electron = "electron",
 }
 
-export interface BuildPlatrom {
+export interface BuildPlatform {
+
+    disable? : boolean,
 
     /**
      * ***name*** : platform name
@@ -89,15 +96,6 @@ export interface BuildPlatrom {
     obfuscated? : boolean,
 }
 
-export interface BuildCordova {
-
-    devices? : Array<"android" | "ios">,
-
-    id? : string,
-
-    name? : string,
-}
-
 export class Builder {
 
     private static BuildCoreList : Array<string> = [
@@ -125,13 +123,28 @@ export class Builder {
     ];
 
     public static build(option? : BuildOption) {
+        const argsOption = CLI.getArgsOPtion();
+        if (argsOption["platform"] || argsOption["p"]) {
+
+            let selectPlatform : string;
+            if (argsOption["platform"]) selectPlatform = argsOption["platform"];
+            if (argsOption["p"]) selectPlatform = argsOption["p"];
+
+            for(let n = 0 ; n< option.platforms.length ; n++) {
+                const platform = option.platforms[n];
+                if (platform.name != selectPlatform) {
+                    platform.disable = true;
+                }
+            }
+        }
+
         if (!option) option = {};
         if (option.debug == undefined) option.debug = false;
         if (option.rootDir == undefined) option.rootDir = process.cwd();
         if (option.tranceComplied == undefined) option.tranceComplied = true;
         if (option.platforms == undefined) option.platforms = [ { name: "web" } ];
 
-        console.log("mikeneko build start");
+        CLI.outn("** mikeneko build start **");
         const rootDir : string = option.rootDir;
 
         // typescript trance complie
@@ -139,9 +152,9 @@ export class Builder {
         try {
             if (option.tranceComplied) tsType = this.typescriptComplie(rootDir);
         } catch (error) {
-            console.log("\n\n[TypeScript TrancePlie Error]")
-            console.log(error.stdout.toString());
-            console.log("\n\n ...... Failed!");
+            CLI.outn("[TypeScript TrancePlie Error]", Color.Red);
+            CLI.outn(error.stdout.toString());
+            CLI.outn("...... " + CLI.setColor("Failed!", Color.Red));
             return;
         }
 
@@ -151,17 +164,27 @@ export class Builder {
 
         for (let n = 0 ; n < option.platforms.length ; n++) {
             // platforms building 
-            const platform = option.platforms[n];
+            let platform = option.platforms[n];
+            if (platform.disable) continue;
+            
             if (!platform.buildType) platform.buildType = BuildPlatformType.Web;
 
             let platformOptionClass : typeof PlatformBase;
             try {
                 const pbName = "Platform" + platform.buildType.substring(0,1).toUpperCase() + platform.buildType.substring(1);
-                const pb_ = require("mikeneko-platform-" + platform.buildType);
+                const pbModuleName = "mikeneko-platform-" + platform.buildType;
+                const pbPath = require.resolve(pbModuleName);
+                const pb_ = require(pbModuleName);
                 if (pb_[pbName]) {
                     platformOptionClass = pb_[pbName];
+                    platformOptionClass.__dirname = pbPath;
                 }
             } catch(error) { }
+
+            if (platformOptionClass) {
+                const p_ = platformOptionClass.handleBuildBegin(platform);
+                if (p_) platform = p_;
+            }
 
             let buildhandle : typeof BuildHandle = BuildHandle;
             try {
@@ -173,8 +196,7 @@ export class Builder {
                 }catch(error){}    
             }
             
-            console.log("# platform = " + platform.name);
-            console.log("# buildType = " + platform.buildType);
+            CLI.outn(CLI.setColor("# ", Color.Green) + "platform = " + platform.name + ", buildType = " + platform.buildType);
 
             // create platform directory
             let platformDir : string = buildDir + "/" + platform.name;
@@ -200,6 +222,18 @@ export class Builder {
                  // core module mount
                  this.coreModuleMount(codeList, tsType, core);
              });
+
+             if (platformOptionClass) {
+                const addModule = (name : string, modulePath? : string) => {
+                    if (!modulePath) modulePath = name;
+                    console.log("# core module mount".padEnd(20) + " " + name);
+                    const fullPath : string = path.dirname(platformOptionClass.__dirname) + "/dist/" + tsType + "/" + modulePath + ".js"; 
+                    let contents : string = fs.readFileSync(fullPath).toString() ;
+                    contents = "var exports = {};\n" + contents + ";\nreturn exports;";
+                    codeList[name] = this.setFn(name, contents, true);
+                };
+                platformOptionClass.handleCoreModuleMount(addModule);
+             }
 
              // core resource mount
              this.coreResourceMount(codeList, rootDir);
@@ -228,10 +262,10 @@ export class Builder {
             if (platform.obfuscated != undefined) obfuscated = platform.obfuscated;
             if (obfuscated) coreStr = this.codeObfuscate(coreStr);
             
-            console.log("# write index.js");
+            CLI.outn(CLI.setColor("# ", Color.Green) + "write index.js");
             fs.writeFileSync(platformDir + "/index.js", coreStr);
     
-            console.log("# write index.html");
+            CLI.outn(CLI.setColor("# ", Color.Green) + "write index.html");
             let indexHTML : string = "<!DOCTYPE html><head><meta charset=\"UTF-8\"><script src=\"index.js\"></script></head><body></body></html>";
             if (platformOptionClass) {
                 const htmlBuffer = platformOptionClass.handleCreateIndexHTML();
@@ -239,24 +273,24 @@ export class Builder {
             }
             fs.writeFileSync(platformDir + "/index.html", indexHTML);
     
-            console.log("# Web Build Comlete.");
+            CLI.outn(CLI.setColor("# ", Color.Green) + "Web Build Comlete.");
 
             if (platformOptionClass) {
-                platformOptionClass.handleWebBuildCompleted();
+                platformOptionClass.handleWebBuildCompleted(platform);
             }
 
-            console.log("# ........ platform = " + platform.name + " ok");
+            CLI.outn(CLI.setColor("# ", Color.Green) + "........ platform = " + platform.name + " ok");
 
             // build handle platform  complete
             buildhandle.handleComplete(platform);
         }
 
-        console.log("#");
-        console.log("# ...... Complete!");
+        CLI.br();
+        CLI.outn("...... Complete!", Color.Green);
     }
 
     private static jsStart(codeList: {[name : string] : string}, tsType : string, platformName : string, debugMode : boolean){
-        console.log("# build Start");
+        CLI.outn(CLI.setColor("# ", Color.Green) + "build Start");
         let content =  fs.readFileSync(path.dirname(__dirname) + "/dist/" + tsType + "/Front.js").toString();
         content = content.split("{{platform}}").join(platformName);
         if (!debugMode) content += "console.log=()=>{};\n"
@@ -273,19 +307,11 @@ export class Builder {
     }
 
     private static coreModuleMount(codeList : {[name : string] : string}, tsType : string, name : string) {
-        console.log("# core module mount".padEnd(30) + " " + name);
+        CLI.outn(CLI.setColor("# ", Color.Green) + "mount core".padEnd(20) + " " + name);
         const fullPath : string = path.dirname(__dirname) + "/dist/" + tsType + "/" + name + ".js"; 
         let contents : string = fs.readFileSync(fullPath).toString() ;
         contents = "var exports = {};\n" + contents + ";\nreturn exports;";
         codeList[name] = this.setFn(name, contents, true);
-    }
-
-    private static coreModuleMountPlatformType(typeName : string, typePath : string, codeList : {[name : string] : string}, tsType : string) {
-        console.log("# core module mount(typename = " + typeName + ")".padEnd(30) + " " + name);
-        const fullPath : string = typePath + "/dist/" + tsType + "/" + name + ".js"; 
-        let contents : string = fs.readFileSync(fullPath).toString() ;
-        contents = "var exports = {};\n" + contents + ";\nreturn exports;";
-        codeList[typeName + "/" + name] = this.setFn(typeName + "/" + name, contents, true);
     }
 
     private static coreResourceMount(codeList : {[name : string] : string}, tsType : string) {
@@ -297,7 +323,7 @@ export class Builder {
             basePath = basePath.split("//").join("/");
             const contentB64 = Buffer.from(fs.readFileSync(fullPath)).toString("base64");
             codeList[basePath] = this.setFn(basePath,  "\"" + contentB64 + "\"") ;
-            console.log(("# core resource mount").padEnd(30) + " " + basePath);
+            CLI.outn(CLI.setColor("# ", Color.Green) + "mount coreres".padEnd(20) + " " + basePath);
         });
     }
 
@@ -318,18 +344,14 @@ export class Builder {
                 let contents : string = fs.readFileSync(fullPath).toString() ;
                 contents = "var exports = {};\n" + contents + ";\nreturn exports;";                
                 codeList[basePath] = this.setFn(basePath, contents, true);
-                let plstr = "";
-                if (targetPath != rootDir + "/src/app") {
-                    plstr = " (" + platformName + ")";
-                }
-                console.log(("# local module" + plstr).padEnd(30) +" " + basePath);
+                CLI.outn(CLI.setColor("# ", Color.Green) + "mount local".padEnd(20) +" " + basePath);
             });
         });
         return strs;
     }
 
     private static jsEnd(codeList : {[name : string] : string}) {
-        console.log("# build End");
+        CLI.outn(CLI.setColor("# ", Color.Green) + "build End");
         codeList.___FOOTER = "sfa.start(()=>{ const st = use(\"Startor\");  new st.Startor(); });";
     }
 
@@ -353,7 +375,7 @@ export class Builder {
                     plstr = "(" + platformName + ")";
                 }
                 codeList[basePath] = this.setFn(basePath,  "\"" + mimeType + "|" + contentB64 + "\"") ;
-                console.log(("# resource mount" + plstr).padEnd(30) + " " + basePath);
+                CLI.outn(CLI.setColor("# ", Color.Green) + "mount localres".padEnd(20) + " " + basePath);
             });
         });
         return strs;
@@ -377,7 +399,7 @@ export class Builder {
                     plstr = "(" + platformName + ")";
                 }
                 codeList[basePath] = this.setFn(basePath, "\"" +  contentB64 + "\";");
-                console.log(("# render mount" + plstr).padEnd(30) + " "+ basePath);
+                CLI.outn(CLI.setColor("# ", Color.Green) + "mount render".padEnd(20) + " "+ basePath);
             });            
         });
         return strs;
@@ -407,18 +429,18 @@ export class Builder {
         let tsType = "es6";
         tsType = this.getTsType(rootDir);
         if (!tsType) tsType = "es6";
-        console.log("# TranceComplieType = " + tsType);
-        console.log("# Trance Complie...");
+        CLI.outn(CLI.setColor("# ", Color.Green) + "TranceComplieType = " + tsType);
+        CLI.out(CLI.setColor("# ", Color.Green) + "Trance Complie...");
         execSync("tsc --pretty");
-        console.log("# ..OK");
+        CLI.out("OK").br();
         return tsType;
     }
 
     private static outMkdir(rootDir : string, alreadyDeleted? : boolean) {
-        console.log("# mkdir " + rootDir);
+        CLI.outn(CLI.setColor("# ", Color.Green) + "mkdir " + rootDir);
         if (alreadyDeleted) {
             if (fs.existsSync(rootDir)) {
-                console.log("# already directory .... clear");
+                CLI.outn(CLI.setColor("# ", Color.Green) + "already directory .... clear");
                 fs.rmSync(rootDir, {
                     recursive: true,
                 });

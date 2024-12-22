@@ -1,20 +1,21 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.command = void 0;
+const nktj_cli_1 = require("nktj_cli");
 const Builder_1 = require("./Builder");
 const Create_1 = require("./Create");
 const command = () => {
-    const argv = process.argv;
-    argv.shift();
-    argv.shift();
-    console.log("=====================================");
-    console.log("Mikeneko CLI");
-    console.log("=====================================");
-    console.log("");
-    if (argv[0] == "create") {
-        Create_1.Create.create(argv);
+    const packageJson = require("../package.json");
+    nktj_cli_1.CLI
+        .outn("=====================================")
+        .outn("Mikeneko CLI Version: " + packageJson.version)
+        .outn("=====================================")
+        .br();
+    const args = nktj_cli_1.CLI.getArgs();
+    if (args[0] == "create") {
+        Create_1.Create.create(args);
     }
-    else if (argv[0] == "build") {
+    else if (args[0] == "build") {
         try {
             const configPath = process.cwd() + "/package.json";
             const config = require(configPath);
@@ -26,12 +27,13 @@ const command = () => {
         }
     }
     else {
-        console.log("[Command List]");
-        console.log("");
-        console.log("  create [project_name]".padEnd(30) + " : Create project source data.");
-        console.log("");
-        console.log("  build".padEnd(30) + " : Build the project sources.");
-        console.log("");
+        nktj_cli_1.CLI
+            .outn("[Command List]")
+            .br()
+            .outn("  create [project_name]".padEnd(30) + " : Create project source data.")
+            .br()
+            .outn("  build".padEnd(30) + " : Build the project sources.")
+            .br();
     }
 };
 exports.command = command;

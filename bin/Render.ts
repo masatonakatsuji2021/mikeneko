@@ -10,13 +10,15 @@ export class Render {
 
     /**
      * ***myMjs*** : Virtual Dom for content.
-     * @deprecated The role of this variable has been changed to **vdo**.
+     * @deprecated The role of this variable has been changed to **vdo**.  
+     * [VirtualDom is described here](VirtualDom.ts)
      */
     public myMjs : VirtualDom;
     
     /**
      * ***mjs**** : Virtual DOM List of VirtualDom Classes.
-     * @deprecated The role of this variable has been changed to **vdos**.
+     * @deprecated The role of this variable has been changed to **vdos**.  
+     * [VirtualDom is described here](VirtualDom.ts)
      * 
      * Example: First, place a v attribute tag in the HTML file.
      * ```html
@@ -31,7 +33,8 @@ export class Render {
     public mjs : VirtualDomList;
         
     /**
-     * ***vdo*** : Virtual Dom for content.
+     * ***vdo*** : Virtual Dom for content.  
+     * [VirtualDom is described here](VirtualDom.ts)
      */
     public get vdo() : VirtualDom {
         return this.myMjs;
@@ -40,6 +43,8 @@ export class Render {
     /**
      * ***vdos*** : Virtual DOM List of VirtualDom Classes.  
      * (``mjs`` is also available as a proxy.)
+     * 
+     * [VirtualDom is described here](VirtualDom.ts)
      * 
      * Example: First, place a v attribute tag in the HTML file.
      * ```html
@@ -149,6 +154,7 @@ export class Render {
         const classPath = Lib.getModulePath("app/" + path);
         let classObj;
         try {
+            if (!useExists(classPath)) throw Error();
             const classObj_ = require(classPath);
             classObj = new classObj_[className]();
             classObj.myMjs = mjs;

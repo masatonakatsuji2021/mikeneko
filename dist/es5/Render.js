@@ -122,6 +122,8 @@ var Render = /** @class */ (function () {
         var classPath = Lib_1.Lib.getModulePath("app/" + path);
         var classObj;
         try {
+            if (!useExists(classPath))
+                throw Error();
             var classObj_ = require(classPath);
             classObj = new classObj_[className]();
             classObj.myMjs = mjs;

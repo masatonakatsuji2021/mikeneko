@@ -138,6 +138,8 @@ class Render {
         const classPath = Lib_1.Lib.getModulePath("app/" + path);
         let classObj;
         try {
+            if (!useExists(classPath))
+                throw Error();
             const classObj_ = require(classPath);
             classObj = new classObj_[className]();
             classObj.myMjs = mjs;
