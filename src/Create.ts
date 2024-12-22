@@ -1,24 +1,46 @@
 import * as fs from "fs";
 import * as path from "path";
+import { CLI, Color} from "nktj_cli";
 
 export class Create {
 
-    public static create(argv : Array<string>) {
-        console.log("# Create Project");
+    public static async create(argv : Array<string>) {
 
-        const rootDir = process.cwd() + "/" + argv[1];
+        CLI.outn("# Create Project").br();
 
-        let exists : boolean = false;
-        if (fs.existsSync(rootDir)) {
-            if (fs.statSync(rootDir).isDirectory()) exists = true;
+        let name;
+        while(!name){
+            name = await CLI.in("Q. Project Name?");
+
+            if (!name) {
+                CLI.out("  [ERROR] ", Color.Red).outn("Project name is empty. please retry.");
+                continue;
+            }
+
+            const rootDir = process.cwd() + "/" + name;
+
+            let exists : boolean = false;
+            if (fs.existsSync(rootDir)) {
+                if (fs.statSync(rootDir).isDirectory()) exists = true;
+            }
+    
+            if (exists){
+                CLI.out("  [ERROR] ", Color.Red).outn("A project directory for \"" + name + "\" has already been created.");
+                name = null;
+                continue;
+            }
         }
+        
+        const status : string = await CLI.br().in("Do you want to create this project? [y/n] (y)") as string;
 
-        if (exists){
-            console.error("[Error] already create project directory.");
+        if (status.toLowerCase() == "n") {
+            CLI.br().outn(".... Canceld");
             return;
-        }
+        } 
 
-        console.log("# mkdir " + argv[1]);
+        const rootDir = process.cwd() + "/" + name;
+
+        CLI.outn(CLI.setColor("# ", Color.Green) + "mkdir".padEnd(15) + " " + rootDir);
         fs.mkdirSync(rootDir);
 
         const defaultPath = path.dirname(__dirname) + "/default";
@@ -27,12 +49,12 @@ export class Create {
             const targetpath = rootDir + dirent.path.substring(defaultPath.length) + "/"+ dirent.name;
             if (dirent.isFile()) {
                 // is file
-                console.log("# Copy".padEnd(25) + " " + dirent.path.substring(defaultPath.length) + dirent.name);
+                CLI.outn(CLI.setColor("# ", Color.Green) + "Copy".padEnd(15) + " " + dirent.path.substring(defaultPath.length) + dirent.name);
                 fs.copyFileSync(dirent.path + "/" + dirent.name, targetpath);
             }
             else {
                 // is directory
-                console.log("# Mkdir".padEnd(25) + " " + dirent.path.substring(defaultPath.length) + dirent.name);
+                CLI.outn(CLI.setColor("# ", Color.Green) + "Mkdir".padEnd(15) + " " + dirent.path.substring(defaultPath.length) + dirent.name);
                 fs.mkdirSync(targetpath, {
                     recursive: true,
                 });
@@ -41,7 +63,7 @@ export class Create {
 
         this.calibrateTsConfig(rootDir);
 
-        console.log("#\n# ............ Create Complete!");
+        CLI.br().outn("....... Create Complete!", Color.Green);
     }
 
     private static search(target : string, callback : (file : fs.Dirent) => void) {
@@ -69,7 +91,7 @@ export class Create {
     private static calibrateTsConfig(rootDir: string) {
         const tsConfig = require(rootDir + "/tsconfig.json");
         tsConfig.compilerOptions.paths["*"] = [ path.dirname(__dirname) + "/bin/*" ];
-        console.log("# calibrate ".padEnd(25) + " /tsconfig.json");
+        CLI.outn(CLI.setColor("# ", Color.Green) + "calibrate ".padEnd(15) + " /tsconfig.json");
         fs.writeFileSync(rootDir + "/tsconfig.json", JSON.stringify(tsConfig, null, "  "));
     }
 }
