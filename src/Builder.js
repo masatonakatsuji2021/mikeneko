@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Builder = exports.BuildPlatformType = void 0;
+exports.Builder = exports.BuildPlatformType = exports.BuildType = void 0;
 const fs = require("fs");
 const path = require("path");
 const mime = require("mime-types");
@@ -10,6 +10,11 @@ const child_process_1 = require("child_process");
 const obfucator = require("javascript-obfuscator");
 const mikeneko_1 = require("mikeneko");
 const nktj_cli_1 = require("nktj_cli");
+var BuildType;
+(function (BuildType) {
+    BuildType["WebBuilder"] = "webBuilder";
+    BuildType["WebPack"] = "webPack";
+})(BuildType || (exports.BuildType = BuildType = {}));
 var BuildPlatformType;
 (function (BuildPlatformType) {
     /** Web */
@@ -69,6 +74,9 @@ class Builder {
             let platform = option.platforms[n];
             if (platform.disable)
                 continue;
+            platform.build = BuildType.WebBuilder;
+            if (option.build)
+                platform.build = option.build;
             if (!platform.buildType)
                 platform.buildType = BuildPlatformType.Web;
             let platformOptionClass;
@@ -104,6 +112,10 @@ class Builder {
             let platformDir = buildDir + "/" + platform.name;
             if (platform.optionDir)
                 platformDir += "/" + platform.optionDir;
+            if (platform.build == BuildType.WebPack) {
+                this.buildWebPack(platformDir, platform, platformOptionClass, buildhandle);
+                return;
+            }
             this.outMkdir(platformDir, true);
             platform.outPath = platformDir;
             platform.path = buildDir + "/" + platform.name;
@@ -362,6 +374,43 @@ class Builder {
             return;
         }
         return tsType;
+    }
+    static setWebpackComponent(platformDir) {
+        let str = "export const WebPackComponents = {\n";
+        const list = fs.readdirSync(platformDir + "/dist", { recursive: true });
+        for (let n = 0; n < list.length; n++) {
+            const dirBase = platformDir + "/dist/" + list[n];
+            if (fs.statSync(dirBase).isDirectory())
+                continue;
+            const dir = (dirBase).split("\\").join("/");
+            let dirPath = dir.substring((platformDir + "/dist/").length);
+            if (path.extname(dirPath) === ".js") {
+                dirPath = dirPath.replace(/(\.[\w\d]+)$/i, '');
+            }
+            str += "\"" + dirPath + "\" : require(\"" + dirPath + "\"),\n";
+        }
+        str += "};";
+        fs.writeFileSync(platformDir + "/dist/WebPackComponents.js", str);
+        nktj_cli_1.CLI.outn("# set webpack components");
+    }
+    static buildWebPack(platformDir, platform, platformOptionClass, buildhandle) {
+        nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "webpack build..");
+        this.setWebpackComponent(platformDir);
+        try {
+            (0, child_process_1.execSync)("cd output/" + platform.name + " && webpack");
+        }
+        catch (error) {
+            console.log(error.stdout.toString());
+        }
+        nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "write index.html");
+        let indexHTML = "<!DOCTYPE html><head><meta charset=\"UTF-8\"><script src=\"index.js\"></script></head><body></body></html>";
+        if (platformOptionClass) {
+            const htmlBuffer = platformOptionClass.handleCreateIndexHTML();
+            if (htmlBuffer)
+                indexHTML = htmlBuffer;
+        }
+        fs.writeFileSync(platformDir + "/www/index.html", indexHTML);
+        nktj_cli_1.CLI.outn(".....EXIT!");
     }
 }
 exports.Builder = Builder;

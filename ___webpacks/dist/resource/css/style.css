@@ -1,0 +1,288 @@
+:root {
+    --main_background: rgb(50,50,50);
+    --main_color: rgb(220,220,220);
+    --header_background: rgb(40,40,40);
+    --header_color: rgb(220,220,220);;
+    --header_border_size: solid 1px rgb(160,160,160);
+    --arrow_border:solid 1px rgb(220,220,220);
+    --active_background:rgba(0,0,0,0.4);
+    --button_background:rgb(5,110,160);
+    --button_color:rgb(240,240,240);
+    --button_border:solid 3px var(--button_background);
+    --dialog_background:rgb(30,30,30);
+    --dialog_color:var(--main_color);
+}
+* {
+    box-sizing:border-box;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    line-height:1.8rem;
+}
+h1, h2, h3, h4, h5 {
+    font-weight:normal;
+}
+body {
+    background:var(--main_background);
+    color:var(--main_color);
+}
+header {
+    background:var(--header_background);
+    color:var(--header_color);
+    border-bottom:var(--header_border_size);
+    position:fixed;
+    display:table;
+    left:0;
+    top:0;
+    width:100%;
+    height:50px;
+    font-size:16px;
+    z-index:2;
+}
+header > * {
+    display:table-cell;
+    vertical-align:middle;
+    width:auto;
+}
+header > *.max {
+    width:100%;
+}
+header .arrow {
+    top: 5px;
+}
+header h1 {
+    margin:0;
+    padding:0 10px;
+    font-size:24px;
+}
+main article {
+    position:fixed;
+    font-size:18px;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+    overflow:auto;
+    background: var(--main_background);
+}
+header ~ main article {
+    top:50px;
+    height:calc(100% - 50px);
+}
+label,
+a {
+    color:darkcyan;
+    transition-duration:100ms;
+    display:inline-block;
+}
+.arrow {
+    width:40px;
+    height:40px;
+    position:relative;
+}
+.arrow:before {
+    content:"";
+    display:block;
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:16px;
+    height:16px;
+    border-left:var(--arrow_border);
+    border-top:var(--arrow_border);
+    transform:translateY(-50%) rotate(135deg);
+    margin-left:-16px;
+}
+.arrow.back:before {
+    transform:translateY(-50%) rotate(-45deg);
+    margin-left:-3px;
+}
+main article table tr th,
+main article table tr td {
+    vertical-align:top;
+    padding:10px;
+}
+main article table tr th {
+    text-align:right;
+}
+main article table.window{
+    position:absolute;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+}
+main article table.window tr td {
+    padding:0;
+    height:100%;
+    vertical-align:top;
+    height:100%;
+}
+main article table.window tr.middle td{
+    vertical-align:middle;
+}
+main article table.window tr.bottom td{
+    vertical-align:bottom;
+}
+
+.m10 { margin:10px; }
+.m20 { margin:20px; }
+.ml10 { margin-left:10px; }
+.ml20 { margin-left:20px; }
+.mr10 { margin-right:10px; }
+.mr20 { margin-right:20px; }
+.mt10 { margin-top:10px; }
+.mt20 { margin-top:20px; }
+.mb10 { margin-bottom:10px; }
+.mb20 { margin-bottom:20px; }
+
+.btn {
+    background:var(--button_background);
+    color:var(--button_color);
+    line-height:50px;
+    height:50px;
+    border-radius:5px;
+    border:var(--button_border);
+    display:block;
+    font-size:18px;
+    font-weight:bold;
+    text-align:center;
+    border-radius:10px;
+}
+.btn:active {
+    background:var(--active_background);
+}
+dialog dwindow {
+    background:var(--dialog_background);
+    color:var(--dialog_color);
+    font-size:20px;
+    border-radius: 10px;
+    box-shadow: 0 0 4px white;
+}
+dialog dwindow table {
+    width:100%;
+    height:100%;
+}
+dialog dwindow table tr td {
+    height:100%;
+    vertical-align:top;
+}
+dialog dwindow table tr td.middle{
+    vertical-align:middle;
+}
+dialog dwindow table tr td.center{
+    text-align:center;
+}
+dialog dwindow table tr td.right{
+    text-align:right;
+}
+dialog dwindow .title {
+    font-weight:bold;
+    padding:10px 0;
+}
+a {
+    color:cyan;
+}
+dialog dwindow .loading{
+    display:table;
+    width:100%;
+}
+dialog dwindow .loading > * {
+    display:table-cell;
+    vertical-align:middle;
+}
+dialog dwindow .loading .image {
+    width:50px;
+    height:50px;
+}
+dialog dwindow .loading .image:after{
+    content:"";
+    display:block;
+    width:50px;
+    height:50px;
+    border-radius:50%;
+    border:solid 5px rgb(40,130,150);
+    border-right:solid 5px rgba(0,0,0,0);
+    animation: loadings 1s linear infinite;
+}
+dialog dwindow .loading .message {
+    padding-left:15px;
+}
+@keyframes loadings {
+    0%{
+        transform:rotate(0deg);
+    }
+    100%{
+        transform:rotate(360deg);
+    }
+}
+ul.list{
+    margin:0;
+    padding:0;
+}
+ul.list li {
+    margin:0;
+    margin:0;
+    list-style-type:none;
+    background:rgb(50,50,50);
+    border-bottom:solid 1px rgb(180,180,180);
+}
+ul.list li:first-child{ 
+    border-top:solid 1px rgb(180,180,180);
+}
+ul.list li a,
+ul.list li label {
+    color:var(--main_color);
+    display:block;
+    padding:10px;
+}
+ul.list li a:active,
+ul.list li label:active {
+    background:rgb(80,80,80);
+}
+ul.list li a div,
+ul.list li label div {
+    display:inline-block;
+}
+ul.list li label input[type=radio] {
+    display:none;
+}
+ul.list li label input + div{
+    display:inline-block;
+}
+ul.list li label input:checked + div:before{
+    content:"\2713";
+}
+
+input,
+textarea,
+select {
+    background:#333;
+    color:white;
+    height:50px;
+    line-height:50px;
+    padding:0 20px;
+    border:solid 1px #999;
+    width:100%;
+    font-size:18px;
+}
+input:focus-visible {
+    outline:solid 1px #29c;
+}
+
+.error-message{
+    line-height:20px;
+    min-height:20px;
+    color:#ff7733;
+    padding:5px 0;
+}
+img {
+    width:100%;
+}
+main {
+    transition-duration:200ms;
+}
+main.open {
+    opacity:1;    
+}
+main.close {
+    opacity:0; 
+}

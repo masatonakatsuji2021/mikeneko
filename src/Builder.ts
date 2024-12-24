@@ -9,12 +9,24 @@ import { BuildHandle } from "mikeneko";
 import { PlatformBase } from "mikeneko/src/PlatformBase";
 import { CLI, Color } from "nktj_cli";
 
+export enum BuildType {
+
+    WebBuilder = "webBuilder",
+
+    WebPack = "webPack",
+}
+
 export interface BuildOption {
 
     /**
      * ***debug*** : debug mode.
      */
     debug? : boolean,
+
+    /**
+     * ***build*** : build type
+     */
+    build?: BuildType,
 
     /**
      * ***rootDir*** : Root Directory.
@@ -65,6 +77,11 @@ export interface BuildPlatform {
      * ***name*** : platform name
      */
     name? : string,
+
+    /**
+     * ***build*** : build type
+     */
+    build?: BuildType,
 
     /**
      * ***buildType*** : 
@@ -166,7 +183,10 @@ export class Builder {
             // platforms building 
             let platform = option.platforms[n];
             if (platform.disable) continue;
-            
+
+            platform.build = BuildType.WebBuilder;
+            if (option.build) platform.build = option.build;
+
             if (!platform.buildType) platform.buildType = BuildPlatformType.Web;
 
             let platformOptionClass : typeof PlatformBase;
@@ -197,10 +217,16 @@ export class Builder {
             }
             
             CLI.outn(CLI.setColor("# ", Color.Green) + "platform = " + platform.name + ", buildType = " + platform.buildType);
-
+          
             // create platform directory
             let platformDir : string = buildDir + "/" + platform.name;
             if (platform.optionDir) platformDir += "/" + platform.optionDir;
+
+            if (platform.build == BuildType.WebPack) {
+                this.buildWebPack(platformDir, platform, platformOptionClass, buildhandle);
+                return;
+            }
+
             this.outMkdir(platformDir, true);
 
             platform.outPath = platformDir;
@@ -480,5 +506,47 @@ export class Builder {
             return;
         }
         return tsType;
+    }
+
+    private static setWebpackComponent(platformDir : string){
+        let str : string = "export const WebPackComponents = {\n";
+        const list = fs.readdirSync(platformDir + "/dist", { recursive: true });
+        for(let n = 0 ; n < list.length ; n++){
+            const dirBase = platformDir + "/dist/" + list[n];
+            if (fs.statSync(dirBase).isDirectory()) continue;
+            const dir = (dirBase).split("\\").join("/");
+            let dirPath = dir.substring((platformDir + "/dist/").length);
+            if (path.extname(dirPath) === ".js") {
+                dirPath = dirPath.replace(/(\.[\w\d]+)$/i, '');
+            }
+            str += "\"" + dirPath + "\" : require(\"" +  dirPath  + "\"),\n";
+        }
+        str += "};";
+        fs.writeFileSync(platformDir + "/dist/WebPackComponents.js", str);
+        CLI.outn("# set webpack components");
+    }
+
+
+    private static buildWebPack(platformDir : string, platform : BuildPlatform, platformOptionClass : typeof PlatformBase, buildhandle : typeof BuildHandle) {
+        CLI.outn(CLI.setColor("# ", Color.Green) + "webpack build..");
+
+        this.setWebpackComponent(platformDir);
+
+        try {
+            execSync("cd output/" + platform.name + " && webpack");
+
+        } catch(error){
+            console.log(error.stdout.toString());
+        }
+
+        CLI.outn(CLI.setColor("# ", Color.Green) + "write index.html");
+        let indexHTML : string = "<!DOCTYPE html><head><meta charset=\"UTF-8\"><script src=\"index.js\"></script></head><body></body></html>";
+        if (platformOptionClass) {
+            const htmlBuffer = platformOptionClass.handleCreateIndexHTML();
+            if (htmlBuffer) indexHTML = htmlBuffer;
+        }
+        fs.writeFileSync(platformDir + "/www/index.html", indexHTML);
+
+        CLI.outn(".....EXIT!");
     }
 }
