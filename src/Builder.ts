@@ -24,11 +24,6 @@ export interface BuildOption {
     debug? : boolean,
 
     /**
-     * ***build*** : build type
-     */
-    build?: BuildType,
-
-    /**
      * ***rootDir*** : Root Directory.
      */
     rootDir? : string,
@@ -47,6 +42,8 @@ export interface BuildOption {
      * ***tranceComplied*** : Tyepscript trance complie.
      */
     tranceComplied? : boolean,
+
+    tscType? : string,
 
     /**
      * ***obfuscated*** : javascript obfuscate.
@@ -167,7 +164,10 @@ export class Builder {
         // typescript trance complie
         let tsType : string = "es6";
         try {
-            if (option.tranceComplied) tsType = this.typescriptComplie(rootDir);
+            if (option.tranceComplied) {
+                option.tscType = tsType;
+                tsType = this.typescriptComplie(rootDir);
+            }
         } catch (error) {
             CLI.outn("[TypeScript TrancePlie Error]", Color.Red);
             CLI.outn(error.stdout.toString());
@@ -184,8 +184,7 @@ export class Builder {
             let platform = option.platforms[n];
             if (platform.disable) continue;
 
-            platform.build = BuildType.WebBuilder;
-            if (option.build) platform.build = option.build;
+            if (!platform.build) platform.build = BuildType.WebBuilder;
 
             if (!platform.buildType) platform.buildType = BuildPlatformType.Web;
 
@@ -223,7 +222,7 @@ export class Builder {
             if (platform.optionDir) platformDir += "/" + platform.optionDir;
 
             if (platform.build == BuildType.WebPack) {
-                this.buildWebPack(platformDir, platform, platformOptionClass, buildhandle);
+                this.buildWebPack(platformDir, option.tscType, platform, platformOptionClass, buildhandle);
                 return;
             }
 
@@ -508,33 +507,15 @@ export class Builder {
         return tsType;
     }
 
-    private static setWebpackComponent(platformDir : string){
-        let str : string = "export const WebPackComponents = {\n";
-        const list = fs.readdirSync(platformDir + "/dist", { recursive: true });
-        for(let n = 0 ; n < list.length ; n++){
-            const dirBase = platformDir + "/dist/" + list[n];
-            if (fs.statSync(dirBase).isDirectory()) continue;
-            const dir = (dirBase).split("\\").join("/");
-            let dirPath = dir.substring((platformDir + "/dist/").length);
-            if (path.extname(dirPath) === ".js") {
-                dirPath = dirPath.replace(/(\.[\w\d]+)$/i, '');
-            }
-            str += "\"" + dirPath + "\" : require(\"" +  dirPath  + "\"),\n";
-        }
-        str += "};";
-        fs.writeFileSync(platformDir + "/dist/WebPackComponents.js", str);
-        CLI.outn("# set webpack components");
-    }
-
-
-    private static buildWebPack(platformDir : string, platform : BuildPlatform, platformOptionClass : typeof PlatformBase, buildhandle : typeof BuildHandle) {
+    private static buildWebPack(platformDir : string, tscType : string, platform : BuildPlatform, platformOptionClass : typeof PlatformBase, buildhandle : typeof BuildHandle) {
         CLI.outn(CLI.setColor("# ", Color.Green) + "webpack build..");
+
+        this.setWebPackDist(platformDir, tscType);
 
         this.setWebpackComponent(platformDir);
 
         try {
-            execSync("cd output/" + platform.name + " && webpack");
-
+            console.log(execSync("cd output/" + platform.name + " && webpack",).toString());
         } catch(error){
             console.log(error.stdout.toString());
         }
@@ -549,4 +530,135 @@ export class Builder {
 
         CLI.outn(".....EXIT!");
     }
+
+    private static setWebPackDist(platformDir : string, tscType : string) {
+        const distDir = platformDir + "/dist";
+        if (fs.existsSync(distDir)){
+            let lists = fs.readdirSync(distDir, {recursive : true});
+            for (let n = 0 ; n < lists.length ;n++) {
+                const l_ = distDir + "/" + lists[n];
+                if (fs.statSync(l_).isFile()) fs.unlinkSync(l_);
+            }
+        }
+        else {
+            fs.mkdirSync(distDir);
+        }
+
+        this.BuildCoreList.push("FrontWebPack");
+
+        for (let n = 0 ; n < this.BuildCoreList.length ; n++){
+            const coreName = this.BuildCoreList[n];
+            fs.copyFileSync(path.dirname(__dirname) + "/dist/" + tscType + "/" + coreName + ".js", distDir + "/" + coreName + ".js");
+        }
+
+        // CORERES set
+        if (!fs.existsSync(distDir + "/CORERES")){
+            fs.mkdirSync(distDir + "/CORERES");
+        }
+        const coreresDir = path.dirname(__dirname) + "/bin/res";
+        const coreresLIsts = fs.readdirSync(coreresDir, { recursive : true });
+        for (let n = 0 ; n < coreresLIsts.length ; n++){
+            const l_  = coreresLIsts[n];
+            const fulll_ = coreresDir + "/" + coreresLIsts[n];
+            if (fs.statSync(fulll_).isDirectory()){
+                if (!fs.existsSync(distDir + "/CORERES/" + l_)){
+                    fs.mkdirSync(distDir + "/CORERES/" + l_);
+                }
+            }
+            else {
+                fs.copyFileSync(fulll_, distDir + "/CORERES/" + l_);
+            }
+        }
+
+
+        // app list set
+        
+        if (!fs.existsSync(distDir + "/app")){
+            fs.mkdirSync(distDir + "/app");
+        }
+        const appDistDir = path.dirname(path.dirname(platformDir)) + "/dist/src/app";
+        const appLists = fs.readdirSync(appDistDir, { recursive : true });
+        for (let n = 0 ; n < appLists.length ; n++){
+            const l_  = appLists[n];
+            const fulll_ = appDistDir + "/" + appLists[n];
+            if (fs.statSync(fulll_).isDirectory()){
+                if (!fs.existsSync(distDir + "/app/" + l_)){
+                    fs.mkdirSync(distDir + "/app/" + l_);
+                }
+            }
+            else {
+                fs.copyFileSync(fulll_, distDir + "/app/" + l_);
+            }
+        }
+
+
+        // rendering set
+        if (!fs.existsSync(distDir + "/rendering")){
+            fs.mkdirSync(distDir + "/rendering");
+        }
+
+        const renderingDir = path.dirname(path.dirname(platformDir)) + "/src/rendering";
+        const renderingLists = fs.readdirSync(renderingDir, { recursive : true });
+        for (let n = 0 ; n < renderingLists.length ; n++){
+            const l_  = renderingLists[n];
+            const fulll_ = renderingDir + "/" + renderingLists[n];
+            if (fs.statSync(fulll_).isDirectory()){
+                if (!fs.existsSync(distDir + "/rendering/" + l_)){
+                    fs.mkdirSync(distDir + "/rendering/" + l_);
+                }
+            }
+            else {
+                fs.copyFileSync(fulll_, distDir + "/rendering/" + l_);
+            }
+        }
+
+        // resource set
+        
+        if (!fs.existsSync(distDir + "/resource")){
+            fs.mkdirSync(distDir + "/resource");
+        }
+        const resourceDir = path.dirname(path.dirname(platformDir)) + "/src/resource";
+        const resourceLIsts = fs.readdirSync(resourceDir, { recursive : true });
+        for (let n = 0 ; n < resourceLIsts.length ; n++){
+            const l_  = resourceLIsts[n];
+            const fulll_ = resourceDir + "/" + resourceLIsts[n];
+            if (fs.statSync(fulll_).isDirectory()){
+                if (!fs.existsSync(distDir + "/resource/" + l_)){
+                    fs.mkdirSync(distDir + "/resource/" + l_);
+                }
+            }
+            else {
+                fs.copyFileSync(fulll_, distDir + "/resource/" + l_);
+            }
+        }
+    }
+
+    private static setWebpackComponent(platformDir : string){
+        let str : string = "export const WebPackComponent = {\n";
+        const list = fs.readdirSync(platformDir + "/dist", { recursive: true });
+        for(let n = 0 ; n < list.length ; n++){
+            const dirBase = platformDir + "/dist/" + list[n];
+            if (fs.statSync(dirBase).isDirectory()) continue;
+            const dir = (dirBase).split("\\").join("/");
+            let dirPath = dir.substring((platformDir + "/dist/").length);
+            if (path.extname(dirPath) === ".js") {
+                dirPath = dirPath.replace(/(\.[\w\d]+)$/i, '');
+            }
+            str += "\"" + dirPath + "\" : require(\"" +  dirPath  + "\"),\n";
+        }
+        str += "};";
+        fs.writeFileSync(platformDir + "/dist/WebPackComponent.js", str);
+        CLI.outn("# set webpack components");
+
+        if (!fs.existsSync(platformDir + "/webpack.config.js")) {
+            CLI.outn("# make webpack.config.js");
+        }
+
+        if (!fs.existsSync(platformDir + "/custom-loader.js")) {
+            CLI.outn("# make custom-loader.js");
+
+        }
+    }
+
+
 }

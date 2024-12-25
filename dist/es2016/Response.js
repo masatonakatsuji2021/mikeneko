@@ -20,7 +20,7 @@ const UI_1 = require("UI");
 const VirtualDom_1 = require("VirtualDom");
 class Response {
     static get routeType() {
-        const MyApp = require("app/config/App").MyApp;
+        const MyApp = use("app/config/App").MyApp;
         return MyApp.routeType;
     }
     static back(index) {
@@ -136,7 +136,7 @@ class Response {
     // rendering....
     static rendering(route, data) {
         return __awaiter(this, void 0, void 0, function* () {
-            const MyApp = require("app/config/App").MyApp;
+            const MyApp = use("app/config/App").MyApp;
             // Controller & View Leave 
             const befCont = Data_1.Data.get("beforeController");
             if (befCont) {
@@ -288,7 +288,7 @@ class Response {
             yield vm.handleBefore();
             yield vm.handleAfter();
             yield Response.__rendering(route, vm);
-            const MyApp = require("app/config/App").MyApp;
+            const MyApp = use("app/config/App").MyApp;
             if (MyApp.animationCloseClassName)
                 (0, VirtualDom_1.dom)("main").removeClass(MyApp.animationCloseClassName);
             if (MyApp.animationOpenClassName)

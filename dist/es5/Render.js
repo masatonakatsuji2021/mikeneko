@@ -10,6 +10,7 @@ var Render = /** @class */ (function () {
     Object.defineProperty(Render.prototype, "vdo", {
         /**
          * ***vdo*** : Virtual Dom for content.
+         * [VirtualDom is described here](VirtualDom.ts)
          */
         get: function () {
             return this.myMjs;
@@ -21,6 +22,8 @@ var Render = /** @class */ (function () {
         /**
          * ***vdos*** : Virtual DOM List of VirtualDom Classes.
          * (``mjs`` is also available as a proxy.)
+         *
+         * [VirtualDom is described here](VirtualDom.ts)
          *
          * Example: First, place a v attribute tag in the HTML file.
          * ```html
@@ -52,6 +55,8 @@ var Render = /** @class */ (function () {
             return;
         }
         var content = use(renderPath);
+        if (globalThis.webpack)
+            content = content.split("data:text/html;base64,").join("");
         content = Lib_1.Lib.base64Decode(content);
         content = this.renderConvert(content);
         ;
@@ -124,7 +129,7 @@ var Render = /** @class */ (function () {
         try {
             if (!useExists(classPath))
                 throw Error();
-            var classObj_ = require(classPath);
+            var classObj_ = use(classPath);
             classObj = new classObj_[className]();
             classObj.myMjs = mjs;
             classObj.mjs = mjs.childs;

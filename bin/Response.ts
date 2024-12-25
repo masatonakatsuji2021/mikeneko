@@ -30,7 +30,7 @@ export class Response {
     public static lock : boolean = false;
 
     private static get routeType() : AppRouteType {
-        const MyApp : typeof App = require("app/config/App").MyApp;
+        const MyApp : typeof App = use("app/config/App").MyApp;
         return MyApp.routeType;
     }
 
@@ -205,7 +205,7 @@ export class Response {
     // rendering....
     public static async rendering (route: DecisionRoute, data? : any) {
 
-        const MyApp : typeof App = require("app/config/App").MyApp;
+        const MyApp : typeof App = use("app/config/App").MyApp;
 
         // Controller & View Leave 
         const befCont : Controller = Data.get("beforeController");
@@ -372,7 +372,7 @@ export class Response {
 
         await Response.__rendering(route, vm);
 
-        const MyApp : typeof App = require("app/config/App").MyApp;
+        const MyApp : typeof App = use("app/config/App").MyApp;
 
         if (MyApp.animationCloseClassName) dom("main").removeClass(MyApp.animationCloseClassName);
         if (MyApp.animationOpenClassName) dom("main").addClass(MyApp.animationOpenClassName);

@@ -121,8 +121,10 @@ var Dialog = /** @class */ (function (_super) {
     Dialog.setDialogCss = function () {
         if ((0, VirtualDom_1.dom)("head").querySelector("link[m=dl]").length > 0)
             return;
-        var style = require("CORERES/dialog/style.css");
-        (0, VirtualDom_1.dom)("head").afterBegin("<link rel=\"stylesheet\" m=\"dl\" href=\"data:text/css;base64," + style + "\">");
+        var style = use("CORERES/dialog/style.css");
+        if (!globalThis.webpack)
+            style = "data:text/css;base64," + style;
+        (0, VirtualDom_1.dom)("head").afterBegin("<link rel=\"stylesheet\" m=\"dl\" href=\"" + style + "\">");
     };
     Dialog.type = "Dialog";
     Dialog.__openDialogs = {};

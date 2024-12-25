@@ -42,9 +42,11 @@ class Render {
             return;
         }
         let content = use(renderPath);
+        if (globalThis.webpack) {
+            content = content.split("data:text/html;base64,").join("");
+        }
         content = Lib_1.Lib.base64Decode(content);
-        content = this.renderConvert(content);
-        ;
+        content = this.renderConvert(content);;
         return content;
     }
     static renderConvert(content) {
@@ -114,7 +116,7 @@ class Render {
         try {
             if (!useExists(classPath))
                 throw Error();
-            const classObj_ = require(classPath);
+            const classObj_ = use(classPath);
             classObj = new classObj_[className]();
             classObj.myMjs = mjs;
             classObj.mjs = mjs.childs;

@@ -21,6 +21,8 @@ var Lib = /** @class */ (function () {
      */
     Lib.getResource = function (path) {
         var data = use("resource/" + path);
+        if (globalThis.webpack)
+            return data;
         var datas = data.split("|");
         var mimeType = datas[0];
         var content = datas[1];
@@ -41,6 +43,8 @@ var Lib = /** @class */ (function () {
      */
     Lib.getResourceDataUrl = function (path) {
         var data = use("resource/" + path);
+        if (globalThis.webpack)
+            return data;
         var datas = data.split("|");
         var mimeType = datas[0];
         var content = datas[1];

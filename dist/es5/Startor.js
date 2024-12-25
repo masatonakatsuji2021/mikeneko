@@ -51,7 +51,7 @@ var Shortcode_1 = require("Shortcode");
 var Startor = /** @class */ (function () {
     function Startor() {
         var _this = this;
-        var MyApp = require("app/config/App");
+        var MyApp = use("app/config/App");
         if (!MyApp) {
             throw Error("App Class is not found.");
         }

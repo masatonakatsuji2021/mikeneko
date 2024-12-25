@@ -95,7 +95,7 @@ export class View extends Render {
 
             const view = new this();
 
-            const MyApp : typeof App = require("app/config/App").MyApp;
+            const MyApp : typeof App = use("app/config/App").MyApp;
             
             if (MyApp.animationCloseClassName) dom("main").addClass(MyApp.animationCloseClassName);
             if (MyApp.animationOpenClassName) dom("main").removeClass(MyApp.animationOpenClassName);

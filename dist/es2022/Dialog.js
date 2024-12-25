@@ -99,8 +99,10 @@ class Dialog extends Render_1.Render {
     static setDialogCss() {
         if ((0, VirtualDom_1.dom)("head").querySelector("link[m=dl]").length > 0)
             return;
-        const style = require("CORERES/dialog/style.css");
-        (0, VirtualDom_1.dom)("head").afterBegin("<link rel=\"stylesheet\" m=\"dl\" href=\"data:text/css;base64," + style + "\">");
+        let style = use("CORERES/dialog/style.css");
+        if (!globalThis.webpack)
+            style = "data:text/css;base64," + style;
+        (0, VirtualDom_1.dom)("head").afterBegin("<link rel=\"stylesheet\" m=\"dl\" href=\"" + style + "\">");
     }
 }
 exports.Dialog = Dialog;

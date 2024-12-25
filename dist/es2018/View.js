@@ -39,7 +39,7 @@ class View extends Render_1.Render {
     static stackOpen(...aregments) {
         return new Promise(async (resolve) => {
             const view = new this();
-            const MyApp = require("app/config/App").MyApp;
+            const MyApp = use("app/config/App").MyApp;
             if (MyApp.animationCloseClassName)
                 (0, VirtualDom_1.dom)("main").addClass(MyApp.animationCloseClassName);
             if (MyApp.animationOpenClassName)

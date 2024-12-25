@@ -14,7 +14,7 @@ const Response_1 = require("Response");
 const Shortcode_1 = require("Shortcode");
 class Startor {
     constructor() {
-        const MyApp = require("app/config/App");
+        const MyApp = use("app/config/App");
         if (!MyApp) {
             throw Error("App Class is not found.");
         }

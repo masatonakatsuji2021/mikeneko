@@ -79,6 +79,7 @@ export class Render {
         }
             
         let content : string = use(renderPath);
+        if (globalThis.webpack) content = content.split("data:text/html;base64,").join("");
         content = Lib.base64Decode(content);
         content = this.renderConvert(content);;
     
@@ -155,7 +156,7 @@ export class Render {
         let classObj;
         try {
             if (!useExists(classPath)) throw Error();
-            const classObj_ = require(classPath);
+            const classObj_ = use(classPath);
             classObj = new classObj_[className]();
             classObj.myMjs = mjs;
             classObj.mjs = mjs.childs;

@@ -57,8 +57,10 @@ class Builder {
         // typescript trance complie
         let tsType = "es6";
         try {
-            if (option.tranceComplied)
+            if (option.tranceComplied) {
+                option.tscType = tsType;
                 tsType = this.typescriptComplie(rootDir);
+            }
         }
         catch (error) {
             nktj_cli_1.CLI.outn("[TypeScript TrancePlie Error]", nktj_cli_1.Color.Red);
@@ -74,9 +76,8 @@ class Builder {
             let platform = option.platforms[n];
             if (platform.disable)
                 continue;
-            platform.build = BuildType.WebBuilder;
-            if (option.build)
-                platform.build = option.build;
+            if (!platform.build)
+                platform.build = BuildType.WebBuilder;
             if (!platform.buildType)
                 platform.buildType = BuildPlatformType.Web;
             let platformOptionClass;
@@ -113,7 +114,7 @@ class Builder {
             if (platform.optionDir)
                 platformDir += "/" + platform.optionDir;
             if (platform.build == BuildType.WebPack) {
-                this.buildWebPack(platformDir, platform, platformOptionClass, buildhandle);
+                this.buildWebPack(platformDir, option.tscType, platform, platformOptionClass, buildhandle);
                 return;
             }
             this.outMkdir(platformDir, true);
@@ -375,29 +376,12 @@ class Builder {
         }
         return tsType;
     }
-    static setWebpackComponent(platformDir) {
-        let str = "export const WebPackComponents = {\n";
-        const list = fs.readdirSync(platformDir + "/dist", { recursive: true });
-        for (let n = 0; n < list.length; n++) {
-            const dirBase = platformDir + "/dist/" + list[n];
-            if (fs.statSync(dirBase).isDirectory())
-                continue;
-            const dir = (dirBase).split("\\").join("/");
-            let dirPath = dir.substring((platformDir + "/dist/").length);
-            if (path.extname(dirPath) === ".js") {
-                dirPath = dirPath.replace(/(\.[\w\d]+)$/i, '');
-            }
-            str += "\"" + dirPath + "\" : require(\"" + dirPath + "\"),\n";
-        }
-        str += "};";
-        fs.writeFileSync(platformDir + "/dist/WebPackComponents.js", str);
-        nktj_cli_1.CLI.outn("# set webpack components");
-    }
-    static buildWebPack(platformDir, platform, platformOptionClass, buildhandle) {
+    static buildWebPack(platformDir, tscType, platform, platformOptionClass, buildhandle) {
         nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "webpack build..");
+        this.setWebPackDist(platformDir, tscType);
         this.setWebpackComponent(platformDir);
         try {
-            (0, child_process_1.execSync)("cd output/" + platform.name + " && webpack");
+            console.log((0, child_process_1.execSync)("cd output/" + platform.name + " && webpack").toString());
         }
         catch (error) {
             console.log(error.stdout.toString());
@@ -411,6 +395,121 @@ class Builder {
         }
         fs.writeFileSync(platformDir + "/www/index.html", indexHTML);
         nktj_cli_1.CLI.outn(".....EXIT!");
+    }
+    static setWebPackDist(platformDir, tscType) {
+        const distDir = platformDir + "/dist";
+        if (fs.existsSync(distDir)) {
+            let lists = fs.readdirSync(distDir, { recursive: true });
+            for (let n = 0; n < lists.length; n++) {
+                const l_ = distDir + "/" + lists[n];
+                if (fs.statSync(l_).isFile())
+                    fs.unlinkSync(l_);
+            }
+        }
+        else {
+            fs.mkdirSync(distDir);
+        }
+        this.BuildCoreList.push("FrontWebPack");
+        for (let n = 0; n < this.BuildCoreList.length; n++) {
+            const coreName = this.BuildCoreList[n];
+            fs.copyFileSync(path.dirname(__dirname) + "/dist/" + tscType + "/" + coreName + ".js", distDir + "/" + coreName + ".js");
+        }
+        // CORERES set
+        if (!fs.existsSync(distDir + "/CORERES")) {
+            fs.mkdirSync(distDir + "/CORERES");
+        }
+        const coreresDir = path.dirname(__dirname) + "/bin/res";
+        const coreresLIsts = fs.readdirSync(coreresDir, { recursive: true });
+        for (let n = 0; n < coreresLIsts.length; n++) {
+            const l_ = coreresLIsts[n];
+            const fulll_ = coreresDir + "/" + coreresLIsts[n];
+            if (fs.statSync(fulll_).isDirectory()) {
+                if (!fs.existsSync(distDir + "/CORERES/" + l_)) {
+                    fs.mkdirSync(distDir + "/CORERES/" + l_);
+                }
+            }
+            else {
+                fs.copyFileSync(fulll_, distDir + "/CORERES/" + l_);
+            }
+        }
+        // app list set
+        if (!fs.existsSync(distDir + "/app")) {
+            fs.mkdirSync(distDir + "/app");
+        }
+        const appDistDir = path.dirname(path.dirname(platformDir)) + "/dist/src/app";
+        const appLists = fs.readdirSync(appDistDir, { recursive: true });
+        for (let n = 0; n < appLists.length; n++) {
+            const l_ = appLists[n];
+            const fulll_ = appDistDir + "/" + appLists[n];
+            if (fs.statSync(fulll_).isDirectory()) {
+                if (!fs.existsSync(distDir + "/app/" + l_)) {
+                    fs.mkdirSync(distDir + "/app/" + l_);
+                }
+            }
+            else {
+                fs.copyFileSync(fulll_, distDir + "/app/" + l_);
+            }
+        }
+        // rendering set
+        if (!fs.existsSync(distDir + "/rendering")) {
+            fs.mkdirSync(distDir + "/rendering");
+        }
+        const renderingDir = path.dirname(path.dirname(platformDir)) + "/src/rendering";
+        const renderingLists = fs.readdirSync(renderingDir, { recursive: true });
+        for (let n = 0; n < renderingLists.length; n++) {
+            const l_ = renderingLists[n];
+            const fulll_ = renderingDir + "/" + renderingLists[n];
+            if (fs.statSync(fulll_).isDirectory()) {
+                if (!fs.existsSync(distDir + "/rendering/" + l_)) {
+                    fs.mkdirSync(distDir + "/rendering/" + l_);
+                }
+            }
+            else {
+                fs.copyFileSync(fulll_, distDir + "/rendering/" + l_);
+            }
+        }
+        // resource set
+        if (!fs.existsSync(distDir + "/resource")) {
+            fs.mkdirSync(distDir + "/resource");
+        }
+        const resourceDir = path.dirname(path.dirname(platformDir)) + "/src/resource";
+        const resourceLIsts = fs.readdirSync(resourceDir, { recursive: true });
+        for (let n = 0; n < resourceLIsts.length; n++) {
+            const l_ = resourceLIsts[n];
+            const fulll_ = resourceDir + "/" + resourceLIsts[n];
+            if (fs.statSync(fulll_).isDirectory()) {
+                if (!fs.existsSync(distDir + "/resource/" + l_)) {
+                    fs.mkdirSync(distDir + "/resource/" + l_);
+                }
+            }
+            else {
+                fs.copyFileSync(fulll_, distDir + "/resource/" + l_);
+            }
+        }
+    }
+    static setWebpackComponent(platformDir) {
+        let str = "export const WebPackComponent = {\n";
+        const list = fs.readdirSync(platformDir + "/dist", { recursive: true });
+        for (let n = 0; n < list.length; n++) {
+            const dirBase = platformDir + "/dist/" + list[n];
+            if (fs.statSync(dirBase).isDirectory())
+                continue;
+            const dir = (dirBase).split("\\").join("/");
+            let dirPath = dir.substring((platformDir + "/dist/").length);
+            if (path.extname(dirPath) === ".js") {
+                dirPath = dirPath.replace(/(\.[\w\d]+)$/i, '');
+            }
+            str += "\"" + dirPath + "\" : require(\"" + dirPath + "\"),\n";
+        }
+        str += "};";
+        fs.writeFileSync(platformDir + "/dist/WebPackComponent.js", str);
+        nktj_cli_1.CLI.outn("# set webpack components");
+        if (!fs.existsSync(platformDir + "/webpack.config.js")) {
+            nktj_cli_1.CLI.outn("# make webpack.config.js");
+        }
+        if (!fs.existsSync(platformDir + "/custom-loader.js")) {
+            nktj_cli_1.CLI.outn("# make custom-loader.js");
+        }
     }
 }
 exports.Builder = Builder;

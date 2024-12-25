@@ -16,7 +16,7 @@ export class Startor {
 
     public constructor() {
 
-        const MyApp = require("app/config/App");
+        const MyApp = use("app/config/App");
         if (!MyApp){
             throw Error("App Class is not found.");
         }

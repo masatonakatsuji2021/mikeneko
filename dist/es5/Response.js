@@ -50,7 +50,7 @@ var Response = /** @class */ (function () {
     }
     Object.defineProperty(Response, "routeType", {
         get: function () {
-            var MyApp = require("app/config/App").MyApp;
+            var MyApp = use("app/config/App").MyApp;
             return MyApp.routeType;
         },
         enumerable: false,
@@ -186,7 +186,7 @@ var Response = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        MyApp = require("app/config/App").MyApp;
+                        MyApp = use("app/config/App").MyApp;
                         befCont = Data_1.Data.get("beforeController");
                         if (!befCont) return [3 /*break*/, 5];
                         befContAction = Data_1.Data.get("beforeControllerAction");
@@ -415,7 +415,7 @@ var Response = /** @class */ (function () {
                         return [4 /*yield*/, Response.__rendering(route, vm)];
                     case 5:
                         _a.sent();
-                        MyApp = require("app/config/App").MyApp;
+                        MyApp = use("app/config/App").MyApp;
                         if (MyApp.animationCloseClassName)
                             (0, VirtualDom_1.dom)("main").removeClass(MyApp.animationCloseClassName);
                         if (MyApp.animationOpenClassName)

@@ -102,7 +102,7 @@ var View = /** @class */ (function (_super) {
                 switch (_a.label) {
                     case 0:
                         view = new this();
-                        MyApp = require("app/config/App").MyApp;
+                        MyApp = use("app/config/App").MyApp;
                         if (MyApp.animationCloseClassName)
                             (0, VirtualDom_1.dom)("main").addClass(MyApp.animationCloseClassName);
                         if (MyApp.animationOpenClassName)

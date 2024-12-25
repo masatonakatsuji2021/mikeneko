@@ -21,7 +21,7 @@ class Response {
      */
     static lock = false;
     static get routeType() {
-        const MyApp = require("app/config/App").MyApp;
+        const MyApp = use("app/config/App").MyApp;
         return MyApp.routeType;
     }
     static back(index) {
@@ -136,7 +136,7 @@ class Response {
     }
     // rendering....
     static async rendering(route, data) {
-        const MyApp = require("app/config/App").MyApp;
+        const MyApp = use("app/config/App").MyApp;
         // Controller & View Leave 
         const befCont = Data_1.Data.get("beforeController");
         if (befCont) {
@@ -284,7 +284,7 @@ class Response {
         await vm.handleBefore();
         await vm.handleAfter();
         await Response.__rendering(route, vm);
-        const MyApp = require("app/config/App").MyApp;
+        const MyApp = use("app/config/App").MyApp;
         if (MyApp.animationCloseClassName)
             (0, VirtualDom_1.dom)("main").removeClass(MyApp.animationCloseClassName);
         if (MyApp.animationOpenClassName)

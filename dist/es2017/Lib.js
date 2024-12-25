@@ -19,6 +19,8 @@ class Lib {
      */
     static getResource(path) {
         const data = use("resource/" + path);
+        if (globalThis.webpack)
+            return data;
         const datas = data.split("|");
         const mimeType = datas[0];
         let content = datas[1];
@@ -39,6 +41,8 @@ class Lib {
      */
     static getResourceDataUrl(path) {
         const data = use("resource/" + path);
+        if (globalThis.webpack)
+            return data;
         const datas = data.split("|");
         const mimeType = datas[0];
         let content = datas[1];

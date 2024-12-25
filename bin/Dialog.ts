@@ -205,7 +205,8 @@ export class Dialog extends Render {
 
     private static setDialogCss(){
         if (dom("head").querySelector("link[m=dl]").length > 0)  return;
-        const style = require("CORERES/dialog/style.css");
-        dom("head").afterBegin("<link rel=\"stylesheet\" m=\"dl\" href=\"data:text/css;base64," + style + "\">");
+        let style = use("CORERES/dialog/style.css");
+        if (!globalThis.webpack) style = "data:text/css;base64," + style;        
+        dom("head").afterBegin("<link rel=\"stylesheet\" m=\"dl\" href=\"" + style + "\">");
     }
 }

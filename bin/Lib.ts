@@ -19,6 +19,7 @@ export class Lib {
      */
     public static getResource(path : string) : string {
         const data = use("resource/" + path);
+        if (globalThis.webpack) return data;
         const datas = data.split("|");
         const mimeType = datas[0];
         let content = datas[1];
@@ -42,6 +43,7 @@ export class Lib {
      */
     public static getResourceDataUrl(path : string) : string {
         const data = use("resource/" + path);
+        if (globalThis.webpack) return data;
         const datas = data.split("|");
         const mimeType = datas[0];
         let content = datas[1];
