@@ -410,9 +410,13 @@ class Builder {
             fs.mkdirSync(distDir);
         }
         this.BuildCoreList.push("FrontWebPack");
+        // core library set
+        if (!fs.existsSync(distDir + "/core")) {
+            fs.mkdirSync(distDir + "/core");
+        }
         for (let n = 0; n < this.BuildCoreList.length; n++) {
             const coreName = this.BuildCoreList[n];
-            fs.copyFileSync(path.dirname(__dirname) + "/dist/" + tscType + "/" + coreName + ".js", distDir + "/" + coreName + ".js");
+            fs.copyFileSync(path.dirname(__dirname) + "/dist/" + tscType + "/" + coreName + ".js", distDir + "/core/" + coreName + ".js");
         }
         // CORERES set
         if (!fs.existsSync(distDir + "/CORERES")) {
@@ -488,6 +492,14 @@ class Builder {
         }
     }
     static setWebpackComponent(platformDir) {
+        if (!fs.existsSync(platformDir + "/webpack.config.js")) {
+            nktj_cli_1.CLI.outn("# make webpack.config.js");
+            fs.copyFileSync(path.dirname(__dirname) + "/res/webpack/webpack.config.js", platformDir + "/webpack.config.js");
+        }
+        if (!fs.existsSync(platformDir + "/custom-loader.js")) {
+            nktj_cli_1.CLI.outn("# make custom-loader.js");
+            fs.copyFileSync(path.dirname(__dirname) + "/res/webpack/custom-loader.js", platformDir + "/custom-loader.js");
+        }
         let str = "export const WebPackComponent = {\n";
         const list = fs.readdirSync(platformDir + "/dist", { recursive: true });
         for (let n = 0; n < list.length; n++) {
@@ -499,17 +511,13 @@ class Builder {
             if (path.extname(dirPath) === ".js") {
                 dirPath = dirPath.replace(/(\.[\w\d]+)$/i, '');
             }
+            if (dirPath.indexOf("core/") === 0)
+                dirPath = dirPath.substring("core/".length);
             str += "\"" + dirPath + "\" : require(\"" + dirPath + "\"),\n";
         }
         str += "};";
         fs.writeFileSync(platformDir + "/dist/WebPackComponent.js", str);
         nktj_cli_1.CLI.outn("# set webpack components");
-        if (!fs.existsSync(platformDir + "/webpack.config.js")) {
-            nktj_cli_1.CLI.outn("# make webpack.config.js");
-        }
-        if (!fs.existsSync(platformDir + "/custom-loader.js")) {
-            nktj_cli_1.CLI.outn("# make custom-loader.js");
-        }
     }
 }
 exports.Builder = Builder;

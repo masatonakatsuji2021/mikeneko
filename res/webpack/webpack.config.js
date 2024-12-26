@@ -16,6 +16,7 @@ module.exports = {
     resolve: {
         modules: [
           __root + "/",
+          __root + "/core/",
         ],
       },
     output: {
