@@ -61,3 +61,37 @@ mikeneko build start
 
 または型定義エラーの場合はプロジェクト内の``init.d.ts``ファイルの一部肩定義をコメントアウトするか  
 ``init.d.ts``ファイルそのものを無効化してみる必要はあります。
+
+## # ビルドバンドルについて
+
+Miekenkoでビルド(Webビルド)する際に下記のビルドバンドルが使用できます。
+
+- WebBuilder (デフォルト)
+- Webpack
+
+``WebBuilder``はMikeneko専用のビルドバンドルで、デフォルトでこちらでビルドされます。 
+一方で``WebPack``にも対応しており、ビルドする環境においてWebpackがグローバルインストールされていることが必須です。
+
+WebPackについてはこちらを参照  
+[https://webpack.js.org/](https://webpack.js.org/)
+
+WebPackを使ってビルドする場合は、``package.json``にて下記のように  
+プラットフォーム別の設定で``build``の項目を``webpack``に指定してビルド実行します。
+
+ビルド時にWebpack用の``webpack.config.js``などの設定ファイルが自動的に設置されます。  
+[package.jsonについてはこちらを参照](packagejson.md)
+
+```json
+{
+    "mikenekoBuild": {
+        "platforms": [
+            { 
+                "name": "app",
+                "build": "webpack",
+                "debug": true
+            }
+        ]
+    }
+}
+```
+

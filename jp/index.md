@@ -1,6 +1,9 @@
 # Mikeneko 
 
-MikenekoはWeb、Android、iOS にインストールできる SPA (Single-Page-Action) 用のフレームワークです。  
+MikenekoはTypeScript(JavaScript)を使って開発できるフロンエンドアプリケーション用フレームワークです。  
+
+Webのみならず Android, iOSスマートフォンアプリ(CordovaなどのWebViewを使用した場合)、 
+Windowsデスクトップアプリ(Electronを使用した場合)もクロスプラットフォームで開発できます
 
 ## # 目次
 

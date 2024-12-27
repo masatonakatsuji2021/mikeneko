@@ -161,3 +161,53 @@ Cordova等を使用する場合、そこから任意のディレクトリに設�
     }
 }
 ```
+
+## # WebPackでのビルド
+
+Mikenekoではビルド(Webビルド)にデフォルトで専用のビルドバンドル(WebBuilder)を使ってビルドされます。
+
+一方で``WebPack``にも対応しております。  
+(ただし、ビルドする環境においてWebpackがグローバルインストールされていることが必須です。)
+
+WebPackについてはこちらを参照  
+[https://webpack.js.org/](https://webpack.js.org/)
+
+WebPackを使ってビルドする場合は、``package.json``にて下記のように  
+プラットフォーム別の設定で``build``の項目を``webpack``に指定してビルド実行します。
+
+ビルド時にWebpack用の``webpack.config.js``などの設定ファイルが自動的に設置されます。  
+[package.jsonについてはこちらを参照](packagejson.md)
+
+```json
+{
+    "mikenekoBuild": {
+        "platforms": [
+            { 
+                "name": "app",
+                "build": "webpack",
+                "debug": true
+            }
+        ]
+    }
+}
+```
+
+## # ソースマッピングの有効化
+
+ビルドハンドラをデフォルトのWebBuilderを使用している場合で、  
+ブラウザ上で各ソースファイルをソースマッピングで表示させるには  
+``mapping``ををtrueで指定します。 
+
+```json
+{
+    "mikenekoBuild": {
+        "platforms": [
+            { 
+                "name": "app",
+                "mapping": true,
+                "debug": true
+            }
+        ]
+    }
+}
+```

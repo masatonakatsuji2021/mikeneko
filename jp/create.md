@@ -4,27 +4,38 @@
 {project_name}には任意で作成するプロジェクト名を指定します。
 
 ```
-$ mike create {project_name}
+$ mike create
 ```
 
-このコマンド実行により、カレントディレクトリ上にプロジェクト名のディレクトリが作成され  
-最低限必要なソースファイルの設置などが行われます。  
+このコマンド実行により、対話形式で入力が進められ  
+カレントディレクトリ上にプロジェクト名のディレクトリと最低限必要なソースファイルの設置などが行われます。  
 
 コマンドが正常に動作している場合は、下記のようにコンソールが流れます。
 
 ```
 $ mike create {project_name}
 =====================================
-Mikeneko CLI
+Mikeneko CLI Version: 1.1.0
 =====================================
 
+
 # Create Project
-# mkdir __aaa
+
+
+Q. Project Name? :project01
+
+
+Do you want to create this project? [y/n] (y) :
+# mkdir           ********************/project01
+# Copy            init.d.ts
+# Copy            package.json
+# Mkdir           src
+# Mkdir           /srcapp
 ..
 ..
-# calibrate               /tsconfig.json
-#
-# ............ Create Complete!
+# calibrate       /tsconfig.json
+
+....... Create Complete!
 ```
 
 ``Create Complete!``が表示されて、プロジェクトの作成が完了します。
