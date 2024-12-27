@@ -3,7 +3,7 @@ import * as path from "path";
 import * as mime from "mime-types";
 import * as UglifyJS  from "uglify-js";
 import * as strip from "strip-comments";
-import { execSync } from "child_process";
+import { exec, execSync } from "child_process";
 import * as obfucator from "javascript-obfuscator";
 import { BuildHandle } from "mikeneko";
 import { PlatformBase } from "mikeneko/src/PlatformBase";
@@ -13,7 +13,7 @@ export enum BuildType {
 
     WebBuilder = "webBuilder",
 
-    WebPack = "webPack",
+    webpack = "webpack",
 }
 
 export interface BuildOption {
@@ -68,6 +68,9 @@ export enum BuildPlatformType {
 
 export interface BuildPlatform {
 
+    /**
+     * ***disable*** : If you set this to true, the build will not include it.
+     */
     disable? : boolean,
 
     /**
@@ -108,6 +111,11 @@ export interface BuildPlatform {
      * ***obfuscated*** : javascript obfuscate.
      */
     obfuscated? : boolean,
+
+    /**
+     * ***mapping*** : Enable source mapping with browsers like Chrome.
+     */
+    mapping?: boolean,
 }
 
 export class Builder {
@@ -136,7 +144,7 @@ export class Builder {
         "Core",
     ];
 
-    public static build(option? : BuildOption) {
+    public static async build(option? : BuildOption) {
         const argsOption = CLI.getArgsOPtion();
         if (argsOption["platform"] || argsOption["p"]) {
 
@@ -166,7 +174,7 @@ export class Builder {
         try {
             if (option.tranceComplied) {
                 option.tscType = tsType;
-                tsType = this.typescriptComplie(rootDir);
+                tsType = await this.typescriptComplie(rootDir);
             }
         } catch (error) {
             CLI.outn("[TypeScript TrancePlie Error]", Color.Red);
@@ -221,7 +229,7 @@ export class Builder {
             let platformDir : string = buildDir + "/" + platform.name;
             if (platform.optionDir) platformDir += "/" + platform.optionDir;
 
-            if (platform.build == BuildType.WebPack) {
+            if (platform.build == BuildType.webpack) {
                 this.buildWebPack(platformDir, option.tscType, platform, platformOptionClass, buildhandle);
                 return;
             }
@@ -245,7 +253,7 @@ export class Builder {
             // core module mount
             this.BuildCoreList.forEach((core : string) => {
                  // core module mount
-                 this.coreModuleMount(codeList, tsType, core);
+                 this.coreModuleMount(codeList, tsType, core, platform);
              });
 
              if (platformOptionClass) {
@@ -255,25 +263,25 @@ export class Builder {
                     const fullPath : string = path.dirname(platformOptionClass.__dirname) + "/dist/" + tsType + "/" + modulePath + ".js"; 
                     let contents : string = fs.readFileSync(fullPath).toString() ;
                     contents = "var exports = {};\n" + contents + ";\nreturn exports;";
-                    codeList[name] = this.setFn(name, contents, true);
+                    codeList[name] = this.setFn(name, contents, true, platform);
                 };
                 platformOptionClass.handleCoreModuleMount(addModule);
              }
 
              // core resource mount
-             this.coreResourceMount(codeList, rootDir);
+             this.coreResourceMount(codeList, platform);
 
             // local module mount
-            this.localModuleMount(codeList, rootDir, platform.name);
+            this.localModuleMount(codeList, rootDir, platform.name, platform);
 
             // rendering html mount
-            this.renderingHtmMount(codeList, rootDir, platform.name);
+            this.renderingHtmMount(codeList, rootDir, platform.name, platform);
 
             // public content mount
-            this.resourceContentMount(codeList, rootDir, platform.name);
+            this.resourceContentMount(codeList, rootDir, platform.name, platform);
 
             // end foot
-            this.jsEnd(codeList);
+            this.jsEnd(codeList, platform);
 
             let coreStr : string = Object.values(codeList).join("");
 
@@ -322,24 +330,49 @@ export class Builder {
         codeList.___HEADER = content;
     }
 
-    private static setFn(name : string,  content, rawFlg? : boolean) {
+    private static setFn(name : string,  content, rawFlg : boolean, platform : BuildPlatform) {
+        let afterContent : string;
         if (rawFlg) {
-            return "sfa.setFn(\"" + name + "\", ()=>{" + content + "});\n";
+            afterContent = "sfa.setFn(\"" + name + "\", ()=>{" + content + "});\n";
         }
         else {
-            return "sfa.setFn(\"" + name + "\", ()=>{ return " + content + "});\n";
+            afterContent = "sfa.setFn(\"" + name + "\", ()=>{ return " + content + "});\n";
         }
+
+        if (platform.mapping) {
+            afterContent = this.contentEvalReplace(afterContent);
+            if (name.indexOf("app/") === -1 && name.indexOf("rendering") === -1 && name.indexOf("resource") === -1) {
+                name = "libs/" + name;
+            }
+            else {
+                name = "src/" + name;
+            }
+            afterContent += "//# sourceURL=mikeneko:///" + name;
+            return "eval(\"" + afterContent + "\");\n";
+        }
+
+        return afterContent;
     }
 
-    private static coreModuleMount(codeList : {[name : string] : string}, tsType : string, name : string) {
+    private static contentEvalReplace(content: string) {
+        content = content.replace(/\\/g, '\\\\');
+        content = content.replace(/\r/g, '\\r');
+        content = content.replace(/\n/g, '\\n');
+        content = content.replace(/\'/g, "\\'");
+        content = content.replace(/\"/g, '\\"');
+        content = content.replace(/\`/g, '\\`');
+        return content;
+    }
+
+    private static coreModuleMount(codeList : {[name : string] : string}, tsType : string, name : string, platform : BuildPlatform) {
         CLI.outn(CLI.setColor("# ", Color.Green) + "mount core".padEnd(20) + " " + name);
         const fullPath : string = path.dirname(__dirname) + "/dist/" + tsType + "/" + name + ".js"; 
         let contents : string = fs.readFileSync(fullPath).toString() ;
         contents = "var exports = {};\n" + contents + ";\nreturn exports;";
-        codeList[name] = this.setFn(name, contents, true);
+        codeList[name] = this.setFn(name, contents, true, platform);
     }
 
-    private static coreResourceMount(codeList : {[name : string] : string}, tsType : string) {
+    private static coreResourceMount(codeList : {[name : string] : string}, platform : BuildPlatform) {
         const targetPath = path.dirname(__dirname) + "/bin/res";
         this.search(targetPath, (file) => {
             const fullPath = file.path + "/" + file.name;
@@ -347,12 +380,12 @@ export class Builder {
             basePath = basePath.split("\\").join("/");
             basePath = basePath.split("//").join("/");
             const contentB64 = Buffer.from(fs.readFileSync(fullPath)).toString("base64");
-            codeList[basePath] = this.setFn(basePath,  "\"" + contentB64 + "\"") ;
+            codeList[basePath] = this.setFn(basePath,  "\"" + contentB64 + "\"", false, platform) ;
             CLI.outn(CLI.setColor("# ", Color.Green) + "mount coreres".padEnd(20) + " " + basePath);
         });
     }
 
-    private static localModuleMount(codeList : {[name : string] : string}, rootDir : string, platformName : string) {
+    private static localModuleMount(codeList : {[name : string] : string}, rootDir : string, platformName : string, platform : BuildPlatform) {
         let targetPaths = [
             rootDir + "/dist/src/app",
             rootDir + "/dist/src_" + platformName + "/app",
@@ -368,19 +401,19 @@ export class Builder {
                 basePath = basePath.split("//").join("/");
                 let contents : string = fs.readFileSync(fullPath).toString() ;
                 contents = "var exports = {};\n" + contents + ";\nreturn exports;";                
-                codeList[basePath] = this.setFn(basePath, contents, true);
+                codeList[basePath] = this.setFn(basePath, contents, true, platform);
                 CLI.outn(CLI.setColor("# ", Color.Green) + "mount local".padEnd(20) +" " + basePath);
             });
         });
         return strs;
     }
 
-    private static jsEnd(codeList : {[name : string] : string}) {
+    private static jsEnd(codeList : {[name : string] : string}, platform : BuildPlatform) {
         CLI.outn(CLI.setColor("# ", Color.Green) + "build End");
         codeList.___FOOTER = "sfa.start(()=>{ const st = use(\"Startor\");  new st.Startor(); });";
     }
 
-    private static resourceContentMount(codeList : {[name : string] : string}, rootDir : string, platformName : string) {
+    private static resourceContentMount(codeList : {[name : string] : string}, rootDir : string, platformName : string, platform : BuildPlatform ) {
         let targetPaths = [
             rootDir + "/src/resource",
             rootDir + "/src_" + platformName + "/resource",
@@ -399,14 +432,14 @@ export class Builder {
                 if (targetPath != rootDir + "/src/resource") {
                     plstr = "(" + platformName + ")";
                 }
-                codeList[basePath] = this.setFn(basePath,  "\"" + mimeType + "|" + contentB64 + "\"") ;
+                codeList[basePath] = this.setFn(basePath,  "\"" + mimeType + "|" + contentB64 + "\"", false, platform) ;
                 CLI.outn(CLI.setColor("# ", Color.Green) + "mount localres".padEnd(20) + " " + basePath);
             });
         });
         return strs;
     }
 
-    private static renderingHtmMount(codeList : {[name : string] : string}, rootDir : string, platformName : string) {
+    private static renderingHtmMount(codeList : {[name : string] : string}, rootDir : string, platformName : string, platform: BuildPlatform) {
         let targetPaths = [
             rootDir + "/src/rendering",
             rootDir + "/src_" + platformName + "/rendering",
@@ -423,7 +456,7 @@ export class Builder {
                 if (targetPath != rootDir + "/src/rendering"){
                     plstr = "(" + platformName + ")";
                 }
-                codeList[basePath] = this.setFn(basePath, "\"" +  contentB64 + "\";");
+                codeList[basePath] = this.setFn(basePath, "\"" +  contentB64 + "\";", false , platform);
                 CLI.outn(CLI.setColor("# ", Color.Green) + "mount render".padEnd(20) + " "+ basePath);
             });            
         });
@@ -450,15 +483,20 @@ export class Builder {
         }
     }
 
-    private static typescriptComplie(rootDir : string) : string {
+    private static async typescriptComplie(rootDir : string) : Promise<string> {
         let tsType = "es6";
         tsType = this.getTsType(rootDir);
         if (!tsType) tsType = "es6";
         CLI.outn(CLI.setColor("# ", Color.Green) + "TranceComplieType = " + tsType);
-        CLI.out(CLI.setColor("# ", Color.Green) + "Trance Complie...");
-        execSync("tsc --pretty");
-        CLI.out("OK").br();
-        return tsType;
+        CLI.wait(CLI.setColor("# ", Color.Green) + "Trance Complie...");
+        return new Promise((resolve, reject) => {
+            exec("tsc --pretty", (error, stdout, stderr)=>{
+                if (error) return reject(error);
+                if (stderr) return reject(stderr);
+                CLI.waitClose("OK").br();
+                resolve(tsType);
+            });
+        });
     }
 
     private static outMkdir(rootDir : string, alreadyDeleted? : boolean) {
@@ -532,6 +570,12 @@ export class Builder {
     }
 
     private static setWebPackDist(platformDir : string, tscType : string) {
+
+        if (!fs.existsSync(platformDir)){
+            CLI.outn(CLI.setColor("# ", Color.Green) + "mkdir " + platformDir);
+            fs.mkdirSync(platformDir);
+        }
+
         const distDir = platformDir + "/dist";
         if (fs.existsSync(distDir)){
             let lists = fs.readdirSync(distDir, {recursive : true});

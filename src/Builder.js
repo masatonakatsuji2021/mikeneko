@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Builder = exports.BuildPlatformType = exports.BuildType = void 0;
 const fs = require("fs");
@@ -13,7 +22,7 @@ const nktj_cli_1 = require("nktj_cli");
 var BuildType;
 (function (BuildType) {
     BuildType["WebBuilder"] = "webBuilder";
-    BuildType["WebPack"] = "webPack";
+    BuildType["webpack"] = "webpack";
 })(BuildType || (exports.BuildType = BuildType = {}));
 var BuildPlatformType;
 (function (BuildPlatformType) {
@@ -28,167 +37,169 @@ var BuildPlatformType;
 })(BuildPlatformType || (exports.BuildPlatformType = BuildPlatformType = {}));
 class Builder {
     static build(option) {
-        const argsOption = nktj_cli_1.CLI.getArgsOPtion();
-        if (argsOption["platform"] || argsOption["p"]) {
-            let selectPlatform;
-            if (argsOption["platform"])
-                selectPlatform = argsOption["platform"];
-            if (argsOption["p"])
-                selectPlatform = argsOption["p"];
-            for (let n = 0; n < option.platforms.length; n++) {
-                const platform = option.platforms[n];
-                if (platform.name != selectPlatform) {
-                    platform.disable = true;
+        return __awaiter(this, void 0, void 0, function* () {
+            const argsOption = nktj_cli_1.CLI.getArgsOPtion();
+            if (argsOption["platform"] || argsOption["p"]) {
+                let selectPlatform;
+                if (argsOption["platform"])
+                    selectPlatform = argsOption["platform"];
+                if (argsOption["p"])
+                    selectPlatform = argsOption["p"];
+                for (let n = 0; n < option.platforms.length; n++) {
+                    const platform = option.platforms[n];
+                    if (platform.name != selectPlatform) {
+                        platform.disable = true;
+                    }
                 }
             }
-        }
-        if (!option)
-            option = {};
-        if (option.debug == undefined)
-            option.debug = false;
-        if (option.rootDir == undefined)
-            option.rootDir = process.cwd();
-        if (option.tranceComplied == undefined)
-            option.tranceComplied = true;
-        if (option.platforms == undefined)
-            option.platforms = [{ name: "web" }];
-        nktj_cli_1.CLI.outn("** mikeneko build start **");
-        const rootDir = option.rootDir;
-        // typescript trance complie
-        let tsType = "es6";
-        try {
-            if (option.tranceComplied) {
-                option.tscType = tsType;
-                tsType = this.typescriptComplie(rootDir);
-            }
-        }
-        catch (error) {
-            nktj_cli_1.CLI.outn("[TypeScript TrancePlie Error]", nktj_cli_1.Color.Red);
-            nktj_cli_1.CLI.outn(error.stdout.toString());
-            nktj_cli_1.CLI.outn("...... " + nktj_cli_1.CLI.setColor("Failed!", nktj_cli_1.Color.Red));
-            return;
-        }
-        // mkdir
-        const buildDir = rootDir + "/output";
-        this.outMkdir(buildDir);
-        for (let n = 0; n < option.platforms.length; n++) {
-            // platforms building 
-            let platform = option.platforms[n];
-            if (platform.disable)
-                continue;
-            if (!platform.build)
-                platform.build = BuildType.WebBuilder;
-            if (!platform.buildType)
-                platform.buildType = BuildPlatformType.Web;
-            let platformOptionClass;
+            if (!option)
+                option = {};
+            if (option.debug == undefined)
+                option.debug = false;
+            if (option.rootDir == undefined)
+                option.rootDir = process.cwd();
+            if (option.tranceComplied == undefined)
+                option.tranceComplied = true;
+            if (option.platforms == undefined)
+                option.platforms = [{ name: "web" }];
+            nktj_cli_1.CLI.outn("** mikeneko build start **");
+            const rootDir = option.rootDir;
+            // typescript trance complie
+            let tsType = "es6";
             try {
-                const pbName = "Platform" + platform.buildType.substring(0, 1).toUpperCase() + platform.buildType.substring(1);
-                const pbModuleName = "mikeneko-platform-" + platform.buildType;
-                const pbPath = require.resolve(pbModuleName);
-                const pb_ = require(pbModuleName);
-                if (pb_[pbName]) {
-                    platformOptionClass = pb_[pbName];
-                    platformOptionClass.__dirname = pbPath;
+                if (option.tranceComplied) {
+                    option.tscType = tsType;
+                    tsType = yield this.typescriptComplie(rootDir);
                 }
             }
-            catch (error) { }
-            if (platformOptionClass) {
-                const p_ = platformOptionClass.handleBuildBegin(platform);
-                if (p_)
-                    platform = p_;
-            }
-            let buildhandle = mikeneko_1.BuildHandle;
-            try {
-                buildhandle = require(rootDir + "/src/BuildHandle").BuildHandle;
-            }
-            catch (error) { }
-            if (!buildhandle) {
-                try {
-                    buildhandle = require(rootDir + "/src_" + platform.name + "/BuildHandle").BuildHandle;
-                }
-                catch (error) { }
-            }
-            nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "platform = " + platform.name + ", buildType = " + platform.buildType);
-            // create platform directory
-            let platformDir = buildDir + "/" + platform.name;
-            if (platform.optionDir)
-                platformDir += "/" + platform.optionDir;
-            if (platform.build == BuildType.WebPack) {
-                this.buildWebPack(platformDir, option.tscType, platform, platformOptionClass, buildhandle);
+            catch (error) {
+                nktj_cli_1.CLI.outn("[TypeScript TrancePlie Error]", nktj_cli_1.Color.Red);
+                nktj_cli_1.CLI.outn(error.stdout.toString());
+                nktj_cli_1.CLI.outn("...... " + nktj_cli_1.CLI.setColor("Failed!", nktj_cli_1.Color.Red));
                 return;
             }
-            this.outMkdir(platformDir, true);
-            platform.outPath = platformDir;
-            platform.path = buildDir + "/" + platform.name;
-            // build handle begin
-            buildhandle.handleBegin(platform);
-            // code set
-            let codeList = {};
-            // start head
-            let debug = option.debug;
-            if (platform.debug != undefined)
-                debug = platform.debug;
-            this.jsStart(codeList, tsType, platform.name, debug);
-            // core module mount
-            this.BuildCoreList.forEach((core) => {
+            // mkdir
+            const buildDir = rootDir + "/output";
+            this.outMkdir(buildDir);
+            for (let n = 0; n < option.platforms.length; n++) {
+                // platforms building 
+                let platform = option.platforms[n];
+                if (platform.disable)
+                    continue;
+                if (!platform.build)
+                    platform.build = BuildType.WebBuilder;
+                if (!platform.buildType)
+                    platform.buildType = BuildPlatformType.Web;
+                let platformOptionClass;
+                try {
+                    const pbName = "Platform" + platform.buildType.substring(0, 1).toUpperCase() + platform.buildType.substring(1);
+                    const pbModuleName = "mikeneko-platform-" + platform.buildType;
+                    const pbPath = require.resolve(pbModuleName);
+                    const pb_ = require(pbModuleName);
+                    if (pb_[pbName]) {
+                        platformOptionClass = pb_[pbName];
+                        platformOptionClass.__dirname = pbPath;
+                    }
+                }
+                catch (error) { }
+                if (platformOptionClass) {
+                    const p_ = platformOptionClass.handleBuildBegin(platform);
+                    if (p_)
+                        platform = p_;
+                }
+                let buildhandle = mikeneko_1.BuildHandle;
+                try {
+                    buildhandle = require(rootDir + "/src/BuildHandle").BuildHandle;
+                }
+                catch (error) { }
+                if (!buildhandle) {
+                    try {
+                        buildhandle = require(rootDir + "/src_" + platform.name + "/BuildHandle").BuildHandle;
+                    }
+                    catch (error) { }
+                }
+                nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "platform = " + platform.name + ", buildType = " + platform.buildType);
+                // create platform directory
+                let platformDir = buildDir + "/" + platform.name;
+                if (platform.optionDir)
+                    platformDir += "/" + platform.optionDir;
+                if (platform.build == BuildType.webpack) {
+                    this.buildWebPack(platformDir, option.tscType, platform, platformOptionClass, buildhandle);
+                    return;
+                }
+                this.outMkdir(platformDir, true);
+                platform.outPath = platformDir;
+                platform.path = buildDir + "/" + platform.name;
+                // build handle begin
+                buildhandle.handleBegin(platform);
+                // code set
+                let codeList = {};
+                // start head
+                let debug = option.debug;
+                if (platform.debug != undefined)
+                    debug = platform.debug;
+                this.jsStart(codeList, tsType, platform.name, debug);
                 // core module mount
-                this.coreModuleMount(codeList, tsType, core);
-            });
-            if (platformOptionClass) {
-                const addModule = (name, modulePath) => {
-                    if (!modulePath)
-                        modulePath = name;
-                    console.log("# core module mount".padEnd(20) + " " + name);
-                    const fullPath = path.dirname(platformOptionClass.__dirname) + "/dist/" + tsType + "/" + modulePath + ".js";
-                    let contents = fs.readFileSync(fullPath).toString();
-                    contents = "var exports = {};\n" + contents + ";\nreturn exports;";
-                    codeList[name] = this.setFn(name, contents, true);
-                };
-                platformOptionClass.handleCoreModuleMount(addModule);
+                this.BuildCoreList.forEach((core) => {
+                    // core module mount
+                    this.coreModuleMount(codeList, tsType, core, platform);
+                });
+                if (platformOptionClass) {
+                    const addModule = (name, modulePath) => {
+                        if (!modulePath)
+                            modulePath = name;
+                        console.log("# core module mount".padEnd(20) + " " + name);
+                        const fullPath = path.dirname(platformOptionClass.__dirname) + "/dist/" + tsType + "/" + modulePath + ".js";
+                        let contents = fs.readFileSync(fullPath).toString();
+                        contents = "var exports = {};\n" + contents + ";\nreturn exports;";
+                        codeList[name] = this.setFn(name, contents, true, platform);
+                    };
+                    platformOptionClass.handleCoreModuleMount(addModule);
+                }
+                // core resource mount
+                this.coreResourceMount(codeList, platform);
+                // local module mount
+                this.localModuleMount(codeList, rootDir, platform.name, platform);
+                // rendering html mount
+                this.renderingHtmMount(codeList, rootDir, platform.name, platform);
+                // public content mount
+                this.resourceContentMount(codeList, rootDir, platform.name, platform);
+                // end foot
+                this.jsEnd(codeList, platform);
+                let coreStr = Object.values(codeList).join("");
+                // code compress
+                let codeCompress = option.codeCompress;
+                if (platform.codeCompress != undefined)
+                    codeCompress = platform.codeCompress;
+                if (codeCompress)
+                    coreStr = this.codeCompress(coreStr);
+                // code obfuscated
+                let obfuscated = option.obfuscated;
+                if (platform.obfuscated != undefined)
+                    obfuscated = platform.obfuscated;
+                if (obfuscated)
+                    coreStr = this.codeObfuscate(coreStr);
+                nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "write index.js");
+                fs.writeFileSync(platformDir + "/index.js", coreStr);
+                nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "write index.html");
+                let indexHTML = "<!DOCTYPE html><head><meta charset=\"UTF-8\"><script src=\"index.js\"></script></head><body></body></html>";
+                if (platformOptionClass) {
+                    const htmlBuffer = platformOptionClass.handleCreateIndexHTML();
+                    if (htmlBuffer)
+                        indexHTML = htmlBuffer;
+                }
+                fs.writeFileSync(platformDir + "/index.html", indexHTML);
+                nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "Web Build Comlete.");
+                if (platformOptionClass) {
+                    platformOptionClass.handleWebBuildCompleted(platform);
+                }
+                nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "........ platform = " + platform.name + " ok");
+                // build handle platform  complete
+                buildhandle.handleComplete(platform);
             }
-            // core resource mount
-            this.coreResourceMount(codeList, rootDir);
-            // local module mount
-            this.localModuleMount(codeList, rootDir, platform.name);
-            // rendering html mount
-            this.renderingHtmMount(codeList, rootDir, platform.name);
-            // public content mount
-            this.resourceContentMount(codeList, rootDir, platform.name);
-            // end foot
-            this.jsEnd(codeList);
-            let coreStr = Object.values(codeList).join("");
-            // code compress
-            let codeCompress = option.codeCompress;
-            if (platform.codeCompress != undefined)
-                codeCompress = platform.codeCompress;
-            if (codeCompress)
-                coreStr = this.codeCompress(coreStr);
-            // code obfuscated
-            let obfuscated = option.obfuscated;
-            if (platform.obfuscated != undefined)
-                obfuscated = platform.obfuscated;
-            if (obfuscated)
-                coreStr = this.codeObfuscate(coreStr);
-            nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "write index.js");
-            fs.writeFileSync(platformDir + "/index.js", coreStr);
-            nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "write index.html");
-            let indexHTML = "<!DOCTYPE html><head><meta charset=\"UTF-8\"><script src=\"index.js\"></script></head><body></body></html>";
-            if (platformOptionClass) {
-                const htmlBuffer = platformOptionClass.handleCreateIndexHTML();
-                if (htmlBuffer)
-                    indexHTML = htmlBuffer;
-            }
-            fs.writeFileSync(platformDir + "/index.html", indexHTML);
-            nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "Web Build Comlete.");
-            if (platformOptionClass) {
-                platformOptionClass.handleWebBuildCompleted(platform);
-            }
-            nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "........ platform = " + platform.name + " ok");
-            // build handle platform  complete
-            buildhandle.handleComplete(platform);
-        }
-        nktj_cli_1.CLI.br();
-        nktj_cli_1.CLI.outn("...... Complete!", nktj_cli_1.Color.Green);
+            nktj_cli_1.CLI.br();
+            nktj_cli_1.CLI.outn("...... Complete!", nktj_cli_1.Color.Green);
+        });
     }
     static jsStart(codeList, tsType, platformName, debugMode) {
         nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "build Start");
@@ -198,22 +209,44 @@ class Builder {
             content += "console.log=()=>{};\n";
         codeList.___HEADER = content;
     }
-    static setFn(name, content, rawFlg) {
+    static setFn(name, content, rawFlg, platform) {
+        let afterContent;
         if (rawFlg) {
-            return "sfa.setFn(\"" + name + "\", ()=>{" + content + "});\n";
+            afterContent = "sfa.setFn(\"" + name + "\", ()=>{" + content + "});\n";
         }
         else {
-            return "sfa.setFn(\"" + name + "\", ()=>{ return " + content + "});\n";
+            afterContent = "sfa.setFn(\"" + name + "\", ()=>{ return " + content + "});\n";
         }
+        if (platform.mapping) {
+            afterContent = this.contentEvalReplace(afterContent);
+            if (name.indexOf("app/") === -1 && name.indexOf("rendering") === -1 && name.indexOf("resource") === -1) {
+                name = "libs/" + name;
+            }
+            else {
+                name = "src/" + name;
+            }
+            afterContent += "//# sourceURL=mikeneko:///" + name;
+            return "eval(\"" + afterContent + "\");\n";
+        }
+        return afterContent;
     }
-    static coreModuleMount(codeList, tsType, name) {
+    static contentEvalReplace(content) {
+        content = content.replace(/\\/g, '\\\\');
+        content = content.replace(/\r/g, '\\r');
+        content = content.replace(/\n/g, '\\n');
+        content = content.replace(/\'/g, "\\'");
+        content = content.replace(/\"/g, '\\"');
+        content = content.replace(/\`/g, '\\`');
+        return content;
+    }
+    static coreModuleMount(codeList, tsType, name, platform) {
         nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "mount core".padEnd(20) + " " + name);
         const fullPath = path.dirname(__dirname) + "/dist/" + tsType + "/" + name + ".js";
         let contents = fs.readFileSync(fullPath).toString();
         contents = "var exports = {};\n" + contents + ";\nreturn exports;";
-        codeList[name] = this.setFn(name, contents, true);
+        codeList[name] = this.setFn(name, contents, true, platform);
     }
-    static coreResourceMount(codeList, tsType) {
+    static coreResourceMount(codeList, platform) {
         const targetPath = path.dirname(__dirname) + "/bin/res";
         this.search(targetPath, (file) => {
             const fullPath = file.path + "/" + file.name;
@@ -221,11 +254,11 @@ class Builder {
             basePath = basePath.split("\\").join("/");
             basePath = basePath.split("//").join("/");
             const contentB64 = Buffer.from(fs.readFileSync(fullPath)).toString("base64");
-            codeList[basePath] = this.setFn(basePath, "\"" + contentB64 + "\"");
+            codeList[basePath] = this.setFn(basePath, "\"" + contentB64 + "\"", false, platform);
             nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "mount coreres".padEnd(20) + " " + basePath);
         });
     }
-    static localModuleMount(codeList, rootDir, platformName) {
+    static localModuleMount(codeList, rootDir, platformName, platform) {
         let targetPaths = [
             rootDir + "/dist/src/app",
             rootDir + "/dist/src_" + platformName + "/app",
@@ -241,17 +274,17 @@ class Builder {
                 basePath = basePath.split("//").join("/");
                 let contents = fs.readFileSync(fullPath).toString();
                 contents = "var exports = {};\n" + contents + ";\nreturn exports;";
-                codeList[basePath] = this.setFn(basePath, contents, true);
+                codeList[basePath] = this.setFn(basePath, contents, true, platform);
                 nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "mount local".padEnd(20) + " " + basePath);
             });
         });
         return strs;
     }
-    static jsEnd(codeList) {
+    static jsEnd(codeList, platform) {
         nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "build End");
         codeList.___FOOTER = "sfa.start(()=>{ const st = use(\"Startor\");  new st.Startor(); });";
     }
-    static resourceContentMount(codeList, rootDir, platformName) {
+    static resourceContentMount(codeList, rootDir, platformName, platform) {
         let targetPaths = [
             rootDir + "/src/resource",
             rootDir + "/src_" + platformName + "/resource",
@@ -269,13 +302,13 @@ class Builder {
                 if (targetPath != rootDir + "/src/resource") {
                     plstr = "(" + platformName + ")";
                 }
-                codeList[basePath] = this.setFn(basePath, "\"" + mimeType + "|" + contentB64 + "\"");
+                codeList[basePath] = this.setFn(basePath, "\"" + mimeType + "|" + contentB64 + "\"", false, platform);
                 nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "mount localres".padEnd(20) + " " + basePath);
             });
         });
         return strs;
     }
-    static renderingHtmMount(codeList, rootDir, platformName) {
+    static renderingHtmMount(codeList, rootDir, platformName, platform) {
         let targetPaths = [
             rootDir + "/src/rendering",
             rootDir + "/src_" + platformName + "/rendering",
@@ -292,7 +325,7 @@ class Builder {
                 if (targetPath != rootDir + "/src/rendering") {
                     plstr = "(" + platformName + ")";
                 }
-                codeList[basePath] = this.setFn(basePath, "\"" + contentB64 + "\";");
+                codeList[basePath] = this.setFn(basePath, "\"" + contentB64 + "\";", false, platform);
                 nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "mount render".padEnd(20) + " " + basePath);
             });
         });
@@ -320,15 +353,24 @@ class Builder {
         }
     }
     static typescriptComplie(rootDir) {
-        let tsType = "es6";
-        tsType = this.getTsType(rootDir);
-        if (!tsType)
-            tsType = "es6";
-        nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "TranceComplieType = " + tsType);
-        nktj_cli_1.CLI.out(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "Trance Complie...");
-        (0, child_process_1.execSync)("tsc --pretty");
-        nktj_cli_1.CLI.out("OK").br();
-        return tsType;
+        return __awaiter(this, void 0, void 0, function* () {
+            let tsType = "es6";
+            tsType = this.getTsType(rootDir);
+            if (!tsType)
+                tsType = "es6";
+            nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "TranceComplieType = " + tsType);
+            nktj_cli_1.CLI.wait(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "Trance Complie...");
+            return new Promise((resolve, reject) => {
+                (0, child_process_1.exec)("tsc --pretty", (error, stdout, stderr) => {
+                    if (error)
+                        return reject(error);
+                    if (stderr)
+                        return reject(stderr);
+                    nktj_cli_1.CLI.waitClose("OK").br();
+                    resolve(tsType);
+                });
+            });
+        });
     }
     static outMkdir(rootDir, alreadyDeleted) {
         nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "mkdir " + rootDir);
@@ -397,6 +439,10 @@ class Builder {
         nktj_cli_1.CLI.outn(".....EXIT!");
     }
     static setWebPackDist(platformDir, tscType) {
+        if (!fs.existsSync(platformDir)) {
+            nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "mkdir " + platformDir);
+            fs.mkdirSync(platformDir);
+        }
         const distDir = platformDir + "/dist";
         if (fs.existsSync(distDir)) {
             let lists = fs.readdirSync(distDir, { recursive: true });
