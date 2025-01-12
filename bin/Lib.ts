@@ -211,15 +211,15 @@ export class Lib {
         });
     }
 
-    public static importResourceScript(scriptName : string, resultVars? : string | Array<string>) {
+    /**
+     * ***importResourceScript*** :  
+     * Loads external JavaScript libraries located in the resource directory. 
+     * @param {string} scriptName JavaScript file path
+     * @returns 
+     */
+    public static importResourceScript(scriptName : string) {
         let script = this.getResource(scriptName);
-        if (resultVars) {
-            if (typeof resultVars == "string")  resultVars = [ resultVars ];
-            script += "\n evalRes = {" + resultVars.join(",") + "};";
-        }
-        let evalRes;
-        eval(script);
-        return evalRes;
+        return eval(script);
     }
 }
 

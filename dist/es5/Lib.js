@@ -167,16 +167,15 @@ var Lib = /** @class */ (function () {
             }, time);
         });
     };
-    Lib.importResourceScript = function (scriptName, resultVars) {
+    /**
+     * ***importResourceScript*** :
+     * Loads external JavaScript libraries located in the resource directory.
+     * @param {string} scriptName JavaScript file path
+     * @returns
+     */
+    Lib.importResourceScript = function (scriptName) {
         var script = this.getResource(scriptName);
-        if (resultVars) {
-            if (typeof resultVars == "string")
-                resultVars = [resultVars];
-            script += "\n evalRes = {" + resultVars.join(",") + "};";
-        }
-        var evalRes;
-        eval(script);
-        return evalRes;
+        return eval(script);
     };
     return Lib;
 }());
