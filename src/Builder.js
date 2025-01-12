@@ -52,6 +52,9 @@ class Builder {
                     }
                 }
             }
+            if (argsOption["corelibtsc"]) {
+                option.corelibtsc = true;
+            }
             if (!option)
                 option = {};
             if (option.debug == undefined)
@@ -74,6 +77,16 @@ class Builder {
             }
             catch (error) {
                 nktj_cli_1.CLI.outn("[TypeScript TrancePlie Error]", nktj_cli_1.Color.Red);
+                nktj_cli_1.CLI.outn(error.stdout.toString());
+                nktj_cli_1.CLI.outn("...... " + nktj_cli_1.CLI.setColor("Failed!", nktj_cli_1.Color.Red));
+                return;
+            }
+            // trancecomplie in core library trancecomplie on select type 
+            try {
+                yield this.coreLibTranceComplie(tsType, option.corelibtsc);
+            }
+            catch (error) {
+                nktj_cli_1.CLI.outn("[TypeScript CoreLib TrancePlie Error]", nktj_cli_1.Color.Red);
                 nktj_cli_1.CLI.outn(error.stdout.toString());
                 nktj_cli_1.CLI.outn("...... " + nktj_cli_1.CLI.setColor("Failed!", nktj_cli_1.Color.Red));
                 return;
@@ -366,11 +379,41 @@ class Builder {
                         return reject(error);
                     if (stderr)
                         return reject(stderr);
+                    nktj_cli_1.CLI.waitClose("OK");
+                    resolve(tsType);
+                });
+            });
+        });
+    }
+    static coreLibTranceComplie(tsType, corelibtsc) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!corelibtsc && fs.existsSync(path.dirname(__dirname) + "/dist/" + tsType))
+                return;
+            let forceStr = "";
+            if (corelibtsc)
+                forceStr = "(Force) ";
+            nktj_cli_1.CLI.wait(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + forceStr + "Core Library TranceComplie...");
+            return new Promise((resolve, reject) => {
+                this.corelibDelete(tsType);
+                (0, child_process_1.exec)("cd " + path.dirname(__dirname) + "/bin && tsc --project tsconfigs/" + tsType + ".json", (error, stdout, stderr) => {
+                    if (error)
+                        return reject(error);
+                    if (stderr)
+                        return reject(stderr);
                     nktj_cli_1.CLI.waitClose("OK").br();
                     resolve(tsType);
                 });
             });
         });
+    }
+    static corelibDelete(tstype) {
+        const deletePath = path.dirname(__dirname) + "/dist/" + tstype;
+        const lists = fs.readdirSync(deletePath);
+        for (let n = 0; n < lists.length; n++) {
+            const l_ = deletePath + "/" + lists[n];
+            fs.unlinkSync(l_);
+        }
+        fs.rmdirSync(deletePath);
     }
     static outMkdir(rootDir, alreadyDeleted) {
         nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "mkdir " + rootDir);

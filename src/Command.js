@@ -4,6 +4,7 @@ exports.command = void 0;
 const nktj_cli_1 = require("nktj_cli");
 const Builder_1 = require("./Builder");
 const Create_1 = require("./Create");
+const Corelib_1 = require("./Corelib");
 const command = () => {
     const packageJson = require("../package.json");
     nktj_cli_1.CLI
@@ -25,6 +26,9 @@ const command = () => {
         catch (error) {
             console.error(error);
         }
+    }
+    else if (args[0] == "corelib") {
+        Corelib_1.Corelib.corelib();
     }
     else {
         nktj_cli_1.CLI

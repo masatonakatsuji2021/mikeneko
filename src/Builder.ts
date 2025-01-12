@@ -43,7 +43,17 @@ export interface BuildOption {
      */
     tranceComplied? : boolean,
 
+    /**
+     * ***tscType*** : Specify the TypeScript transpilation type.  
+     * If not specified, it will be transpiled to ES6 by default.
+     */
     tscType? : string,
+
+    /**
+     * ***corelibtsc*** : Force transpilation of core libraries.  
+     * Used to update transpiled files when the core library is updated.
+     */
+    corelibtsc?: boolean,
 
     /**
      * ***obfuscated*** : javascript obfuscate.
@@ -160,6 +170,10 @@ export class Builder {
             }
         }
 
+        if (argsOption["corelibtsc"]) {
+            option.corelibtsc = true;
+        }
+
         if (!option) option = {};
         if (option.debug == undefined) option.debug = false;
         if (option.rootDir == undefined) option.rootDir = process.cwd();
@@ -178,6 +192,16 @@ export class Builder {
             }
         } catch (error) {
             CLI.outn("[TypeScript TrancePlie Error]", Color.Red);
+            CLI.outn(error.stdout.toString());
+            CLI.outn("...... " + CLI.setColor("Failed!", Color.Red));
+            return;
+        }
+
+        // trancecomplie in core library trancecomplie on select type 
+        try {
+            await this.coreLibTranceComplie(tsType, option.corelibtsc);
+        } catch(error) {
+            CLI.outn("[TypeScript CoreLib TrancePlie Error]", Color.Red);
             CLI.outn(error.stdout.toString());
             CLI.outn("...... " + CLI.setColor("Failed!", Color.Red));
             return;
@@ -493,10 +517,37 @@ export class Builder {
             exec("tsc --pretty", (error, stdout, stderr)=>{
                 if (error) return reject(error);
                 if (stderr) return reject(stderr);
+                CLI.waitClose("OK");
+                resolve(tsType);
+            });
+        });
+    }
+
+    private static async coreLibTranceComplie(tsType : string, corelibtsc: boolean) : Promise<string> {
+        if (!corelibtsc && fs.existsSync(path.dirname(__dirname) + "/dist/" + tsType)) return;
+        let forceStr = "";
+        if (corelibtsc) forceStr = "(Force) ";
+        CLI.wait(CLI.setColor("# ", Color.Green) + forceStr + "Core Library TranceComplie...");
+        return new Promise((resolve, reject) => {            
+            this.corelibDelete(tsType);
+            exec("cd " + path.dirname(__dirname) + "/bin && tsc --project tsconfigs/" + tsType + ".json",(error, stdout, stderr)=>{
+                if (error) return reject(error);
+                if (stderr) return reject(stderr);
                 CLI.waitClose("OK").br();
                 resolve(tsType);
             });
         });
+    }
+
+    private static corelibDelete(tstype: string) {
+        const deletePath = path.dirname(__dirname) + "/dist/" + tstype;
+        const lists = fs.readdirSync(deletePath);
+
+        for(let n = 0 ; n < lists.length; n++){
+            const l_ = deletePath + "/" + lists[n];            
+            fs.unlinkSync(l_);
+        }
+        fs.rmdirSync(deletePath);
     }
 
     private static outMkdir(rootDir : string, alreadyDeleted? : boolean) {

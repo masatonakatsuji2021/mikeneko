@@ -1,6 +1,7 @@
 import { CLI } from "nktj_cli";
 import { Builder, BuildOption } from "./Builder";
 import { Create } from "./Create";
+import { Corelib } from "./Corelib";
 
 export const command = ()=>{
 
@@ -27,6 +28,9 @@ export const command = ()=>{
         }catch(error){
             console.error(error);
         }
+    }
+    else if(args[0] == "corelib") {
+        Corelib.corelib();
     }
     else {
         CLI
