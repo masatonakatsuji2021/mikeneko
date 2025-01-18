@@ -6,7 +6,8 @@ import { Controller } from "Controller";
 import { View } from "View";
 import { Template } from "Template";
 import { UI } from "UI";
-import { dom} from "VirtualDom";
+import { dom, VirtualDom} from "VirtualDom";
+import { Dialog, DialogOption } from "Dialog";
 
 export interface PageHistory {
 
@@ -262,6 +263,73 @@ export class Response {
         }
     }
 
+    /**
+     * ***bindUI*** : Bind the UI content to the specified virtual DOM class.
+     * * Wrapper functions from UI classes.
+     * @param {VirtualDom} vdo Bind Virtual Dom
+     * @param {string} UIName  UI Name
+     * @return {UI}
+     */
+    public static bindUI(vdo: VirtualDom, UIName : string) : UI;
+
+    /**
+     * ***bindUI*** : Bind the UI content to the specified virtual DOM class.
+     * * Wrapper functions from UI classes.
+     * @param {VirtualDom} vdo Bind Virtual Dom
+     * @param {string} UIName  UI Name
+     * @param {any} sendData Transmission data contents
+     * @return {UI}
+     */
+    public static bindUI(vdo: VirtualDom, UIName : string, sendData : any) : UI;
+
+    public static bindUI(vdo: VirtualDom, UIName : string, sendData? : any) : UI {
+        return UI.bind(vdo, UIName, sendData);
+    }
+
+    /**
+     * ***appendUI*** : Appends the UI content to the specified virtual DOM class.
+     * * Wrapper functions from UI classes.
+     * @param {VirtualDom} vdo Append Virtual Dom
+     * @param {string} UIName UI name
+     * @returns {UI}
+     */
+    public static appendUI(vdo: VirtualDom, UIName: string) : UI;
+
+    /**
+     * ***appendUI*** : Appends the UI content to the specified virtual DOM class.
+    * * Wrapper functions from UI classes.
+     * @param {VirtualDom} vdo Append Virtual Dom
+     * @param {string} UIName UI name
+     * @param {any} sendData Transmission data contents
+     * @returns {UI}
+     */
+    public static appendUI(vdo: VirtualDom, UIName: string, sendData : any) : UI;
+
+    public static appendUI(vdo: VirtualDom, UIName: string, sendData? : any) : UI {
+        return UI.append(vdo, UIName, sendData);
+    }
+
+    /**
+     * ***openDialog*** : Displays the specified dialog.
+     * * Wrapper functions from Dialog classes.
+     * @param {string} dialogName Dialog Name
+     * @returns {Dialog}
+     */
+    public static openDialog(dialogName: string) : Dialog;
+
+    /**
+     * ***openDialog*** : Displays the specified dialog.
+     * * Wrapper functions from Dialog classes.
+     * @param {string} dialogName Dialog Name
+     * @param {DialogOption} option dialog options
+     * @returns {Dialog}
+     */
+    public static openDialog(dialogName: string, option: DialogOption) : Dialog;
+
+    public static openDialog(dialogName: string, option?: DialogOption) : Dialog {
+        return Dialog.show(dialogName, option);
+    }
+
     private static async renderingOnController(route : DecisionRoute, data?: any) {
         const controllerName : string = Lib.getModuleName(route.controller + "Controller");
         const controllerPath : string = "app/controller/" + Lib.getModulePath(route.controller + "Controller");
@@ -341,7 +409,6 @@ export class Response {
         await cont.handleRenderAfter(); 
         if(vw) await vw.handleRenderAfter();
     }
-
 
     private static async renderingOnView(route : DecisionRoute, data?: any) {
         const viewName : string = Lib.getModuleName(route.view + "View");

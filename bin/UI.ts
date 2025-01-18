@@ -18,31 +18,31 @@ export class UI extends Render {
 
     /**
      * ***bind*** : Bind the UI content to the specified virtual DOM class.
-     * @param {VirtualDom} mjs Bind Virtual Dom
+     * @param {VirtualDom} vdo Bind Virtual Dom
      * @returns {UI}
      */
-    public static bind(mjs: VirtualDom) : UI;
+    public static bind(vdo: VirtualDom) : UI;
 
     /**
      * ***bind*** : Bind the UI content to the specified virtual DOM class.
-     * @param {VirtualDom} mjs Bind Virtual Dom
+     * @param {VirtualDom} vdo Bind Virtual Dom
      * @param {string} UIName UI Name
      * @returns {UI}
      */
-    public static bind(mjs: VirtualDom, UIName : string) : UI;
+    public static bind(vdo: VirtualDom, UIName : string) : UI;
 
     /**
      * ***bind*** : Bind the UI content to the specified virtual DOM class.
-     * @param {VirtualDom} mjs Bind Virtual Dom
+     * @param {VirtualDom} vdo Bind Virtual Dom
      * @param {string} UIName UI Name
      * @param {any} sendData Transmission data contents
      * @returns {UI}
      */
-    public static bind(mjs: VirtualDom, UIName : string, sendData : any) : UI;
+    public static bind(vdo: VirtualDom, UIName : string, sendData : any) : UI;
 
-    public static bind(mjs: VirtualDom, UIName? : string, sendData? : any) : UI {
+    public static bind(vdo: VirtualDom, UIName? : string, sendData? : any) : UI {
         if(UIName) UIName = "ui/" + UIName;
-        return super.bind(mjs, UIName, sendData, this) as UI;
+        return super.bind(vdo, UIName, sendData, this) as UI;
     }
 
     /**

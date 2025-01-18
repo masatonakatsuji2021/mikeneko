@@ -3,7 +3,7 @@ import * as path from "path";
 import * as mime from "mime-types";
 import * as UglifyJS  from "uglify-js";
 import * as strip from "strip-comments";
-import { exec, execSync } from "child_process";
+import { exec } from "child_process";
 import * as obfucator from "javascript-obfuscator";
 import { BuildHandle } from "mikeneko";
 import { PlatformBase } from "mikeneko/src/PlatformBase";
@@ -192,7 +192,7 @@ export class Builder {
             }
         } catch (error) {
             CLI.outn("[TypeScript TrancePlie Error]", Color.Red);
-            CLI.outn(error.stdout.toString());
+            CLI.outn(error);
             CLI.outn("...... " + CLI.setColor("Failed!", Color.Red));
             return;
         }
@@ -202,7 +202,7 @@ export class Builder {
             await this.coreLibTranceComplie(tsType, option.corelibtsc);
         } catch(error) {
             CLI.outn("[TypeScript CoreLib TrancePlie Error]", Color.Red);
-            CLI.outn(error.stdout.toString());
+            CLI.outn(error);
             CLI.outn("...... " + CLI.setColor("Failed!", Color.Red));
             return;
         }
@@ -342,8 +342,7 @@ export class Builder {
             buildhandle.handleComplete(platform);
         }
 
-        CLI.br();
-        CLI.outn("...... Complete!", Color.Green);
+        CLI.br().outn("...... Complete!", Color.Green);
     }
 
     private static jsStart(codeList: {[name : string] : string}, tsType : string, platformName : string, debugMode : boolean){
@@ -515,10 +514,14 @@ export class Builder {
         CLI.wait(CLI.setColor("# ", Color.Green) + "Trance Complie...");
         return new Promise((resolve, reject) => {
             exec("tsc --pretty", (error, stdout, stderr)=>{
-                if (error) return reject(error);
-                if (stderr) return reject(stderr);
-                CLI.waitClose("OK");
-                resolve(tsType);
+                if (error) {
+                    CLI.waitClose(CLI.setColor("NG", Color.Red));
+                    reject(stdout);
+                }
+                else {
+                    CLI.waitClose(CLI.setColor("OK", Color.Green));
+                    resolve(tsType);
+                }
             });
         });
     }
@@ -531,10 +534,14 @@ export class Builder {
         return new Promise((resolve, reject) => {            
             this.corelibDelete(tsType);
             exec("cd " + path.dirname(__dirname) + "/bin && tsc --project tsconfigs/" + tsType + ".json",(error, stdout, stderr)=>{
-                if (error) return reject(error);
-                if (stderr) return reject(stderr);
-                CLI.waitClose("OK").br();
-                resolve(tsType);
+                if (error) {
+                    CLI.waitClose(CLI.setColor("NG", Color.Red));
+                    reject(stdout);
+                }
+                else {
+                    CLI.waitClose(CLI.setColor("OK", Color.Green));
+                    resolve(tsType);
+                }
             });
         });
     }
@@ -567,18 +574,16 @@ export class Builder {
 
     private static codeCompress(code : string) {
         // Delete comment
-        console.log("# code compress ... ");
-        console.log("# delete commentout...");
+        CLI.outn(CLI.setColor("# ", Color.Green) + "code compress ...");
         const strippedCode = strip(code);
         // Compress JavaScript code
-        console.log("# code compress...");
         const result = UglifyJS.minify(strippedCode);
         if (result.error) throw result.error;
         return result.code;
     }
 
     private static codeObfuscate(code : string) {
-        console.log("# code obfuscate .... ");
+        CLI.outn(CLI.setColor("# ", Color.Green) + "code obfuscate .... ");
         code = obfucator.obfuscate(code).getObfuscatedCode();
         return code;
     }
@@ -596,17 +601,19 @@ export class Builder {
         return tsType;
     }
 
-    private static buildWebPack(platformDir : string, tscType : string, platform : BuildPlatform, platformOptionClass : typeof PlatformBase, buildhandle : typeof BuildHandle) {
-        CLI.outn(CLI.setColor("# ", Color.Green) + "webpack build..");
+    private static async buildWebPack(platformDir : string, tscType : string, platform : BuildPlatform, platformOptionClass : typeof PlatformBase, buildhandle : typeof BuildHandle) {
 
         this.setWebPackDist(platformDir, tscType);
 
         this.setWebpackComponent(platformDir);
 
         try {
-            console.log(execSync("cd output/" + platform.name + " && webpack",).toString());
+            await this.webPackExec(platform.name);
         } catch(error){
-            console.log(error.stdout.toString());
+            CLI.outn("[Webpack Build Error]", Color.Red);
+            CLI.outn(error);
+            CLI.outn("...... " + CLI.setColor("Failed!", Color.Red));
+            return;
         }
 
         CLI.outn(CLI.setColor("# ", Color.Green) + "write index.html");
@@ -617,7 +624,24 @@ export class Builder {
         }
         fs.writeFileSync(platformDir + "/www/index.html", indexHTML);
 
-        CLI.outn(".....EXIT!");
+        CLI.br().outn("...... Complete!", Color.Green);
+    }
+
+    private static webPackExec(platformName: string) {
+        CLI.wait(CLI.setColor("# ", Color.Green) + "webpack build ...");
+        return new Promise((resolve, reject) => {
+            exec("cd output/" + platformName + " && webpack",(error, stdout)=>{
+                if (error) {
+                    CLI.waitClose(CLI.setColor("NG", Color.Red));
+                    reject(stdout);
+                }
+                else {
+                    CLI.waitClose(CLI.setColor("OK", Color.Green));
+                    CLI.outn(stdout);
+                    resolve(true);
+                }
+            });
+        });
     }
 
     private static setWebPackDist(platformDir : string, tscType : string) {
@@ -760,6 +784,5 @@ export class Builder {
         }
         str += "};";
         fs.writeFileSync(platformDir + "/dist/WebPackComponent.js", str);
-        CLI.outn("# set webpack components");
     }
 }

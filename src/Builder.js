@@ -77,7 +77,7 @@ class Builder {
             }
             catch (error) {
                 nktj_cli_1.CLI.outn("[TypeScript TrancePlie Error]", nktj_cli_1.Color.Red);
-                nktj_cli_1.CLI.outn(error.stdout.toString());
+                nktj_cli_1.CLI.outn(error);
                 nktj_cli_1.CLI.outn("...... " + nktj_cli_1.CLI.setColor("Failed!", nktj_cli_1.Color.Red));
                 return;
             }
@@ -87,7 +87,7 @@ class Builder {
             }
             catch (error) {
                 nktj_cli_1.CLI.outn("[TypeScript CoreLib TrancePlie Error]", nktj_cli_1.Color.Red);
-                nktj_cli_1.CLI.outn(error.stdout.toString());
+                nktj_cli_1.CLI.outn(error);
                 nktj_cli_1.CLI.outn("...... " + nktj_cli_1.CLI.setColor("Failed!", nktj_cli_1.Color.Red));
                 return;
             }
@@ -210,8 +210,7 @@ class Builder {
                 // build handle platform  complete
                 buildhandle.handleComplete(platform);
             }
-            nktj_cli_1.CLI.br();
-            nktj_cli_1.CLI.outn("...... Complete!", nktj_cli_1.Color.Green);
+            nktj_cli_1.CLI.br().outn("...... Complete!", nktj_cli_1.Color.Green);
         });
     }
     static jsStart(codeList, tsType, platformName, debugMode) {
@@ -375,12 +374,14 @@ class Builder {
             nktj_cli_1.CLI.wait(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "Trance Complie...");
             return new Promise((resolve, reject) => {
                 (0, child_process_1.exec)("tsc --pretty", (error, stdout, stderr) => {
-                    if (error)
-                        return reject(error);
-                    if (stderr)
-                        return reject(stderr);
-                    nktj_cli_1.CLI.waitClose("OK");
-                    resolve(tsType);
+                    if (error) {
+                        nktj_cli_1.CLI.waitClose(nktj_cli_1.CLI.setColor("NG", nktj_cli_1.Color.Red));
+                        reject(stdout);
+                    }
+                    else {
+                        nktj_cli_1.CLI.waitClose(nktj_cli_1.CLI.setColor("OK", nktj_cli_1.Color.Green));
+                        resolve(tsType);
+                    }
                 });
             });
         });
@@ -396,12 +397,14 @@ class Builder {
             return new Promise((resolve, reject) => {
                 this.corelibDelete(tsType);
                 (0, child_process_1.exec)("cd " + path.dirname(__dirname) + "/bin && tsc --project tsconfigs/" + tsType + ".json", (error, stdout, stderr) => {
-                    if (error)
-                        return reject(error);
-                    if (stderr)
-                        return reject(stderr);
-                    nktj_cli_1.CLI.waitClose("OK").br();
-                    resolve(tsType);
+                    if (error) {
+                        nktj_cli_1.CLI.waitClose(nktj_cli_1.CLI.setColor("NG", nktj_cli_1.Color.Red));
+                        reject(stdout);
+                    }
+                    else {
+                        nktj_cli_1.CLI.waitClose(nktj_cli_1.CLI.setColor("OK", nktj_cli_1.Color.Green));
+                        resolve(tsType);
+                    }
                 });
             });
         });
@@ -431,18 +434,16 @@ class Builder {
     }
     static codeCompress(code) {
         // Delete comment
-        console.log("# code compress ... ");
-        console.log("# delete commentout...");
+        nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "code compress ...");
         const strippedCode = strip(code);
         // Compress JavaScript code
-        console.log("# code compress...");
         const result = UglifyJS.minify(strippedCode);
         if (result.error)
             throw result.error;
         return result.code;
     }
     static codeObfuscate(code) {
-        console.log("# code obfuscate .... ");
+        nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "code obfuscate .... ");
         code = obfucator.obfuscate(code).getObfuscatedCode();
         return code;
     }
@@ -462,24 +463,44 @@ class Builder {
         return tsType;
     }
     static buildWebPack(platformDir, tscType, platform, platformOptionClass, buildhandle) {
-        nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "webpack build..");
-        this.setWebPackDist(platformDir, tscType);
-        this.setWebpackComponent(platformDir);
-        try {
-            console.log((0, child_process_1.execSync)("cd output/" + platform.name + " && webpack").toString());
-        }
-        catch (error) {
-            console.log(error.stdout.toString());
-        }
-        nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "write index.html");
-        let indexHTML = "<!DOCTYPE html><head><meta charset=\"UTF-8\"><script src=\"index.js\"></script></head><body></body></html>";
-        if (platformOptionClass) {
-            const htmlBuffer = platformOptionClass.handleCreateIndexHTML();
-            if (htmlBuffer)
-                indexHTML = htmlBuffer;
-        }
-        fs.writeFileSync(platformDir + "/www/index.html", indexHTML);
-        nktj_cli_1.CLI.outn(".....EXIT!");
+        return __awaiter(this, void 0, void 0, function* () {
+            this.setWebPackDist(platformDir, tscType);
+            this.setWebpackComponent(platformDir);
+            try {
+                yield this.webPackExec(platform.name);
+            }
+            catch (error) {
+                nktj_cli_1.CLI.outn("[Webpack Build Error]", nktj_cli_1.Color.Red);
+                nktj_cli_1.CLI.outn(error);
+                nktj_cli_1.CLI.outn("...... " + nktj_cli_1.CLI.setColor("Failed!", nktj_cli_1.Color.Red));
+                return;
+            }
+            nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "write index.html");
+            let indexHTML = "<!DOCTYPE html><head><meta charset=\"UTF-8\"><script src=\"index.js\"></script></head><body></body></html>";
+            if (platformOptionClass) {
+                const htmlBuffer = platformOptionClass.handleCreateIndexHTML();
+                if (htmlBuffer)
+                    indexHTML = htmlBuffer;
+            }
+            fs.writeFileSync(platformDir + "/www/index.html", indexHTML);
+            nktj_cli_1.CLI.br().outn("...... Complete!", nktj_cli_1.Color.Green);
+        });
+    }
+    static webPackExec(platformName) {
+        nktj_cli_1.CLI.wait(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "webpack build ...");
+        return new Promise((resolve, reject) => {
+            (0, child_process_1.exec)("cd output/" + platformName + " && webpack", (error, stdout) => {
+                if (error) {
+                    nktj_cli_1.CLI.waitClose(nktj_cli_1.CLI.setColor("NG", nktj_cli_1.Color.Red));
+                    reject(stdout);
+                }
+                else {
+                    nktj_cli_1.CLI.waitClose(nktj_cli_1.CLI.setColor("OK", nktj_cli_1.Color.Green));
+                    nktj_cli_1.CLI.outn(stdout);
+                    resolve(true);
+                }
+            });
+        });
     }
     static setWebPackDist(platformDir, tscType) {
         if (!fs.existsSync(platformDir)) {
@@ -606,7 +627,6 @@ class Builder {
         }
         str += "};";
         fs.writeFileSync(platformDir + "/dist/WebPackComponent.js", str);
-        nktj_cli_1.CLI.outn("# set webpack components");
     }
 }
 exports.Builder = Builder;
