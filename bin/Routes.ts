@@ -1,9 +1,11 @@
 import { App } from "App";
+import { RMapConvert, RouteMap } from "RouteMap";
 
 export interface Route{
     view : string,
     controller: string,
     action: string,
+    handle: (url : string) => string | RouteMap,
     aregment?: Array<any>,
 }
 
@@ -19,6 +21,7 @@ export interface DecisionRoute {
     action?: string,
     args? : Array<string>,
     view? : string,
+    handle?: (url : string) => string | RouteMap,
 }
 
 export class Routes{
@@ -30,7 +33,8 @@ export class Routes{
 
         const MyApp : typeof App = use("app/config/App").MyApp;
 
-        if(!this._routes){
+        if(!Routes._routes){        
+            if (MyApp.maps) MyApp.routes = RMapConvert(MyApp.maps);
             Routes._routes = Routes.routeConvert(MyApp.routes);
         }
 
@@ -70,6 +74,7 @@ export class Routes{
                     controller: null,
                     view: null,
                     action: null,
+                    handle: null,
                 };
                 for(let n2 = 0; n2 < vals.length ; n2++){
                     let v_ = vals[n2];
@@ -104,6 +109,16 @@ export class Routes{
                 }
 
                 res[url] = buffer;             
+            }
+            else if(typeof val == "function") {
+                let buffer : Route = {
+                    controller: null,
+                    view: null,
+                    action: null,
+                    handle: null,
+                };                
+                buffer.handle = val;
+                res[url] = buffer;
             }
             else{
                 var buffers = Routes.routeConvert(val);
@@ -192,6 +207,17 @@ export class Routes{
 
         let res : DecisionRoute= {};
         if(decision){
+
+            if (decision.handle){
+                const handleRes = decision.handle(targetUrl);
+                if (handleRes instanceof RouteMap) {
+                    decision.view = handleRes.view; 
+                }
+                else {
+                    decision.view = handleRes;
+                }
+            }
+
             res = {
                 url : targetUrl,
                 mode: DecisionRouteMode.Success,
@@ -199,6 +225,7 @@ export class Routes{
                 action: decision.action,
                 args: decision.aregment,
                 view : decision.view,
+                handle: decision.handle,
             };
         }
         else{

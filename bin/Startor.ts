@@ -9,6 +9,7 @@ import { Template } from "Template";
 import { Background } from "Background";
 import { Response } from "Response";
 import { Shortcode } from "Shortcode";
+import { RMapConvert } from "RouteMap";
 
 export class Startor {
 
@@ -37,11 +38,26 @@ export class Startor {
             });
         
             await Background.load();
-            let url : string = this.MyApp.beginURL;
-            if (this.MyApp.routeType == AppRouteType.web) {
-                if (location.hash) url = location.hash.substring(1);
+            let begin = this.MyApp.begin;
+            if (!begin) begin = "/";
+            let url = "/";
+            if (typeof begin == "string") {
+                url = begin;
             }
-            Response.next(url);
+            else {
+                url = begin.url;
+            }
+
+            if (this.MyApp.routeType == AppRouteType.web) {
+                if (location.hash) url = location.hash.substring(1);       
+                const route : DecisionRoute = Routes.searchRoute(url);
+                Response.rendering(route).then(()=>{
+                    Response.isBack = false;
+                });
+            }
+            else {
+                Response.next(url);
+            }
         })();
     }
 

@@ -666,5 +666,6 @@ Builder.BuildCoreList = [
     "Validation",
     "View",
     "UI",
+    "RouteMap",
     "Core",
 ];

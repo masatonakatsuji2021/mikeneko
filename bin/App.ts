@@ -1,5 +1,7 @@
+import { RouteMap, RouteMaps } from "RouteMap";
+
 export interface Routes {
-    [url : string] : string | Routes,
+    [url : string] : string | Routes | Function,
 }
 
 export enum AppRouteType {
@@ -39,11 +41,10 @@ export class App {
     public static notFoundView : string;
 
     /**
-     * ***beginURL*** : 
-     * Screen URL to open immediately after launching the app.  
-     * (Default is "/".)
+     * ***begin*** : 
+     * Specify the URL or RouteMap class object of the screen to open immediately after launching the app. 
      */
-    public static beginURL : string = "/";
+    public static begin : string | RouteMap;
 
     /**
      * ***routes*** : Routing Settings.  
@@ -63,6 +64,12 @@ export class App {
      * ```
      */
     public static routes: Routes;
+
+    /**
+     * ***maps*** : Specify the route map list for each screen and the view used here.
+     * (It is intended as a successor to the ``routes`` member variable for routing.)
+     */
+    public static maps: RouteMaps;
 
     /**
      * ***backgrounds*** : Background class list to run.  

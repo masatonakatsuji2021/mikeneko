@@ -8,6 +8,7 @@ import { Template } from "Template";
 import { UI } from "UI";
 import { dom, VirtualDom} from "VirtualDom";
 import { Dialog, DialogOption } from "Dialog";
+import { RouteMap } from "RouteMap";
 
 export interface PageHistory {
 
@@ -93,6 +94,45 @@ export class Response {
     }
 
     /**
+     * ***move*** : Transitions to the specified RouteMap object.
+     * @param {RouteMap} map RouteMap Class Object
+     * @returns {void}
+     */
+    public static move(map : RouteMap) : void;
+
+    /**
+     * ***move*** : Transitions to the specified RouteMap object.
+     * @param {RouteMap} map RouteMap Class Object
+     * @param {Array<string | number>} args request URL argrements
+     * @returns {void}
+     */
+    public static move(map : RouteMap, args: Array<string | number>) : void;
+
+    /**
+     * ***move*** : Transitions to the specified RouteMap object.
+     * @param {RouteMap} map RouteMap Class Object
+     * @param {Array<string | number>} args request URL argrements
+     * @param {any} data send data (Name is not entered. Available only when routeType is app.)
+     * @returns {void}
+     */
+    public static move(map : RouteMap, args: Array<string | number>, data: any) : void;
+
+    public static move(map : RouteMap, args?: Array<string | number>, data?: any)  : void {
+        if (Response.lock) return;
+        let url = map.url;
+        const indentifier = "{!!!}";
+        if (args) {
+            url = url.replace(/\/{([^}]+)}/g, indentifier);
+
+            for (let n = 0 ; n < args.length ; n++) {
+                url = url.replace(indentifier, "/" + args[n].toString());
+            }
+        }
+        url = url.split(indentifier).join("");
+        Response.next(url, data);        
+    }
+
+    /**
      * ***next*** : Transition to the specified URL (route path)  
      * It cannot be used if screen transitions are disabled by lock, etc.  
      * @param {string} url route path
@@ -118,8 +158,18 @@ export class Response {
         };
         Data.push("history", hdata);
         const route : DecisionRoute = Routes.searchRoute(url.toString());
-        Response.rendering(route, data);
-        if (this.routeType == AppRouteType.web) location.href = "#" + url;
+
+        if (this.routeType == AppRouteType.web) {
+            if (url == "/") {
+                location.hash = "";
+            }
+            else {
+                location.hash = "#" + url;
+            }
+        }
+        else {
+            Response.rendering(route, data);
+        }
     }
 
     /**
@@ -480,6 +530,8 @@ export class Response {
     }
 
     public static async __rendering(route : DecisionRoute, context : Controller | View){
+
+        console.log(route);
 
         if(!context.view){
             if(route.controller){

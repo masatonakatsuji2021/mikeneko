@@ -152,6 +152,7 @@ export class Builder {
         "Validation",
         "View", 
         "UI", 
+        "RouteMap",
         "Core",
     ];
 
