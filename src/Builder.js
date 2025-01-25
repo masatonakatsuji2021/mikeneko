@@ -39,14 +39,18 @@ class Builder {
     static build(option) {
         return __awaiter(this, void 0, void 0, function* () {
             const argsOption = nktj_cli_1.CLI.getArgsOPtion();
+            let platformnames = [];
+            let selectPlatform;
             if (argsOption["platform"] || argsOption["p"]) {
-                let selectPlatform;
                 if (argsOption["platform"])
                     selectPlatform = argsOption["platform"];
                 if (argsOption["p"])
                     selectPlatform = argsOption["p"];
-                for (let n = 0; n < option.platforms.length; n++) {
-                    const platform = option.platforms[n];
+            }
+            for (let n = 0; n < option.platforms.length; n++) {
+                const platform = option.platforms[n];
+                platformnames.push(platform.name);
+                if (selectPlatform) {
                     if (platform.name != selectPlatform) {
                         platform.disable = true;
                     }
@@ -73,7 +77,17 @@ class Builder {
             if (tsType_)
                 tsType = tsType_;
             option.tscType = tsType;
-            nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "TranceComplie Type = " + tsType);
+            nktj_cli_1.CLI.setIndent(4).br();
+            let platformText = platformnames.join(", ");
+            if (selectPlatform)
+                platformText = selectPlatform;
+            nktj_cli_1.CLI.outData({
+                "TypeSCript Type": tsType,
+                "corelibtsc": Boolean(option.corelibtsc),
+                "root": rootDir,
+                "platform": platformText,
+            });
+            nktj_cli_1.CLI.br().setIndent(0);
             // trancecomplie in core library trancecomplie on select type 
             try {
                 yield this.typescriptComplieCoreLib(tsType, option.corelibtsc);

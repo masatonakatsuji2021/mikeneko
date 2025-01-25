@@ -157,17 +157,21 @@ export class Builder {
 
     public static async build(option? : BuildOption) {
         const argsOption = CLI.getArgsOPtion();
+        let platformnames = [];
+        let selectPlatform : string;
         if (argsOption["platform"] || argsOption["p"]) {
 
-            let selectPlatform : string;
             if (argsOption["platform"]) selectPlatform = argsOption["platform"];
             if (argsOption["p"]) selectPlatform = argsOption["p"];
-
-            for(let n = 0 ; n< option.platforms.length ; n++) {
-                const platform = option.platforms[n];
+        }
+        
+        for(let n = 0 ; n< option.platforms.length ; n++) {
+            const platform = option.platforms[n];
+            platformnames.push(platform.name);
+            if (selectPlatform) {
                 if (platform.name != selectPlatform) {
                     platform.disable = true;
-                }
+                }    
             }
         }
 
@@ -183,14 +187,23 @@ export class Builder {
 
         CLI.outn("** mikeneko build start **");
         const rootDir : string = option.rootDir;
-        
+
         // typescript trance complie
         let tsType : string = "es6";
         const tsType_ = this.getTsType(rootDir);
         if (tsType_) tsType = tsType_;
         option.tscType = tsType;
 
-        CLI.outn(CLI.setColor("# ",Color.Green) + "TranceComplie Type = " + tsType);
+        CLI.setIndent(4).br();
+        let platformText = platformnames.join(", ");
+        if (selectPlatform) platformText = selectPlatform;
+        CLI.outData({
+            "TypeSCript Type": tsType,
+            "corelibtsc" : Boolean(option.corelibtsc),
+            "root": rootDir,
+            "platform": platformText,
+        });
+        CLI.br().setIndent(0);
 
         // trancecomplie in core library trancecomplie on select type 
         try {
