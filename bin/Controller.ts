@@ -5,6 +5,7 @@ import { VirtualDom, VirtualDomList } from "VirtualDom";
 /**
  * ***Controller*** : Main class for each screen.  
  * handlers for multiple screens can be managed collectively using public methods.
+ * @deprecated This class is deprecated. Please use the View class.
  */
 export class Controller {
 

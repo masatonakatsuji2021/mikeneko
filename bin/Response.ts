@@ -198,6 +198,7 @@ export class Response {
     
     /**
      * ***nowController*** : Get the current Controller class object if there is one.
+     * @deprecated The Controller class has been deprecated.
      */
     public static get nowController() : Controller {
         if (Data.get("beforeController")) return Data.get("beforeController");
