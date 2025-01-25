@@ -13,32 +13,24 @@ export class Render {
      * @deprecated The role of this variable has been changed to **vdo**.  
      * [VirtualDom is described here](VirtualDom.ts)
      */
-    public myMjs : VirtualDom;
+    public get myMjs() : VirtualDom {
+        return this.vdo;
+    }
     
     /**
      * ***mjs**** : Virtual DOM List of VirtualDom Classes.
-     * @deprecated The role of this variable has been changed to **vdos**.  
-     * [VirtualDom is described here](VirtualDom.ts)
-     * 
-     * Example: First, place a v attribute tag in the HTML file.
-     * ```html
-     * <h1 v="mainTitle"></h1>
-     * ```
-     * Insert text in the View class etc. as follows:
-     * ```typescript
-     * this.mjs.mainTitle.text = "MainTitle Text...";
-     * ```
+     * @deprecated The role of this variable has been changed to **vdo**.  
      * [How to use VirtualDOM is described in VirtualDom classes.](./VirtualDom.ts)
      */
-    public mjs : VirtualDomList;
+    public get mjs() : VirtualDomList {
+        return this.vdos;
+    }
         
     /**
      * ***vdo*** : Virtual Dom for content.  
      * [VirtualDom is described here](VirtualDom.ts)
      */
-    public get vdo() : VirtualDom {
-        return this.myMjs;
-    }
+    public vdo : VirtualDom;
     
     /**
      * ***vdos*** : Virtual DOM List of VirtualDom Classes.  
@@ -56,28 +48,42 @@ export class Render {
      * ```
      * [How to use VirtualDOM is described in VirtualDom classes.](./VirtualDom.ts)
      */
-    public get vdos() : VirtualDomList {
-        return this.mjs;
-    }
+    public vdos : VirtualDomList;
 
     /**
      * ***sendData*** : 
      */
     public sendData: any;
-        
+
+    private static getHtmlRenderPath(path? : string) : string {
+        if (!path) path = Lib.getRenderingPath(this.___PATH___.substring("app/".length), this.type);
+        const renderPath : string = "rendering/" + path + ".html";
+        return renderPath;
+    }
+
+    /**
+     * ***getHtmlExists*** : Determines if HTML content information can be rendered.
+     * @param {string} path rendering html Name
+     * @returns {boolean}
+     */
+    public static getHtmlExists(path : string) : boolean {
+        const renderPath = this.getHtmlRenderPath(path);
+        if(!useExists(renderPath)) return false;
+        return true;
+    }
+
     /**
      * ***getHtml** : Get Rendering HTML content information.
      * @param {string} path rendering html Name
      * @returns {string}
      */
     public static getHtml(path? : string) : string {
-        if (!path) path = Lib.getRenderingPath(this.___PATH___.substring("app/".length), this.type);
-        const renderPath : string = "rendering/" + path + ".html";
-        if(!useExists(renderPath)){
+        const renderPath = this.getHtmlRenderPath(path);
+        if (!this.getHtmlExists(path)) {
             console.error("[Rendering ERROR] Rendering data does not exist. Check if source file \"" + renderPath + "\" exists.") 
             return;
         }
-            
+
         let content : string = use(renderPath);
         if (globalThis.webpack) content = content.split("data:text/html;base64,").join("");
         content = Lib.base64Decode(content);
@@ -118,33 +124,33 @@ export class Render {
 
     /**
      * ***bindUI*** : Bind the Render content to the specified virtual DOM class.
-     * @param {VirtualDom} mjs Bind Virtual Dom
+     * @param {VirtualDom} vdo Bind Virtual Dom
      * @param {string} path render Path
      * @param {any} sendData Transmission data contents
      * @param {any} defaultClass Default Response Class Object
      * @returns {Render | UI | View | Template | Dialog}
      */
-    public static bind(mjs: VirtualDom, path : string, sendData : any, defaultClass: any) {
-        mjs.html = this.getHtml(path);
-        return this.loadClass(mjs, path, sendData, defaultClass);
+    public static bind(vdo: VirtualDom, path : string, sendData : any, defaultClass: any) {
+        vdo.html = this.getHtml(path);
+        return this.loadClass(vdo, path, sendData, defaultClass);
     }
 
     /**
      * ***bindUI*** : Appends the Render content to the specified virtual DOM class.
-     * @param {VirtualDom} mjs Append Virtual Dom
+     * @param {VirtualDom} vdo Append Virtual Dom
      * @param {string} path render Path
      * @param {any} sendData Transmission data contents
      * @param {any} defaultClass Default Response Class Object
      * @returns {Render | UI | View | Template | Dialog}
      */
-    public static append(mjs: VirtualDom, path : string, sendData : any, defaultClass: any) {
-        const myMjs = new VirtualDom();
-        mjs.append(this.getHtml(path), true);
-        mjs.reload(myMjs);
-        return this.loadClass(myMjs, path, sendData, defaultClass);
+    public static append(vdo: VirtualDom, path : string, sendData : any, defaultClass: any) {
+        const myVdo = new VirtualDom();
+        vdo.append(this.getHtml(path), true);
+        vdo.reload(myVdo);
+        return this.loadClass(myVdo, path, sendData, defaultClass);
     }
 
-    protected static loadClass(mjs : VirtualDom, path?: string, sendData? : any, defaultClass? : any) {
+    protected static loadClass(vdo : VirtualDom, path?: string, sendData? : any, defaultClass? : any) {
         if (path) {
             path = path + this.type;
         }
@@ -158,8 +164,8 @@ export class Render {
             if (!useExists(classPath)) throw Error();
             const classObj_ = use(classPath);
             classObj = new classObj_[className]();
-            classObj.myMjs = mjs;
-            classObj.mjs = mjs.childs;
+            classObj.vdo = vdo;
+            classObj.vdos = vdo.childs;
         }catch(error) {
             if (defaultClass) {
                 classObj = new defaultClass();
@@ -167,8 +173,8 @@ export class Render {
             else {
                 classObj = new Render();
             }
-            classObj.myMjs = mjs;
-            classObj.mjs = mjs.childs;
+            classObj.vdo = vdo;
+            classObj.vdos = vdo.childs;
         }
         if (classObj.handle) classObj.handle(sendData);
         return classObj;

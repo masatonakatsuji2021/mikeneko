@@ -141,6 +141,7 @@ export class Builder {
         "Exception", 
         "KeyEvent", 
         "Response", 
+        "Transition",
         "Routes", 
         "Render",
         "Startor", 
@@ -182,26 +183,30 @@ export class Builder {
 
         CLI.outn("** mikeneko build start **");
         const rootDir : string = option.rootDir;
-
+        
         // typescript trance complie
         let tsType : string = "es6";
+        const tsType_ = this.getTsType(rootDir);
+        if (tsType_) tsType = tsType_;
+        option.tscType = tsType;
+
+        CLI.outn(CLI.setColor("# ",Color.Green) + "TranceComplie Type = " + tsType);
+
+        // trancecomplie in core library trancecomplie on select type 
         try {
-            if (option.tranceComplied) {
-                option.tscType = tsType;
-                tsType = await this.typescriptComplie(rootDir);
-            }
-        } catch (error) {
-            CLI.outn("[TypeScript TrancePlie Error]", Color.Red);
+            await this.typescriptComplieCoreLib(tsType, option.corelibtsc);
+        } catch(error) {
+            CLI.outn("[TypeScript TrancePlie CoreLib Error]", Color.Red);
             CLI.outn(error);
             CLI.outn("...... " + CLI.setColor("Failed!", Color.Red));
             return;
         }
 
-        // trancecomplie in core library trancecomplie on select type 
+        // trancecomplie in local content
         try {
-            await this.coreLibTranceComplie(tsType, option.corelibtsc);
-        } catch(error) {
-            CLI.outn("[TypeScript CoreLib TrancePlie Error]", Color.Red);
+            await this.typescriptComplieLocal(tsType);
+        } catch (error) {
+            CLI.outn("[TypeScript TrancePlie Error]", Color.Red);
             CLI.outn(error);
             CLI.outn("...... " + CLI.setColor("Failed!", Color.Red));
             return;
@@ -506,12 +511,8 @@ export class Builder {
         }
     }
 
-    private static async typescriptComplie(rootDir : string) : Promise<string> {
-        let tsType = "es6";
-        tsType = this.getTsType(rootDir);
-        if (!tsType) tsType = "es6";
-        CLI.outn(CLI.setColor("# ", Color.Green) + "TranceComplieType = " + tsType);
-        CLI.wait(CLI.setColor("# ", Color.Green) + "Trance Complie...");
+    private static async typescriptComplieLocal(tsType: string) : Promise<string> {
+        CLI.wait(CLI.setColor("# ", Color.Green) + "TranceComplie ...");
         return new Promise((resolve, reject) => {
             exec("tsc --pretty", (error, stdout, stderr)=>{
                 if (error) {
@@ -526,11 +527,12 @@ export class Builder {
         });
     }
 
-    private static async coreLibTranceComplie(tsType : string, corelibtsc: boolean) : Promise<string> {
-        if (!corelibtsc && fs.existsSync(path.dirname(__dirname) + "/dist/" + tsType)) return;
+    private static async typescriptComplieCoreLib(tsType : string, corelibtsc: boolean) : Promise<string> {
+        if (!fs.existsSync(path.dirname(__dirname) + "/dist")) fs.mkdirSync(path.dirname(__dirname) + "/dist");        
+        if (!fs.existsSync(path.dirname(__dirname) + "/dist/" + tsType)) fs.mkdirSync(path.dirname(__dirname) + "/dist/" + tsType);
+        if (!corelibtsc) return;
         let forceStr = "";
-        if (corelibtsc) forceStr = "(Force) ";
-        CLI.wait(CLI.setColor("# ", Color.Green) + forceStr + "Core Library TranceComplie...");
+        CLI.wait(CLI.setColor("# ", Color.Green) + forceStr + "TranceComplie (Core Library) ...");
         return new Promise((resolve, reject) => {            
             this.corelibDelete(tsType);
             exec("cd " + path.dirname(__dirname) + "/bin && tsc --project tsconfigs/" + tsType + ".json",(error, stdout, stderr)=>{

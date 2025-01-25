@@ -53,10 +53,10 @@ export class Dialog extends Render {
      * ***close*** : Method for closing the dialog.
      */
     public close() {
-        this.myMjs.removeClass("open");
+        this.vdo.removeClass("open");
         this.handleClose();
         setTimeout(() => {
-            this.myMjs.remove();
+            this.vdo.remove();
         }, 300);
     }
 
@@ -80,60 +80,60 @@ export class Dialog extends Render {
     
     /**
      * ***bind*** : Bind the Dialog content to the specified virtual DOM class.
-     * @param {VirtualDom} mjs Bind Virtual Dom
+     * @param {VirtualDom} vdo Bind Virtual Dom
      * @returns {View}
      */
-    public static bind(mjs: VirtualDom) : Dialog;
+    public static bind(vdo: VirtualDom) : Dialog;
 
     /**
      * ***bind*** : Bind the Dialog content to the specified virtual DOM class.
-     * @param {VirtualDom} mjs Bind Virtual Dom
+     * @param {VirtualDom} vdo Bind Virtual Dom
      * @param {string} dialogName Dialog Name
      * @returns {Dialog}
      */
-    public static bind(mjs: VirtualDom, dialogName : string) : Dialog;
+    public static bind(vdo: VirtualDom, dialogName : string) : Dialog;
 
     /**
      * ***bind*** : Bind the Dialog content to the specified virtual DOM class.
-     * @param {VirtualDom} mjs Bind Virtual Dom
+     * @param {VirtualDom} vdo Bind Virtual Dom
      * @param {string} dialogName Dialog Name
      * @param {any} sendData Transmission data contents
      * @returns {Dialog}
      */
-    public static bind(mjs: VirtualDom, dialogName : string, sendData : any) : Dialog;
+    public static bind(vdo: VirtualDom, dialogName : string, sendData : any) : Dialog;
 
-    public static bind(mjs: VirtualDom, dialogName? : string, sendData? : any) : Dialog {
+    public static bind(vdo: VirtualDom, dialogName? : string, sendData? : any) : Dialog {
         if(dialogName) dialogName = "dialog/" + dialogName;
-        return super.bind(mjs, dialogName, sendData, this) as Dialog;
+        return super.bind(vdo, dialogName, sendData, this) as Dialog;
     }
 
     /**
      * ***append*** : Appends the Dialog content to the specified virtual DOM class.
-     * @param {VirtualDom} mjs Append Virtual Dom
+     * @param {VirtualDom} vdo Append Virtual Dom
      * @returns {Dialog}
      */
-    public static append(mjs: VirtualDom) : Dialog;
+    public static append(vdo: VirtualDom) : Dialog;
 
     /**
      * ***append*** : Appends the Dialog content to the specified virtual DOM class.
-     * @param {VirtualDom} mjs Append Virtual Dom
+     * @param {VirtualDom} vdo Append Virtual Dom
      * @param {string} dialogName Dialog name
      * @returns {Dialog}
      */
-    public static append(mjs: VirtualDom, dialogName : string) : Dialog;
+    public static append(vdo: VirtualDom, dialogName : string) : Dialog;
     
     /**
      * ***append*** : Appends the Dialog content to the specified virtual DOM class.
-     * @param {VirtualDom} mjs Append Virtual Dom
+     * @param {VirtualDom} vdo Append Virtual Dom
      * @param {string} dialogName Dialog name
      * @param {any} sendData Transmission data contents
      * @returns {Dialog}
      */
-    public static append(mjs: VirtualDom, dialogName : string, sendData : any) : Dialog;
+    public static append(vdo: VirtualDom, dialogName : string, sendData : any) : Dialog;
     
-    public static append(mjs: VirtualDom, dialogName? : string, sendData? : any) : Dialog {
+    public static append(vdo: VirtualDom, dialogName? : string, sendData? : any) : Dialog {
         if(dialogName) dialogName = "dialog/" + dialogName;
-        return super.append(mjs, dialogName, sendData, this) as Dialog;
+        return super.append(vdo, dialogName, sendData, this) as Dialog;
     }
 
     /**
@@ -183,21 +183,21 @@ export class Dialog extends Render {
         if (!option) option = {};
         this.setDialogCss();
         const dialogStr = "<dwindow>" + this.getHtml(dialogName) + "</dwindow>";
-        const dialogMjs = VirtualDom.create(dialogStr, "dialog");
+        const dialogVdo = VirtualDom.create(dialogStr, "dialog");
         
         if (option.class) {
             if (typeof option.class == "string") option.class = [ option.class ];
             option.class.forEach((c) => {
-                dialogMjs.addClass(c);
+                dialogVdo.addClass(c);
             });
         }
 
-        dom("body").append(dialogMjs, true);
-        dialogMjs.reload();
+        dom("body").append(dialogVdo, true);
+        dialogVdo.reload();
         setTimeout(()=>{
-            dialogMjs.addClass("open");
+            dialogVdo.addClass("open");
         }, 100);
-        const dialog : Dialog = this.loadClass(dialogMjs, dialogName, option.sendData, this);
+        const dialog : Dialog = this.loadClass(dialogVdo, dialogName, option.sendData, this);
         Dialog.addDialog(dialog);
         if (option.handle) option.handle(dialog);
         return dialog;

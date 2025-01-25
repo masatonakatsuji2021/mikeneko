@@ -444,7 +444,7 @@ export class Response {
         if (MyApp.animationCloseClassName) dom("main").removeClass(MyApp.animationCloseClassName);
         if (MyApp.animationOpenClassName) dom("main").addClass(MyApp.animationOpenClassName);
 
-        vm.myMjs = dom("main article");
+        vm.vdo = dom("main article");
         
         await vm.handleRenderBefore();
 
@@ -504,11 +504,21 @@ export class Response {
         }
 
         // View Rendering...
-        const viewHtml = View.getHtml("view/" + context.view);
+        const viewPath = "view/" + context.view;
+        let viewHtml : string = "";
+        if (View.getHtmlExists(viewPath)) {
+            viewHtml = View.getHtml("view/" + context.view);
+        }
+        else {
+            const view = context as View;
+            if (view.contentHtml) {
+                viewHtml = view.contentHtml;
+            }
+        }
         if (!dom("main").length) dom("body").append("<main></main>");
         const main = dom("main");
         main.html = "<article>" + viewHtml + "</article>";
-        context.mjs = main.childs;
+        context.vdos = main.childs;
 
         const beforeHead = Data.get("beforeHead");
         if (beforeHead != context.head) {

@@ -12,63 +12,68 @@ import { Data } from "Data";
 export class View extends Render {
 
     protected static type : string = "View";
+
+    /**
+     * ***contentHtml`` : If you place HTML content for screen display here, it will be displayed..
+     */
+    public contentHtml : string;
     
     /**
      * ***bind*** : Bind the View content to the specified virtual DOM class.
-     * @param {VirtualDom} mjs Bind Virtual Dom
+     * @param {VirtualDom} vdo Bind Virtual Dom
      * @returns {View}
      */
-    public static bind(mjs: VirtualDom) : View;
+    public static bind(vdo: VirtualDom) : View;
 
     /**
      * ***bind*** : Bind the View content to the specified virtual DOM class.
-     * @param {VirtualDom} mjs Bind Virtual Dom
+     * @param {VirtualDom} vdo Bind Virtual Dom
      * @param {string} ViewName View Name
      * @returns {View}
      */
-    public static bind(mjs: VirtualDom, ViewName : string) : View;
+    public static bind(vdo: VirtualDom, ViewName : string) : View;
 
     /**
      * ***bind*** : Bind the View content to the specified virtual DOM class.
-     * @param {VirtualDom} mjs Bind Virtual Dom
+     * @param {VirtualDom} vdo Bind Virtual Dom
      * @param {string} ViewName View Name
      * @param {any} sendData Transmission data contents
      * @returns {View}
      */
-    public static bind(mjs: VirtualDom, ViewName : string, sendData : any) : View;
+    public static bind(vdo: VirtualDom, ViewName : string, sendData : any) : View;
 
-    public static bind(mjs: VirtualDom, ViewName? : string, sendData? : any) : View {
+    public static bind(vdo: VirtualDom, ViewName? : string, sendData? : any) : View {
         if(ViewName) ViewName = "view/" + ViewName;
-        return super.bind(mjs, ViewName, sendData, this) as View;
+        return super.bind(vdo, ViewName, sendData, this) as View;
     }
 
     /**
      * ***append*** : Appends the View content to the specified virtual DOM class.
-     * @param {VirtualDom} mjs Append Virtual Dom
+     * @param {VirtualDom} vdo Append Virtual Dom
      * @returns {Dialog}
      */
-    public static append(mjs: VirtualDom) : View;
+    public static append(vdo: VirtualDom) : View;
 
     /**
      * ***append*** : Appends the View content to the specified virtual DOM class.
-     * @param {VirtualDom} mjs Append Virtual Dom
+     * @param {VirtualDom} vdo Append Virtual Dom
      * @param {string} ViewName View name
      * @returns {Dialog}
      */
-    public static append(mjs: VirtualDom, ViewName : string) : View;
+    public static append(vdo: VirtualDom, ViewName : string) : View;
     
     /**
      * ***append*** : Appends the View content to the specified virtual DOM class.
-     * @param {VirtualDom} mjs Append Virtual Dom
+     * @param {VirtualDom} vdo Append Virtual Dom
      * @param {string} ViewName View name
      * @param {any} sendData Transmission data contents
      * @returns {Dialog}
      */
-    public static append(mjs: VirtualDom, ViewName : string, sendData : any) : View;
+    public static append(vdo: VirtualDom, ViewName : string, sendData : any) : View;
     
-    public static append(mjs: VirtualDom, ViewName? : string, sendData? : any) : View {
+    public static append(vdo: VirtualDom, ViewName? : string, sendData? : any) : View {
         if(ViewName) ViewName = "view/" + ViewName;
-        return super.append(mjs, ViewName, sendData, this) as View;
+        return super.append(vdo, ViewName, sendData, this) as View;
     }
 
 
@@ -105,7 +110,8 @@ export class View extends Render {
             const article = VirtualDom.create(this.getHtml(), "article");
             const main = dom("main");
             main.append(article);
-            view.mjs = main.childs;
+            view.vdo = article;
+            view.vdos = main.childs;
 
             Data.set("backHandle", async ()=>{
 

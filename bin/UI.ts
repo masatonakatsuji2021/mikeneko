@@ -47,31 +47,31 @@ export class UI extends Render {
 
     /**
      * ***append*** : Appends the UI content to the specified virtual DOM class.
-     * @param {VirtualDom} mjs Append Virtual Dom
+     * @param {VirtualDom} vdo Append Virtual Dom
      * @returns {UI}
      */
-    public static append(mjs: VirtualDom) : UI;
+    public static append(vdo: VirtualDom) : UI;
 
     /**
      * ***append*** : Appends the UI content to the specified virtual DOM class.
-     * @param {VirtualDom} mjs Append Virtual Dom
+     * @param {VirtualDom} vdo Append Virtual Dom
      * @param {string} UIName UI name
      * @param {any} sendData Transmission data contents
      * @returns {UI}
      */
-    public static append(mjs: VirtualDom, UIName : string) : UI;
+    public static append(vdo: VirtualDom, UIName : string) : UI;
 
     /**
      * ***append*** : Appends the UI content to the specified virtual DOM class.
-     * @param {VirtualDom} mjs Append Virtual Dom
+     * @param {VirtualDom} vdo Append Virtual Dom
      * @param {string} UIName UI name
      * @param {any} sendData Transmission data contents
      * @returns {UI}
      */
-    public static append(mjs: VirtualDom, UIName : string, sendData : any) : UI;
+    public static append(vdo: VirtualDom, UIName : string, sendData : any) : UI;
 
-    public static append(mjs: VirtualDom, UIName? : string, sendData? : any) : UI {
+    public static append(vdo: VirtualDom, UIName? : string, sendData? : any) : UI {
         if(UIName) UIName = "ui/" + UIName;
-        return super.append(mjs, UIName, sendData, this) as UI;
+        return super.append(vdo, UIName, sendData, this) as UI;
     }
 }

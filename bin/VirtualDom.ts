@@ -33,7 +33,7 @@ export class VirtualDom {
      * ```
      * In the above case, the following code can be used to manipulate the DOM as a child VirtualDom
      * ```typescript
-     * mjs.main.childs.sub.text = "Sub Text....";
+     * this.vdos.main.childs.sub.text = "Sub Text....";
      * ```
      */
     public childs : VirtualDomList = {};
@@ -73,13 +73,13 @@ export class VirtualDom {
     public static create(text : string, tagName : string) : VirtualDom;
 
     public static create(text? : string, tagName? : string) : VirtualDom {
-        const mjs = new VirtualDom();
+        const vdo = new VirtualDom();
         if (!tagName) tagName = "div";
         if (text.indexOf("<tr") === 0 || text.indexOf("<td") === 0) tagName = "table";
         const el = document.createElement(tagName);
-        mjs.addEl(el);
-        if (text) mjs.html = text;
-        return mjs;
+        vdo.addEl(el);
+        if (text) vdo.html = text;
+        return vdo;
     }
 
     /**
@@ -96,12 +96,12 @@ export class VirtualDom {
      * @returns {VirtualDom}
      */
     public static dom(queryString : string) : VirtualDom {
-        const mjs = new VirtualDom();
+        const vdo = new VirtualDom();
         const qss = document.querySelectorAll(queryString);
         qss.forEach((el : HTMLElement) => {
-            mjs.addEl(el);
+            vdo.addEl(el);
         });
-        return mjs;
+        return vdo;
     }
 
     /**
@@ -110,8 +110,8 @@ export class VirtualDom {
      * write the following code in TypeScript to create an empty VirtualDom class and add the p tag element to it.
      * ```typescript
      * const el = document.querySelector("p");
-     * const mjs = VirtualDom.create();
-     * mjs.addEl(el);
+     * const vdo = VirtualDom.create();
+     * vdo.addEl(el);
      * ```
      * @param {HTMLElement} el HTMLElement
      * @returns {VirtualDom}
@@ -174,7 +174,7 @@ export class VirtualDom {
                     if (index == 0) {
                         if (!context.childs[a_]) context.childs[a_] = new VirtualDom();
                         parent = context.childs[a_];
-                        if (!parent.els.length) parent.addEl(el);
+                        parent.addEl(el);
                     }
                     else {
                         if (!parent.childs[a_]) parent.childs[a_] = new VirtualDom();
@@ -199,42 +199,42 @@ export class VirtualDom {
      * ***first*** : Get the virtual DOM class that contains the first element  
      * A code sample of TypeScript is shown below.
      * ```typescript
-     * const first : VirtualDom = mjs.first;
+     * const first : VirtualDom = this.vdo.first;
      * ```
      */
     public get first() : VirtualDom {
-        const mjs = new VirtualDom();
-        mjs.addEl(this.els[0]);
-        return mjs;
+        const vdo = new VirtualDom();
+        vdo.addEl(this.els[0]);
+        return vdo;
     }
 
     /**
      * ***last*** : Get the virtual DOM class that contains the last element.  
      * A code sample of TypeScript is shown below.
      * ```typescript
-     * const last : VirtualDom = mjs.last;
+     * const last : VirtualDom = vdo.last;
      * ```
      */
     public get last() : VirtualDom {
-        const mjs = new VirtualDom();
-        mjs.addEl(this.els[this.els.length - 1]);
-        return mjs;
+        const vdo = new VirtualDom();
+        vdo.addEl(this.els[this.els.length - 1]);
+        return vdo;
     }
 
     /**
      * ***index*** : Gets the virtual DOM class that contains the element at the specified index.  
      * A code sample of TypeScript is shown below.
      * ```typescript
-     * const three : VirtualDom = mjs.index(2);
+     * const three : VirtualDom = vdo.index(2);
      * ```
      * @param {number} index Element Index Number
      * @returns {VirtualDom}
      */
     public index(index: number) : VirtualDom {
-        const mjs = new VirtualDom();
+        const vdo = new VirtualDom();
         if (!this.els[index]) return;
-        mjs.addEl(this.els[index]);
-        return mjs;
+        vdo.addEl(this.els[index]);
+        return vdo;
     }
 
     /**
@@ -243,9 +243,9 @@ export class VirtualDom {
     public get prev() : VirtualDom {
         // @ts-ignore
         const prevEl : HTMLElement = this.els[0].previousElementSibling;
-        const mjs = new VirtualDom();
-        mjs.addEl(prevEl);
-        return mjs;
+        const vdo = new VirtualDom();
+        vdo.addEl(prevEl);
+        return vdo;
     }
 
     /**
@@ -254,9 +254,9 @@ export class VirtualDom {
     public get next() : VirtualDom {
         // @ts-ignore
         const prevEl : HTMLElement = this.els[0].nextElementSibling;
-        const mjs = new VirtualDom();
-        mjs.addEl(prevEl);
-        return mjs;
+        const vdo = new VirtualDom();
+        vdo.addEl(prevEl);
+        return vdo;
     }
 
     /**
@@ -283,25 +283,25 @@ export class VirtualDom {
      * @returns {VirtualDom}
      */
     public querySelector(queryString: string) : VirtualDom {
-        const mjs = new VirtualDom();
+        const vdo = new VirtualDom();
         this.els.forEach((el : HTMLElement) => {
             const qss = el.querySelectorAll(queryString);
             qss.forEach((qs : HTMLElement) => {
-                mjs.addEl(qs);
-            });
+                vdo.addEl(qs);
+            });vdo
         });
-        return mjs;
+        return vdo;
     }
 
     /**
      * ***text*** : Gets or sets the specified text.  
      * The following is an example of how to set text:
      * ```typescript
-     * mjs.text = "Text Area Sample Text.....";
+     * vdo.text = "Text Area Sample Text.....";
      * ```
      * The following is an example of how to get text:
      * ```typescript
-     * const text : string = mjs.text;
+     * const text : string = vdo.text;
      * ```
      */
     public set text(value : string | number) {
@@ -316,7 +316,7 @@ export class VirtualDom {
      * ***setText*** : Gets or sets the specified text.  
      * A code sample of TypeScript is shown below.
      * ```typescript
-     * mjs.setText("Text Area Sample Text .....");
+     * vdo.setText("Text Area Sample Text .....");
      * ```
      * @param {string | number} value Text content
      * @returns {VirtualDom}
@@ -327,7 +327,7 @@ export class VirtualDom {
      * ***setText*** : Gets or sets the specified text.  
      * A code sample of TypeScript is shown below.
      * ```typescript
-     * mjs.setText("Text Area Sample Text .....", true);
+     * vdo.setText("Text Area Sample Text .....", true);
      * ```
      * @param {string | number} value Text content
      * @param {boolean?} noReload Whether or not reload can be executed
@@ -350,11 +350,11 @@ export class VirtualDom {
      * ***html*** : Gets or sets an HTML tag.  
      * The following is an example of how to set text:
      * ```typescript
-     * mjs.html = "<h1>HTML Tag Test Sample ....</h1>";
+     * vdo.html = "<h1>HTML Tag Test Sample ....</h1>";
      * ```
      * The following is an example of how to get text:
      * ```typescript
-     * const html : string = mjs.html;
+     * const html : string = vdo.html;
      * ```
      */
     public set html(value : string | HTMLElement | VirtualDom) {
@@ -370,7 +370,7 @@ export class VirtualDom {
      * ***setHtml*** : Gets or sets an HTML tag.
      * A code sample of TypeScript is shown below.
      * ```typescript
-     * mjs.setHtml("<h1>HTML Tag Test Sample ....</h1>");
+     * vdo.setHtml("<h1>HTML Tag Test Sample ....</h1>");
      * ```
      * @param {string | HTMLElement | VirtualDom} value HTML tag content or HTMLElement, VirtualDom class
      * @returns {VirtualDom}
@@ -381,7 +381,7 @@ export class VirtualDom {
      * ***setHtml*** : Gets or sets an HTML tag.
      * A code sample of TypeScript is shown below.
      * ```typescript
-     * mjs.setHtml("<h1>HTML Tag Test Sample ....</h1>", true);
+     * vdo.setHtml("<h1>HTML Tag Test Sample ....</h1>", true);
      * ```
      * @param {string | HTMLElement | VirtualDom} value HTML tag content or HTMLElement, VirtualDom class
      * @param {boolean?} noReload Whether or not reload can be executed
@@ -420,11 +420,11 @@ export class VirtualDom {
      * ***outerHTML*** : Get or set the outerHTML.  
      * The following is an example of how to set text:
      * ```typescript
-     * mjs.outerHTML = "<h1>Outer HTML Tag Test Sample ....</h1>";
+     * vdo.outerHTML = "<h1>Outer HTML Tag Test Sample ....</h1>";
      * ```
      * The following is an example of how to get text:
      * ```typescript
-     * const outerHTML : string = mjs.outerHTML;
+     * const outerHTML : string = vdo.outerHTML;
      * ```
      */
     public set outerHtml(value : string) {
@@ -445,7 +445,7 @@ export class VirtualDom {
      * ***afterBegin*** : Inserts content immediately below the target element, before the first child.  
      * A code sample of TypeScript is shown below.
      * ```typescript
-     * mjs.afterBegin("<h1>afterBegin HTML Tag Test Sample ....</h1>");
+     * vdo.afterBegin("<h1>afterBegin HTML Tag Test Sample ....</h1>");
      * ```
      * @param {string | HTMLElement | VirtualDom} value Inserted Content
      * @returns {VirtualDom}
@@ -456,7 +456,7 @@ export class VirtualDom {
      * ***afterBegin*** : Inserts content immediately below the target element, before the first child.
      * A code sample of TypeScript is shown below.
      * ```typescript
-     * mjs.afterBegin("<h1>afterBegin HTML Tag Test Sample ....</h1>", true);
+     * vdo.afterBegin("<h1>afterBegin HTML Tag Test Sample ....</h1>", true);
      * ```
      * @param {string | HTMLElement | VirtualDom} value Inserted Content
      * @param {boolean?} noReload Whether or not reload can be executed
@@ -491,7 +491,7 @@ export class VirtualDom {
      * ***append*** : Inserts content directly below the target element, after the last child.  
      * A code sample of TypeScript is shown below.
      * ```typescript
-     * mjs.append("<h1>append HTML Tag Test Sample ....</h1>");
+     * vdo.append("<h1>append HTML Tag Test Sample ....</h1>");
      * ```
      * @param {string | HTMLElement | VirtualDom} value Inserted Content
      * @returns {VirtualDom}
@@ -502,7 +502,7 @@ export class VirtualDom {
      * ***append*** : Inserts content directly below the target element, after the last child.  
      * A code sample of TypeScript is shown below.
      * ```typescript
-     * mjs.append("<h1>append HTML Tag Test Sample ....</h1>", true);
+     * vdo.append("<h1>append HTML Tag Test Sample ....</h1>", true);
      * ```
      * @param {string | HTMLElement | VirtualDom} value Inserted Content
      * @param {boolean?} noReload Whether or not reload can be executed
@@ -537,7 +537,7 @@ export class VirtualDom {
      * ***remove*** : Delete the target element.  
      * A code sample of TypeScript is shown below.
      * ```typescript
-     * mjs.remove();
+     * vdo.remove();
      * ``` 
      * @returns {VirtualDom}
      */
@@ -552,12 +552,12 @@ export class VirtualDom {
      * ***style*** : Setting style(stylesheets) attributes for an element.  
      * A code sample of TypeScript is shown below.
      * ```typescript
-     * mjs.style({ background: "rgb(255,100,0" });
+     * vdo.style({ background: "rgb(255,100,0" });
      * ``` 
-     * @param {[name : string] : string | number} stylesheets Style attribute information
+     * @param {[name : string] : string | number | boolean} stylesheets Style attribute information
      * @returns {VirtualDom}
      */
-    public style(stylesheets : {[name : string] : string | number}) : VirtualDom {
+    public style(stylesheets : {[name : string] : string | number | boolean}) : VirtualDom {
         const c = Object.keys(stylesheets);
         for (let n = 0 ; n < c.length ; n++) {
             const name = c[n];
@@ -574,7 +574,7 @@ export class VirtualDom {
      * ***getStyle*** : Get style information for the specified selector.  
      * A code sample of TypeScript is shown below.
      * ```typescript
-     * const background : string = mjs.getStyle("background");
+     * const background : string = vdo.getStyle("background");
      * ``` 
      * @param {string} name selector
      * @returns {string | number}
@@ -587,7 +587,7 @@ export class VirtualDom {
      * ***attr** : Get the value for an element attribute name.  
      * A code sample of TypeScript is shown below.
      * ```typescript
-     * const max : string = mjs.attr("max");
+     * const max : string = vdo.attr("max");
      * ``` 
      * @param {string} name attribute name
      * @returns {string}
@@ -598,15 +598,15 @@ export class VirtualDom {
      * ***attr*** : Set attribute information for an element.  
      * A code sample of TypeScript is shown below.
      * ```typescript
-     * mjs.attr("max", 128);
+     * vdo.attr("max", 128);
      * ``` 
      * @param {string} name attribute name
-     * @param {string | number} value attribute value
+     * @param {string | number | boolean} value attribute value
      * @returns {VirtualDom}
      */
-    public attr(name : string, value : string | number) : VirtualDom;
+    public attr(name : string, value : string | number | true) : VirtualDom;
 
-    public attr(name : string, value? : string | number) : string | VirtualDom {
+    public attr(name : string, value? : string | number | true) : string | VirtualDom {
         if (value != undefined) {
             this.els.forEach((el : HTMLElement) => {
                 el.setAttribute(name, value.toString());
@@ -622,7 +622,7 @@ export class VirtualDom {
      * ***isAttr*** : Whether the specified attribute name exists for the element.  
      * A code sample of TypeScript is shown below.
      * ```typescript
-     * const exists : boolean = mjs.isAttr("min");
+     * const exists : boolean = vdo.isAttr("min");
      * ``` 
      * @param {string} name attribute name
      * @returns {boolean}
@@ -637,7 +637,7 @@ export class VirtualDom {
      * ***removeAttr*** : Remove attribute information from an element.  
      * A code sample of TypeScript is shown below.
      * ```typescript
-     * mjs.removeAttr("min");
+     * vdo.removeAttr("min");
      * ``` 
      * @param {string} name The name of the attribute to be deleted.
      * @returns {VirtualDom}
@@ -654,11 +654,11 @@ export class VirtualDom {
      * A code sample of TypeScript is shown below.  
      * An example of setting the src attribute is as follows:
      * ```typescript
-     * mjs.src = "img/sample.png";
+     * vdo.src = "img/sample.png";
      * ``` 
      * An example of getting the src attribute is below.
      * ```typescript
-     * const src : string = mjs.src;
+     * const src : string = vdo.src;
      * ``` 
      */
     public set src(value : string) {
@@ -674,11 +674,11 @@ export class VirtualDom {
      * A code sample of TypeScript is shown below.  
      * An example of setting the src attribute is as follows:
      * ```typescript
-     * mjs.placeHolder = "Placeholder text.....";
+     * vdo.placeHolder = "Placeholder text.....";
      * ``` 
      * An example of getting the src attribute is below.
      * ```typescript
-     * const placeHolder : string = mjs.placeHolder;
+     * const placeHolder : string = vdo.placeHolder;
      * ``` 
      */
     public set placeHolder(value: string) {
@@ -694,11 +694,11 @@ export class VirtualDom {
      * A code sample of TypeScript is shown below.  
      * An example of setting the src attribute is as follows:
      * ```typescript
-     * mjs.href = "css/style.css";
+     * vdo.href = "css/style.css";
      * ``` 
      * An example of getting the src attribute is below.
      * ```typescript
-     * const href : string = mjs.href;
+     * const href : string = vdo.href;
      * ``` 
      */
     public set href(value : string) {
@@ -713,7 +713,7 @@ export class VirtualDom {
      * ***display*** : Set whether elements are visible or hidden.  
      * A code sample of TypeScript is shown below.  
      * ```typescript
-     * mjs.display = true;
+     * vdo.display = true;
      * ``` 
      */
     public set display(status: boolean) {
@@ -729,7 +729,7 @@ export class VirtualDom {
      * ***disable*** : Specifies whether the element can be disabled.
      * A code sample of TypeScript is shown below.  
      * ```typescript
-     * mjs.disable = true;
+     * vdo.disable = true;
      * ``` 
      */
     public set disable(status: number) {
@@ -746,11 +746,11 @@ export class VirtualDom {
      * A code sample of TypeScript is shown below.  
      * An example of setting the src attribute is as follows:
      * ```typescript
-     * mjs.id = "ancher1";
+     * vdo.id = "ancher1";
      * ``` 
      * An example of getting the src attribute is below.
      * ```typescript
-     * const id : string = mjs.id;
+     * const id : string = vdo.id;
      * ``` 
      */
     public set id(value: string) {
@@ -766,11 +766,11 @@ export class VirtualDom {
      * A code sample of TypeScript is shown below.  
      * An example of setting the src attribute is as follows:
      * ```typescript
-     * mjs.name = "tagname1";
+     * vdo.name = "tagname1";
      * ``` 
      * An example of getting the src attribute is below.
      * ```typescript
-     * const name : string = mjs.name;
+     * const name : string = vdo.name;
      * ``` 
      */
     public set name(value : string) {
@@ -785,7 +785,7 @@ export class VirtualDom {
      * ***isClass*** : Gets whether the class attribute of an element exists.  
      * A code sample of TypeScript is shown below.  
      * ```typescript
-     * const exists : boolean = mjs.isClass("class1");
+     * const exists : boolean = vdo.isClass("class1");
      * ``` 
      * @param {string} className Target class attribute
      * @returns {boolean}
@@ -798,7 +798,7 @@ export class VirtualDom {
      * ***addClass*** : Adds the specified class attribute to an element.  
      * A code sample of TypeScript is shown below.  
      * ```typescript
-     * mjs.addClass("class2");
+     * vdo.addClass("class2");
      * ``` 
      * @param {string} className add class attribute
      * @returns {VirtualDom}
@@ -814,7 +814,7 @@ export class VirtualDom {
      * ***removeClass*** : Remove a class attribute from an element.  
      * A code sample of TypeScript is shown below.  
      * ```typescript
-     * mjs.removeClass("class2");
+     * vdo.removeClass("class2");
      * ``` 
      * @param {string} className delete class attribute
      * @returns {VirtualDom}
@@ -830,7 +830,7 @@ export class VirtualDom {
      * ***data*** : Get the data stored in the Virtual DOM class.  
      * A code sample of TypeScript is shown below.  
      * ```typescript
-     * const data = mjs.data("data01");
+     * const data = vdo.data("data01");
      * ``` 
      * @param {string} name data name
      * @returns {any}
@@ -841,7 +841,7 @@ export class VirtualDom {
      * ***data*** : Storing data in virtual DOM classes.  
      * A code sample of TypeScript is shown below.  
      * ```typescript
-     * mjs.data("data01", { name: "name1", value: "value1" });
+     * vdo.data("data01", { name: "name1", value: "value1" });
      * ``` 
      * @param {string} name save data name
      * @param {any} value value
@@ -863,7 +863,7 @@ export class VirtualDom {
      * ***removeData*** : Deletes data stored in the virtual DOM.  
      * A code sample of TypeScript is shown below.  
      * ```typescript
-     * mjs.removeData("data01");
+     * vdo.removeData("data01");
      * ``` 
      * @param {string} name delete data name
      * @returns {VirtualDom}
@@ -877,7 +877,7 @@ export class VirtualDom {
      * ***on*** : Sets a listener for events on a virtual DOM element.  
      * A code sample of TypeScript is shown below.  
      * ```typescript
-     * mjs.on("click", (e: Event, context: VirtualDom) => {
+     * vdo.on("click", (e: Event, context: VirtualDom) => {
      *      context.style({ color: "red" });
      * });
      * ``` 
@@ -891,7 +891,7 @@ export class VirtualDom {
      * ***on*** : Sets a listener for events on a virtual DOM element.  
      * A code sample of TypeScript is shown below.  
      * ```typescript
-     * mjs.on("click", (e: Event, context: VirtualDom) => {
+     * vdo.on("click", (e: Event, context: VirtualDom) => {
      *      context.style({ color: "red" });
      * }, { passive: true });
      * ``` 
@@ -919,7 +919,7 @@ export class VirtualDom {
      * ***onClick*** : Set an event listener for when an element is clicked.  
      * A code sample of TypeScript is shown below.  
      * ```typescript
-     * mjs.onClick = (e: Event, context: VirtualDom) => {
+     * vdo.onClick = (e: Event, context: VirtualDom) => {
      *      console.log("click event...");
      *      context.style({ color: "red" });
      * };
@@ -933,7 +933,7 @@ export class VirtualDom {
      * ***onDblClick*** : Sets an event listener for when an element is double-clicked.   
      * A code sample of TypeScript is shown below.  
      * ```typescript
-     * mjs.onDblClick = (e: Event, context: VirtualDom) => {
+     * vdo.onDblClick = (e: Event, context: VirtualDom) => {
      *      console.log("double click event...");
      *      context.style({ color: "red" });
      * };
@@ -947,7 +947,7 @@ export class VirtualDom {
      * ***onFocus*** : Sets an event listener for when an element is focused.  
      * A code sample of TypeScript is shown below.  
      * ```typescript
-     * mjs.onFocus = (e: Event, context: VirtualDom) => {
+     * vdo.onFocus = (e: Event, context: VirtualDom) => {
      *      console.log("focus event...");
      *      context.style({ color: "red" });
      * };
@@ -961,7 +961,7 @@ export class VirtualDom {
      * ***onChange*** : Sets an event listener for when an element's input value is changed.  
      * A code sample of TypeScript is shown below.  
      * ```typescript
-     * mjs.onChange = (e: Event, context: VirtualDom) => {
+     * vdo.onChange = (e: Event, context: VirtualDom) => {
      *      console.log("change event...");
      *      context.style({ color: "red" });
      * };
@@ -975,7 +975,7 @@ export class VirtualDom {
      * ***onMouseDown*** : Sets an event listener for when the mouse button is pressed on an element.  
      * A code sample of TypeScript is shown below.  
      * ```typescript
-     * mjs.onMouseDown = (e: Event, context: VirtualDom) => {
+     * vdo.onMouseDown = (e: Event, context: VirtualDom) => {
      *      console.log("mouse down event...");
      *      context.style({ color: "red" });
      * };
@@ -989,7 +989,7 @@ export class VirtualDom {
      * ***onMouseUp*** : Sets an event listener for when a mouse button is released on an element.  
      * A code sample of TypeScript is shown below.  
      * ```typescript
-     * mjs.onMouseUp = (e: Event, context: VirtualDom) => {
+     * vdo.onMouseUp = (e: Event, context: VirtualDom) => {
      *      console.log("mouse up event...");
      *      context.style({ color: "red" });
      * };
@@ -1003,7 +1003,7 @@ export class VirtualDom {
      * ***onMouseMove*** : Sets an event listener for when the mouse cursor moves within an element.  
      * A code sample of TypeScript is shown below.  
      * ```typescript
-     * mjs.onMouseMove = (e: Event, context: VirtualDom) => {
+     * vdo.onMouseMove = (e: Event, context: VirtualDom) => {
      *      console.log("mouse move event...");
      *      context.style({ color: "red" });
      * };
@@ -1017,7 +1017,7 @@ export class VirtualDom {
      * ***dispatch*** : Executes a specified event on an element.  
      * A code sample of TypeScript is shown below.  
      * ```typescript
-     * mjs.dispatch("click");
+     * vdo.dispatch("click");
      * ```
      * @param {HTMLElementEventMap} eventName dispatch event name
      * @returns {VirtualDom}
@@ -1034,7 +1034,7 @@ export class VirtualDom {
      * ***value*** : If the element is an input field, gets the entered or selected value.  
      * A code sample of TypeScript is shown below.  
      * ```typescript
-     * const value = mjs.value;
+     * const value = vdo.value;
      * ```
      */
     public get value() : string | number | Array<string | number> {
@@ -1100,11 +1100,11 @@ export class VirtualDom {
      * A code sample of TypeScript is shown below.  
      * An example of setting the src attribute is as follows:
      * ```typescript
-     * mjs.value("value text ....");
+     * vdo.value("value text ....");
      * ```
      * An example of getting the src attribute is below.
      * ```typescript
-     * const value = mjs.value;
+     * const value = vdo.value;
      * ```
      */
     public set value(value : string | number | Array<string | number>) {
@@ -1180,11 +1180,11 @@ export class VirtualDom {
      * A code sample of TypeScript is shown below.  
      * An example of setting the src attribute is as follows:
      * ```typescript
-     * mjs.checked = true;
+     * vdo.checked = true;
      * ```
      * An example of getting the src attribute is below.
      * ```typescript
-     * const checked : boolean = mjs.checked;
+     * const checked : boolean = vdo.checked;
      * ```
      */
     public set checked(status: boolean) {
@@ -1203,7 +1203,7 @@ export class VirtualDom {
      * ***reset*** : If the element is an input field, resets the input or selected value.  
      * A code sample of TypeScript is shown below.  
      * ```typescript
-     * mjs.reset();
+     * vdo.reset();
      * ```
      * @returns {VirtualDom}
      */
@@ -1246,7 +1246,7 @@ export class VirtualDom {
      * ***selectAddParam*** : If the element is a select tag, add an item option.  
      * A code sample of TypeScript is shown below.  
      * ```typescript
-     * mjs.selectAddParam({
+     * vdo.selectAddParam({
      *      0: "select colum 0",
      *      1: "select colum 1",
      *      2: "select colum 2",
@@ -1262,7 +1262,7 @@ export class VirtualDom {
      * ***selectAddParam*** : If the element is a select tag, add an item option.
      * A code sample of TypeScript is shown below.  
      * ```typescript
-     * mjs.selectAddParam({
+     * vdo.selectAddParam({
      *      0: "select colum 0",
      *      1: "select colum 1",
      *      2: "select colum 2",
@@ -1305,7 +1305,7 @@ export class VirtualDom {
      * ***selectEmpty*** : If the element is a select tag, set the empty selection.  
      * A code sample of TypeScript is shown below.  
      * ```typescript
-     * mjs.selectEmpty("--- Select ----");
+     * vdo.selectEmpty("--- Select ----");
      * ```
      * @param {string} text Selection Text Name
      * @returns {VirtualDom}
@@ -1324,7 +1324,7 @@ export class VirtualDom {
      * ***selectResetParam*** : If the element is a Select tag, reset the options.  
      * A code sample of TypeScript is shown below.  
      * ```typescript
-     * mjs.selectResetParam();
+     * vdo.selectResetParam();
      * ```
      * @returns {VirtualDom}
      */
@@ -1337,7 +1337,7 @@ export class VirtualDom {
      * ***selectedText*** : If the element is a checkbox, gets the display text of the selected item.  
      * A code sample of TypeScript is shown below.  
      * ```typescript
-     * const selected : string = mjs.selectedText;
+     * const selected : string = this.vdo.selectedText;
      * ```
      */
     public get selectedText() : string | Array<string> {

@@ -538,10 +538,10 @@ export class ValidateErrorResult {
      * ```html
      * <div v="error.name"></div>
      * ```
-     * @param {VirtualDomList} mjs Virtual DOM List
+     * @param {VirtualDomList} vdos Virtual DOM List
      * @returns {void}
      */
-    public bind(mjs : VirtualDomList) : void;
+    public bind(vdos : VirtualDomList) : void;
 
     /**
      * ***bind*** : Based on the result of the validation check, an error message is bound to the error virtual DOM from the specified virtual DOM list.  
@@ -549,11 +549,11 @@ export class ValidateErrorResult {
      * ```html
      * <div v="error.name"></div>
      * ```
-     * @param {VirtualDomList} mjs Virtual DOM List
+     * @param {VirtualDomList} vdos Virtual DOM List
      * @param {string} name field name
      * @returns {void}
      */
-    public bind(mjs : VirtualDomList, name : string) : void;
+    public bind(vdos : VirtualDomList, name : string) : void;
 
     /**
      * ***bind*** : Based on the result of the validation check, an error message is bound to the error virtual DOM from the specified virtual DOM list.  
@@ -561,18 +561,18 @@ export class ValidateErrorResult {
      * ```html
      * <div v="error.name"></div>
      * ```
-     * @param {VirtualDomList} mjs Virtual DOM List
+     * @param {VirtualDomList} vdos Virtual DOM List
      * @param {string} name field name
      * @param {number} index Index Number
      * @returns {void}
      */
-    public bind(mjs : VirtualDomList, name : string, index : number) : void;
+    public bind(vdos : VirtualDomList, name : string, index : number) : void;
 
-    public bind(mjs : VirtualDomList, name? : string, index? : number) : void {
+    public bind(vdos : VirtualDomList, name? : string, index? : number) : void {
         if (name) {
-            if (!mjs.error) return;
-            if (!mjs.error.childs[name]) return;
-            let target : VirtualDom = mjs.error.childs[name];
+            if (!vdos.error) return;
+            if (!vdos.error.childs[name]) return;
+            let target : VirtualDom = vdos.error.childs[name];
             let result;
             if (index) {
                 if (target.index(index)) {
@@ -601,11 +601,11 @@ export class ValidateErrorResult {
                 if (this.fieldIndexs[field]) {
                     const fieldCount = this.fieldIndexs[field];
                     for(let n = 0 ; n < fieldCount ; n++) {
-                        this.bind(mjs, field, n);
+                        this.bind(vdos, field, n);
                     }
                 }
                 else {
-                    this.bind(mjs, field);
+                    this.bind(vdos, field);
                 }
             });
         }
@@ -765,36 +765,36 @@ export class Validation {
 
     /**
      * ***verifyBind*** : After checking the input data for validity, the error content is automatically bound using the virtual DOM.
-     * @param {VirtualDomList} mjs Virtual DOM Class List
+     * @param {VirtualDomList} vdos Virtual DOM Class List
      * @param {any} data input data
      * @returns {ValidateErrorResult} 
      */
-    public static verifyBind(mjs: VirtualDomList, data: any) : ValidateErrorResult;
+    public static verifyBind(vdos: VirtualDomList, data: any) : ValidateErrorResult;
 
     /**
      * ***verifyBind*** : After checking the input data for validity, the error content is automatically bound using the virtual DOM.
-     * @param {VirtualDomList} mjs Virtual DOM Class List
+     * @param {VirtualDomList} vdos Virtual DOM Class List
      * @param {any} data input data
      * @param {ValidateRuleMaps} rules Validation Check Rules
      * @returns {ValidateErrorResult} 
      */
-    public static verifyBind(mjs: VirtualDomList, data: any, rules : ValidateRuleMaps) : ValidateErrorResult;
+    public static verifyBind(vdos: VirtualDomList, data: any, rules : ValidateRuleMaps) : ValidateErrorResult;
     
-    public static verifyBind(mjs: VirtualDomList, data: any, rules? : ValidateRuleMaps) : ValidateErrorResult {
+    public static verifyBind(vdos: VirtualDomList, data: any, rules? : ValidateRuleMaps) : ValidateErrorResult {
         const my = new this();
         if (rules) my.rules = rules;
-        return my.verifyBind(mjs, data);
+        return my.verifyBind(vdos, data);
     }
 
     /**
      * ***verifyBind*** : After checking the input data for validity, the error content is automatically bound using the virtual DOM.
-     * @param {VirtualDomList} mjs Virtual DOM Class List
+     * @param {VirtualDomList} vdos Virtual DOM Class List
      * @param {any} data input data
      * @returns {ValidateErrorResult} 
      */
-    public verifyBind(mjs: VirtualDomList, data : any) : ValidateErrorResult {
+    public verifyBind(vdos: VirtualDomList, data : any) : ValidateErrorResult {
         const result = this.verify(data);
-        result.bind(mjs);
+        result.bind(vdos);
         return result;
     }
 }
@@ -836,21 +836,21 @@ export class ValidateMethod {
     public length(value: any, args : Array<any>) : boolean {
         if (!this.required(value)) return true;
         const target = this.getArgValue(args, 0);
-        if (value.length !== target) return false;
+        if (Array.from(value).length !== target) return false;
         return true;
     }
 
     public lengthMin(value: any, args : Array<any>) : boolean {
         if (!this.required(value)) return true;
         const target = this.getArgValue(args, 0);
-        if (value.length < target) return false;
+        if (Array.from(value).length < target) return false;
         return true;
     }
 
     public lengthMax(value: any, args : Array<any>) : boolean {
         if (!this.required(value)) return true;
         const target = this.getArgValue(args, 0);
-        if (value.length > target) return false;
+        if (Array.from(value).length > target) return false;
         return true;
     }
 
@@ -858,8 +858,8 @@ export class ValidateMethod {
         if (!this.required(value)) return true;
         const targetMin = this.getArgValue(args, 0);
         const targetMax = this.getArgValue(args, 1);
-        if (value.length < targetMin) return false;
-        if (value.length > targetMax) return false;
+        if (Array.from(value).length < targetMin) return false;
+        if (Array.from(value).length > targetMax) return false;
         return true;
     }
 

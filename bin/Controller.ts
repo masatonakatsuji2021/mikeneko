@@ -10,27 +10,28 @@ export class Controller {
 
     /**
      * ***myMjs*** : Virtual Dom for content.
+     * @deprecated This functionality is migrated to the member variable ``vdo``.
      */
-    public myMjs : VirtualDom;
+    public get myMjs() : VirtualDom {
+        return this.vdo;
+    }
 
     /**
      * ***mjs**** : Virtual DOM List of VirtualDom Classes.
+     * @deprecated This functionality is migrated to the member variable ``vdo``.
      */
-    public mjs : VirtualDomList;
-    
+    public get mjs() : VirtualDomList {
+        return this.vdos;
+    } 
+
     /**
      * ***vdo*** : Virtual Dom for content.
      */
-    public get vdo() : VirtualDom {
-        return this.myMjs;
-    }
-
+    public vdo : VirtualDom;
     /**
      * ***vdos*** : Virtual DOM List of VirtualDom Classes.
      */
-    public get vdos() : VirtualDomList {
-        return this.mjs;
-    }
+    public vdos : VirtualDomList;
 
     /**
      * ***sendData*** : 

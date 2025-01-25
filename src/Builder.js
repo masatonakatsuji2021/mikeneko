@@ -69,24 +69,27 @@ class Builder {
             const rootDir = option.rootDir;
             // typescript trance complie
             let tsType = "es6";
+            const tsType_ = this.getTsType(rootDir);
+            if (tsType_)
+                tsType = tsType_;
+            option.tscType = tsType;
+            nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "TranceComplie Type = " + tsType);
+            // trancecomplie in core library trancecomplie on select type 
             try {
-                if (option.tranceComplied) {
-                    option.tscType = tsType;
-                    tsType = yield this.typescriptComplie(rootDir);
-                }
+                yield this.typescriptComplieCoreLib(tsType, option.corelibtsc);
             }
             catch (error) {
-                nktj_cli_1.CLI.outn("[TypeScript TrancePlie Error]", nktj_cli_1.Color.Red);
+                nktj_cli_1.CLI.outn("[TypeScript TrancePlie CoreLib Error]", nktj_cli_1.Color.Red);
                 nktj_cli_1.CLI.outn(error);
                 nktj_cli_1.CLI.outn("...... " + nktj_cli_1.CLI.setColor("Failed!", nktj_cli_1.Color.Red));
                 return;
             }
-            // trancecomplie in core library trancecomplie on select type 
+            // trancecomplie in local content
             try {
-                yield this.coreLibTranceComplie(tsType, option.corelibtsc);
+                yield this.typescriptComplieLocal(tsType);
             }
             catch (error) {
-                nktj_cli_1.CLI.outn("[TypeScript CoreLib TrancePlie Error]", nktj_cli_1.Color.Red);
+                nktj_cli_1.CLI.outn("[TypeScript TrancePlie Error]", nktj_cli_1.Color.Red);
                 nktj_cli_1.CLI.outn(error);
                 nktj_cli_1.CLI.outn("...... " + nktj_cli_1.CLI.setColor("Failed!", nktj_cli_1.Color.Red));
                 return;
@@ -364,14 +367,9 @@ class Builder {
             }
         }
     }
-    static typescriptComplie(rootDir) {
+    static typescriptComplieLocal(tsType) {
         return __awaiter(this, void 0, void 0, function* () {
-            let tsType = "es6";
-            tsType = this.getTsType(rootDir);
-            if (!tsType)
-                tsType = "es6";
-            nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "TranceComplieType = " + tsType);
-            nktj_cli_1.CLI.wait(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "Trance Complie...");
+            nktj_cli_1.CLI.wait(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "TranceComplie ...");
             return new Promise((resolve, reject) => {
                 (0, child_process_1.exec)("tsc --pretty", (error, stdout, stderr) => {
                     if (error) {
@@ -386,14 +384,16 @@ class Builder {
             });
         });
     }
-    static coreLibTranceComplie(tsType, corelibtsc) {
+    static typescriptComplieCoreLib(tsType, corelibtsc) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!corelibtsc && fs.existsSync(path.dirname(__dirname) + "/dist/" + tsType))
+            if (!fs.existsSync(path.dirname(__dirname) + "/dist"))
+                fs.mkdirSync(path.dirname(__dirname) + "/dist");
+            if (!fs.existsSync(path.dirname(__dirname) + "/dist/" + tsType))
+                fs.mkdirSync(path.dirname(__dirname) + "/dist/" + tsType);
+            if (!corelibtsc)
                 return;
             let forceStr = "";
-            if (corelibtsc)
-                forceStr = "(Force) ";
-            nktj_cli_1.CLI.wait(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + forceStr + "Core Library TranceComplie...");
+            nktj_cli_1.CLI.wait(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + forceStr + "TranceComplie (Core Library) ...");
             return new Promise((resolve, reject) => {
                 this.corelibDelete(tsType);
                 (0, child_process_1.exec)("cd " + path.dirname(__dirname) + "/bin && tsc --project tsconfigs/" + tsType + ".json", (error, stdout, stderr) => {
@@ -641,6 +641,7 @@ Builder.BuildCoreList = [
     "Exception",
     "KeyEvent",
     "Response",
+    "Transition",
     "Routes",
     "Render",
     "Startor",
