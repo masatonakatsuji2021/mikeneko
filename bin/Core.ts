@@ -17,3 +17,5 @@ export { Template } from "Template";
 export { UI } from "UI";
 export { Validation, ValidateRule, ValidateRuleMaps, ValidateRuleMap, ValidateErrorResult, ValidateOption, ValidateMethod } from "Validation";
 export { View } from "View";
+export { RouteMap, RouteMapDataCaseHandle, RouteMapDataCaseView, RouteMaps, RMap, RMapConvert } from "RouteMap";
+export { Transition } from "Transition";

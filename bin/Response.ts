@@ -531,8 +531,6 @@ export class Response {
 
     public static async __rendering(route : DecisionRoute, context : Controller | View){
 
-        console.log(route);
-
         if(!context.view){
             if(route.controller){
                 context.view = route.controller + "/" + route.action;
