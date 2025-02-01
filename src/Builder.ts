@@ -130,32 +130,6 @@ export interface BuildPlatform {
 
 export class Builder {
 
-    private static BuildCoreList : Array<string> = [
-        "Ajax",
-        "App", 
-        "Background", 
-        "Controller", 
-        "Data", 
-        "Dialog",
-        "VirtualDom",
-        "Exception", 
-        "KeyEvent", 
-        "Response", 
-        "Transition",
-        "Routes", 
-        "Render",
-        "Startor", 
-        "Storage", 
-        "Shortcode",
-        "Template", 
-        "Lib", 
-        "Validation",
-        "View", 
-        "UI", 
-        "RouteMap",
-        "Core",
-    ];
-
     public static async build(option? : BuildOption) {
         const argsOption = CLI.getArgsOPtion();
         let platformnames = [];
@@ -189,6 +163,18 @@ export class Builder {
         CLI.outn("** mikeneko build start **");
         const rootDir : string = option.rootDir;
 
+        if (!fs.existsSync(rootDir + "/node_modules/mikeneko-corelib/package.json")) {
+            try {
+                await this.installCoreLib(rootDir);
+            } catch(error) {
+                CLI.outn(error);
+                CLI.outn(CLI.setColor(" .... Install Failed!", Color.Red));
+                return;
+            }
+        }
+
+        const CoreLibList = require(rootDir + "/node_modules/mikeneko-corelib/list.json");
+
         // typescript trance complie
         let tsType : string = "es6";
         const tsType_ = this.getTsType(rootDir);
@@ -208,7 +194,7 @@ export class Builder {
 
         // trancecomplie in core library trancecomplie on select type 
         try {
-            await this.typescriptComplieCoreLib(tsType, option.corelibtsc);
+            await this.typescriptComplieCoreLib(rootDir, tsType, option.corelibtsc);
         } catch(error) {
             CLI.outn("[TypeScript TrancePlie CoreLib Error]", Color.Red);
             CLI.outn(error);
@@ -273,7 +259,13 @@ export class Builder {
             if (platform.optionDir) platformDir += "/" + platform.optionDir;
 
             if (platform.build == BuildType.webpack) {
-                this.buildWebPack(platformDir, option.tscType, platform, platformOptionClass, buildhandle);
+                this.buildWebPack(
+                    rootDir, 
+                    platformDir, 
+                    option.tscType, 
+                    platform, 
+                    CoreLibList,
+                    platformOptionClass, buildhandle);
                 return;
             }
 
@@ -291,12 +283,12 @@ export class Builder {
             // start head
             let debug :boolean = option.debug;
             if (platform.debug != undefined) debug = platform.debug;                
-            this.jsStart(codeList, tsType, platform.name, debug);
+            this.jsStart(rootDir, codeList, tsType, platform.name, debug);
 
             // core module mount
-            this.BuildCoreList.forEach((core : string) => {
+            CoreLibList.forEach((core : string) => {
                  // core module mount
-                 this.coreModuleMount(codeList, tsType, core, platform);
+                 this.coreModuleMount(rootDir, codeList, tsType, core, platform);
              });
 
              if (platformOptionClass) {
@@ -311,8 +303,8 @@ export class Builder {
                 platformOptionClass.handleCoreModuleMount(addModule);
              }
 
-             // core resource mount
-             this.coreResourceMount(codeList, platform);
+            // core resource mount
+            this.coreResourceMount(rootDir, codeList, platform);
 
             // local module mount
             this.localModuleMount(codeList, rootDir, platform.name, platform);
@@ -364,9 +356,26 @@ export class Builder {
         CLI.br().outn("...... Complete!", Color.Green);
     }
 
-    private static jsStart(codeList: {[name : string] : string}, tsType : string, platformName : string, debugMode : boolean){
+    private static installCoreLib(rootDir: string) {
+        CLI.wait(CLI.setColor("# ", Color.Green) + "Install 'mikeneko-corelib' ...");
+
+        return new Promise((resolve, reject) => {
+            exec("npm i mikeneko-corelib --prefix " + rootDir, (error, stdout, stderr)=>{
+                if (error) {
+                    CLI.waitClose(CLI.setColor("NG", Color.Red));
+                    reject(stderr);
+                }
+                else {
+                    CLI.waitClose(CLI.setColor("OK", Color.Green));
+                    resolve(true);
+                }
+            });
+        });
+    }
+
+    private static jsStart(rootDir: string, codeList: {[name : string] : string}, tsType : string, platformName : string, debugMode : boolean){
         CLI.outn(CLI.setColor("# ", Color.Green) + "build Start");
-        let content =  fs.readFileSync(path.dirname(__dirname) + "/dist/" + tsType + "/Front.js").toString();
+        let content =  fs.readFileSync(rootDir + "/dist/corelib/Front.js").toString();
         content = content.split("{{platform}}").join(platformName);
         if (!debugMode) content += "console.log=()=>{};\n"
         codeList.___HEADER = content;
@@ -406,16 +415,16 @@ export class Builder {
         return content;
     }
 
-    private static coreModuleMount(codeList : {[name : string] : string}, tsType : string, name : string, platform : BuildPlatform) {
+    private static coreModuleMount(rootDir : string, codeList : {[name : string] : string}, tsType : string, name : string, platform : BuildPlatform) {
         CLI.outn(CLI.setColor("# ", Color.Green) + "mount core".padEnd(20) + " " + name);
-        const fullPath : string = path.dirname(__dirname) + "/dist/" + tsType + "/" + name + ".js"; 
+        const fullPath : string = rootDir + "/dist/corelib/" + name + ".js"; 
         let contents : string = fs.readFileSync(fullPath).toString() ;
         contents = "var exports = {};\n" + contents + ";\nreturn exports;";
         codeList[name] = this.setFn(name, contents, true, platform);
     }
 
-    private static coreResourceMount(codeList : {[name : string] : string}, platform : BuildPlatform) {
-        const targetPath = path.dirname(__dirname) + "/bin/res";
+    private static coreResourceMount(rootDir: string, codeList : {[name : string] : string}, platform : BuildPlatform) {
+        const targetPath = rootDir + "/node_modules/mikeneko-corelib/bin/res";
         this.search(targetPath, (file) => {
             const fullPath = file.path + "/" + file.name;
             let basePath = "CORERES/"+ fullPath.substring((targetPath + "/").length);
@@ -541,15 +550,23 @@ export class Builder {
         });
     }
 
-    private static async typescriptComplieCoreLib(tsType : string, corelibtsc: boolean) : Promise<string> {
-        if (!fs.existsSync(path.dirname(__dirname) + "/dist")) fs.mkdirSync(path.dirname(__dirname) + "/dist");        
-        if (!fs.existsSync(path.dirname(__dirname) + "/dist/" + tsType)) fs.mkdirSync(path.dirname(__dirname) + "/dist/" + tsType);
-        if (!corelibtsc) return;
+    private static async typescriptComplieCoreLib(rootDir : string, tsType : string, corelibtsc: boolean) : Promise<string> {
+        const libPath = rootDir + "/node_modules/mikeneko-corelib";
+        const binPath = libPath + "/bin";
+        const distPath = libPath + "/dist";
+        const distTsTypePath = distPath + "/" + tsType;
+        const outPath = rootDir + "/dist/corelib";
+        if (!corelibtsc) {
+            if (fs.existsSync(outPath)) return;
+        }
+        if (!fs.existsSync(distPath)) fs.mkdirSync(distPath);        
+        if (!fs.existsSync(distTsTypePath)) fs.mkdirSync(distTsTypePath);
         let forceStr = "";
         CLI.wait(CLI.setColor("# ", Color.Green) + forceStr + "TranceComplie (Core Library) ...");
-        return new Promise((resolve, reject) => {            
-            this.corelibDelete(tsType);
-            exec("cd " + path.dirname(__dirname) + "/bin && tsc --project tsconfigs/" + tsType + ".json",(error, stdout, stderr)=>{
+
+        return new Promise((resolve, reject) => {
+            this.corelibDelete(distTsTypePath);
+            exec("cd " + binPath + " && tsc --outdir " + outPath + " --project tsconfigs/" + tsType + ".json",(error, stdout, stderr)=>{
                 if (error) {
                     CLI.waitClose(CLI.setColor("NG", Color.Red));
                     reject(stdout);
@@ -562,15 +579,14 @@ export class Builder {
         });
     }
 
-    private static corelibDelete(tstype: string) {
-        const deletePath = path.dirname(__dirname) + "/dist/" + tstype;
-        const lists = fs.readdirSync(deletePath);
+    private static corelibDelete(distTsTypePath : string) {
+        const lists = fs.readdirSync(distTsTypePath);
 
         for(let n = 0 ; n < lists.length; n++){
-            const l_ = deletePath + "/" + lists[n];            
+            const l_ = distTsTypePath + "/" + lists[n];            
             fs.unlinkSync(l_);
         }
-        fs.rmdirSync(deletePath);
+        fs.rmdirSync(distTsTypePath);
     }
 
     private static outMkdir(rootDir : string, alreadyDeleted? : boolean) {
@@ -617,9 +633,9 @@ export class Builder {
         return tsType;
     }
 
-    private static async buildWebPack(platformDir : string, tscType : string, platform : BuildPlatform, platformOptionClass : typeof PlatformBase, buildhandle : typeof BuildHandle) {
+    private static async buildWebPack(rootDir: string, platformDir : string, tscType : string, platform : BuildPlatform, CoreLibList: Array<string>, platformOptionClass : typeof PlatformBase, buildhandle : typeof BuildHandle) {
 
-        this.setWebPackDist(platformDir, tscType);
+        this.setWebPackDist(rootDir, platformDir, tscType, CoreLibList);
 
         this.setWebpackComponent(platformDir);
 
@@ -660,7 +676,7 @@ export class Builder {
         });
     }
 
-    private static setWebPackDist(platformDir : string, tscType : string) {
+    private static setWebPackDist(rootDir: string, platformDir : string, tscType : string, CoreLibList: Array<string>) {
 
         if (!fs.existsSync(platformDir)){
             CLI.outn(CLI.setColor("# ", Color.Green) + "mkdir " + platformDir);
@@ -679,23 +695,24 @@ export class Builder {
             fs.mkdirSync(distDir);
         }
 
-        this.BuildCoreList.push("FrontWebPack");
+        CoreLibList.push("FrontWebPack");
 
         // core library set
         if (!fs.existsSync(distDir + "/core")){
             fs.mkdirSync(distDir + "/core");
         }
 
-        for (let n = 0 ; n < this.BuildCoreList.length ; n++){
-            const coreName = this.BuildCoreList[n];
-            fs.copyFileSync(path.dirname(__dirname) + "/dist/" + tscType + "/" + coreName + ".js", distDir + "/core/" + coreName + ".js");
+        const distLibPath = rootDir + "/dist/corelib";
+        for (let n = 0 ; n < CoreLibList.length ; n++){
+            const coreName = CoreLibList[n];
+            fs.copyFileSync(distLibPath + "/" + coreName + ".js", distDir + "/core/" + coreName + ".js");
         }
 
         // CORERES set
         if (!fs.existsSync(distDir + "/CORERES")){
             fs.mkdirSync(distDir + "/CORERES");
         }
-        const coreresDir = path.dirname(__dirname) + "/bin/res";
+        const coreresDir = rootDir + "/node_modules/mikeneko-corelib/bin/res";
         const coreresLIsts = fs.readdirSync(coreresDir, { recursive : true });
         for (let n = 0 ; n < coreresLIsts.length ; n++){
             const l_  = coreresLIsts[n];
@@ -710,9 +727,7 @@ export class Builder {
             }
         }
 
-
         // app list set
-        
         if (!fs.existsSync(distDir + "/app")){
             fs.mkdirSync(distDir + "/app");
         }

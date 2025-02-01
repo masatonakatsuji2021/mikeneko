@@ -6,6 +6,6 @@ module.exports = function(content){
     const dirname = __dirname.split("\\").join("/");
     const classPath = this.resourcePath.split("\\").join("/").split(dirname + "/dist/").join("").replace(/(\.[\w\d]+)$/i, '');
     content += "try { " + ClassName + ".___PATH___ = \"" + classPath + "\"; } catch(error){}";
-    console.log("  " + classPath);
+    console.log("    " + classPath);
     return content;
 };

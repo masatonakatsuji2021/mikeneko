@@ -13,18 +13,19 @@
     },
     "devDependencies": {
         "@types/node": "^20.10.1",
-        "nktj_cli": "^1.0.2",
         "javascript-obfuscator": "^4.1.1",
         "mime-types": "^2.1.35",
+        "nktj_cli": "^1.0.2",
         "strip-comments": "^2.0.1",
         "typescript": "^5.3.2",
         "uglify-js": "^3.18.0"
     },
     "dependencies": {
         "@types/node": "^20.10.1",
-        "nktj_cli": "^1.0.2",
         "javascript-obfuscator": "^4.1.1",
+        "mikeneko-corelib": "^1.0.0",
         "mime-types": "^2.1.35",
+        "nktj_cli": "^1.0.2",
         "strip-comments": "^2.0.1",
         "typescript": "^5.3.2",
         "uglify-js": "^3.18.0"

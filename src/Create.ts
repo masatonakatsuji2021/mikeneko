@@ -1,6 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import { CLI, Color} from "nktj_cli";
+import { exec } from "child_process";
 
 export class Create {
 
@@ -61,7 +62,15 @@ export class Create {
             }
         });
 
-        this.calibrateTsConfig(rootDir);
+        if (!fs.existsSync(rootDir + "/node_modules/mikeneko-corelib/package.json")) {
+            try {
+                await this.installCoreLib(rootDir);
+            } catch(error) {
+                CLI.outn(error);
+                CLI.outn(CLI.setColor(" .... Install Failed!", Color.Red));
+                return;
+            }
+        }
 
         CLI.br().outn("....... Create Complete!", Color.Green);
     }
@@ -87,11 +96,21 @@ export class Create {
             }
         }
     }
+    
+    private static installCoreLib(rootDir: string) {
+        CLI.wait(CLI.setColor("# ", Color.Green) + "Install 'mikeneko-corelib' ...");
 
-    private static calibrateTsConfig(rootDir: string) {
-        const tsConfig = require(rootDir + "/tsconfig.json");
-        tsConfig.compilerOptions.paths["*"] = [ path.dirname(__dirname) + "/bin/*" ];
-        CLI.outn(CLI.setColor("# ", Color.Green) + "calibrate ".padEnd(15) + " /tsconfig.json");
-        fs.writeFileSync(rootDir + "/tsconfig.json", JSON.stringify(tsConfig, null, "  "));
+        return new Promise((resolve, reject) => {
+            exec("npm i mikeneko-corelib --prefix " + rootDir, (error, stdout, stderr)=>{
+                if (error) {
+                    CLI.waitClose(CLI.setColor("NG", Color.Red));
+                    reject(stderr);
+                }
+                else {
+                    CLI.waitClose(CLI.setColor("OK", Color.Green));
+                    resolve(true);
+                }
+            });
+        });
     }
 }

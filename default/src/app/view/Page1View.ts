@@ -1,4 +1,4 @@
-import { Response } from "Response";
+import { Transition } from "Transition";
 import { View } from "app/view/View";
 
 export class Page1View extends View {
@@ -11,7 +11,7 @@ export class Page1View extends View {
         this.vdos.description.text = "page1 description text sample....";
 
         this.vdos.back.onClick = () => {
-            Response.back();
+            Transition.back();
         };
     }
 }

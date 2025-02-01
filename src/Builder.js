@@ -71,6 +71,17 @@ class Builder {
                 option.platforms = [{ name: "web" }];
             nktj_cli_1.CLI.outn("** mikeneko build start **");
             const rootDir = option.rootDir;
+            if (!fs.existsSync(rootDir + "/node_modules/mikeneko-corelib/package.json")) {
+                try {
+                    yield this.installCoreLib(rootDir);
+                }
+                catch (error) {
+                    nktj_cli_1.CLI.outn(error);
+                    nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor(" .... Install Failed!", nktj_cli_1.Color.Red));
+                    return;
+                }
+            }
+            const CoreLibList = require(rootDir + "/node_modules/mikeneko-corelib/list.json");
             // typescript trance complie
             let tsType = "es6";
             const tsType_ = this.getTsType(rootDir);
@@ -90,7 +101,7 @@ class Builder {
             nktj_cli_1.CLI.br().setIndent(0);
             // trancecomplie in core library trancecomplie on select type 
             try {
-                yield this.typescriptComplieCoreLib(tsType, option.corelibtsc);
+                yield this.typescriptComplieCoreLib(rootDir, tsType, option.corelibtsc);
             }
             catch (error) {
                 nktj_cli_1.CLI.outn("[TypeScript TrancePlie CoreLib Error]", nktj_cli_1.Color.Red);
@@ -154,7 +165,7 @@ class Builder {
                 if (platform.optionDir)
                     platformDir += "/" + platform.optionDir;
                 if (platform.build == BuildType.webpack) {
-                    this.buildWebPack(platformDir, option.tscType, platform, platformOptionClass, buildhandle);
+                    this.buildWebPack(rootDir, platformDir, option.tscType, platform, CoreLibList, platformOptionClass, buildhandle);
                     return;
                 }
                 this.outMkdir(platformDir, true);
@@ -168,11 +179,11 @@ class Builder {
                 let debug = option.debug;
                 if (platform.debug != undefined)
                     debug = platform.debug;
-                this.jsStart(codeList, tsType, platform.name, debug);
+                this.jsStart(rootDir, codeList, tsType, platform.name, debug);
                 // core module mount
-                this.BuildCoreList.forEach((core) => {
+                CoreLibList.forEach((core) => {
                     // core module mount
-                    this.coreModuleMount(codeList, tsType, core, platform);
+                    this.coreModuleMount(rootDir, codeList, tsType, core, platform);
                 });
                 if (platformOptionClass) {
                     const addModule = (name, modulePath) => {
@@ -187,7 +198,7 @@ class Builder {
                     platformOptionClass.handleCoreModuleMount(addModule);
                 }
                 // core resource mount
-                this.coreResourceMount(codeList, platform);
+                this.coreResourceMount(rootDir, codeList, platform);
                 // local module mount
                 this.localModuleMount(codeList, rootDir, platform.name, platform);
                 // rendering html mount
@@ -230,9 +241,24 @@ class Builder {
             nktj_cli_1.CLI.br().outn("...... Complete!", nktj_cli_1.Color.Green);
         });
     }
-    static jsStart(codeList, tsType, platformName, debugMode) {
+    static installCoreLib(rootDir) {
+        nktj_cli_1.CLI.wait(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "Install 'mikeneko-corelib' ...");
+        return new Promise((resolve, reject) => {
+            (0, child_process_1.exec)("npm i mikeneko-corelib --prefix " + rootDir, (error, stdout, stderr) => {
+                if (error) {
+                    nktj_cli_1.CLI.waitClose(nktj_cli_1.CLI.setColor("NG", nktj_cli_1.Color.Red));
+                    reject(stderr);
+                }
+                else {
+                    nktj_cli_1.CLI.waitClose(nktj_cli_1.CLI.setColor("OK", nktj_cli_1.Color.Green));
+                    resolve(true);
+                }
+            });
+        });
+    }
+    static jsStart(rootDir, codeList, tsType, platformName, debugMode) {
         nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "build Start");
-        let content = fs.readFileSync(path.dirname(__dirname) + "/dist/" + tsType + "/Front.js").toString();
+        let content = fs.readFileSync(rootDir + "/dist/corelib/Front.js").toString();
         content = content.split("{{platform}}").join(platformName);
         if (!debugMode)
             content += "console.log=()=>{};\n";
@@ -268,15 +294,15 @@ class Builder {
         content = content.replace(/\`/g, '\\`');
         return content;
     }
-    static coreModuleMount(codeList, tsType, name, platform) {
+    static coreModuleMount(rootDir, codeList, tsType, name, platform) {
         nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "mount core".padEnd(20) + " " + name);
-        const fullPath = path.dirname(__dirname) + "/dist/" + tsType + "/" + name + ".js";
+        const fullPath = rootDir + "/dist/corelib/" + name + ".js";
         let contents = fs.readFileSync(fullPath).toString();
         contents = "var exports = {};\n" + contents + ";\nreturn exports;";
         codeList[name] = this.setFn(name, contents, true, platform);
     }
-    static coreResourceMount(codeList, platform) {
-        const targetPath = path.dirname(__dirname) + "/bin/res";
+    static coreResourceMount(rootDir, codeList, platform) {
+        const targetPath = rootDir + "/node_modules/mikeneko-corelib/bin/res";
         this.search(targetPath, (file) => {
             const fullPath = file.path + "/" + file.name;
             let basePath = "CORERES/" + fullPath.substring((targetPath + "/").length);
@@ -398,19 +424,26 @@ class Builder {
             });
         });
     }
-    static typescriptComplieCoreLib(tsType, corelibtsc) {
+    static typescriptComplieCoreLib(rootDir, tsType, corelibtsc) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!fs.existsSync(path.dirname(__dirname) + "/dist"))
-                fs.mkdirSync(path.dirname(__dirname) + "/dist");
-            if (!fs.existsSync(path.dirname(__dirname) + "/dist/" + tsType))
-                fs.mkdirSync(path.dirname(__dirname) + "/dist/" + tsType);
-            if (!corelibtsc)
-                return;
+            const libPath = rootDir + "/node_modules/mikeneko-corelib";
+            const binPath = libPath + "/bin";
+            const distPath = libPath + "/dist";
+            const distTsTypePath = distPath + "/" + tsType;
+            const outPath = rootDir + "/dist/corelib";
+            if (!corelibtsc) {
+                if (fs.existsSync(outPath))
+                    return;
+            }
+            if (!fs.existsSync(distPath))
+                fs.mkdirSync(distPath);
+            if (!fs.existsSync(distTsTypePath))
+                fs.mkdirSync(distTsTypePath);
             let forceStr = "";
             nktj_cli_1.CLI.wait(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + forceStr + "TranceComplie (Core Library) ...");
             return new Promise((resolve, reject) => {
-                this.corelibDelete(tsType);
-                (0, child_process_1.exec)("cd " + path.dirname(__dirname) + "/bin && tsc --project tsconfigs/" + tsType + ".json", (error, stdout, stderr) => {
+                this.corelibDelete(distTsTypePath);
+                (0, child_process_1.exec)("cd " + binPath + " && tsc --outdir " + outPath + " --project tsconfigs/" + tsType + ".json", (error, stdout, stderr) => {
                     if (error) {
                         nktj_cli_1.CLI.waitClose(nktj_cli_1.CLI.setColor("NG", nktj_cli_1.Color.Red));
                         reject(stdout);
@@ -423,14 +456,13 @@ class Builder {
             });
         });
     }
-    static corelibDelete(tstype) {
-        const deletePath = path.dirname(__dirname) + "/dist/" + tstype;
-        const lists = fs.readdirSync(deletePath);
+    static corelibDelete(distTsTypePath) {
+        const lists = fs.readdirSync(distTsTypePath);
         for (let n = 0; n < lists.length; n++) {
-            const l_ = deletePath + "/" + lists[n];
+            const l_ = distTsTypePath + "/" + lists[n];
             fs.unlinkSync(l_);
         }
-        fs.rmdirSync(deletePath);
+        fs.rmdirSync(distTsTypePath);
     }
     static outMkdir(rootDir, alreadyDeleted) {
         nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "mkdir " + rootDir);
@@ -476,9 +508,9 @@ class Builder {
         }
         return tsType;
     }
-    static buildWebPack(platformDir, tscType, platform, platformOptionClass, buildhandle) {
+    static buildWebPack(rootDir, platformDir, tscType, platform, CoreLibList, platformOptionClass, buildhandle) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.setWebPackDist(platformDir, tscType);
+            this.setWebPackDist(rootDir, platformDir, tscType, CoreLibList);
             this.setWebpackComponent(platformDir);
             try {
                 yield this.webPackExec(platform.name);
@@ -516,7 +548,7 @@ class Builder {
             });
         });
     }
-    static setWebPackDist(platformDir, tscType) {
+    static setWebPackDist(rootDir, platformDir, tscType, CoreLibList) {
         if (!fs.existsSync(platformDir)) {
             nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "mkdir " + platformDir);
             fs.mkdirSync(platformDir);
@@ -533,20 +565,21 @@ class Builder {
         else {
             fs.mkdirSync(distDir);
         }
-        this.BuildCoreList.push("FrontWebPack");
+        CoreLibList.push("FrontWebPack");
         // core library set
         if (!fs.existsSync(distDir + "/core")) {
             fs.mkdirSync(distDir + "/core");
         }
-        for (let n = 0; n < this.BuildCoreList.length; n++) {
-            const coreName = this.BuildCoreList[n];
-            fs.copyFileSync(path.dirname(__dirname) + "/dist/" + tscType + "/" + coreName + ".js", distDir + "/core/" + coreName + ".js");
+        const distLibPath = rootDir + "/dist/corelib";
+        for (let n = 0; n < CoreLibList.length; n++) {
+            const coreName = CoreLibList[n];
+            fs.copyFileSync(distLibPath + "/" + coreName + ".js", distDir + "/core/" + coreName + ".js");
         }
         // CORERES set
         if (!fs.existsSync(distDir + "/CORERES")) {
             fs.mkdirSync(distDir + "/CORERES");
         }
-        const coreresDir = path.dirname(__dirname) + "/bin/res";
+        const coreresDir = rootDir + "/node_modules/mikeneko-corelib/bin/res";
         const coreresLIsts = fs.readdirSync(coreresDir, { recursive: true });
         for (let n = 0; n < coreresLIsts.length; n++) {
             const l_ = coreresLIsts[n];
@@ -644,28 +677,3 @@ class Builder {
     }
 }
 exports.Builder = Builder;
-Builder.BuildCoreList = [
-    "Ajax",
-    "App",
-    "Background",
-    "Controller",
-    "Data",
-    "Dialog",
-    "VirtualDom",
-    "Exception",
-    "KeyEvent",
-    "Response",
-    "Transition",
-    "Routes",
-    "Render",
-    "Startor",
-    "Storage",
-    "Shortcode",
-    "Template",
-    "Lib",
-    "Validation",
-    "View",
-    "UI",
-    "RouteMap",
-    "Core",
-];

@@ -6,7 +6,7 @@
     "rootDir": "./",
     "outDir": "./dist",
     "paths": {
-      "*": ["./*", "../bin/*"],
+      "*": ["./node_modules/mikeneko-corelib/bin/*"],
       "app/*" : [ "./src/app/*" ]
     }
   },

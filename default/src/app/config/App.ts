@@ -1,12 +1,11 @@
-import { App, AppRouteType, Routes } from "App";
+import { App, AppRouteType } from "App";
+import { RouteMaps } from "RouteMap";
+import { Maps } from "app/config/Maps";
 
 export class MyApp extends App {
     
     public static routeType: AppRouteType = AppRouteType.application;
 
-    public static routes : Routes = {
-        "/" : "home",
-        "/page1" : "page1",
-    };
+    public static maps : RouteMaps = Maps;
 
 }
