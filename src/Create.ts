@@ -10,6 +10,10 @@ export class Create {
         CLI.outn("# Create Project").br();
 
         let name;
+        if (argv[1]) {
+            name = argv[1];
+            CLI.outn("project name : " + name);
+        }
         while(!name){
             name = await CLI.in("Q. Project Name?");
 
@@ -62,17 +66,16 @@ export class Create {
             }
         });
 
-        if (!fs.existsSync(rootDir + "/node_modules/mikeneko-corelib/package.json")) {
-            try {
-                await this.installCoreLib(rootDir);
-            } catch(error) {
-                CLI.outn(error);
-                CLI.outn(CLI.setColor(" .... Install Failed!", Color.Red));
-                return;
-            }
+        // npm local package install
+        try {
+            await this.npmInstall(rootDir);
+        } catch(error) {
+            CLI.outn(error);
+            CLI.outn(CLI.setColor(" .... Install Failed!", Color.Red));
+            return;
         }
-
-        CLI.br().outn("....... Create Complete!", Color.Green);
+    
+        CLI.outn("....... Create Complete!", Color.Green)
     }
 
     private static search(target : string, callback : (file : fs.Dirent) => void) {
@@ -97,11 +100,12 @@ export class Create {
         }
     }
     
-    private static installCoreLib(rootDir: string) {
-        CLI.wait(CLI.setColor("# ", Color.Green) + "Install 'mikeneko-corelib' ...");
+    private static npmInstall(rootDir: string) {
+        CLI.wait(CLI.setColor("# ", Color.Green) + "npm local package install..");
 
         return new Promise((resolve, reject) => {
-            exec("npm i mikeneko-corelib --prefix " + rootDir, (error, stdout, stderr)=>{
+            console.log(rootDir);
+            exec("cd " + rootDir + " && npm i", (error, stdout, stderr)=>{
                 if (error) {
                     CLI.waitClose(CLI.setColor("NG", Color.Red));
                     reject(stderr);
@@ -113,4 +117,5 @@ export class Create {
             });
         });
     }
+    
 }

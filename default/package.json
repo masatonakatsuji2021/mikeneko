@@ -1,11 +1,11 @@
 {
-    "mikenekoBuild": {
-        "platforms": [
-            { 
-                "name": "web",
-                "debug": true,
-                "codeCompress": false
-            }
-        ]
+    "name": "mikeneko-project-sample",
+    "version":"1.0.0",
+    "scripts": {
+        "build": "node ."
+    },
+    "dependencies": {
+        "mikeneko-corelib":"^1.0.0",
+        "mikeneko-build": "^1.0.0"
     }
 }
