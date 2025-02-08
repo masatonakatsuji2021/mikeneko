@@ -1,6 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import { CLI, Color} from "nktj_cli";
+import { exec } from "child_process";
 
 export class Create {
 
@@ -9,6 +10,10 @@ export class Create {
         CLI.outn("# Create Project").br();
 
         let name;
+        if (argv[1]) {
+            name = argv[1];
+            CLI.outn("project name : " + name);
+        }
         while(!name){
             name = await CLI.in("Q. Project Name?");
 
@@ -61,9 +66,16 @@ export class Create {
             }
         });
 
-        this.calibrateTsConfig(rootDir);
-
-        CLI.br().outn("....... Create Complete!", Color.Green);
+        // npm local package install
+        try {
+            await this.npmInstall(rootDir);
+        } catch(error) {
+            CLI.outn(error);
+            CLI.outn(CLI.setColor(" .... Install Failed!", Color.Red));
+            return;
+        }
+    
+        CLI.outn("....... Create Complete!", Color.Green)
     }
 
     private static search(target : string, callback : (file : fs.Dirent) => void) {
@@ -87,11 +99,23 @@ export class Create {
             }
         }
     }
+    
+    private static npmInstall(rootDir: string) {
+        CLI.wait(CLI.setColor("# ", Color.Green) + "npm local package install..");
 
-    private static calibrateTsConfig(rootDir: string) {
-        const tsConfig = require(rootDir + "/tsconfig.json");
-        tsConfig.compilerOptions.paths["*"] = [ path.dirname(__dirname) + "/bin/*" ];
-        CLI.outn(CLI.setColor("# ", Color.Green) + "calibrate ".padEnd(15) + " /tsconfig.json");
-        fs.writeFileSync(rootDir + "/tsconfig.json", JSON.stringify(tsConfig, null, "  "));
+        return new Promise((resolve, reject) => {
+            console.log(rootDir);
+            exec("cd " + rootDir + " && npm i", (error, stdout, stderr)=>{
+                if (error) {
+                    CLI.waitClose(CLI.setColor("NG", Color.Red));
+                    reject(stderr);
+                }
+                else {
+                    CLI.waitClose(CLI.setColor("OK", Color.Green));
+                    resolve(true);
+                }
+            });
+        });
     }
+    
 }

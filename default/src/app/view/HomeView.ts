@@ -1,5 +1,6 @@
-import { Response } from "Response";
+import { Transition } from "Transition";
 import { View } from "app/view/View";
+import { Maps } from "app/config/Maps";
 
 export class HomeView extends View {
 
@@ -9,7 +10,7 @@ export class HomeView extends View {
         this.title = "Mikeneko";
 
         this.vdos.page1.onClick = () => {
-            Response.next("/page1");
+            Transition.move(Maps.page1);
         };
     }
 }

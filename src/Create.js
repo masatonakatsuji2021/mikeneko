@@ -13,11 +13,16 @@ exports.Create = void 0;
 const fs = require("fs");
 const path = require("path");
 const nktj_cli_1 = require("nktj_cli");
+const child_process_1 = require("child_process");
 class Create {
     static create(argv) {
         return __awaiter(this, void 0, void 0, function* () {
             nktj_cli_1.CLI.outn("# Create Project").br();
             let name;
+            if (argv[1]) {
+                name = argv[1];
+                nktj_cli_1.CLI.outn("project name : " + name);
+            }
             while (!name) {
                 name = yield nktj_cli_1.CLI.in("Q. Project Name?");
                 if (!name) {
@@ -60,8 +65,16 @@ class Create {
                     });
                 }
             });
-            this.calibrateTsConfig(rootDir);
-            nktj_cli_1.CLI.br().outn("....... Create Complete!", nktj_cli_1.Color.Green);
+            // npm local package install
+            try {
+                yield this.npmInstall(rootDir);
+            }
+            catch (error) {
+                nktj_cli_1.CLI.outn(error);
+                nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor(" .... Install Failed!", nktj_cli_1.Color.Red));
+                return;
+            }
+            nktj_cli_1.CLI.outn("....... Create Complete!", nktj_cli_1.Color.Green);
         });
     }
     static search(target, callback) {
@@ -84,11 +97,21 @@ class Create {
             }
         }
     }
-    static calibrateTsConfig(rootDir) {
-        const tsConfig = require(rootDir + "/tsconfig.json");
-        tsConfig.compilerOptions.paths["*"] = [path.dirname(__dirname) + "/bin/*"];
-        nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "calibrate ".padEnd(15) + " /tsconfig.json");
-        fs.writeFileSync(rootDir + "/tsconfig.json", JSON.stringify(tsConfig, null, "  "));
+    static npmInstall(rootDir) {
+        nktj_cli_1.CLI.wait(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "npm local package install..");
+        return new Promise((resolve, reject) => {
+            console.log(rootDir);
+            (0, child_process_1.exec)("cd " + rootDir + " && npm i", (error, stdout, stderr) => {
+                if (error) {
+                    nktj_cli_1.CLI.waitClose(nktj_cli_1.CLI.setColor("NG", nktj_cli_1.Color.Red));
+                    reject(stderr);
+                }
+                else {
+                    nktj_cli_1.CLI.waitClose(nktj_cli_1.CLI.setColor("OK", nktj_cli_1.Color.Green));
+                    resolve(true);
+                }
+            });
+        });
     }
 }
 exports.Create = Create;
