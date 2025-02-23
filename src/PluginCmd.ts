@@ -55,6 +55,7 @@ export class PluginCmd {
         } catch (error) {
             CLI.outn(CLI.setColor("[Plugin Error] " + error,Color.Red));
             CLI.outn(CLI.setColor("..... Failed!", Color.Red));
+            return;
         }
 
         CLI.br().outn(CLI.setColor(".... Complete!", Color.Green));

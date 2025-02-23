@@ -31,7 +31,7 @@ export const command = ()=>{
     }
     else if (args[0] == "platform") {
         if (args[1] == "add") {
-            PlatformCmd.add();
+            PlatformCmd.add(args[2]);
         }
         else if (args[1] == "remove") {
             PlatformCmd.remove(args[2]);

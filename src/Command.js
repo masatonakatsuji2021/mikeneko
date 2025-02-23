@@ -28,7 +28,7 @@ const command = () => {
     }
     else if (args[0] == "platform") {
         if (args[1] == "add") {
-            PlatformCmd_1.PlatformCmd.add();
+            PlatformCmd_1.PlatformCmd.add(args[2]);
         }
         else if (args[1] == "remove") {
             PlatformCmd_1.PlatformCmd.remove(args[2]);

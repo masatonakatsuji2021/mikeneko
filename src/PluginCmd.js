@@ -60,6 +60,7 @@ class PluginCmd {
             catch (error) {
                 nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("[Plugin Error] " + error, nktj_cli_1.Color.Red));
                 nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("..... Failed!", nktj_cli_1.Color.Red));
+                return;
             }
             nktj_cli_1.CLI.br().outn(nktj_cli_1.CLI.setColor(".... Complete!", nktj_cli_1.Color.Green));
         });
