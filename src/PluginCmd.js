@@ -28,6 +28,10 @@ class PluginCmd {
                 catch (error) {
                     throw Error("Could not load file \"mikeneko.json\\n" + error.toString());
                 }
+                if (mikeneko.plugins) {
+                    if (mikeneko.plugins.indexOf(pluginName) > -1)
+                        throw Error("Plugin \"" + pluginName + "\" is already configured");
+                }
                 nktj_cli_1.CLI.wait(nktj_cli_1.CLI.setColor("# ", nktj_cli_1.Color.Green) + "Plugin Check \"" + pluginName + "\" ... ");
                 try {
                     yield this.pluginNpmView(pluginName);
@@ -110,6 +114,32 @@ class PluginCmd {
     static list() {
         return __awaiter(this, void 0, void 0, function* () {
             nktj_cli_1.CLI.outn("* Plugin List");
+            try {
+                if (!(fs.existsSync(process.cwd() + "/mikeneko.json") &&
+                    fs.existsSync(process.cwd() + "/mikeneko.json"))) {
+                    throw Error("Not found \"mikeneko.json\" or \"tsconfig.json\".");
+                }
+                let mikeneko;
+                try {
+                    mikeneko = require(process.cwd() + "/mikeneko.json");
+                }
+                catch (error) {
+                    throw Error("Could not load file \"mikeneko.json\".\n" + error.toString());
+                }
+                nktj_cli_1.CLI.br();
+                for (let n = 0; n < mikeneko.plugins.length; n++) {
+                    const pluginName = mikeneko.plugins[n];
+                    let pgData;
+                    try {
+                        pgData = require(pluginName + "/package.json");
+                    }
+                    catch (error) { }
+                    nktj_cli_1.CLI.outn("- " + pgData.name.trim() + " (" + pgData.version.trim() + ")");
+                }
+            }
+            catch (error) {
+                nktj_cli_1.CLI.outn(nktj_cli_1.CLI.setColor("[Plugin Error] " + error, nktj_cli_1.Color.Red));
+            }
         });
     }
     static pluginNpmView(pluginName) {

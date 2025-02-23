@@ -5,12 +5,11 @@ const nktj_cli_1 = require("nktj_cli");
 const Create_1 = require("./Create");
 const PluginCmd_1 = require("./PluginCmd");
 const PlatformCmd_1 = require("./PlatformCmd");
+const Info_1 = require("./Info");
 const command = () => {
     const packageJson = require("../package.json");
     nktj_cli_1.CLI
-        .outn("=====================================")
         .outn("Mikeneko CLI Version: " + packageJson.version)
-        .outn("=====================================")
         .br();
     const args = nktj_cli_1.CLI.getArgs();
     if (args[0] == "create") {
@@ -39,11 +38,7 @@ const command = () => {
         }
     }
     else {
-        nktj_cli_1.CLI
-            .outn("[Command List]")
-            .br()
-            .outn("  create [project_name]".padEnd(30) + " : Create project source data.")
-            .br();
+        Info_1.Info.info();
     }
 };
 exports.command = command;

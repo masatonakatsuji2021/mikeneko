@@ -21,6 +21,10 @@ export class PluginCmd {
                 throw Error("Could not load file \"mikeneko.json\\n" + error.toString());
             }
 
+            if (mikeneko.plugins) {
+                if (mikeneko.plugins.indexOf(pluginName) > -1) throw Error("Plugin \"" + pluginName + "\" is already configured");
+            }
+
             CLI.wait(CLI.setColor("# ", Color.Green) + "Plugin Check \"" + pluginName + "\" ... ");
             try {
                 await this.pluginNpmView(pluginName);
@@ -113,6 +117,38 @@ export class PluginCmd {
     public static async list() {
         CLI.outn("* Plugin List");
 
+        try {
+
+            if (!(
+                fs.existsSync(process.cwd() + "/mikeneko.json") &&
+                fs.existsSync(process.cwd() + "/mikeneko.json")
+            )) {
+                throw Error("Not found \"mikeneko.json\" or \"tsconfig.json\".");
+            }
+
+            let mikeneko;
+            try {
+                mikeneko = require(process.cwd() + "/mikeneko.json");
+            } catch (error) {
+                throw Error("Could not load file \"mikeneko.json\".\n" + error.toString());
+            }
+            
+            CLI.br();
+
+            for(let n = 0 ; n < mikeneko.plugins.length ; n++) {
+                const pluginName = mikeneko.plugins[n];
+
+                let pgData;
+                try {
+                    pgData = require(pluginName + "/package.json");
+                } catch (error) {}
+
+                CLI.outn("- " + pgData.name.trim() + " (" + pgData.version.trim() + ")"); 
+            }
+
+        } catch (error) {
+            CLI.outn(CLI.setColor("[Plugin Error] " + error,Color.Red));
+        }
     }
 
     private static async pluginNpmView(pluginName: string) {
