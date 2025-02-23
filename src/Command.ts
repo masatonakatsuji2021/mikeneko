@@ -21,20 +21,10 @@ export const command = ()=>{
     }
     else if (args[0] == "plugin") {
         if (args[1] == "add") {
-            if (args[2]) {
-                PluginCmd.add(args[2]);
-            }
-            else {
-                PluginCmd.add();
-            }
+            PluginCmd.add(args[2]);
         }
         else if (args[1] == "remove") {
-            if (args[2]) {
-                PluginCmd.remove(args[2]);
-            }
-            else {
-                PluginCmd.remove();
-            }
+            PluginCmd.remove(args[2]);
         }
         else if (args[1] == "list") {
             PluginCmd.list();
@@ -45,7 +35,7 @@ export const command = ()=>{
             PlatformCmd.add();
         }
         else if (args[1] == "remove") {
-            PlatformCmd.remove(args[3]);
+            PlatformCmd.remove(args[2]);
         }
         else if (args[1] == "list") {
             PlatformCmd.list();
