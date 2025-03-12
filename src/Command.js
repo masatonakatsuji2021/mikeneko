@@ -15,6 +15,10 @@ const command = () => {
     if (args[0] == "create") {
         Create_1.Create.create(args);
     }
+    else if (args[0] == "build") {
+        const { Builder } = require(process.cwd() + "/node_modules/mikeneko-build");
+        Builder.build();
+    }
     else if (args[0] == "plugin") {
         if (args[1] == "add") {
             PluginCmd_1.PluginCmd.add(args[2]);
