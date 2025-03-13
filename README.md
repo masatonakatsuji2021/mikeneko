@@ -5,9 +5,13 @@
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![TypeScript Version](https://img.shields.io/badge/TypeScript-%5E5.7.2-blue)
 
+## What is this?
+
+mikeneko is a SPA (Single-Page-Action) framework that supports web and terminal applications.  
+It is composed of TypeScript (JavaScript).
+
 ## Contents
 
-* [What is this?](#What-is-this)
 * [How to use it?](#How-to-use-it)
     * [Installing mikeneko](#Installing-mikeneko)
     * [Preparing the environment from project sources](#Preparing-the-environment-from-project-sources)
@@ -154,10 +158,9 @@
 
 
 
-## What is this?
 
-mikeneko is a SPA (Single-Page-Action) framework that supports web and terminal applications.  
-It is composed of TypeScript (JavaScript).
+
+
 
 ## How to use it?
 
