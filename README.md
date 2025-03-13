@@ -10,6 +10,8 @@
 mikeneko is a SPA (Single-Page-Action) framework that supports web and terminal applications.  
 It is composed of TypeScript (JavaScript).
 
+[The Japanese version of REAMME is here.](README-ja.md)
+
 ## Contents
 
 * [How to use it?](#How-to-use-it)
@@ -155,12 +157,34 @@ It is composed of TypeScript (JavaScript).
     * [Temporary display of screen (stackOpen)](#Temporary-display-of-screen-stackOpen)
 * [UI Class](#UI-Class)
     * [How to specify the UI](#How-to-specify-the-UI)
-
-
-
-
-
-
+        * [Show UI class files only](#Show-UI-class-files-only)
+        * [UI rendering HTML only](#UI-rendering-HTML-only)
+        * [Place both UI class files and rendering HTML (Recommendation)](#Place-both-UI-class-files-and-rendering-HTML-Recommendation)
+    * [Displaying the UI (bind)](#Displaying-the-UI-bind)
+    * [UI Addition Display (append)](#UI-Addition-Display-append)
+    * [UI Addition Display (afterBegin)](#UI-Addition-Display-afterBegin)
+    * [Event handlers when displaying the UI (handle)](#Event-handlers-when-displaying-the-UI-handle)
+    * [Manipulating the Virtual DOM](#manipulating-the-virtual-dom-1)
+* [Template Class](#Template-Class)
+    * [Setting the template to use](#Setting-the-template-to-use)
+    * [How to specify a template](#How-to-specify-a-template)
+        * [Display only template class files](#Display-only-template-class-files)
+        * [Template rendering Display only HTML](#Template-rendering-Display-only-HTML)
+        * [Place both the template class file and the rendering HTML](#Place-both-the-template-class-file-and-the-rendering-HTML)
+    * [Event handler when Template is displayed (handle)](#Event-handler-when-Template-is-displayed-handle)
+* [Background Class](#Background-Class)
+    * [How to use Background](#How-to-use-Background)
+* [About Plugins](#About-Plugins)
+    * [Installing the plugin](#Installing-the-plugin)
+    * [Remove plugin](#Remove-plugin)
+    * [Checking installed plugins](#Checking-installed-plugins)
+* [Console mike command](#Console-mike-command)
+    * [Create a project](#Create-a-project)
+    * [Adding a platform](#Adding-a-platform)
+    * [Removing a Platform](#Removing-a-Platform)
+    * [Adding Plugins](#Adding-Plugins)
+    * [Remove plugin](#Remove-plugin)
+    * [View Added Plugins](#View-Added-Plugins)
 
 ## How to use it?
 
@@ -3068,7 +3092,7 @@ There are the following ways to specify the UI:
 - UI rendering HTML only
 - Place both UI class files and rendering HTML (Recommendation)
 
-#### ### Show UI class files only
+#### Show UI class files only
 
 How to install and display only UI derived class.  
 The simplest way
@@ -3107,7 +3131,7 @@ This is the simplest method, but it has the following problems:
 - In normal editors, HTML statements are not highlighted, so you cannot use the completion function for HTML tags themselves.
 - HTML tags may become bloated, which may reduce the readability of the TypeScript code itself.
 
-#### ### UI rendering HTML only
+#### UI rendering HTML only
 
 How to separate the HTML content of the UI into a separate file.  
 The method is simple: write HTML in ``app/rendering/ui/sample.html``
@@ -3138,7 +3162,7 @@ This is also the simplest method, but it has the following problems:
 - Since only HTML tags are installed,  
 UI button operations must be performed using a screen view displayed by binding, etc.
 
-#### ### Place both UI class files and rendering HTML (Recommendation)
+#### Place both UI class files and rendering HTML (Recommendation)
 
 How to place both the above UI class file and rendering HTML file  
 Various files are placed in the following directory structure.
@@ -3176,7 +3200,7 @@ the HTML information in the ``html`` variable will be displayed first.
 
 <div id="ui_bind"></div>
 
-### ## Displaying the UI (bind)
+### Displaying the UI (bind)
 
 To display the UI in a specific DOM element (VirautlDom), use the ``UI.bind`` method.
 
@@ -3242,7 +3266,7 @@ export class HomeView extends View {
 
 <div id="ui_append"></div>
 
-### ## UI Addition Display (append)
+### UI Addition Display (append)
 
 To append and display the UI at the bottom of a specified DOM element (VirautlDom),  
 use the ``append`` method.  
@@ -3328,7 +3352,7 @@ export class HomeView extends View {
 }
 ```
 
-### ## UI Addition Display (afterBegin)
+### UI Addition Display (afterBegin)
 
 To add and display the UI at the top of a specified DOM element (VirautlDom), use the ``afterBegin`` method.  
 Unlike the ``append`` method, if you display the list in order, it will be in reverse order.
@@ -3413,7 +3437,7 @@ export class HomeView extends View {
 }
 ```
 
-### ## Event handlers when displaying the UI (handle)
+### Event handlers when displaying the UI (handle)
 
 You can use ``handle`` to set an event handler for UI display or post-append display.
 
@@ -3448,7 +3472,7 @@ export class SampleUI extends UI {
 }
 ```
 
-### ## Manipulating the Virtual DOM
+### Manipulating the Virtual DOM
 
 The virtual Doms that can be specified in the UI are broadly divided into the following:
 - ``vdo`` : Target UI elements  (※ Only valid when ``bind`` is used)
@@ -3498,7 +3522,7 @@ For details on how to operate in a Virtual Dom, [see here](#virtualdom).
 
 <div id="template"></div>
 
-## # Template Class
+## Template Class
 
 ``Template`` is a base class for handling layouts that are displayed before the screen is displayed in a View.
 
@@ -3520,7 +3544,7 @@ HTML tags placed in a template are basically retained as is until the template o
 so mainly place parts that are not affected by screen transitions by the view, such as headers and footers,   
 in the template, or call various UIs from the template class.
 
-### ## Setting the template to use
+### Setting the template to use
 
 The template to be used is determined by the member variable ``template`` in the view when the screen is displayed.
 
@@ -3561,14 +3585,14 @@ export class Page2View extends View {
 }
 ```
 
-### ## How to specify a template
+### How to specify a template
 
 There are the following ways to specify a template:
 - Display only template class files
 - Template rendering: Display only HTML
 - Place both the template class file and the rendering HTML
 
-#### ### Display only template class files
+#### Display only template class files
 
 How to display only Template-derived classes.  
 The simplest way.
@@ -3611,7 +3635,7 @@ This is the simplest method, but it has the following problems:
 - In normal editors, HTML statements are not highlighted, so you cannot use the completion function for HTML tags themselves.
 - HTML tags may become bloated, which may reduce the readability of the TypeScript code itself.
 
-#### ### Template rendering: Display only HTML
+#### Template rendering Display only HTML
 
 How to separate the HTML content of the template into a separate file.  
 The method is simple: write HTML in ``app/rendering/template/default.html``
@@ -3642,7 +3666,7 @@ This is also the simplest method, but it has the following problems:
 - Since only HTML tags are set,   
 button operations in the template must be performed using a screen view displayed by binding, etc.
 
-#### ### Place both the template class file and the rendering HTML
+#### Place both the template class file and the rendering HTML
 
 How to place both the above Template class file and the rendered HTML.  
 Various files are arranged in the following directory structure.
@@ -3695,7 +3719,7 @@ This approach solves both the problems with template class files and rendering H
 If you have already specified the member variable ``html`` in each Template class,  
 the HTML information in the ``html`` variable will be displayed first.
 
-### ## Event handler when Template is displayed (handle)
+### Event handler when Template is displayed (handle)
 
 Use ``handle`` to set an event handler in the template's HTML.
 
@@ -3730,13 +3754,13 @@ export class DefaultTemplate extends Template {
 
 <div id="background"></div>
 
-## # Background Class
+## Background Class
 
 The ``Background`` class is a base class for executing processes immediately after the app is launched or viewed in a browser.  
 Processes that you want to perform in the background, separate from screen transitions and button operations,   
 are written here.
 
-### ## How to use Background
+### How to use Background
 
 First, to prepare a TestBackground,  
 write the following code in the ``app/background/TestBackground.ts`` file:
@@ -3787,7 +3811,7 @@ export class MyApp extends App {
 
 <div id="plugin"></div>
 
-## # About Plugins
+## About Plugins
 
 Mikeneko has the ability to add and use plugins that can extend functions beyond the standard functions of the core library.
 
@@ -3796,7 +3820,7 @@ The plugin is provided as an npm package.
 
 [Currently available plugins are listed here](document-plugins-en.md).
 
-### ## Installing the plugin
+### Installing the plugin
 
 To safely install a plugin,   
 use the ``mike plugin add`` command in the current directory of your project.  
@@ -3811,7 +3835,7 @@ $ mike plugin add mikeneko-plugin-dialog
 When you perform the above, 
 the necessary dependent packages will be installed and the settings required to add plugins will be automatically performed.
 
-### ## Remove plugin
+### Remove plugin
 
 To safely remove an installed plugin,  
 use the ``mike plugin remove`` command in the current directory of your project.  
@@ -3826,7 +3850,7 @@ $ mike plugin remove mikeneko-plugin-dialog
 When you perform the above,   
 the necessary dependent packages will be uninstalled and the settings required to remove the plugin will be automatically performed.
 
-### ## Checking installed plugins
+### Checking installed plugins
 
 To see all installed plugins,   
 run the command ``mike plugin list`` in the current directory of your project.
@@ -3845,7 +3869,7 @@ $ mike plugin list
 
 ```
 
-## # Console mike command
+## Console mike command
 
 ``mike`` is a function for mikeneko to create projects and manage the plugin platform.  
 Can be executed on the console as a CUI command.
@@ -3856,7 +3880,7 @@ $ mike
 
 Details about each function are listed below.
 
-### ## Create a project
+### Create a project
 
 To create a project, use the ``mike create`` command.  
 Enter the name of your project in {project-name}.
@@ -3868,7 +3892,7 @@ $ mike create {project-name}
 After execution, the project directory, the initial source code,   
 and the minimum npm packages required for building will be installed.
 
-### ## Adding a platform
+### Adding a platform
 
 To add a platform for the build output, use the ``mike plugin add`` command.  
 ``{platform-name}`` is the name of the platform you want to add.
@@ -3879,7 +3903,7 @@ $ mike platform add {platform-name}
 
 Additional platforms will be set after implementation.
 
-### ## Removing a Platform
+### Removing a Platform
 
 To remove a platform that is a build output destination, use the ``mike plugin remove`` command.  
 For ``{platform-name}``, enter the name of the platform you want to delete.
@@ -3893,7 +3917,7 @@ Any remaining build data for the platform will be deleted.
 
 <div id="mike-plugin-add"></div>
 
-### ## Adding Plugins
+### Adding Plugins
 
 To add a plugin to your project, use the ``mike plugin add`` command:  
 ``{plugin-name}`` is the name of the plugin you want to add.
@@ -3905,7 +3929,7 @@ $ mike plugin add {plugin-name}
 After execution, the plugin and its dependent packages will be installed,  
 and additional settings for the plugin will be made.
 
-### ## Remove plugin
+### Remove plugin
 
 To remove a plugin from your project, use the ``mike plugin remove`` command:  
 Replace {plugin-name} with the name of the plugin you want to remove.
@@ -3916,7 +3940,7 @@ $ mike plugin remove {plugin-name}
 
 After this is done, the plugins to be deleted will be uninstalled and the plugin settings will be erased.
 
-### ## View Added Plugins
+### View Added Plugins
 
 To see the plugins installed in your project, use the ``mike plugin list`` command:
 
