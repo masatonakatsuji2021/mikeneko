@@ -1,13 +1,21 @@
-# mikeneko
+![mikeneko](mikeneko.png)
 
-<br><img src="mikeneko.png"><br><br>
+## Contents
+
+* [What is this?](#What-is-this)
+* [How to install](#How-to-install)
+    * [Required environment](#Required-environment)
+    * [Installing mikeneko](#Installing-mikeneko)
+    * [Preparing the environment from project sources](#Preparing-the-environment-from-project-sources)
+
+## What is this?
 
 mikeneko is a SPA (Single-Page-Action) framework that supports web and terminal applications.  
 It is composed of TypeScript (JavaScript).
 
-## # How to install
+## How to install
 
-### ## Required environment
+### Required environment
 
 The following environment is required
 
@@ -16,7 +24,7 @@ The following environment is required
 - VisualStudioCode (Editor with TypeScript completion)
 - TypeScript (5.7.2 or later)
 
-### ## Installing mikeneko
+### Installing mikeneko
 
 Install mikeneko with the following npm command.
 
@@ -33,7 +41,7 @@ $ mike
 The ``mike`` command is a function for creating projects and managing the plugin platform in mikeneko.
 [For details on commands, see here](#mike)
 
-### ## Preparing the environment from project sources
+### Preparing the environment from project sources
 
 Prepare a test sample in the following Git repository.
 
@@ -3614,7 +3622,7 @@ Mikeneko has the ability to add and use plugins that can extend functions beyond
 The plugin is provided as an npm package.  
 (Package name format of ``mikeneko-plugin-xxxx``)
 
-[Currently available plugins are listed here](plugins.md).
+[Currently available plugins are listed here](document-plugins-en.md).
 
 ### ## Installing the plugin
 
@@ -3743,20 +3751,3 @@ To see the plugins installed in your project, use the ``mike plugin list`` comma
 ```
 $ mike plugin list
 ```
-
-## # Others
-
-### ## Supported versions of dependent packages
-
-The contents described in the document are supported for the following dependent package versions and later:
-
-|||
-|:--|:--|
-|mikeneko|1.1.3|
-|mikeneko-build|1.0.2|
-|mikeneko-corelib|1.0.3|
-
-### ## Developer of this package
-
-- Author : masato Nakatsuji
-
