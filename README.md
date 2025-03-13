@@ -1,28 +1,180 @@
 ![mikeneko](mikeneko.png)
 
+[![npm version](https://img.shields.io/npm/v/mikeneko.svg)](https://npmjs.com/package/mikeneko)
+[![npm download](https://img.shields.io/npm/dt/mikeneko.svg)](https://npmjs.com/package/mikeneko)
+![License](https://img.shields.io/badge/license-MIT-blue)
+![TypeScript Version](https://img.shields.io/badge/TypeScript-%5E5.7.2-blue)
+
 ## Contents
 
 * [What is this?](#What-is-this)
-* [How to install](#How-to-install)
-    * [Required environment](#Required-environment)
+* [How to use it?](#How-to-use-it)
     * [Installing mikeneko](#Installing-mikeneko)
     * [Preparing the environment from project sources](#Preparing-the-environment-from-project-sources)
+* [Create project](#Create-Project)
+    * [Project file/directory structure](#Project-file-directory-structure)
+* [Web Build](#Web-Build)
+* [How to specify build options](#How-to-specify-build-options)
+    * [Argument specification for Builder.build method](#Argument-specification-for-Builderbuild-method)
+    * [Specification by configuration file mikeneko.json](#Specification-by-configuration-file-mikenekojson)
+* [Web Build Option](#Web-Build-Option)
+    * [Platform Settings](#Platform-Settings)
+    * [Debug Log Output](#Debug-Log-Output)
+    * [View Mappings](#View-Mappings)
+    * [Code Obfuscation](#Code-Obfuscation)
+    * [Code Compression](#Code-Compression)
+    * [Force Build of Core Libraries](#Force-Build-of-Core-Libraries)
+    * [Change Transpiled Version](#Change-Transpiled-Version)
+    * [Build With WebPack](#Build-With-WebPack)
+* [Initial Setup](#Initial-Setup)
+    * [Root Method](#Root-Method)
+    * [Routing](#Routing)
+    * [Specifying the NotFound View](#Specifying-the-NotFound-View)
+    * [Screen Transition Delay Settings](#Screen-Transition-Delay-Settings)
+    * [Class Settings for Screen Transition Animation](#Class-Settings-for-Screen-Transition-Animation)
+    * [Background Processing Settings](#Background-Processing-Settings)
+* [Routing Setting](#Routing-Setting)
+    * [Routing with URL path and View](#Routing-with-URL-path-and-View)
+        * [Specifying the URL and View](#Specifying-the-URL-and-View)
+        * [URL Scope](#URL-Scope)
+        * [When to specify dynamic or arbitrary values ​​in the URL](#When-to-specify-dynamic-arbitrary-values-​​in-the-URL)
+    * [Routing with RouteMap](#Routing-with-RouteMap)
+* [About the Core Library](#About-the-Core-Library)
+* [Transition Class](#Transition-Class)
+    * [Transition to another screen (next)](#Transition-to-another-screen-next)
+    * [Screen transition with RouteMap specified (move)](#Screen-transition-with-RouteMap-specified-move)
+    * [Temporarily change screen (stack)](#Temporarily-change-screen-stack)
+    * [Return to previous screen (back)](#Return-to-previous-screen-back)
+    * [Display another screen (replace)](#Display-another-screen-replace)
+    * [Delete screen history (historyClear)](#Delete-screen-history-historyClear)
+    * [Adding Screen History (historyAdd)](#Adding-Screen-History-historyAdd)
+    * [Obtaining the transition state (isNext/isBack)](#Obtaining-the-transition-state-isNextisBack)
+    * [Lock screen transitions (lock)](#Lock-screen-transitions-lock)
+    * [Displaying the UI (bindUI)](#Displaying-the-UI-bindUI)
+    * [Addition of UI (appendUI)](#Addition-of-UI-appendUI)
+* [VirtualDom Class](#VirtualDom-Class)
+    * [Setting up and operating a Virtual Dom](#Setting-up-and-operating-a-Virtual-Dom)
+    * [Chaining DOM Manipulation](#Chaining-DOM-Manipulation)
+    * [Parent element operations](#Parent-element-operations)
+    * [Multi-element operations](#Multi-element-operations)
+        * [Get the number of target elements](#Get-the-number-of-target-elements)
+        * [Specify the first element](#Specify-the-first-element)
+        * [Specify the last element](#Specify-the-last-element)
+        * [Specify the nth element](#Specify-the-nth-element)
+        * [Specify the previous element](#Specify-the-previous-element)
+        * [Specify the following element](#Specify-the-following-element)
+    * [Search within an element (querySelector)](#Search-within-an-element-querySelector)
+    * [Creating a new virtual DOM (VirtualDom.create)](#Creating-a-new-virtual-DOM-VirtualDomcreate)
+    * [Get/Set specify text (text)](#GetSet-specify-text-text)
+    * [Get/Set HTML Tags (html)](#GetSet-HTML-Tags-html)
+    * [Adding content (append)](#Adding-content-append)
+    * [Add to the beginning of the content (afterBegin)](#Add-to-the-beginning-of-the-content-afterBegin)
+    * [Get/set css (style sheet) (style)](#Getset-css-style-sheet-style)
+    * [Get the setting value of css (style sheet) (getStyle)](#Get-the-setting-value-of-css-style-sheet-getStyle)
+    * [Get/Set Attributes (attr)](#GetSet-Attributes-attr)
+    * [Deleting an attribute (removeAttr)](#Deleting-an-attribute-removeAttr)
+    * [Easy retrieval/setting of attribute values](#Easy-retrievalsetting-of-attribute-values)
+        * [Get/set src](#Getset-src)
+        * [Get/set placeHolder](#Getset-placeHolder)
+        * [Get/set href](#Getset-href)
+        * [Get/set name](#Getset-name)
+        * [Get/set id](#Getset-id)
+    * [Adding a class attribute (addClass)](#Adding-a-class-attribute-addClass)
+    * [Removing a class attribute (removeClass)](#Removing-a-class-attribute-removeClass)
+    * [Get/Set temporary data (data)](#GetSet-temporary-data-data)
+    * [Delete temporary data (removeData)](#Delete-temporary-data-removeData)
+    * [Setting the Event Handler (on)](#Setting-the-Event-Handler-on)
+        * [When an element is pressed (onClick)](#When-an-element-is-pressed-onClick)
+        * [When you double-click an element (onDblClick)](#When-you-double-click-an-element-onDblClick)
+        * [When an element is changed (onChange)](#When-an-element-is-changed-onChange)
+        * [When the focus of an element changes (onFocus)](#When-the-focus-of-an-element-changes-onFocus)
+        * [When the mouse click begins (onMouseDown)](#When-the-mouse-click-begins-onMouseDown)
+        * [When the mouse click ends (onMouseUp)](#When-the-mouse-click-ends-onMouseUp)
+        * [When the mouse cursor moves (onMouseMove)](#When-the-mouse-cursor-moves-onMouseMove)
+    * [Event Execution (dispatch)](#Event-Execution-dispatch)
+    * [Get/Set Input Value (value)](#GetSet-Input-Value-value)
+        * [Get/Set Checkbox Selection Value](#GetSet-Checkbox-Selection-Value)
+        * [Get file selection](#Get-file-selection)
+    * [Get/change checkbox selection state (checked)](#Getchange-checkbox-selection-state-checked)
+    * [Adding options to the drop-down menu (selectAddParam)](#Adding-options-to-the-drop-down-menu-selectAddParam)
+    * [Display when no pull-down menu is selected (selectEmpty)](#Display-when-no-pull-down-menu-is-selected-selectEmpty)
+    * [Clear the selection in the drop-down menu (selectResetParam)](#Clear-the-selection-in-the-drop-down-menu-selectResetParam)
+    * [Get the display text of the options in the pull-down menu (selectedText)](#Get-the-display-text-of-the-options-in-the-pull-down-menu-selectedText)
+    * [Switching between displaying and hiding on the screen (display)](#Switching-between-displaying-and-hiding-on-the-screen-display)
+    * [Enable/disable elements (disable)](#Enabledisable-elements-disable)
+* [Render Class](#Render-Class)
+* [Lib class](#Lib-class)
+    * [Check if resource file exists](#Check-if-resource-file-exists)
+    * [Getting resource files](#Getting-resource-files)
+    * [Get DataURL of resource file](#Get-DataURL-of-resource-file)
+    * [Get MimeType of resource file](#Get-MimeType-of-resource-file)
+    * [Decoding from base64 format (base64Decode)](#Decoding-from-base64-format-base64Decode)
+    * [Encode to base64 format (base64Encode)](#Encode-to-base64-format-base64Encode)
+    * [Creating a unique identifier (uniqId)](#Creating-a-unique-identifier-uniqId)
+    * [Retrieving Object Data by Value (passByValue)](#Retrieving-Object-Data-by-Value-passByValue)
+    * [Stop at a specified time (sleep)](#Stop-at-a-specified-time-sleep)
+    * [Loading external JS scripts (importResourceScript)](#Loading-external-JS-scripts-importResourceScript)
+    * [Getting the date and time (datetime)](#Getting-the-date-and-time-datetime)
+        * [Getting the date and time in a format](#Getting-the-date-and-time-in-a-format)
+        * [Get the last day of the month (getLastDate)](#Get-the-last-day-of-the-month-getLastDate)
+        * [Get the last day of the month (getLastDay)](#Get-the-last-day-of-the-month-getLastDay)
+        * [Get tomorrow's information (nextDate)](#Get-tomorrows-information-nextDate)
+        * [Get the previous day's information (prevDate)](#Get-the-previous-days-information-prevDate)
+        * [Get next month's information (nextMonth)](#Get-next-months-information-nextMonth)
+        * [Get previous month's information (prevMonth)](#Get-previous-months-information-prevMonth)
+* [View Class](#View-Class)
+    * [Placement of View class file](#Placement-of-View-class-file)
+    * [Setting HTML content](#Setting-HTML-content)
+        * [Place HTML content directly in the View-derived class](#Place-HTML-content-directly-in-the-View-derived-class)
+        * [Setting the rendering HTML file (Recommendation)](#Setting-the-rendering-HTML-file-Recommendation)
+    * [Main life cycle](#Main-life-cycle)
+        * [The handle method](#The-handle-method)
+        * [The handleNext method](#The-handleNext-method)
+        * [The handleBack method](#The-handleBack-method)
+        * [handleBefore/handleAfter Methods](#handleBeforehandleAfter-Methods)
+        * [The handleRenderBefore method](#The-handleRenderBefore-method)
+        * [The handleRenderBAfter method](#The-handleRenderBAfter-method)
+        * [The handleLeave method](#The-handleLeave-method)
+        * [The handleLeaveNext method](#The-handleLeaveNext-method)
+        * [The handleLeaveBack method](#The-handleLeaveBack-method)
+        * [The handleLeaveStackClose method](#The-handleLeaveStackClose-method)
+        * [The handleTemplateChanged method](#The-handleTemplateChanged-method)
+        * [The handleHeadChanged method](#The-handleHeadChanged-method)
+        * [The handleHeaderChanged method](#The-handleHeaderChanged-method)
+        * [The handleFooterChanged method](#The-handleFooterChanged-method)
+    * [Manipulating the Virtual DOM](#Manipulating-the-Virtual-DOM)
+    * [Template settings](#Template-settings)
+    * [Head settings](#Head-settings)
+    * [Header settings](#Header-settings)
+    * [Footer Settings](#Footer-Settings)
+    * [Changing the rendered HTML](#Changing-the-rendered-HTML)
+    * [Temporary display of screen (stackOpen)](#Temporary-display-of-screen-stackOpen)
+* [UI Class](#UI-Class)
+    * [How to specify the UI](#How-to-specify-the-UI)
+
+
 
 ## What is this?
 
 mikeneko is a SPA (Single-Page-Action) framework that supports web and terminal applications.  
 It is composed of TypeScript (JavaScript).
 
-## How to install
+## How to use it?
 
-### Required environment
+To use it, you must first install ``Node.js`` and its package management tool, ``npm``.  
+After the above installation is complete, install mikeneko as an npm package.
 
-The following environment is required
+The following environment is required:
 
 - Node.js (ver20.18.1 or later)
 - npm (ver10.8.2 or later)
-- VisualStudioCode (Editor with TypeScript completion)
 - TypeScript (5.7.2 or later)
+- VisualStudioCode (Editor with TypeScript completion)
+
+Once the installation is complete, follow the steps below:
+
+- [Create Project](#Create-Project)
+- [Starting a Web Build](#Build-and-Build-Options)
 
 ### Installing mikeneko
 
@@ -47,7 +199,7 @@ Prepare a test sample in the following Git repository.
 
 [https://github.com/masatonakatsuji2021/mikeneko_sample](https://github.com/masatonakatsuji2021/mikeneko_sample)
 
-## # Create a project
+## Create Project
 
 To create a project, use the following command:  
 After that, the project name etc. are set interactively.
@@ -62,7 +214,7 @@ If the project name is already set, you can specify it directly using the follow
 $ mike create project1
 ```
 
-### ## Project file/directory structure
+### Project file/directory structure
 
 Below is an example.
 
@@ -116,20 +268,31 @@ See below for an overview of the files and directories in the source code.
 
 *1 No need to create it as it will be generated automatically.
 
-## # Build and Build Options
+## Web Build
 
-Move the current directory to the project directory and execute the following command to build the project:
+(Available from version 1.1.4)  
+Change the current directory to the project directory,  
+Running the ``mike build`` command will start a web build from the project sources.
 
-```
+```bash
 $ cd project1
 $ node . 
 ```
+
+You can also build the web by running the ``index.js`` file set when creating the project with the node command.
+
+```bash
+$ cd project1
+$ node . 
+```
+
+## How to specify build options
 
 Build options can be set by
 - specifying them as arguments to the ``Builder.build`` method
 - specifying them in the configuration file ``mikeneko.json``
 
-### ## Argument specification for Builder.build method
+### Argument specification for Builder.build method
 
 Build options can be specified as arguments to the ``Builder.build`` method for executing the build in ``index.js`` located directly under the project directory,  
 as shown below.
@@ -147,7 +310,7 @@ Builder.build({
 });
 ```
 
-### ## Specification by configuration file mikeneko.json
+### Specification by configuration file mikeneko.json
 
 How to specify build options in the configuration file mikeneko.json.
 
@@ -162,9 +325,9 @@ How to specify build options in the configuration file mikeneko.json.
 }
 ```
 
-## # Main build options
+## Web Build Option
 
-### ## Platform Settings
+### Platform Settings
 
 If you want to add two or more platforms to ``mikeneko.json``,   
 list them as follows:
@@ -199,9 +362,7 @@ execute the following command:
 $ node . --platform app2
 ```
 
-### ## Build options
-
-#### ### Debug log output
+### Debug Log Output
 
 Set debug to true in mikeneko.json.
 
@@ -216,7 +377,7 @@ Set debug to true in mikeneko.json.
 });
 ```
 
-#### ### View Mappings
+### View Mappings
 
 Set mapping to true in mikeneko.json.
 
@@ -231,7 +392,7 @@ Set mapping to true in mikeneko.json.
 }
 ```
 
-#### ### Code Obfuscation
+### Code Obfuscation
 
 Set ``obfuscated`` to ``true`` in ``mikeneko.json``.
 
@@ -246,7 +407,7 @@ Set ``obfuscated`` to ``true`` in ``mikeneko.json``.
 }
 ```
 
-#### ### Code compression
+### Code Compression
 
 Set ``codeCompress`` to ``true`` in ``mikeneko.json``.
 
@@ -261,7 +422,15 @@ Set ``codeCompress`` to ``true`` in ``mikeneko.json``.
 }
 ```
 
-#### ### Force build of core libraries
+### Force Build of Core Libraries
+
+When building a web site immediately after creating a project, two types of sources are transpiled from TypeScript: the core library source and the local source in the project (including plugins if any are added).
+
+None of these, except for your project's local sources,  
+will be transpiled unless you delete the files in the dist directory after transpiling once.
+
+However, if you want to optimize after updating the mikeneko core library (``mikeneko-corelib``) or adding/removing plugins,  
+you can specify the ``--force`` option to force all TypeScript files to be transpiled.
 
 If the core library is updated,   
 it will be updated with the following command.
@@ -270,7 +439,7 @@ it will be updated with the following command.
 $ node . --force
 ```
 
-#### ### Change transpiled version
+### Change Transpiled Version
 
 Change the target in ``tsconfig.json``.
 
@@ -285,7 +454,7 @@ Change the target in ``tsconfig.json``.
 }
 ```
 
-#### ### Build with WebPack
+### Build With WebPack
 
 Specify ``build`` to ``webpack`` in ``mikeneko.json``.  
 (Note that WebPack is installed globally.)
@@ -302,7 +471,7 @@ Specify ``build`` to ``webpack`` in ``mikeneko.json``.
 ```
 <div id="app"></div>
 
-## # Initial Setup
+## Initial Setup
 
 Open ``src/app/config/App.ts`` and make sure the code is written as below.
 
@@ -346,7 +515,7 @@ export class MyApp extends App {
 }
 ```
 
-### ## Root Method
+### Root Method
 
 There are two options, ``web`` and ``application``, so select one.
 
@@ -360,7 +529,7 @@ There are two options, ``web`` and ``application``, so select one.
 public static routeType: AppRouteType = AppRouteType.web;
 ```
 
-### ## routing
+### Routing
 
 Specify the routing settings for each screen below  
 For more information on routing, [see here.](#routes)
@@ -372,7 +541,7 @@ The following is the case when using the RouteMap method.
 public static maps : RouteMaps = Maps;
 ```
 
-### ## Specifying the NotFound screen
+### Specifying the NotFound View
 
 Specify the screen to be displayed if a screen does not exist or the file class for the screen is insufficient.  
 Can be specified by view name or RouteMap class.  
@@ -383,7 +552,7 @@ For the RouteMap, [see here](#routemap)
 public static notFoundView: RouteMap = Maps.notFound;
 ```
 
-### ## Screen transition delay settings
+### Screen Transition Delay Settings
 
 Specify this if you need a slight delay when performing animations during screen transitions.  
 The unit is ms.
@@ -393,7 +562,7 @@ The unit is ms.
 public static delay: number = 300;
 ```
 
-### ## Class settings for screen transition animation
+### Class Settings for Screen Transition Animation
 
 When performing animation display, etc., you can use the member variable   
 ``animationClassSelector`` to specify class attributes for when various screens are displayed and when they end.
@@ -424,7 +593,7 @@ public static animationClassSelector: AnimationClassSelector = {
 };
 ```
 
-### ## Background Processing Settings
+### Background Processing Settings
 
 You can enumerate background processes that run simultaneously when the app is launched.    
 The order will be the execution order of each background class.
@@ -442,7 +611,7 @@ For background, [see here](#background)
 
 <div id="routes"></div>
 
-## # Routing
+## Routing Setting
 
 Routing is information that links the screen class (View) and URL that are applied when transitioning between screens.    
 In mikeneko, screen transitions and switching are basically performed by specifying a URL with routing or the ``RouteMap`` class.
@@ -451,7 +620,7 @@ There are two main methods for routing:
 - Routing with URL path and View specified as literal string.
 - Routing with RouteMap
 
-### ## Routing with URL path and View
+### Routing with URL path and View
 
 Specify the View name (View derived class name) to be used by using the URL as a key.    
 
@@ -476,7 +645,7 @@ public static routes = {
 };
 ```
 
-#### ### Specifying the URL and View
+#### Specifying the URL and View
 
 The key value (left side) is the URL (path) and the value (right side) is the view name to be used.    
 In the example below, HomeView(``src/app/view/HomeView.ts``) is specified as the screen (TOP) that appears immediately after the app is launched.
@@ -501,7 +670,7 @@ For more information on Transition, [see here](#transition)
 Transition.next("/faq");
 ```
 
-#### ### URL Scope
+#### URL Scope
 
 If the same path exists for multiple routes at the beginning of the URL,   
 it can be written in the scope.
@@ -534,7 +703,7 @@ Scope can also be specified by nesting as follows:
 },
 ```
 
-#### ### When to specify dynamic/arbitrary values ​​in the URL
+#### When to specify dynamic arbitrary values ​​in the URL
 
 Use the ``{}`` notation when specifying dynamic or arbitrary values ​​in the URL.
 
@@ -588,7 +757,7 @@ This will apply the routing in the above case.
 
 <div id="routemap"></div>
 
-### ## Routing with RouteMap
+### Routing with RouteMap
 
 ``RouteMap`` is a method that emphasizes complementary functions more than the above routing methods.  
 The method is to instantiate the URL and View class name in the ``RouteMap`` class and use it.
@@ -643,7 +812,7 @@ public static maps = {
 
 * When using RouteMap, the first specified route is applied to the TOP immediately after the app is launched.
 
-## # About the Core Library
+## About the Core Library
 
 In mikeneko, the standard functions available are collectively called core libraries.  
 The core libraries provided are:
@@ -666,7 +835,7 @@ In addition to this, functions such as dialog display (``Dialog``) and input val
 
 <div id="transition"></div>
 
-## # Transition Class
+## Transition Class
 
 ``Transition`` is a class mainly used for screen transitions, etc.  
 To use it, you need to import the module with the following import.
@@ -675,7 +844,7 @@ To use it, you need to import the module with the following import.
 import { Transition } from "Transition";
 ```
 
-### ## Transition to another screen (next)
+### Transition to another screen (next)
 
 You can use the ``next`` method to navigate to another screen.  
 When this method is used, the screen transition history is stored inside the app.
@@ -755,7 +924,7 @@ import { MyApp } from "app/config/App";
 Transition.next(MyApp.maps.other, null, { id: 2 });    // <= Go to the RouteMap information screen specified in MyApp.maps.other
 ```
 
-### ## Screen transition with RouteMap specified (move)
+### Screen transition with RouteMap specified (move)
 
 To use RouteMap to transition between screens, use the ``move`` method.  
 The usage is the same as using the ``next`` method.  
@@ -767,7 +936,7 @@ import { MyApp } from "app/config/App";
 Transition.move(MyApp.maps.faq);    // <= Go to the RouteMap information screen specified in MyApp.maps.faq
 ```
 
-### ## Temporarily change screen (stack)
+### Temporarily change screen (stack)
 
 You can temporarily navigate to another screen using the ``stack`` method.  
 (This is a wrapper function for ``View.stackOpen``) 
@@ -793,7 +962,7 @@ When receiving, you can specify the value to be passed as a return value by usin
 ``handleLeaveStackClose`` event on the view side of the selection screen.  
 For details, [see here](#view_stackopen)
 
-### ## Return to previous screen (back)
+### Return to previous screen (back)
 
 To go back to the previous screen, use the ``back`` method.
 
@@ -807,7 +976,7 @@ The number of screens to go back can be specified by an argument.
 Transition.back(2); // <= Go back two
 ```
 
-### ## Display another screen (replace)
+### Display another screen (replace)
 
 To switch between different screens, use the ``replace`` method.  
 
@@ -868,7 +1037,7 @@ Transition.replace(MyApp.maps.other, null, { id: 2 });    // <= Go to the RouteM
 
 The screen behavior after switching (such as the life cycle of the View) is the same as when transitioning using ``next`` or ``move``.
 
-### ## Delete screen history (historyClear)
+### Delete screen history (historyClear)
 
 To delete all screen transition history within an app, use the ``historyClear`` method.
 
@@ -876,7 +1045,7 @@ To delete all screen transition history within an app, use the ``historyClear`` 
 Transition.historyClear();
 ```
 
-### ## Adding Screen History (historyAdd)
+### Adding Screen History (historyAdd)
 
 If you want to add an optional history of screen transitions within the app, use the ``historyAdd`` method.
 
@@ -885,7 +1054,7 @@ Transition.historyAdd("/");             // <= Add TOP page
 Transition.historyAdd(MyApp.maps.faq);  // <= Added FAQ screen in RouteMap format
 ```
 
-### ## Obtaining the transition state (isNext/isBack)
+### Obtaining the transition state (isNext/isBack)
 
 To get the screen transition status (back or forward) in a view, use ``isNext`` or ``isBack``.  
 ``isNext`` and ``isBack`` are opposites, so you can use either one.
@@ -906,7 +1075,7 @@ if (Transition.isNext) {
 }
 ```
 
-### ## Lock screen transitions (lock)
+### Lock screen transitions (lock)
 
 By using ``lock``, you can temporarily disable a series of screen transitions,   
 such as transitions using ``next``, ``move``, ``replace``,   
@@ -926,7 +1095,7 @@ Transition.lock = false;
 
 Be sure to unlock the app at the end, otherwise it will stop working.
 
-### ## Displaying the UI (bindUI)
+### Displaying the UI (bindUI)
 
 The ``bindUI`` method allows you to bind and display a UI to a specified virtual DOM element.  
 This method is a wrapper function for ``UI.bind``.  
@@ -951,7 +1120,7 @@ For how to extract the data, please refer to [About UI Class](#ui)
 const itemUI = Transition.bindUI(this.vdos.item, "item", { id: 3 });
 ```
 
-### ## Addition of UI (appendUI)
+### Addition of UI (appendUI)
 
 The ``appendUI`` method allows you to append a UI to a specified virtual DOM element.  
 * This method is a wrapper function for ``UI.append``.    
@@ -977,12 +1146,12 @@ const listeItemUI = Transition.appendUI(this.vdos.list, "listItem", { id: 3 });
 
 <div id="virtualdom"></div>
 
-## # VirtualDom Class
+## VirtualDom Class
 
 The ``VirtualDom`` class is a class for operating the virtual Dom,   
 which is necessary to set the text display of the HTML content part and the event operation when a button is pressed.
 
-### ## Setting up and operating a Virtual Dom
+### Setting up and operating a Virtual Dom
 
 First, in the HTML part such as ``View`` or ``UI``,   
 you need to place the tag to be applied as a virtual DOM and specify the attribute name.  
@@ -1041,7 +1210,7 @@ The following code will display the same text for all tags that have ``test1`` d
 this.vdos.test1.text = "Test1 Sample...";
 ```
 
-### ## Chaining DOM Manipulation
+### Chaining DOM Manipulation
 
 The v attribute can be used to perform chain operations using the ``.`` separator.
 
@@ -1086,7 +1255,7 @@ Chain Test
 
 Chaining allows you to manipulate elements by categorization.
 
-### ## Parent element operations
+### Parent element operations
 
 To get the parent element, use ``parent``.  
 Parent elements can be obtained and operated without specifying the v attribute.
@@ -1095,11 +1264,11 @@ Parent elements can be obtained and operated without specifying the v attribute.
 this.vdos.test.parent.text = "Parent Text";
 ```
 
-### ## Multi-element operations
+### Multi-element operations
 
 The ``VirtualDom`` class provides methods (setter/getter) to operate on multiple elements in one virtual DOM.
 
-#### ### Get the number of target elements
+#### Get the number of target elements
 
 The number of target elements is obtained with ``length``.
 
@@ -1107,7 +1276,7 @@ The number of target elements is obtained with ``length``.
 console.log(this.vdos.test.length);
 ```
 
-#### ### Specify the first element
+#### Specify the first element
 
 The first element is obtained with ``first``.
 
@@ -1115,7 +1284,7 @@ The first element is obtained with ``first``.
 this.vdos.test.first.text = "Test Sample (First)";
 ```
 
-#### ### Specify the last element
+#### Specify the last element
 
 The last element is obtained with ``last``.
 
@@ -1123,7 +1292,7 @@ The last element is obtained with ``last``.
 this.vdos.test.last.text = "Test Sample (Last)";
 ```
 
-#### ### Specify the nth element
+#### Specify the nth element
 
 The nth element can be obtained by specifying the index number as an argument using the ``index`` method.
 
@@ -1131,7 +1300,7 @@ The nth element can be obtained by specifying the index number as an argument us
 this.vdos.test.index(2).text = "Test Sample (2)";
 ```
 
-#### ### Specify the previous element
+#### Specify the previous element
 
 To get the adjacent element before an element, use ``prev``.  
 If the virtual DOM itself has multiple elements,   
@@ -1141,7 +1310,7 @@ it gets the adjacent element before the first element.
 this.vdos.test.prev.text = "Prev Text";
 ```
 
-#### ### Specify the following element:
+#### Specify the following element
 
 To get the next adjacent element of an element, use ``next``.  
 If the virtual DOM itself has multiple elements,   
@@ -1151,7 +1320,7 @@ it gets the next adjacent element from the first element.
 this.vdos.test.next.text = "Next Text";
 ```
 
-### ## Search within an element (querySelector)
+### Search within an element (querySelector)
 
 Using the ``querySelector`` method,  
 you can retrieve elements that match a selector or selectors specified within an element in the ``VirtualDOM`` object.  
@@ -1173,7 +1342,7 @@ use ``querySelector`` and write it as follows.
 console.log(this.vdos.area.querySelector(".description").text);
 ```
 
-### ## Creating a new virtual DOM (VirtualDom.create)
+### Creating a new virtual DOM (VirtualDom.create)
 
 Using the ``VirtualDom.create`` method,  
 a virtual DOM (``VirtualDom`` class object) can be created without applying the v attribute to HTML content.
@@ -1196,7 +1365,7 @@ newDom.style({ color: "orange" });
 this.vdos.target.html = newDom;
 ```
 
-### ## Get/specify text (text)
+### Get/Set specify text (text)
 
 Use ``text``(setter/getter) to set and get text.  
 
@@ -1213,7 +1382,7 @@ const sampleText = this.vdos.sample.text;
 console.log(sampletext);
 ```
 
-### ## Get/Set HTML Tags (html)
+### Get/Set HTML Tags (html)
 
 Use ``html`` (setter/getter) to set and retrieve HTML tag content (innerHTML).  
 To set HTML tags, use the following code:
@@ -1237,7 +1406,7 @@ const sampleHtml = this.vdos.sample.html;
 console.log(sampleHtml);
 ```
 
-### ## Adding content (append)
+### Adding content (append)
 
 To append HTML content to a string or a virtual DOM object, use the append method:  
 ``append`` adds to the end of the tag element.
@@ -1256,7 +1425,7 @@ const newDom = VirtualDom.create("New VDom Text ....");
 this.vdos.list.append(newDom);
 ```
 
-### ## Add to the beginning of the content (afterBegin)
+### Add to the beginning of the content (afterBegin)
 
 To append HTML content to the beginning of a string or virtual DOM object, use the afterBegin method:  
 ``append`` appends downwards to the bottom of the tag, whereas ``afterBegin`` appends upwards to the top of the tag.
@@ -1275,7 +1444,7 @@ const newDom = VirtualDom.create("New VDom Text ....");
 this.vdos.list.afterBegin(newDom);
 ```
 
-### ## Get/set css (style sheet) (style)
+### Get/set css (style sheet) (style)
 
 To get or set stylesheet (css) values, use the ``style`` method.
 
@@ -1295,7 +1464,7 @@ this.vdos.sample.style({
 });
 ```
 
-### ## Get the setting value of css (style sheet) (getStyle)
+### Get the setting value of css (style sheet) (getStyle)
 
 The style sheet settings are obtained with ``getStyle``.
 
@@ -1304,7 +1473,7 @@ const bgColor = this.vdos.sample.getStyle("background");
 console.log(bgColor);
 ```
 
-### ## Get/Set Attributes (attr)
+### Get/Set Attributes (attr)
 
 Use ``attr`` to specify or retrieve attribute values ​​for an element tag.
 
@@ -1327,7 +1496,7 @@ const name = this.vdos.sample.attr("name");
 cosnole.log(name);
 ```
 
-### ## Deleting an attribute (removeAttr)
+### Deleting an attribute (removeAttr)
 
 If you want to remove attribute information, use ``removeAttr``.
 
@@ -1335,11 +1504,11 @@ If you want to remove attribute information, use ``removeAttr``.
 this.vdos.sample.removeAttr("name");
 ```
 
-### ## Easy retrieval/setting of attribute values
+### Easy retrieval/setting of attribute values
 
 Among the attribute values, the most frequently used attribute information can be easily obtained/set using the following.
 
-#### ### Get/set src
+#### Get/set src
 
 Use ``src`` to get and set the src attribute used for image paths, etc.
 
@@ -1356,7 +1525,7 @@ To set the src attribute value, use the following:
 this.vdos.image.src = "img/sample.png";
 ```
 
-#### ### Get/set placeHolder
+#### Get/set placeHolder
 
 Use ``placeholder`` to get and set the placeholder attribute
 
@@ -1373,7 +1542,7 @@ To set the placeholder attribute value, use the following:
 this.vdos.image.placeholder = "Placeholder Sample....";
 ```
 
-#### ### Get/set href
+#### Get/set href
 
 Use ``href`` to get and set the href attribute used in link tags, etc.
 
@@ -1390,7 +1559,7 @@ To set the href attribute value, use the following:
 this.vdos.link.href = "linkurl";
 ```
 
-#### ### Get/set name
+#### Get/set name
 
 Use ``name`` to get and set the name attribute.
 
@@ -1407,7 +1576,7 @@ To set the input attribute value, use the following:
 this.vdos.input.name = "yourname";
 ```
 
-#### ### Get/set id
+#### Get/set id
 
 Use ``id`` to get and set the id attribute.
 
@@ -1424,7 +1593,7 @@ To set the id attribute value, use the following:
 this.vdos.sample.id = "sample";
 ```
 
-### ## Adding a class attribute (addClass)
+### Adding a class attribute (addClass)
 
 If you want to add a specific class attribute, use ``addClass``.
 
@@ -1432,7 +1601,7 @@ If you want to add a specific class attribute, use ``addClass``.
 this.vdos.sample.addClass("open");
 ```
 
-### ## Removing a class attribute (removeClass)
+### Removing a class attribute (removeClass)
 
 If you want to remove a specific class attribute, use ``removeClass``.
 
@@ -1440,7 +1609,7 @@ If you want to remove a specific class attribute, use ``removeClass``.
 this.vdos.sample.removeClass("open");
 ```
 
-### ## Getting/setting temporary data (data)
+### Get/Set temporary data (data)
 
 To get or set temporary data on a VirtualDom, use the ``data`` method:  
 The value set by this ``data`` method is confidential because it is information that is not included in the actual HTML tag.
@@ -1461,7 +1630,7 @@ const id = this.vdos.button.data("id");
 console.log(id);
 ```
 
-### ## Delete temporary data (removeData)
+### Delete temporary data (removeData)
 
 To remove temporary data, use ``removeData``.  
 Specify only the data name as an argument
@@ -1470,7 +1639,7 @@ Specify only the data name as an argument
 this.vdos.button.removeData("id");
 ```
 
-### ## Setting the Event Handler (on)
+### Setting the Event Handler (on)
 
 To set an event handler, use the ``on`` method:  
 
@@ -1515,7 +1684,7 @@ this.vdos.button
 Among the events in the ``on`` method,   
 the simple set method that can be written is listed below.
 
-#### ### When an element is pressed (onClick)
+#### When an element is pressed (onClick)
 
 Set an event handler for when an element is clicked or tapped.  
 
@@ -1525,7 +1694,7 @@ this.vdos.button.onClick = () => {
 };
 ```
 
-#### ### When you double-click an element (onDblClick)
+#### When you double-click an element (onDblClick)
 
 Set an event handler for double-clicking an element.
 
@@ -1535,7 +1704,7 @@ this.vdos.button.onDblClick = () => {
 };
 ```
 
-#### ### When an element is changed (onChange)
+#### When an element is changed (onChange)
 
 Set an event handler when an element (input value or selected value) is changed.
 
@@ -1545,7 +1714,7 @@ this.vdos.button.onChange = () => {
 };
 ```
 
-#### ### When the focus of an element changes (onFocus)
+#### When the focus of an element changes (onFocus)
 
 Set an event handler for when focus changes to an element.
 
@@ -1555,7 +1724,7 @@ this.vdos.button.onFocus = () => {
 };
 ```
 
-#### ### When the mouse click begins (onMouseDown)
+#### When the mouse click begins (onMouseDown)
 
 Sets an event handler for when the mouse button is pressed within an element.
 
@@ -1565,7 +1734,7 @@ this.vdos.button.onMouseDown = () => {
 };
 ```
 
-#### ### When the mouse click ends (onMouseUp)
+#### When the mouse click ends (onMouseUp)
 
 Sets an event handler for when the mouse button is released within an element.
 
@@ -1575,7 +1744,7 @@ this.vdos.button.onMouseUp = () => {
 };
 ```
 
-#### ### When the mouse cursor moves (onMouseMove)
+#### When the mouse cursor moves (onMouseMove)
 
 Set an event handler for when the mouse cursor moves within an element.
 
@@ -1585,7 +1754,7 @@ this.vdos.button.onMouseMove = () => {
 };
 ```
 
-### ## Event Execution (dispatch)
+### Event Execution (dispatch)
 
 To execute an event arbitrarily, use the ``dispatch`` method.
 
@@ -1595,7 +1764,7 @@ Specify the name of the event to be implemented as an argument.
 this.vdos.button.dispatch("click");
 ```
 
-### ## Get/Set Input Value (value)
+### Get/Set Input Value (value)
 
 If the element is an input field or a pull-down menu,   
 use ``value`` (setter/getter) to get and set the value.
@@ -1618,7 +1787,7 @@ To set the input value, use the following:
 this.vdos.name.value = "input area..";
 ```
 
-#### ## Get/Set Checkbox Selection Value
+#### Get/Set Checkbox Selection Value
 
 In the case of checkboxes, the get/set type is an array value.  
 For example, if you specify a check box in HTML as follows:
@@ -1649,7 +1818,7 @@ When setting, specify the value as an array.
 this.vdos.checkbox.value = [ 1, 2 ];
 ```
 
-#### ### Get file selection
+#### Get file selection
 
 If the input field is a file selection, the data is returned as a buffer.
 
@@ -1683,7 +1852,7 @@ The results are as follows:
 }
 ```
 
-### ## Get/change checkbox selection state (checked)
+### Get/change checkbox selection state (checked)
 
 You can use ``checked`` to get and change the selection state of a single checkbox.
 
@@ -1702,7 +1871,7 @@ Can be forced to ``true`` or ``false``
 this.vdos.checkbox.checked = true;
 ```
 
-### ## Adding options to the drop-down menu (selectAddParam)
+### Adding options to the drop-down menu (selectAddParam)
 
 Use ``selectAddParam`` if the element is a drop-down menu and you want to add options to it.
 
@@ -1760,7 +1929,7 @@ In the above case, it will be set as follows:
 </select>
 ```
 
-### ## Display when no pull-down menu is selected (selectEmpty)
+### Display when no pull-down menu is selected (selectEmpty)
 
 Use ``selectEmpty`` to display when an element is not selected in a pull-down menu.
 
@@ -1776,7 +1945,7 @@ In reality, it is set as follows:
 </select>
 ```
 
-### ## Clear the selection in the drop-down menu (selectResetParam)
+### Clear the selection in the drop-down menu (selectResetParam)
 
 Use ``selectResetParam`` if the element is a dropdown menu and you want to clear all options.
 
@@ -1784,7 +1953,7 @@ Use ``selectResetParam`` if the element is a dropdown menu and you want to clear
 this.vdos.select.selectResetParam();
 ```
 
-### ## Get the display text of the options in the pull-down menu (selectedText)
+### Get the display text of the options in the pull-down menu (selectedText)
 
 To get the text that an element displays in addition to the selected value in a drop-down menu, use ``selectedText``.
 
@@ -1792,7 +1961,7 @@ To get the text that an element displays in addition to the selected value in a 
 console.log(this.vdos.select.selectedText);
 ```
 
-### ## Switching between displaying and hiding on the screen (display)
+### Switching between displaying and hiding on the screen (display)
 
 Use ``display`` to easily show or hide elements.
 
@@ -1808,7 +1977,7 @@ If you want to hide it, set it to ``false`` as shown below.
 this.vdos.button.display = false;
 ```
 
-### ## Enable/disable elements (disable)
+### Enable/disable elements (disable)
 
 To enable or disable an element (such as an input field), use ``disable``.
 
@@ -1826,7 +1995,7 @@ this.vdos.button.disable = false;
 
 <div id="render"></div>
 
-## # Render Class
+## Render Class
 
 The Render class is the base class for drawing.  
 This class is not used directly,   
@@ -1834,7 +2003,7 @@ but is used as the base class for functions such as ``View``, ``UI``, ``Template
 
 <div id="lib"></div>
 
-## # Lib class
+## Lib class
 
 The ``Lib`` class is a class that compiles commonly available functions into class methods.  
 To use it, you need to import the module with the following import.  
@@ -1843,7 +2012,7 @@ To use it, you need to import the module with the following import.
 import { Lib } from "Lib";
 ```
 
-### ## Check if resource file exists
+### Check if resource file exists
 
 To check if a resource file exists, use the ``existResource`` method:  
 The resource files that can be specified here are those placed in the src/resource directory.
@@ -1857,7 +2026,7 @@ const exists = Lib.existResource("img/sampleA.jpg");
 console.log(exists);
 ```
 
-### ## Getting resource files
+### Getting resource files
 
 To get a resource file, use the ``getResource`` method:  
 The resource files that can be specified here are those placed in the ``src/resource`` directory.
@@ -1873,7 +2042,7 @@ const data = Lib.getResource("css/sample.css");
 console.log(data);
 ```
 
-### ## Get DataURL of resource file
+### Get DataURL of resource file
 
 To get the resource file as a DataURL, use the ``getResourceDataUrl`` method:  
 The resource files that can be specified here are those placed in the ``src/resource`` directory.
@@ -1890,7 +2059,7 @@ console.log(dataUrl);
 Because it is in data URL format,   
 it can be used to display images in img tags or add separate CSS.
 
-### ## Get MimeType of resource file
+### Get MimeType of resource file
 
 To get the mimeType of a resource file, use the ``getResourceMimeType`` method:  
 The resource files that can be specified here are those placed in the ``src/resource`` directory.
@@ -1904,7 +2073,7 @@ const mime = Lib.getResourceMimeType("img/sample.jpg");
 console.log(mime);
 ```
 
-### ## Decoding from base64 format (base64Decode)
+### Decoding from base64 format (base64Decode)
 
 To decode base64 data, use the ``base64Decode`` method:  
 Specify base64 format data as an argument.
@@ -1916,7 +2085,7 @@ const content = Lib.base64Decode("YWJjZGVmZw==");
 console.log(content);   // Output abcdefg
 ```
 
-### ## Encode to base64 format (base64Encode)
+### Encode to base64 format (base64Encode)
 
 To convert data to base64 format, use the ``base64Encode`` method.  
 Specify the data to be converted as an argument.
@@ -1928,7 +2097,7 @@ const content = Lib.base64Decode("abcdefg");
 console.log(content);   // Outputs YWJjZGVmZw==
 ```
 
-### ## Creating a unique identifier (uniqId)
+### Creating a unique identifier (uniqId)
 
 Unique identifiers can be easily created using the ``uniqID`` method:  
 The created identifier will be a random string consisting of alphanumeric characters (including uppercase and lowercase letters).
@@ -1947,7 +2116,7 @@ const id = Lib.uniqId(128);
 console.log(id);
 ```
 
-### ## Retrieving Object Data by Value (passByValue)
+### Retrieving Object Data by Value (passByValue)
 
 In TypeScript (JavaScript), if you duplicate the object data itself,   
 it is passed by reference,   
@@ -1969,7 +2138,7 @@ copy.name = "change name";
 console.log({ origin, copy });      // <= The origin name is printed unchanged.
 ```
 
-### ## Stop at a specified time (sleep)
+### Stop at a specified time (sleep)
 
 To sleep for a certain period of time, use the ``sleep`` method.  
 
@@ -1989,7 +2158,7 @@ as shown below, and you must execute it with await.
 })();
 ```
 
-### ## Loading external JS scripts (importResourceScript)
+### Loading external JS scripts (importResourceScript)
 
 If some JavaScript source exists as a resource file (in the ``src/resources`` directory),  
 it cannot be used as is in the TypeScript source.
@@ -2002,7 +2171,7 @@ const sample = Lib.importResourceScript("js/sample.js");
 console.log(sample);
 ```
 
-### ## Getting the date and time (datetime)
+### Getting the date and time (datetime)
 
 ``datetime`` is provided as a method for obtaining the date and time.  
 The return value of ``datetime`` alone is a dedicated class object (``MDateTime``).
@@ -2029,7 +2198,7 @@ console.log(Lib.dateTime().getFullYear());
 
 Below is an explanation of the methods provided specifically for the ``MDateTime`` class.
 
-#### ### Getting the date and time in a format
+#### Getting the date and time in a format
 
 To display a date and time with a specified format, use the ``format`` method.  
 The date and time information is replaced with each assigned character such as ``YYYY`` or ``MM``.
@@ -2059,7 +2228,7 @@ The assigned letters and their contents are as follows:
 |LW|Last day of the week|
 |U|Show elapsed time in milliseconds|
 
-#### ### Get the last day of the month (getLastDate)
+#### Get the last day of the month (getLastDate)
 
 Use the ``getLastDate`` method to get the last day of a specified month.
 
@@ -2067,7 +2236,7 @@ Use the ``getLastDate`` method to get the last day of a specified month.
 console.log(Lib.dateTime().getLastDate());
 ```
 
-#### ### Get the last day of the month (getLastDay)
+#### Get the last day of the month (getLastDay)
 
 Use the ``getLastDay`` method to get the day of the week that is the last day of a specified month and year.
 
@@ -2075,7 +2244,7 @@ Use the ``getLastDay`` method to get the day of the week that is the last day of
 console.log(Lib.dateTime().getLastDay());
 ```
 
-#### ### Get tomorrow's information (nextDate)
+#### Get tomorrow's information (nextDate)
 
 Use the ``nextDate`` method to get tomorrow's information.   
 The return value is an ``MDateTime`` class object.
@@ -2086,7 +2255,7 @@ In the following case, tomorrow's date will be obtained.
 console.log(Lib.dateTime().nextDate().format("YYYY/MM/DD"));
 ```
 
-#### ### Get the previous day's information (prevDate)
+#### Get the previous day's information (prevDate)
 
 Use the ``prevDate`` method to get information about the previous day.   
 The return value is an ``MDateTime`` class object.
@@ -2097,7 +2266,7 @@ In the following cases, the previous day's date will be obtained.
 console.log(Lib.dateTime().prevDate().format("YYYY/MM/DD"));
 ```
 
-#### ### Get next month's information (nextMonth)
+#### Get next month's information (nextMonth)
 
 Use the ``nextMonth`` method to get information about the next month.  
 The return value is an ``MDateTime`` class object.
@@ -2108,7 +2277,7 @@ In the following cases, the next month's year and month will be obtained.
 console.log(Lib.dateTime().nextMonth().format("YYYY/MM"));
 ```
 
-#### ### Get previous month's information (prevMonth)
+#### Get previous month's information (prevMonth)
 
 Use the ``prevMonth`` method to get information about the previous month.  
 The return value is an ``MDateTime`` class object.
@@ -2121,7 +2290,7 @@ console.log(Lib.dateTime().prevMonth().format("YYYY/MM"));
 
 <div id="view"></div>
 
-## # View Class
+## View Class
 
 ``View`` is a base class for performing operations and processes related to screen display.  
 Create a ``View`` derived class for each screen,   
@@ -2130,7 +2299,7 @@ and add events and processing for when buttons are pressed or other operations a
 When using View, the screen transition history is basically retained.  
 (However, this does not include cases such as when switching with ``Transition.replace``.)
 
-### ## Placement of View class file
+### Placement of View class file
 
 As an example, the following shows how to set up the ``HomeView`` class.  
 Create a ts file in the path ``src/app/view/HomeView.ts`` and write the code.  
@@ -2143,13 +2312,13 @@ import { View } from "View";
 export class HomeView extends VIew {}
 ```
 
-### ## Setting HTML content
+### Setting HTML content
 
 There are two main ways to set up HTML content that includes HTML tags:
 - Place HTML content directly in the View-derived class
 - Install a dedicated rendering HTML file
 
-#### ### Place HTML content directly in the View-derived class
+#### Place HTML content directly in the View-derived class
 
 Putting HTML content directly into the ``HomeView`` class.  
 Write the HTML tags to be displayed in the member variable ``html``
@@ -2173,7 +2342,7 @@ so you cannot use the completion function for HTML tags themselves.
 - It is not possible to switch between multiple screen display patterns.   
 (This is possible if you install the following HTML file separately.)
 
-#### ### Setting the rendering HTML file (Recommendation)
+#### Setting the rendering HTML file (Recommendation)
 
 How to separate HTML content into separate files.  
 Considering the complexity of the code, this is recommended.
@@ -2203,7 +2372,7 @@ For more information, [see Changing the Rendered HTML.](#view_view)
 If you have already specified the member variable ``html`` in each View class,   
 the HTML information of the ``html`` variable will be displayed first.
 
-### ## Main life cycle
+### Main life cycle
 
 The ``View`` class provides many handlers that are executed when the screen is displayed,   
 and their life cycles are shown in the table below.
@@ -2273,7 +2442,7 @@ View.handleLeave
 
 <div id="view_handle"></div>
 
-#### ### The handle method
+#### The handle method
 
 ``handle`` is the handler that is executed after the screen is displayed.  
 Basically, various operations and processing are described inside this.
@@ -2307,7 +2476,7 @@ export class SampleView extends VIew {
 }
 ```
 
-#### ### The handleNext method
+#### The handleNext method
 
 ``handleNext`` is a handler that is executed only when you move on from the previous screen using ``Transition.next`` etc.  
 Executed after ``handle`` method.
@@ -2351,7 +2520,7 @@ export class SampleView extends VIew {
 }
 ```
 
-#### ### The handleBack method
+#### The handleBack method
 
 ``handleBack`` is a handler that is executed only when you return to the previous screen using ``Transition.back`` etc.  
 Executed after ``handle`` method.
@@ -2395,7 +2564,7 @@ export class SampleView extends VIew {
 }
 ```
 
-#### ### handleBefore/handleAfter Methods
+#### handleBefore/handleAfter Methods
 
 ``handleBefore`` and ``handleAfter`` are handlers that run before the screen is displayed.  
 Mainly used for preparing variable data before displaying on the screen.  
@@ -2421,7 +2590,7 @@ export class SampleView extends VIew {
 }
 ```
 
-#### ### The handleRenderBefore method
+#### The handleRenderBefore method
 
 The ``handleRenderBefore`` method is an event that is executed after the screen is displayed by rendering and before ``handle`` method.  
 Mainly used when sharing among multiple views.
@@ -2441,7 +2610,7 @@ export class SampleView extends VIew {
 }
 ```
 
-#### ### The handleRenderBAfter method
+#### The handleRenderBAfter method
 
 The ``handleRenderBefore`` method is an event that is executed after the screen is displayed by rendering.  
 Mainly used when sharing among multiple views.
@@ -2461,7 +2630,7 @@ export class SampleView extends VIew {
 }
 ```
 
-#### ### The handleLeave method
+#### The handleLeave method
 
 The ``handleLeave`` method executes an event when you leave the current screen.
  
@@ -2490,7 +2659,7 @@ export class SampleView extends VIew {
 }
 ```
 
-#### ### The handleLeaveNext method
+#### The handleLeaveNext method
 
 The ``handleleavenext`` method is an event that is executed when you leave the current screen by proceeding to the next screen using ``Transition.next`` etc.  
 Executed after ``handleLeave`` method.
@@ -2510,7 +2679,7 @@ export class SampleView extends VIew {
 }
 ```
 
-#### ### The handleLeaveBack method
+#### The handleLeaveBack method
 
 The ``handleaveback`` method is an event that is executed when you leave the current screen and return to the previous screen using ``Transition.back`` etc.  
 Executed after ``handleLeave`` method.
@@ -2530,7 +2699,7 @@ export class SampleView extends VIew {
 }
 ```
 
-#### ### The handleLeaveStackClose method
+#### The handleLeaveStackClose method
 
 The ``handleavestackclose`` method is an event that is executed when a view is temporarily displayed using the ``Transition.stack`` or ``stackOpen`` method and then returns to the original screen.  
 Since it is a temporary display (displayed in front while the previous screen remains in the background),  
@@ -2554,7 +2723,7 @@ export class SampleView extends VIew {
 }
 ```
 
-#### ### The handleTemplateChanged method
+#### The handleTemplateChanged method
 
 The ``handleTemplateChanged`` method is an event that is executed when the ``template`` variable is set or changed.  
 For details about the function using the template variable, [see Template Settings.](#view_template)
@@ -2576,7 +2745,7 @@ export class SampleView extends VIew {
 }
 ```
 
-#### ### The handleHeadChanged method
+#### The handleHeadChanged method
 
 The ``handleHeadChanged`` method is an event that is executed when the head variable is set or changed.  
 For details on the function using the head variable, [see About setting head](#view_head).
@@ -2598,7 +2767,7 @@ export class SampleView extends VIew {
 }
 ```
 
-#### ### The handleHeaderChanged method
+#### The handleHeaderChanged method
 
 The ``handleHeaderChanged`` method is an event that is executed when the header variable is set or changed.  
 For details on the function using the variable header, [see About header settings](#view_header).
@@ -2620,7 +2789,7 @@ export class SampleView extends VIew {
 }
 ```
 
-#### ### The handleFooterChanged method
+#### The handleFooterChanged method
 
 The ``handleFooterChanged`` method is an event that is executed when the footer variable is set or changed.  
 For details on the function using the variable footer, [see About setting footer](#view_footer).
@@ -2642,7 +2811,7 @@ export class SampleView extends VIew {
 }
 ```
 
-### ## Manipulating the Virtual DOM
+### Manipulating the Virtual DOM
 
 The virtual Doms that can be specified in a View are broadly divided into the following:
 - ``vdo`` : Whole-screen elements (``VirtualDom``)
@@ -2691,7 +2860,7 @@ For information on how to operate in a virtual Dom, [see here](#virtualdom).
 
 <div id="view_template"></div>
 
-### ## Template settings
+### Template settings
 
 If the member variable ``template`` is specified, the specified template will be used.  
 For more information about templates, [see here](#template).
@@ -2720,7 +2889,7 @@ This will display the screen based on the specified template.
 
 <div id="view_head"></div>
 
-### ## Head settings
+### Head settings
 
 By specifying the member variable ``head``, you can bind the UI to the head tag.  
 
@@ -2745,7 +2914,7 @@ This sets the UI HTML specified in the head tag.
 
 <div id="view_header"></div>
 
-### ## Header settings
+### Header settings
 
 By specifying the member variable ``header``, you can bind the UI to the header tag.  
 
@@ -2770,7 +2939,7 @@ This sets the HTML of the UI specified in the header tag.
 
 <div id="view_footer"></div>
 
-### ## Footer Settings
+### Footer Settings
 
 By specifying the member variable ``footer``, you can bind the UI to the footer tag.  
 
@@ -2795,7 +2964,7 @@ This sets the HTML of the UI specified in the footer tag.
 
 <div id="view_view"></div>
 
-### ## Changing the rendered HTML
+### Changing the rendered HTML
 
 If you want to change the rendering HTML file to a different name,   
 you can do so by changing the member variable ``view``.
@@ -2820,7 +2989,7 @@ In the above case, the HTML in ``src/rendering/view/testCase1.html`` will be app
 
 <div id="view_stackopen"></div>
 
-### ## Temporary display of screen (stackOpen)
+### Temporary display of screen (stackOpen)
 
 The ``stackOpen`` method brings a screen to the front temporarily.
 
@@ -2878,7 +3047,7 @@ export class SelectView extends VIew {
 
 <div id="ui"></div>
 
-## # UI Class
+## UI Class
 
 ``UI`` is a class for displaying and operating each part on each screen.  
 Used to modularize the most complex part of the screen display, such as the operation logic.   
@@ -2889,7 +3058,7 @@ By modularizing the UI, operations and displays can be unified, improving mainta
 Create a ``UI`` derived class for each screen,   
 and add events and processing for when buttons are pressed or other operations are performed here.
 
-### ## How to specify the UI
+### How to specify the UI
 
 There are the following ways to specify the UI:
 - Show UI class files only
