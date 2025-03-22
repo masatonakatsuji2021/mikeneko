@@ -1,8 +1,10 @@
 {
-    "name": "mikeneko-project-sample",
+    "name": "mikeneko-project-base",
     "version":"1.0.0",
     "scripts": {
-        "build": "node ."
+        "build": "node .",
+        "build.app": "node . --platform app",
+        "build.web": "node . --platform web"
     },
     "dependencies": {
         "mikeneko-corelib":"^1.0.0",

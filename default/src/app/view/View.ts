@@ -1,6 +1,9 @@
 import { View as BaseView } from "View";
-import { HeaderUI } from "app/ui/HeaderUI";
 
+/**
+ * ### View
+ * Inheritance class of each View
+ */
 export class View extends BaseView {
 
     public template: string = "default";
@@ -8,12 +11,4 @@ export class View extends BaseView {
     public head: string = "head";
 
     public header: string = "header";
-
-    public handleBefore() {
-        console.log("handle before ... ok");
-    }
-
-    public set title(title: string) {
-        HeaderUI.title(title);
-    }
 }

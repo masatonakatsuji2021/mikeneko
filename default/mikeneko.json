@@ -4,6 +4,11 @@
             "name": "web",
             "debug": true,
             "mapping": true
+        },
+        {
+            "name": "app",
+            "debug": true,
+            "mapping": true
         }
     ]
 }
