@@ -48,10 +48,16 @@ It is composed of TypeScript (JavaScript).
 * [About the Core Library](#About-the-Core-Library)
 * [Transition Class](#Transition-Class)
     * [Transition to another screen (next)](#Transition-to-another-screen-next)
+        * [Specify a string path (URL)](#specify-a-string-path-url)
+        * [Specify the RouteMap class instance.](#specify-the-routemap-class-instance)
+        * [Specifying a static View class](#Specifying-a-static-View-class)
     * [Screen transition with RouteMap specified (move)](#Screen-transition-with-RouteMap-specified-move)
     * [Temporarily change screen (stack)](#Temporarily-change-screen-stack)
     * [Return to previous screen (back)](#Return-to-previous-screen-back)
     * [Display another screen (replace)](#Display-another-screen-replace)
+        * [Specify a string path (URL) as the replace](#Specify-a-string-path-URL-as-the-replace)
+        * [Specify an instance of the RouteMap class as the replace.](#Specify-an-instance-of-the-RouteMap-class-as-the-replace)
+        * [Specify a static View class as the replace](#Specify-a-static-View-class-as-the-replace)
     * [Delete screen history (historyClear)](#Delete-screen-history-historyClear)
     * [Adding Screen History (historyAdd)](#Adding-Screen-History-historyAdd)
     * [Obtaining the transition state (isNext/isBack)](#Obtaining-the-transition-state-isNextisBack)
@@ -76,6 +82,7 @@ It is composed of TypeScript (JavaScript).
     * [Adding content (append)](#Adding-content-append)
     * [Add to the beginning of the content (afterBegin)](#Add-to-the-beginning-of-the-content-afterBegin)
     * [Get/set css (style sheet) (style)](#Getset-css-style-sheet-style)
+    * [Get CSSStyleDeclaration interface access](#Get-CSSStyleDeclaration-interface-access)
     * [Get the setting value of css (style sheet) (getStyle)](#Get-the-setting-value-of-css-style-sheet-getStyle)
     * [Get/Set Attributes (attr)](#GetSet-Attributes-attr)
     * [Deleting an attribute (removeAttr)](#Deleting-an-attribute-removeAttr)
@@ -174,17 +181,39 @@ It is composed of TypeScript (JavaScript).
     * [Event handler when Template is displayed (handle)](#Event-handler-when-Template-is-displayed-handle)
 * [Background Class](#Background-Class)
     * [How to use Background](#How-to-use-Background)
+* [Hook Class](#hook-class)
+    * [How to use Hook](#how-to-use-hook)
+    * [Main reservation events](#main-reservation-events)
+        * [Immediately after launching the app (onStartoBegin)](#immediately-after-launching-the-app-onstartobegin)
+        * [When transitioning to the next screen (onTransitionNext)](#when-transitioning-to-the-next-screen-ontransitionnext)
+        * [When moving to the next screen (onTransitionMove)](#when-moving-to-the-next-screen-ontransitionmove)
+        * [When transitioning to the next screen using stack (onTransitionStack)](#when-transitioning-to-the-next-screen-using-stack-ontransitionstack)
+        * [After a screen is closed from the stack (onTransitionStackClose)](#after-a-screen-is-closed-from-the-stack-ontransitionstackclose)
+        * [When returning to the previous screen (onTransitionBack)](#when-returning-to-the-previous-screen-ontransitionback)
+        * [When switching to the next screen (onTransitionReplace)](#when-switching-to-the-next-screen-ontransitionreplace)
+        * [When adding screen history (onTransitionHistoryAdd)](#when-adding-screen-history-ontransitionhistoryadd)
+        * [When clearing screen history (onTransitionHistoryClear)](#when-clearing-screen-history-ontransitionhistoryclear)
+        * [When you remove the screen history (onTransitionHistoryPop)](#when-you-remove-the-screen-history-ontransitionhistorypop)
+        * [Before screen change (onRenderingBefore)](#before-screen-change-onrenderingbefore)
+        * [After screen change (onRenderingAfter)](#after-screen-change-onrenderingafter)
+        * [When binding the UI (onUIBind)](#when-binding-the-ui-onuibind)
+        * [When adding UI (onUIAppend)](#when-adding-ui-onuiappend)
+        * [When installing the render content (onSetRenderContent)](#when-installing-the-render-content-onsetrendercontent)
+    * [Run your own event](#run-your-own-event)
 * [About Plugins](#About-Plugins)
     * [Installing the plugin](#Installing-the-plugin)
     * [Remove plugin](#Remove-plugin)
     * [Checking installed plugins](#Checking-installed-plugins)
 * [Console mike command](#Console-mike-command)
     * [Create a project](#Create-a-project)
+    * [Web Build of the Project](#Web-Build-of-the-Project)
     * [Adding a platform](#Adding-a-platform)
     * [Removing a Platform](#Removing-a-Platform)
     * [Adding Plugins](#Adding-Plugins)
     * [Remove plugin](#Remove-plugin)
     * [View Added Plugins](#View-Added-Plugins)
+* [Others](#others)
+    * [About import path specification](#about-import-path-specification)
 
 ## How to use it?
 
@@ -297,13 +326,14 @@ See below for an overview of the files and directories in the source code.
 
 ## Web Build
 
-(Available from version 1.1.4)  
 Change the current directory to the project directory,  
 Running the ``mike build`` command will start a web build from the project sources.
 
+* Features since version 1.1.4
+
 ```bash
 $ cd project1
-$ node . 
+$ mike build
 ```
 
 You can also build the web by running the ``index.js`` file set when creating the project with the node command.
@@ -846,15 +876,16 @@ The core libraries provided are:
 
 ||||
 |:--|:--|:--|
-|App|[Initial setting class](#app)||
-|Transition|[Method class for screen transition](#transition)||
-|VirtualDom|[Virtual DOM manipulation classes](#virtualdom)||
-|Lib|[Commonly Used Method Classes](#lib)||
-|Render|[Drawing classes](#render)|Classes not used directly|
-|View|[Display class for each screen](#view)||
-|UI|[Class for parts to be displayed commonly on each screen](#ui)||
-|Template|[Template Classes](#template)||
-|Background|[Background processing classes](#background)||
+|App|[Initial setting class](#initial-setup)||
+|Transition|[Method class for screen transition](#transition-class)||
+|VirtualDom|[Virtual DOM manipulation classes](#virtualdom-class)||
+|Lib|[Commonly Used Method Classes](#lib-class)||
+|Render|[Drawing classes](#render-class)|Classes not used directly|
+|View|[Display class for each screen](#view-class)||
+|UI|[Class for parts to be displayed commonly on each screen](#ui-class)||
+|Template|[Template Classes](#template-class)||
+|Background|[Background processing classes](#background-class)||
+|Hook|[Class for setting interrupt execution when various events occur](#hook-class)|
 
 In addition to this, functions such as dialog display (``Dialog``) and input validation check (``Validation``) can be used by installing them as separate plugins.
 
@@ -876,7 +907,34 @@ import { Transition } from "Transition";
 You can use the ``next`` method to navigate to another screen.  
 When this method is used, the screen transition history is stored inside the app.
 
-For example, specify the destination URL as an argument as follows:
+There are the following ways to specify the transition destination:
+
+- Specify a string path (URL)
+- Specify the RouteMap class instance.
+- Specifying a static View class
+
+#### Specify a string path (URL)
+
+If you want to specify the destination as a string path (URL), use the following:  
+In this case, you need to specify the path and the destination View class name in ``routes`` in the initial settings (App) beforehand.  
+[For more information on specifying string paths for routing, see here](#routing-with-url-path-and-view)
+
+For example, suppose you specify the following routes in ``app/config/App.ts``:
+
+```typescript
+import { App } from "App";
+
+export class MyApp extends App {
+
+    public static routes = {
+        "/": "home",
+        "/faq" : "faq",
+    };
+}
+```
+
+If you want to transition to the above path ``/faq``,  
+specify the path as an argument as follows:
 
 ```typescript
 Transition.next("/faq");    // <= Go to /faq page
@@ -903,6 +961,8 @@ export class FaqView extends View {
 }
 ```
 
+#### Specify the RouteMap class instance.
+
 You can specify a ``RouteMap`` instance instead of a URL.
 
 ```typescript
@@ -912,6 +972,8 @@ Transition.next(RMap("faq"));    // <= Go to the FaqView screen
 ```
 
 If you are using RouteMap routing, you can specify it as follows:  
+[For more information on routing using RouteMap, see here.](#routing-with-routemap)
+
 First, you need to create an instance of RouteMap in ``MyApp.maps.faq``.
 
 ```typescript
@@ -951,6 +1013,26 @@ import { MyApp } from "app/config/App";
 Transition.next(MyApp.maps.other, null, { id: 2 });    // <= Go to the RouteMap information screen specified in MyApp.maps.other
 ```
 
+#### Specifying a static View class
+
+ * Features since version 1.1.4
+
+You can also specify the View class (typeof) directly.
+
+```typescript
+import { Page1View } from "app/view/Page1View";
+
+Transition.next(Page1View);
+```
+
+When specifying a View class, it is possible to set temporary data for the output screen.
+
+```typescript
+import { Page1View } from "app/view/Page1View";
+
+Transition.next(Page1View, { id : 2});
+```
+
 ### Screen transition with RouteMap specified (move)
 
 To use RouteMap to transition between screens, use the ``move`` method.  
@@ -961,6 +1043,24 @@ The usage is the same as using the ``next`` method.
 import { MyApp } from "app/config/App";
 
 Transition.move(MyApp.maps.faq);    // <= Go to the RouteMap information screen specified in MyApp.maps.faq
+```
+
+* Features since version 1.1.4
+
+You can also specify the View class (typeof) directly.
+
+```typescript
+import { Page1View } from "app/view/Page1View";
+
+Transition.move(Page1View);
+```
+
+When specifying a View class, it is possible to set temporary data for the output screen.
+
+```typescript
+import { Page1View } from "app/view/Page1View";
+
+Transition.move(Page1View, { id : 2});
 ```
 
 ### Temporarily change screen (stack)
@@ -982,6 +1082,15 @@ some value can be returned, so you can receive it.
 ```typescript
 // Temporarily display the selection screen
 const res = await Transition.stack(maps.select);
+console.log(res);
+```
+
+``RouteMap`` class instance and static View class can be specified as the display destination by arguments.
+
+```typescript
+import { SelectView } extends "app/view/SelectView";
+// // Temporarily display the Page1View screen
+const res = await Transition.stack(SelectView);
 console.log(res);
 ```
 
@@ -1010,9 +1119,42 @@ To switch between different screens, use the ``replace`` method.
 It is similar to ``next`` and ``move``, but the big difference is that it can switch between different screens without leaving a history of screen transitions.  
 Therefore, if you go back to the previous screen, you will be returned to the screen before the switch, so please be careful.
 
+There are the following ways to specify the transition destination:
+
+- Specify a string path (URL)
+- Specify the RouteMap class instance.
+- Specifying a static View class
+
+The screen behavior after switching (such as the life cycle of the View) is the same as when transitioning using ``next`` or ``move``.
+
+#### Specify a string path (URL) as the replace
+
+If you want to specify the destination as a string path (URL), use the following:  
+In this case, you need to specify the path and the destination View class name in ``routes`` in the initial settings (App) beforehand.  
+[For more information on specifying string paths for routing, see here](#routing-with-url-path-and-view)
+
+For example, suppose you specify the following routes in ``app/config/App.ts``:
+
+```typescript
+import { App } from "App";
+
+export class MyApp extends App {
+
+    public static routes = {
+        "/": "home",
+        "/other2": "other2",
+    };
+}
+```
+
+If you want to transition to the above path ``/other2``,  
+specify the path as an argument as follows:
+
 ```typescript
 Transition.replace("/other2");
 ```
+
+#### Specify an instance of the RouteMap class as the replace.
 
 You can specify a RouteMap instance instead of a URL.
 
@@ -1023,6 +1165,8 @@ Transition.replace(RMap("faq"));    // <= Go to the FaqView screen
 ```
 
 If you are using RouteMap routing, you can specify it as follows:  
+[For more information on routing using RouteMap, see here.](#routing-with-routemap)
+
 First, you need to create an instance of RouteMap in ``MyApp.maps.faq``.
 
 ```typescript
@@ -1062,7 +1206,26 @@ import { MyApp } from "app/config/App";
 Transition.replace(MyApp.maps.other, null, { id: 2 });    // <= Go to the RouteMap information screen specified in MyApp.maps.other
 ```
 
-The screen behavior after switching (such as the life cycle of the View) is the same as when transitioning using ``next`` or ``move``.
+#### Specify a static View class as the replace
+
+ * Features since version 1.1.4
+
+You can also specify the View class (typeof) directly.
+
+```typescript
+import { Page1View } from "app/view/Page1View";
+
+Transition.replace(Page1View);
+```
+
+When specifying a View class, it is possible to set temporary data for the output screen.
+
+```typescript
+import { Page1View } from "app/view/Page1View";
+
+Transition.replace(Page1View, { id : 2});
+```
+
 
 ### Delete screen history (historyClear)
 
@@ -1079,6 +1242,7 @@ If you want to add an optional history of screen transitions within the app, use
 ```typescript
 Transition.historyAdd("/");             // <= Add TOP page
 Transition.historyAdd(MyApp.maps.faq);  // <= Added FAQ screen in RouteMap format
+Transition.historyAdd(Page1View);       // <= Added Page1View Static Class.
 ```
 
 ### Obtaining the transition state (isNext/isBack)
@@ -1490,6 +1654,21 @@ this.vdos.sample.style({
     "font-size": "15px",    
 });
 ```
+
+### Get CSSStyleDeclaration interface access
+
+* Features since version 1.1.4
+
+By using the getter ``css``,  
+you can also set the style sheet using an object of the ``CSSStyleDeclaration`` interface.  
+[For more information on CSSStyleDeclaration, see here.](https://developer.mozilla.org/ja/docs/Web/API/CSSStyleDeclaration)
+
+```typescript
+this.vdos.sample.css.background = "red";
+this.vdos.sample.css.color = "white";
+this.vdos.sample.css.padding = "10px";
+```
+
 
 ### Get the setting value of css (style sheet) (getStyle)
 
@@ -3809,7 +3988,377 @@ export class MyApp extends App {
 }
 ```
 
-<div id="plugin"></div>
+## Hook Class
+
+* Features since version 1.1.4
+
+The Hook class is a class for setting interrupt execution when various events occur.  
+
+### How to use Hook
+
+Place your Hook-derived class in the ``app/hook`` directory.
+
+```typescript
+import { Hook } from "Hook";
+
+export class TestHook extends Hook {
+
+    public onStartorBegin() {
+        console.log("on startor begin .... ok");
+    }
+
+    public onTransitionNext() {
+        console.log("on transition next .... ok");
+    }
+}
+```
+
+After that, when the app starts,  
+all Hook classes in the ``app/hook`` directory are automatically loaded and the methods are executed when each event occurs.
+
+The Hook class has pre-defined methods (``HookNames``) for each event.
+
+|||
+|:--|:--|
+|onStartoBegin|Immediately after launching the app.|
+|onTransitionNext|When transitioning to the next screen.|
+|onTransitionMove|When moving to the next screen.|
+|onTransitionStack|When transitioning to the next screen using stack.|
+|onTransitionStackClose|After a screen is closed from the stack.|
+|onTransitionBack|When returning to the previous screen.|
+|onTransitionReplace|When switching to the next screen.|
+|onTransitionHistoryAdd|When adding screen history.|
+|onTransitionHistoryClear|When clearing screen history.|
+|onTransitionHistoryPop|When you remove the screen history|
+|onRenderingBefore|Before screen change.|
+|onRenderingAfter|After screen change.|
+|onUIBind|When binding the UI.|
+|onUIAppend|When adding UI.|
+|onSetRenderContent|When installing the render content.|
+
+You can also set up your own events other than the ones listed here.  
+For more information, [see here](#Run-your-own-event).
+
+### Main reservation events
+
+#### Immediately after launching the app (onStartoBegin)
+
+The ``onStartoBegin`` method is executed immediately after the application starts.
+
+```typescript
+import { Hook } from "Hook";
+
+export class TestHook extends Hook {
+
+    public onStartoBegin() {
+        console.log("on startor begin ... ok");
+    }
+}
+```
+
+#### When transitioning to the next screen (onTransitionNext)
+
+The ``onTransitionNext`` method is executed just before executing a screen transition with ``Transition.next``.  
+Destination information as an argument (path URL, ``RouteMap`` class instance, static ``View`` class).
+
+```typescript
+import { Hook } from "Hook";
+import { RouteMap } from "RouteMap";
+import { View } from "View";
+
+export class TestHook extends Hook {
+
+    public onTransitionNext(target : string | number | RouteMap | typeof View) {
+        console.log("on transition next ... ok");
+    }
+}
+```
+
+#### When moving to the next screen (onTransitionMove)
+
+The ``onTransitionNext`` method is executed just before executing a screen transition with ``Transition.move``.  
+Destination information as an argument (``RouteMap`` class instance, static ``View`` class).
+
+```typescript
+import { Hook } from "Hook";
+import { RouteMap } from "RouteMap";
+import { View } from "View";
+
+export class TestHook extends Hook {
+
+    public onTransitionMove(target : RouteMap | typeof View) {
+        console.log("on transition move ... ok");
+    }
+}
+```
+
+#### When transitioning to the next screen using stack (onTransitionStack)
+
+The ``onTransitionStack`` method is executed when the screen is temporarily displayed using ``Transition.stack``.  
+Destination information as an argument (``RouteMap`` class instance, static ``View`` class).
+
+```typescript
+import { Hook } from "Hook";
+import { RouteMap } from "RouteMap";
+import { View } from "View";
+
+export class TestHook extends Hook {
+
+    public onTransitionStack(target : RouteMap | typeof View) {
+        console.log("on transition stack ... ok");
+    }
+}
+```
+
+#### After a screen is closed from the stack (onTransitionStackClose)
+
+The ``onTransitionStackClose`` method is executed when ``Transition.stackClose`` is executed.
+
+```typescript
+import { Hook } from "Hook";
+
+export class TestHook extends Hook {
+
+    public onTransitionStackClose() {
+        console.log("on transition stack close ... ok");
+    }
+}
+```
+
+#### When returning to the previous screen (onTransitionBack)
+
+The ``onTransitionBack`` method is executed when you return to the previous screen using the ``Transition.back`` method.
+
+```typescript
+import { Hook } from "Hook";
+
+export class TestHook extends Hook {
+
+    public onTransitionBack() {
+        console.log("on transition back ... ok");
+    }
+}
+```
+
+#### When switching to the next screen (onTransitionReplace)
+
+The ``onTransitionReplace`` method is executed when a different screen is displayed using ``Transition.replace``.  
+Destination information as an argument path URL, ``RouteMap`` class instance, static ``View`` class).
+
+```typescript
+import { Hook } from "Hook";
+import { RouteMap } from "RouteMap";
+import { View } from "View";
+
+export class TestHook extends Hook {
+
+    public onTransitionReplace(target : string | number | RouteMap | typeof View) {
+        console.log("on transition replace ... ok");
+    }
+}
+```
+
+#### When adding screen history (onTransitionHistoryAdd)
+
+The ``onTransitionHistoryAdd`` method is executed when a history is added using ``Transition.historyAdd`` or ``Transition.addHistory``.  
+Destination information as an argument path URL, ``RouteMap`` class instance, static ``View`` class).
+
+```typescript
+import { Hook } from "Hook";
+import { RouteMap } from "RouteMap";
+import { View } from "View";
+
+export class TestHook extends Hook {
+
+    public onTransitionHistoryAdd(target : string | number | RouteMap | typeof View) {
+        console.log("on transition history add ... ok");
+    }
+}
+```
+
+#### When clearing screen history (onTransitionHistoryClear)
+
+The ``onTransitionHistoryClear`` method is executed when all history is deleted by ``Transition.historyClear``.
+
+```typescript
+import { Hook } from "Hook";
+import { RouteMap } from "RouteMap";
+import { View } from "View";
+
+export class TestHook extends Hook {
+
+    public onTransitionHistoryClear() {
+        console.log("on transition history clear ... ok");
+    }
+}
+```
+
+#### When you remove the screen history (onTransitionHistoryPop)
+
+The ``onTransitionHistoryPop`` method is executed when the history is restored by ``Transition.HistoryPop``.
+
+```typescript
+import { Hook } from "Hook";
+
+export class TestHook extends Hook {
+
+    public onTransitionHistoryPop() {
+        console.log("on transition history pop ... ok");
+    }
+}
+```
+
+#### Before screen change (onRenderingBefore)
+
+The ``onRenderingBefore`` method is executed just before the screen changes.  
+Destination information as an argument (``DecisionRoute`` interface object).
+
+```typescript
+import { Hook } from "Hook";
+import { DecisionRoute } from "Routes";
+
+export class TestHook extends Hook {
+
+    public onRenderingBefore(target: DecisionRoute) {
+        console.log("on rendering before ... ok");
+    }
+}
+```
+
+#### After screen change (onRenderingAfter)
+
+The ``onRenderingBefore`` method is executed just after the screen changes.  
+Destination information as an argument (``DecisionRoute`` interface object).
+
+```typescript
+import { Hook } from "Hook";
+import { DecisionRoute } from "Routes";
+
+export class TestHook extends Hook {
+
+    public onRenderingAfter(target: DecisionRoute) {
+        console.log("on rendering after ... ok");
+    }
+}
+```
+
+#### When binding the UI (onUIBind)
+
+The ``onUIBind`` method is executed when binding is performed by ``UI.bind``.  
+The following is passed as an argument:
+
+|||
+|:--|:--|
+|vdo|Bind destination VirtualDom class object.|
+|UIName|The UI name to bind to.|
+|data|Temporary data being passed.|
+
+```typescript
+import { Hook } from "Hook";
+import { VirtualDom } from "VirtualDom";
+
+export class TestHook extends Hook {
+
+    public onUIBind(option: {vdo: VirtualDom, UIName : string, sendData : any}) {
+        console.log("on UI bind ... ok");
+    }
+}
+```
+
+#### When adding UI (onUIAppend)
+
+The ``onUIAppend`` method is executed when appending is performed by ``UI.append``.  
+The following is passed as an argument:
+
+|||
+|:--|:--|
+|vdo|Append destination VirtualDom class object.|
+|UIName|The UI name to Append to.|
+|data|Temporary data being passed.|
+
+
+```typescript
+import { Hook } from "Hook";
+import { VirtualDom } from "VirtualDom";
+
+export class TestHook extends Hook {
+
+    public onUIAppend(option: {vdo: VirtualDom, UIName : string, sendData : any}) {
+        console.log("on UI append ... ok");
+    }
+}
+```
+
+#### When installing the render content (onSetRenderContent)
+
+The ``onSetRenderContent`` method is executed just before rendering HTML content such as View, UI, Template, etc.  
+The content HTML is passed to the argument.
+
+```typescript
+import { Hook } from "Hook";
+
+export class TestHook extends Hook {
+
+    public onSetRenderContent(content: string) {
+        console.log("on set render content ... ok");
+    }
+}
+```
+
+### Run your own event
+
+If you want to implement your own hook name,   
+first add the ``Hook.dispatch`` method to the place where you want to implement it.  
+Optionally specify the hook name as an argument.
+
+```typescript
+import { Hook } from "Hook";
+
+...
+
+Hook.dispatch("TargetDispatch");
+```
+
+Then, place ``app/hook/TestHook.ts`` etc. in each project source and set the ``on{optional hook name}`` method.  
+This will cause any hook methods to be executed at the point where ``Hook.dispatch`` is called.
+
+```typescript
+import { Hook } from "Hook";
+
+export class TestHook extends Hook {
+
+    public onTargetDispatch() {
+        console.log("on target dispatch ... ok");
+    }
+}
+```
+
+If you want to pass any value to ``Hook.dispatch``, pass it as the second argument. 
+Or you can get the return value if you want to get it.
+
+```typescript
+import { Hook } from "Hook";
+
+...
+
+const result = Hook.dispatch("TargetDispatch", id);
+```
+
+In the project source, ``app/hook/TestHook.ts`` etc., the following arguments are passed:  
+Arguments are returned with ``return``.
+
+```typescript
+import { Hook } from "Hook";
+
+export class textHook extends Hook {
+
+    public onTargetDispatch(id: number) {
+        console.log("on target dispatch (id=" + id + ")... ok");
+
+        return "result";
+    }
+}
+```
 
 ## About Plugins
 
@@ -3883,14 +4432,34 @@ Details about each function are listed below.
 ### Create a project
 
 To create a project, use the ``mike create`` command.  
-Enter the name of your project in {project-name}.
+Enter the name of your project at the end of the command.  
 
-```
-$ mike create {project-name}
+```bash
+$ mike create app-project
 ```
 
 After execution, the project directory, the initial source code,   
 and the minimum npm packages required for building will be installed.
+
+### Web Build of the Project
+
+* Features since version 1.1.4
+
+To run a build of the project sources, use the ``mike build`` command.  
+Specify the project directory as the current directory and then run.
+
+```bash
+$ cd app-project
+$ mike build
+```
+
+You can also specify optional build options at the end of the command.
+
+```bash
+$ mike build --force
+```
+
+[See here for build options](#web-build-option).
 
 ### Adding a platform
 
@@ -3946,4 +4515,23 @@ To see the plugins installed in your project, use the ``mike plugin list`` comma
 
 ```
 $ mike plugin list
+```
+
+## Others
+
+### About import path specification
+
+* Features since version 1.1.4
+
+The path in importing local sources can be specified as both absolute and relative paths.  
+If you specify an absolute path, specify the path directly under ``src`` (or directly under ``src_{platform_name}``) in the project directory.
+
+```typescript
+import { AppView } from "app/view/AppView";
+```
+
+The following is the path relative to the location of the source file being loaded.
+
+```typescript
+import { AppView } from "./AppView";
 ```
