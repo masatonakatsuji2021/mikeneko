@@ -3,7 +3,7 @@
     "description": "A web framework for the client side that can deploy spa (single-page-action) simply and quickly. Package for framework provision.",
     "author": "masato nakatsuji",
     "license": "MIT",
-    "version": "1.1.4",
+    "version": "1.1.5",
     "bin": {
         "mike": "src/command"
     },
